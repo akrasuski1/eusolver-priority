@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # hashcache.py ---
 #
 # Filename: hashcache.py
@@ -37,7 +38,6 @@
 
 # Code:
 
-#!/usr/bin/env python3
 
 """Implements a hashed cache, which is the dual of a bloom filter.
 i.e., false negatives are allowed, but not false positives."""
@@ -108,12 +108,12 @@ class HashCache(object):
                 set_entry[i].num_accesses += 1
                 set_entry[i].timestamp = self.monotonic_timestamp
                 self.monotonic_timestamp += 1
-                return True
+                return entry[i].data
 
-        return False
+        return None
 
-    def exists(self, key):
-        """Checks if a key exists in the hash cache"""
+    def find(self, key):
+        "Finds a key, returns None if non-existent"
         hash_value = self.hash_function(key)
         set_index = hash_value % self.num_sets
 
@@ -123,10 +123,13 @@ class HashCache(object):
             if (self.hash_table[set_index] == key):
                 self.hash_table[set_index].num_hits += 1
                 self.hash_table[set_index].timestamp = self.monotonic_timestamp
-                self.monotonic_timestamp += 1
-                return True
+                return self.hash_table[set_index].data
             else:
-                return False
+                return None
+
+    def exists(self, key):
+        """Checks if a key exists in the hash cache"""
+        return (self.find(key) != None)
 
     def _insert_into_set(self, set_index, key):
         # is there an empty slot in the set somewhere?

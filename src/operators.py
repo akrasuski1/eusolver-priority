@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-# utils.py ---
+# operators.py ---
 #
-# Filename: utils.py
+# Filename: operators.py
 # Author: Abhishek Udupa
-# Created: Tue Aug 18 12:03:06 2015 (-0400)
+# Created: Tue Aug 18 16:25:53 2015 (-0400)
 #
 #
 # Copyright (c) 2015, Abhishek Udupa, University of Pennsylvania
@@ -38,66 +38,43 @@
 
 # Code:
 
-
-"""Some utility functions, which are largely self-explanatory"""
-
-import math
-
-def print_module_misuse_and_exit():
-    print('This module is intented for use as a library, and not as a ' +
-          'standalone program!')
-    sys.exit(1)
-
+import utils
+import basetypes
 
 if __name__ == '__main__':
-    print_module_misuse_and_exit()
+    utils.print_module_misuse_and_exit()
+
+def OperatorTypes(IntEnum):
+    built_in_function_operator = 1
+    macro_function_operator = 2
+    unknown_function_operator = 3
+
+def OperatorBase(object):
+    """A base class for operators. Only manages OperatorTypes"""
+    def __init__(self, operator_type):
+        self.operator_type = operator_type
+
+    def __str__(self):
+        raise AbstractMethodError('OperatorBase.__str__()')
+
+    def __repr__(self):
+        raise AbstractMethodError('OperatorBase.__repr__()')
+
+    def to_smt(self, expr_object):
+        raise AbstractMethodError('OperatorBase.to_smt()')
+
+    def evaluate(self, expr_object):
+        raise AbstractMethodError('OperatorBase.evaluate()')
+
+def BuiltInFunctionCodes(IntEnum):
+    """Represents codes for the set of built-in functions"""
+    # builtins for the CORE logic
 
 
-def is_number_prime(number):
-    for i in range(2, math.ceil(math.sqrt(number))):
-        if (number % i == 0):
-            return False
-    return True
+    # builtins for LIA
 
 
-def round_to_next_higher_prime(number):
-    while (not is_number_prime(number)):
-        number += 1
-    return number
-
-
-def partitions(n, k):
-    """generate all splits of n into k components. Order
-    "of the split components is considered relevant.
-    """
-    if (n < k):
-        raise ArgumentError('n must be greater than or equal to k in call ' +
-                            'to utils.partitions(n, k)')
-
-    cuts = []
-    cuts.append(0)
-    cuts.append(n-k+1)
-    for i in range(k - 1):
-      cuts.append(n - k + 1 + i + 1)
-
-    done = False
-
-    while (not done):
-        retval = tuple([cuts[i] - cuts[i-1] for i in range(1, k+1)])
-        rightmost = 0
-        for i in range(1,k):
-            if cuts[i] - cuts[i - 1] > 1:
-                rightmost = i
-                cuts[i] = cuts[i] - 1
-                break
-        if rightmost == 0:
-            done = True
-        else:
-            accum = 1
-            for i in reversed(range(1, rightmost)):
-                cuts[i] = cuts[rightmost] - accum
-                accum = accum + 1
-        yield retval
+def BuiltInFunction(OperatorBase)
 
 #
-# utils.py ends here
+# operators.py ends here

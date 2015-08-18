@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-# basetypes.py ---
+# exprtypes.py ---
 #
-# Filename: basetypes.py
+# Filename: exprtypes.py
 # Author: Abhishek Udupa
-# Created: Tue Aug 18 11:13:18 2015 (-0400)
+# Created: Tue Aug 18 12:58:59 2015 (-0400)
 #
 #
 # Copyright (c) 2015, Abhishek Udupa, University of Pennsylvania
@@ -38,45 +38,90 @@
 
 # Code:
 
+"""Defines a type class and a set of types commonly used"""
 
-"""Implementation of a few basic types used in various contexts"""
-
+import basetypes
+from enum import IntEnum
 import utils
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
-class OptionError(Exception):
-    def __init__(self, error_msg):
-        self.error_msg = error_msg
+def TypeCodes(IntEnum):
+    """An (extensible) set of type codes. There must be
+    (at least) one class deriving from TypeBase for each of these
+    type codes."""
+
+    boolean_type = 1
+    integer_type = 2
+    bit_vector_type = 3
+
+def TypeBase(object):
+    """Base class for all types. Only handles type codes."""
+
+    def __init__(self, type_code):
+        self.type_code = type_code
 
     def __str__(self):
-        return 'Option Error: ' + self.error_msg
+        raise basetypes.AbstractMethodError('TypeBase.__str__()')
 
     def __repr__(self):
-        return self.__str__()
+        raise basetypes.AbstractMethodError('TypeBase.__repr__()')
 
 
-class ArgumentError(Exception):
-    def __init__(self, error_msg):
-        self.error_msg = error_msg
+def _BoolType(TypeBase):
+    """A Boolean Type."""
+
+    def __init__(self):
+        super().__init__(TypeCodes.boolean_type)
 
     def __str__(self):
-        return 'Argument Error: ' + self.error_msg
+        return 'BooleanType'
 
     def __repr__(self):
-        return self.__str__()
+        return 'BooleanType'
+
+_boolean_type_instance = _BoolType()
+
+def BoolType():
+    return _boolean_type_instance
 
 
-class AbstractMethodError(Exception):
-    def __init__(self, method_name):
-        self.method_name = method_name
+def _IntType(TypeBase):
+    """An Integer Type."""
+
+    def __init__(self):
+        super().__init__(TypeCodes.integer_type)
 
     def __str__(self):
-        return 'Attempted to call abstract method: ' + self.method_name
+        return 'IntegerType'
 
     def __repr__(self):
-        return self.__str__()
+        return 'IntegerType'
+
+_integer_type_instance = _IntType()
+
+def IntType(TypeBase):
+    return _integer_type_instance
+
+
+def BitVectorType(TypeBase):
+    """A (parametrized) bit vector type"""
+
+    def __init__(self, size):
+        super().__init__(TypeCodes.bit_vector_type)
+        self.size = size
+
+    def __eq__(self, other):
+        if (not isinstance(other, BitVectorType)):
+            return False
+        return (other.size == self.size)
+
+    def __ne__(self, other):
+        return (not self.__eq__(other))
+
+    def get_size(self):
+        return size
 
 #
-# basetypes.py ends here
+# exprtypes.py ends here
