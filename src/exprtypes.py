@@ -43,11 +43,12 @@
 import basetypes
 from enum import IntEnum
 import utils
+import collections
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
-def TypeCodes(IntEnum):
+class TypeCodes(IntEnum):
     """An (extensible) set of type codes. There must be
     (at least) one class deriving from TypeBase for each of these
     type codes."""
@@ -56,7 +57,7 @@ def TypeCodes(IntEnum):
     integer_type = 2
     bit_vector_type = 3
 
-def TypeBase(object):
+class TypeBase(object):
     """Base class for all types. Only handles type codes."""
 
     def __init__(self, type_code):
@@ -69,7 +70,7 @@ def TypeBase(object):
         raise basetypes.AbstractMethodError('TypeBase.__repr__()')
 
 
-def _BoolType(TypeBase):
+class _BoolType(TypeBase):
     """A Boolean Type."""
 
     def __init__(self):
@@ -87,7 +88,7 @@ def BoolType():
     return _boolean_type_instance
 
 
-def _IntType(TypeBase):
+class _IntType(TypeBase):
     """An Integer Type."""
 
     def __init__(self):
@@ -105,15 +106,16 @@ def IntType(TypeBase):
     return _integer_type_instance
 
 
-def BitVectorType(TypeBase):
+class _BitVectorType(TypeBase):
     """A (parametrized) bit vector type"""
 
     def __init__(self, size):
+        assert(size > 0)
         super().__init__(TypeCodes.bit_vector_type)
         self.size = size
 
     def __eq__(self, other):
-        if (not isinstance(other, BitVectorType)):
+        if (not isinstance(other, _BitVectorType)):
             return False
         return (other.size == self.size)
 
@@ -122,6 +124,11 @@ def BitVectorType(TypeBase):
 
     def get_size(self):
         return size
+
+_bitvector_type_intern_dict = collections.defaultdict(_BitVectorType)
+
+def BitVectorType(size):
+    return _bitvector_type_intern_dict[size]
 
 #
 # exprtypes.py ends here

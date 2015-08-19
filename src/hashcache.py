@@ -160,7 +160,7 @@ class HashCache(object):
             self.monotonic_timestamp += 1
 
 
-def WeightedReplacementFunction(object):
+class WeightedReplacementFunction(object):
     """A weighted replacement function for the HashCache"""
     def __init__(self, hit_weight = 1, recency_weight = 1):
         """Constructs a WeightedReplacementFunction.
@@ -184,7 +184,7 @@ def WeightedReplacementFunction(object):
 
         return current_minimum_index
 
-def RandomReplacementFunction(object):
+class RandomReplacementFunction(object):
     """A random replacement function."""
     def __init__(self, num_probes = 1):
         """Constructs a random replacement function.
