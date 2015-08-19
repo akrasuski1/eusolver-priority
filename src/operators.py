@@ -69,9 +69,25 @@ def OperatorBase(object):
 def BuiltInFunctionCodes(IntEnum):
     """Represents codes for the set of built-in functions"""
     # builtins for the CORE logic
-
+    built_in_operator_eq = 1
+    built_in_operator_and = 2
+    built_in_operator_or = 3
+    built_in_operator_not = 4
+    built_in_operator_implies = 5
+    built_in_operator_iff = 6
+    built_in_operator_xor = 7
+    built_in_operator_xnor = 8
+    built_in_operator_ite = 9
 
     # builtins for LIA
+    builtin_operator_add = 10
+    builtin_operator_sub = 11
+    builtin_operator_minus = 12
+    builtin_operator_mul = 13
+    builtin_operator_div = 14
+
+    # builtins for BV
+
 
 
 def BuiltInFunction(OperatorBase)
