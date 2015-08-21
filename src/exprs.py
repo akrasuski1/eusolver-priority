@@ -133,5 +133,35 @@ def ExprManager(object):
         return _ConstantExpression(ExpressionKinds.constant_expression,
                                    exprtypes.BoolType(), True)
 
+def _constant_to_string(constant_type, constant_value):
+    if (constant_type == exprtypes.BoolType() or
+        constant_type == exprtypes.IntType()):
+        return str(constant_value)
+    else:
+        num_bits = constant_type.size
+        if (num_bits % 4 == 0):
+            format_string = '0%dX' % num_bits / 4
+            prefix_string = '#x'
+        else:
+            format_string = '0%db' % num_bits
+            prefix_string = '#b'
+        return prefix_string + format(constant_value, format_string)
+
+
+def expression_to_string(expr):
+    """Returns a string representation of an expression"""
+
+    if (expr.expr_kind == ExpressionKinds.variable_expression):
+        return expr.var_name
+    elif (expr.expr_kind == ExpressionKinds.constant_expression):
+        return _constant_to_string(expr.expr_type, expr.const_value)
+    else:
+        retval = '(' + expr.function_info.function_name + ' '
+        for child in expr.children:
+            retval += expression_to_string(child)
+            retval += ' '
+        retval += ')'
+        return retval
+
 #
 # exprs.py ends here

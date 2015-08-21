@@ -41,30 +41,48 @@
 import utils
 import basetypes
 from enum import IntEnum
+import z3
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
-class OperatorTypes(IntEnum):
-    """Operator types
-    builtin_function_operator: represents a builtin function.
-    macro_function_operator: represents a user defined macro.
-    unknown_function_operator: represents a function to be synthesized for.
+class FunctionKinds(IntEnum):
+    """Function Kinds.
+    builtin_function: represents a builtin function.
+    macro_function: represents a user defined macro.
+    unknown_function: represents a function to be synthesized for.
     """
-    builtin_function_operator = 1
-    macro_function_operator = 2
-    unknown_function_operator = 3
+    builtin_function = 1
+    macro_function = 2
+    unknown_function = 3
 
-class _OperatorBase(object):
-    """A base class for operators. Only manages OperatorTypes"""
-    def __init__(self, operator_type):
-        self.operator_type = operator_type
 
-    def __str__(self):
-        raise AbstractMethodError('OperatorBase.__str__()')
+class _FunctionBase(object):
+    """A base class for function.
+    Manages the following aspects of a function:
+    Arity: negative values indicate arbitrary arity,
+        i.e., the function is associative and commutative
+    DomainTypes: A tuple that indicates the types of the domain of the function.
+        The tuple should have the same size as the arity, unless the arity is
+        negative, in which case, the tuple ought to contain only one element.
+    RangeType: The type of the range of the function
+    """
+    def __init__(self, function_kind, function_name,
+                 function_arity, domain_types, range_type):
+        assert function_arity != 0, "Arity of functions cannot be zero!"
 
-    def __repr__(self):
-        raise AbstractMethodError('OperatorBase.__repr__()')
+        self.function_kind = function_kind
+        self.function_name = function_name
+        self.function_arity = function_arity
+        self.domain_types = domain_types
+        self.range_type = range_type
+
+        if (function_arity > 0):
+            assert (len(domain_types) == function_arity), "Size of domain must be equal to arity!"
+        else:
+            assert len(domain_types) == 1, ("Only one domain type is allowed for " +
+                                            "associative and commutative functions")
+
 
     def to_smt(self, expr_object, smt_context_object):
         raise AbstractMethodError('OperatorBase.to_smt()')
@@ -72,68 +90,97 @@ class _OperatorBase(object):
     def evaluate(self, expr_object, eval_context_object):
         raise AbstractMethodError('OperatorBase.evaluate()')
 
+    def _children_to_smt(self, expr_object, smt_context_object):
+        """Returns a tuple containing the smt terms representing the children."""
+        return (tuple(x.function_info.to_smt(x, smt_context_object)
+                      for x in expr_object.children))
+
+    def _evaluate_children(self, expr_object, eval_context_object):
+        """Pushes the values obtained from the evaluation of the children
+        onto the evaluation stack of the eval_context_object."""
+        for child in expr_object.children:
+            child.function_info.evaluate(child, eval_context_object)
+
+
 class BuiltInFunctionCodes(IntEnum):
     """Represents codes for the set of built-in functions"""
     # builtins for the CORE logic
-    builtin_operator_eq = 1
-    builtin_operator_and = 2
-    builtin_operator_or = 3
-    builtin_operator_not = 4
-    builtin_operator_implies = 5
-    builtin_operator_iff = 6
-    builtin_operator_xor = 7
-    builtin_operator_xnor = 8
-    builtin_operator_ite = 9
+    builtin_function_eq = 1
+    builtin_function_and = 2
+    builtin_function_or = 3
+    builtin_function_not = 4
+    builtin_function_implies = 5
+    builtin_function_iff = 6
+    builtin_function_xor = 7
+    builtin_function_xnor = 8
+    builtin_function_ite = 9
 
     # builtins for LIA
-    builtin_operator_add = 10
-    builtin_operator_sub = 11
-    builtin_operator_minus = 12
-    builtin_operator_mul = 13
-    builtin_operator_div = 14
+    builtin_function_add = 10
+    builtin_function_sub = 11
+    builtin_function_minus = 12
+    builtin_function_mul = 13
+    builtin_function_div = 14
 
     # builtins for BV
-    builtin_operator_bvconcat = 15
-    builtin_operator_bvextract = 16
-    builtin_operator_bvnot = 17
-    builtin_operator_bvand = 18
-    builtin_operator_bvor = 19
-    builtin_operator_bvneg = 20
-    builtin_operator_bvadd = 21
-    builtin_operator_bvmul = 22
-    builtin_operator_bvudiv = 23
-    builtin_operator_bvurem = 24
-    builtin_operator_bvshl = 25
-    builtin_operator_bvlshr = 26
-    builtin_operator_bvult = 27
-    builtin_operator_bvnand = 28
-    builtin_operator_bvnor = 29
-    builtin_operator_bvxor = 30
-    builtin_operator_bvxnor = 31
-    builtin_operator_bvcomp = 32
-    builtin_operator_bvsub = 33
-    builtin_operator_bvsdiv = 34
-    builtin_operator_bvsrem = 35
-    builtin_operator_bvsmod = 36
-    builtin_operator_bvashr = 37
-    builtin_operator_bvule = 38
-    builtin_operator_bvugt = 39
-    builtin_operator_bvuge = 40
-    builtin_operator_bvslt = 41
-    builtin_operator_bvsle = 42
-    builtin_operator_bvsgt = 43
-    builtin_operator_bvsge = 44
+    builtin_function_bvconcat = 15
+    builtin_function_bvextract = 16
+    builtin_function_bvnot = 17
+    builtin_function_bvand = 18
+    builtin_function_bvor = 19
+    builtin_function_bvneg = 20
+    builtin_function_bvadd = 21
+    builtin_function_bvmul = 22
+    builtin_function_bvudiv = 23
+    builtin_function_bvurem = 24
+    builtin_function_bvshl = 25
+    builtin_function_bvlshr = 26
+    builtin_function_bvult = 27
+    builtin_function_bvnand = 28
+    builtin_function_bvnor = 29
+    builtin_function_bvxor = 30
+    builtin_function_bvxnor = 31
+    builtin_function_bvcomp = 32
+    builtin_function_bvsub = 33
+    builtin_function_bvsdiv = 34
+    builtin_function_bvsrem = 35
+    builtin_function_bvsmod = 36
+    builtin_function_bvashr = 37
+    builtin_function_bvule = 38
+    builtin_function_bvugt = 39
+    builtin_function_bvuge = 40
+    builtin_function_bvslt = 41
+    builtin_function_bvsle = 42
+    builtin_function_bvsgt = 43
+    builtin_function_bvsge = 44
 
     # all builtin functions must be below this
     # value
-    builtin_operator_max_sentinel = 1000000
+    builtin_function_max_sentinel = 1000000
 
 
-class BuiltInFunctionBase(OperatorBase):
-    """A base class for "builtin" functions"""
-    def __init__(self, operator_code):
-        super().__init__()
-        self.operator_code = operator_code
+class _BuiltinFunctionBase(_FunctionBase):
+    """A base class for builtin functions."""
+    def __init__(self, function_code,
+                 function_name, function_arity,
+                 domain_types, range_type):
+        super().__init__(FunctionKinds.builtin_function, function_name,
+                         function_arity, domain_types, range_type)
+        self.function_code = function_code
+
+
+class EqFunction(_BuiltinFunctionBase):
+    """A function object for equality. Parametrized by the domain type."""
+    def __init__(domain_type):
+        super().__init__(BuiltInFunctionCodes.builtin_function_eq, '=', 2,
+                         (domain_type, domain_type), exprtypes.BoolType())
+
+    def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object)
+        return (child_terms[0] == child_terms[1])
+
+    def evaluate(self, expr_object,
+
 
 #
 # operators.py ends here

@@ -57,11 +57,16 @@ class TypeCodes(IntEnum):
     integer_type = 2
     bit_vector_type = 3
 
+_type_id_counter = 0
+
 class TypeBase(object):
     """Base class for all types. Only handles type codes."""
 
     def __init__(self, type_code):
+        global _type_id_counter
         self.type_code = type_code
+        self.type_id = _type_id_counter
+        _type_id_counter += 1
 
     def __str__(self):
         raise basetypes.AbstractMethodError('TypeBase.__str__()')
