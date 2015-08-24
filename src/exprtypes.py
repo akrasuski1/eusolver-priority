@@ -119,6 +119,12 @@ class _BitVectorType(TypeBase):
         super().__init__(TypeCodes.bit_vector_type)
         self.size = size
 
+    def __str__(self):
+        return ('(BitVectorType %d)' % self.size)
+
+    def __repr__(self):
+        return self.__str__()
+
     def __eq__(self, other):
         if (not isinstance(other, _BitVectorType)):
             return False

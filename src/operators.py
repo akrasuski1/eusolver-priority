@@ -41,6 +41,7 @@
 import utils
 import basetypes
 from enum import IntEnum
+import functools
 import z3
 
 if __name__ == '__main__':
@@ -82,7 +83,10 @@ class _FunctionBase(object):
         else:
             assert len(domain_types) == 1, ("Only one domain type is allowed for " +
                                             "associative and commutative functions")
-
+        # build the mangled function name
+        self.mangled_function_name = '_'.join(self.function_name +
+                                              [str(dom_type.type_id)
+                                               for dom_type in self.domain_types])
 
     def to_smt(self, expr_object, smt_context_object):
         raise AbstractMethodError('OperatorBase.to_smt()')
@@ -171,7 +175,7 @@ class _BuiltinFunctionBase(_FunctionBase):
 
 class EqFunction(_BuiltinFunctionBase):
     """A function object for equality. Parametrized by the domain type."""
-    def __init__(domain_type):
+    def __init__(self, domain_type):
         super().__init__(BuiltInFunctionCodes.builtin_function_eq, '=', 2,
                          (domain_type, domain_type), exprtypes.BoolType())
 
@@ -179,7 +183,96 @@ class EqFunction(_BuiltinFunctionBase):
         child_terms = self._children_to_smt(expr_object, smt_context_object)
         return (child_terms[0] == child_terms[1])
 
-    def evaluate(self, expr_object,
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        result = (eval_context_object.peek(0).actual_value ==
+                  eval_context_object.peek(1).actual_value)
+        eval_context_object.pop(2)
+        eval_context_object.push_raw_value(result)
+
+
+class AndFunction(_BuiltinFunctionBase):
+    """A function object for conjunctions. Allows arbitrary number of arguments."""
+    def __init__(self):
+        super().__init__(BuiltInFunctionCodes.builtin_function_and, 'and', -1,
+                         (exprtypes.BoolType(), ), exprtypes.BoolType())
+
+    def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object)
+        return z3.And(*child_terms)
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        result = True
+        for i in range(len(expr_object.children)):
+            if (not eval_context_object.peek(i).actual_value):
+                result = False
+                break
+        eval_context_object.pop(len(expr_object.children))
+        eval_context_object.push_raw_value(result)
+
+
+class OrFunction(_BuiltinFunctionBase):
+    """A function object for disjunctions. Allows arbitrary number of arguments."""
+    def __init__(self):
+        super().__init__(BuiltInFunctionCodes.builtin_function_or, 'or', -1,
+                         (exprtypes.BoolType(), ), exprtypes.BoolType())
+
+    def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object)
+        return z3.Or(*child_terms)
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        result = False
+        for i in range(len(expr_object.children)):
+            if (eval_context_object.peek(i).actual_value):
+                result = True
+                break
+        eval_context_object.pop(len(expr_object.children))
+        eval_context_object.push_raw_value(result)
+
+
+class NotFunction(_BuiltinFunctionBase):
+    """A function object for negation."""
+    def __init__(self):
+        super().__init__(BuiltInFunctionCodes.builtin_function_not, 'not', 1,
+                         (exprtypes.BoolType(),), exprtypes.BoolType())
+
+    def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object)
+        return z3.Not(child_terms[0])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        result = (not eval_context_object.peek(0).actual_value)
+        eval_context_object.pop(1)
+        eval_context_object.push_raw_value(result)
+
+
+class ImpliesFunction(_BuiltinFunctionBase):
+    def __init__(self):
+        super().__init__(BuiltInFunctionCodes.builtin_function_implies, 'implies', 2,
+                         (exprtypes.BoolType(), exprtypes.BoolType()), exprtypes.BoolType())
+
+    def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object)
+        return z3.Implies(child_terms[0], child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        b = eval_context_object.peek(0)
+        a = eval_context_object.peek(1)
+        result = ((not a.actual_value) or (b.actual_value))
+        eval_context_object.pop(2)
+        eval_context_object.push_raw_value(result)
+
+class IffFunction(_BuiltinFunctionBase):
+    def __init__(self):
+        super().__init__(BuiltInFunctionCodes.builtin_function_iff, 'iff', 2,
+                         (exprtypes.BoolType(), exprtypes.BoolType()), exprtypes.BoolType())
+
+    def to_smt(self, expr_object, smt_context_object):
 
 
 #
