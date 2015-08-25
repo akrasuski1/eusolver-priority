@@ -99,5 +99,6 @@ def partitions(n, k):
                 accum = accum + 1
         yield retval
 
+
 #
 # utils.py ends here
