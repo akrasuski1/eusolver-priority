@@ -185,6 +185,9 @@ class AlternativesGenerator(GeneratorBase):
     def generate(self):
         for sub_generator in self.sub_generators:
             yield from sub_generator.generate()
+            # # audupa: comment out above and uncomment below for python3 < 3.3
+            # for obj in sub_generator.generate():
+            #     yield obj
 
     def clone(self):
         return AlternativesGenerator([x.clone() for x in self.sub_generators],
@@ -217,6 +220,9 @@ class _RecursiveGeneratorPlaceholder(GeneratorBase):
             return
         else:
             yield from self.actual_generator.generate()
+            # # audupa: comment out above and uncomment below for python3 < 3.3
+            # for obj in self.actual_generator.generate():
+            #     yield obj
 
     def clone(self):
         return _RecursiveGeneratorPlaceholder(self.factory, self.identifier)
@@ -299,7 +305,7 @@ def test_generators():
                                                            [start_generator_ph,
                                                             start_generator_ph])], None, None))
 
-    start_generator.set_size(6)
+    start_generator.set_size(8)
     for exp in start_generator.generate():
         print(exp)
 
