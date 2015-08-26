@@ -42,6 +42,7 @@ import utils
 import exprtypes
 import sys
 import functools
+import hashcache
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -117,8 +118,15 @@ def evaluate(expr, point_map):
 
 
 class ConcreteEvaluator(object):
-    def __init__(self):
+    def __init__(self, hash_cache_num_sets = (1 << 20),
+                 hash_cache_associativity = 1,
+                 hash_cache_replacement_function = hashcache.RandomReplacementFunction(),
+                 hash_cache_hash_function = hashcache.default_hash_function):
         self.points = []
+        self.signature_cache = hashcache.HashCache(hash_cache_num_sets,
+                                                   hash_cache_associativity,
+                                                   hash_cache_replacement_function,
+                                                   hash_cache_hash_function)
 
     def add_point(self, point_map):
         self.points.append(point_map)
@@ -126,13 +134,24 @@ class ConcreteEvaluator(object):
     def compute_signature(self, expr):
         return tuple([evaluate(expr, x) for x in self.points])
 
+    def validate(self, expr):
+        sig = self.compute_signature(expr)
+        if (self.signature_cache.exists(sig)):
+            return False
+        else:
+            self.signature_cache.insert(sig)
+            return True
+
+
 def test_evaluation():
     enumerator_module = __import__('enumerators')
     assert(enumerator_module != None)
+
+    concrete_evaluator = ConcreteEvaluator()
+
     generator = enumerator_module._generate_test_generators()
     generator.set_size(8)
 
-    concrete_evaluator = ConcreteEvaluator()
     concrete_evaluator.add_point({'varA' : 3, 'varB' : 5, 'varC' : 4})
     concrete_evaluator.add_point({'varA' : 5, 'varB' : 10, 'varC' : 2})
     concrete_evaluator.add_point({'varA' : 15, 'varB' : 6, 'varC' : 10})

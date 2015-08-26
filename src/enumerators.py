@@ -260,10 +260,10 @@ class RecursiveGeneratorFactory(object):
 ############################################################
 # TEST CASES and utils for other test cases.
 ############################################################
-def _generate_test_generators():
-    var_generator = LeafGenerator(['varA', 'varB', 'varC'], None, 'Variable Generator')
-    const_generator = LeafGenerator([0, 1], None, 'Constant Generator')
-    leaf_generator = AlternativesGenerator([var_generator, const_generator], None,
+def _generate_test_generators(validator = None):
+    var_generator = LeafGenerator(['varA', 'varB', 'varC'], validator, 'Variable Generator')
+    const_generator = LeafGenerator([0, 1], validator, 'Constant Generator')
+    leaf_generator = AlternativesGenerator([var_generator, const_generator], validator,
                                            'Leaf Term Generator')
     generator_factory = RecursiveGeneratorFactory()
     start_generator_ph = generator_factory.make_placeholder('Start')
@@ -275,35 +275,35 @@ def _generate_test_generators():
                                      ([leaf_generator] +
                                       [FunctionalGenerator('add',
                                                            [start_generator_ph,
-                                                            start_generator_ph]),
+                                                            start_generator_ph], validator),
                                        FunctionalGenerator('sub',
                                                            [start_generator_ph,
-                                                            start_generator_ph]),
+                                                            start_generator_ph], validator),
                                        FunctionalGenerator('ite',
                                                            [start_bool_generator_ph,
                                                             start_generator_ph,
-                                                            start_generator_ph])], None, None))
+                                                            start_generator_ph], validator)], validator, None))
 
     start_bool_generator = \
     generator_factory.make_generator('StartBool',
                                      AlternativesGenerator,
                                      ([FunctionalGenerator('and',
                                                            [start_bool_generator_ph,
-                                                            start_bool_generator_ph]),
+                                                            start_bool_generator_ph], validator),
                                        FunctionalGenerator('or',
                                                            [start_bool_generator_ph,
-                                                            start_bool_generator_ph]),
+                                                            start_bool_generator_ph], validator),
                                        FunctionalGenerator('not',
-                                                           [start_bool_generator_ph]),
+                                                           [start_bool_generator_ph], validator),
                                        FunctionalGenerator('le',
                                                            [start_generator_ph,
-                                                            start_generator_ph]),
+                                                            start_generator_ph], validator),
                                        FunctionalGenerator('eq',
                                                            [start_generator_ph,
-                                                            start_generator_ph]),
+                                                            start_generator_ph], validator),
                                        FunctionalGenerator('ge',
                                                            [start_generator_ph,
-                                                            start_generator_ph])], None, None))
+                                                            start_generator_ph], validator)], validator, None))
     return start_generator
 
 def test_generators():

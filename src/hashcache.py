@@ -63,11 +63,64 @@ class HashCacheEntry(object):
         self.num_hits = num_hits
 
 
+class WeightedReplacementFunction(object):
+    """A weighted replacement function for the HashCache"""
+    def __init__(self, hit_weight = 1, recency_weight = 1):
+        """Constructs a WeightedReplacementFunction.
+        Args:
+            hit_weight (int): weight for the hit count of the entry.
+            recency_weight (int): weight for how recently was the entry hit
+        """
+        self.hit_weight = hit_weight / (hit_weight + recency_weight)
+        self.recency_weight = recency_weight / (hit_weight + recency_weight)
+
+    def __call__(self, set_entry):
+        current_minimum = float('inf')
+        current_minimum_index = -1
+
+        for i in range(len(set_entry)):
+            score = ((set_entry[i].num_hits * hit_weight) +
+                     (set_entry[i].timestamp * recency_weight))
+            if (score < current_minimum):
+                current_minimum = score
+                current_minimum_index = i
+
+        return current_minimum_index
+
+
+class RandomReplacementFunction(object):
+    """A random replacement function."""
+    def __init__(self, num_probes = 1):
+        """Constructs a random replacement function.
+        Args:
+            num_probes: Number of random probes to make in the associative
+                        region. The replacement chosen is the min weight entry
+                        among the probes made.
+        """
+
+        self.num_probes = num_probes
+
+    def __call__(self, set_entry):
+        current_minimum = float('inf')
+        current_minimum_index = -1
+
+        for i in range(num_probes):
+            random_index = random.randint(0, len(set_entry)-1)
+
+            score = ((set_entry[random_index].num_hits * hit_weight) +
+                     (set_entry[random_index].timestamp * recency_weight))
+            if (score < current_minimum):
+                current_minimum = score
+                current_minimum_index = random_index
+
+        return current_minimum_index
+
+
 class HashCache(object):
     """The main hash cache class"""
 
     def __init__(self, num_sets, associativity,
-                 replacement_function,
+                 replacement_function = RandomReplacementFunction(),
                  hash_function = default_hash_function):
         """Constructs a HashCache.
         Args:
@@ -120,7 +173,7 @@ class HashCache(object):
         if (self.associativity > 1):
             return self._lookup_in_set(set_index, key)
         else:
-            if (self.hash_table[set_index] == key):
+            if (self.hash_table[set_index] != None and self.hash_table[set_index].data == key):
                 self.hash_table[set_index].num_hits += 1
                 self.hash_table[set_index].timestamp = self.monotonic_timestamp
                 return self.hash_table[set_index].data
@@ -158,58 +211,6 @@ class HashCache(object):
         else:
             self.hash_table[set_index] = HashCacheEntry(key, self.monotonic_timestamp)
             self.monotonic_timestamp += 1
-
-
-class WeightedReplacementFunction(object):
-    """A weighted replacement function for the HashCache"""
-    def __init__(self, hit_weight = 1, recency_weight = 1):
-        """Constructs a WeightedReplacementFunction.
-        Args:
-            hit_weight (int): weight for the hit count of the entry.
-            recency_weight (int): weight for how recently was the entry hit
-        """
-        self.hit_weight = hit_weight / (hit_weight + recency_weight)
-        self.recency_weight = recency_weight / (hit_weight + recency_weight)
-
-    def __call__(self, set_entry):
-        current_minimum = float('inf')
-        current_minimum_index = -1
-
-        for i in range(len(set_entry)):
-            score = ((set_entry[i].num_hits * hit_weight) +
-                     (set_entry[i].timestamp * recency_weight))
-            if (score < current_minimum):
-                current_minimum = score
-                current_minimum_index = i
-
-        return current_minimum_index
-
-class RandomReplacementFunction(object):
-    """A random replacement function."""
-    def __init__(self, num_probes = 1):
-        """Constructs a random replacement function.
-        Args:
-            num_probes: Number of random probes to make in the associative
-                        region. The replacement chosen is the min weight entry
-                        among the probes made.
-        """
-
-        self.num_probes = num_probes
-
-    def __call__(self, set_entry):
-        current_minimum = float('inf')
-        current_minimum_index = -1
-
-        for i in range(num_probes):
-            random_index = random.randint(0, len(set_entry)-1)
-
-            score = ((set_entry[random_index].num_hits * hit_weight) +
-                     (set_entry[random_index].timestamp * recency_weight))
-            if (score < current_minimum):
-                current_minimum = score
-                current_minimum_index = random_index
-
-        return current_minimum_index
 
 #
 # hashcache.py ends here
