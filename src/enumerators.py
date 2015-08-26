@@ -258,9 +258,9 @@ class RecursiveGeneratorFactory(object):
 
 
 ############################################################
-# TEST CASES
+# TEST CASES and utils for other test cases.
 ############################################################
-def test_generators():
+def _generate_test_generators():
     var_generator = LeafGenerator(['varA', 'varB', 'varC'], None, 'Variable Generator')
     const_generator = LeafGenerator([0, 1], None, 'Constant Generator')
     leaf_generator = AlternativesGenerator([var_generator, const_generator], None,
@@ -273,10 +273,10 @@ def test_generators():
     generator_factory.make_generator('Start',
                                      AlternativesGenerator,
                                      ([leaf_generator] +
-                                      [FunctionalGenerator('+',
+                                      [FunctionalGenerator('add',
                                                            [start_generator_ph,
                                                             start_generator_ph]),
-                                       FunctionalGenerator('-',
+                                       FunctionalGenerator('sub',
                                                            [start_generator_ph,
                                                             start_generator_ph]),
                                        FunctionalGenerator('ite',
@@ -295,16 +295,19 @@ def test_generators():
                                                             start_bool_generator_ph]),
                                        FunctionalGenerator('not',
                                                            [start_bool_generator_ph]),
-                                       FunctionalGenerator('<=',
+                                       FunctionalGenerator('le',
                                                            [start_generator_ph,
                                                             start_generator_ph]),
-                                       FunctionalGenerator('=',
+                                       FunctionalGenerator('eq',
                                                            [start_generator_ph,
                                                             start_generator_ph]),
-                                       FunctionalGenerator('>=',
+                                       FunctionalGenerator('ge',
                                                            [start_generator_ph,
                                                             start_generator_ph])], None, None))
+    return start_generator
 
+def test_generators():
+    start_generator = _generate_test_generators()
     start_generator.set_size(8)
     for exp in start_generator.generate():
         print(exp)

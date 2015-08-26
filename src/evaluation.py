@@ -40,64 +40,110 @@
 
 import utils
 import exprtypes
+import sys
+import functools
+
+# if __name__ == '__main__':
+#     utils.print_module_misuse_and_exit()
+
+def _evaluate_and(expr, point_map):
+    eval_values = [evaluate(x, point_map) for x in expr[1:]]
+    return functools.reduce(lambda x, y: (x and y), eval_values)
+
+def _evaluate_or(expr, point_map):
+    eval_values = [evaluate(x, point_map) for x in expr[1:]]
+    return functools.reduce(lambda x, y: (x or y), eval_values)
+
+def _evaluate_not(expr, point_map):
+    res = evaluate(expr[1], point_map)
+    return (not res)
+
+def _evaluate_implies(expr, point_map):
+    ant = evaluate(expr[1], point_map)
+    con = evaluate(expr[2], point_map)
+    return ((not ant) or con)
+
+def _evaluate_xor(expr, point_map):
+    eval_values = [evaluate(x, point_map) for x in expr[1:]]
+    return (eval_values[0] != eval_values[1])
+
+def _evaluate_eq(expr, point_map):
+    eval_values = [evaluate(x, point_map) for x in expr[1:]]
+    return (eval_values[0] == eval_values[1])
+
+def _evaluate_ne(expr, point_map):
+    eval_values = [evaluate(x, point_map) for x in expr[1:]]
+    return (eval_values[0] != eval_values[1])
+
+def _evaluate_ite(expr, point_map):
+    eval_cond = evaluate(expr[1], point_map)
+    if (eval_cond):
+        return evaluate(expr[2], point_map)
+    else:
+        return evaluate(expr[3], point_map)
+
+def _evaluate_add(expr, point_map):
+    return functools.reduce(lambda x, y: (x + y), [evaluate(x, point_map) for x in expr[1:]])
+
+def _evaluate_sub(expr, point_map):
+    return functools.reduce(lambda x, y: (x - y), [evaluate(x, point_map) for x in expr[2:]], evaluate(expr[1], point_map))
+
+def _evaluate_le(expr, point_map):
+    return (evaluate(expr[1], point_map) <= evaluate(expr[2], point_map))
+
+def _evaluate_ge(expr, point_map):
+    return (evaluate(expr[1], point_map) >= evaluate(expr[2], point_map))
+
+def _evaluate_lt(expr, point_map):
+    return (evaluate(expr[1], point_map) < evaluate(expr[2], point_map))
+
+def _evaluate_gt(expr, point_map):
+    return (evaluate(expr[1], point_map) > evaluate(expr[2], point_map))
+
+def evaluate(expr, point_map):
+    if (not isinstance(expr, tuple)):
+        # constant or variable
+        if (isinstance(expr, str)):
+            # variable
+            return point_map[expr]
+        else:
+            # constant
+            return expr
+    else:
+        # function application
+        evaluator_name = '_evaluate_%s' % expr[0]
+        evaluator = getattr(sys.modules[__name__], evaluator_name)
+        return evaluator(expr, point_map)
+
+
+class ConcreteEvaluator(object):
+    def __init__(self):
+        self.points = []
+
+    def add_point(self, point_map):
+        self.points.append(point_map)
+
+    def compute_signature(self, expr):
+        return tuple([evaluate(expr, x) for x in self.points])
+
+def test_evaluation():
+    enumerator_module = __import__('enumerators')
+    assert(enumerator_module != None)
+    generator = enumerator_module._generate_test_generators()
+    generator.set_size(8)
+
+    concrete_evaluator = ConcreteEvaluator()
+    concrete_evaluator.add_point({'varA' : 3, 'varB' : 5, 'varC' : 4})
+    concrete_evaluator.add_point({'varA' : 5, 'varB' : 10, 'varC' : 2})
+    concrete_evaluator.add_point({'varA' : 15, 'varB' : 6, 'varC' : 10})
+    concrete_evaluator.add_point({'varA' : 42, 'varB' : 4, 'varC' : 8})
+    concrete_evaluator.add_point({'varA' : 4, 'varB' : 42, 'varC' : 84})
+
+    for expr in generator.generate():
+        print(concrete_evaluator.compute_signature(expr))
 
 if __name__ == '__main__':
-    utils.print_module_misuse_and_exit()
-
-class EvalValue(object):
-    """Represents a (typed) value."""
-    def __init__(self, value_type, actual_value):
-        self.value_type = value_type
-        self.actual_value = actual_value
-
-    def __eq__(self, other):
-        return ((self.value_type == other.value_type) and
-                (self.actual_value == other.actual_value))
-
-    def __neq__(self, other):
-        return (not (self.__eq__(other)))
-
-    def __str__(self, other):
-        if (self.value_type == exprtypes.BoolType() ||
-            self.value_type == exprtypes.IntType()):
-            return str(self.actual_value)
-        elif (self.value_type.typecode == exprtypes.TypeCodes.bit_vector_type):
-            if (self.value_type.size % 4 == 0):
-                format_string = '0%dX' % self.value_type.size / 4
-                prefix_string = '#x'
-            else:
-                format_string = '0%db' % self.value_type.size
-                prefix_string = '#b'
-            return prefix_string + format(self.actual_value, format_string)
-
-class EvaluationContext(object):
-    """Provides a context (an evaluation stack) for evaluating expressions."""
-    default_eval_stack_size = 4096
-    def __init__(self, eval_stack_size = default_eval_stack_size):
-        self.eval_stack = [EvalValue(exprtypes.IntType(), 0)] * eval_stack_size
-        self.eval_stack_top = 0
-
-    def push(self, new_value, value_type = None):
-        """Can either have new_value to be an EvalValue object, or
-        something that can be used together with value_type to construct
-        an EvalValue object."""
-
-        if (value_type == None):
-            self.eval_stack[self.eval_stack_top] = new_value
-        else:
-            self.eval_stack[self.eval_stack_top] = EvalValue(value_type, new_value)
-        self.eval_stack_top += 1
-
-    def push_raw_value(self, new_value, value_type = None):
-        self.eval_stack[self.eval_stack_top].value_type = value_type
-        self.eval_stack[self.eval_stack_top].actual_value = new_value
-        self.eval_stack_top += 1
-
-    def peek(self, depth = 0):
-        return self.eval_stack[self.eval_stack_top - depth - 1]
-
-    def pop(self, num_items = 1):
-        self.eval_stack_top -= num_items
+    test_evaluation()
 
 #
 # evaluation.py ends here

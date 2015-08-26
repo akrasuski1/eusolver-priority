@@ -42,6 +42,7 @@
 """Some utility functions, which are largely self-explanatory"""
 
 import math
+import sys
 
 def print_module_misuse_and_exit():
     print('This module is intented for use as a library, and not as a ' +
