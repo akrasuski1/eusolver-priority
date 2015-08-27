@@ -43,6 +43,7 @@ import exprtypes
 import sys
 import functools
 import hashcache
+import z3
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -115,6 +116,72 @@ def evaluate(expr, point_map):
         evaluator_name = '_evaluate_%s' % expr[0]
         evaluator = getattr(sys.modules[__name__], evaluator_name)
         return evaluator(expr, point_map)
+
+
+# functions for smtfication
+def _to_smt_and(expr):
+    return z3.And(*[to_smt(x) for x in expr[1:]])
+
+def _to_smt_or(expr):
+    return z3.Or(*[to_smt(x) for x in expr[1:]])
+
+def _to_smt_not(expr):
+    return z3.Not(to_smt(expr[1]))
+
+def _to_smt_implies(expr):
+    return z3.Implies(to_smt(expr[1]), to_smt(expr[2]))
+
+def _to_smt_xor(expr):
+    return z3.Xor(to_smt(expr[1]), to_smt(expr[2]))
+
+def _to_smt_eq(expr):
+    return (to_smt(expr[1]) == to_smt(expr[2]))
+
+def _to_smt_ne(expr):
+    return z3.Not(_to_smt_eq(expr))
+
+def _to_smt_ite(expr):
+    return z3.If(to_smt(expr[1]), to_smt(expr[2]), to_smt(expr[3]))
+
+def _to_smt_add(expr):
+    return z3.Sum(*[to_smt(x) for x in expr[1:]])
+
+def _to_smt_sub(expr):
+    return functools.reduce(lambda x, y: (x - y),
+                            [to_smt(x) for x in expr[2:]],
+                            to_smt(expr[1]))
+
+def _to_smt_le(expr):
+    return (to_smt(expr[1]) <= to_smt(expr[2]))
+
+def _to_smt_ge(expr):
+    return (to_smt(expr[1]) >= to_smt(expr[2]))
+
+def _to_smt_lt(expr):
+    return (to_smt(expr[1]) < to_smt(expr[2]))
+
+def _to_smt_gt(expr):
+    return (to_smt(expr[1]) > to_smt(expr[2]))
+
+def to_smt(expr):
+    if (not isinstance(expr, tuple)):
+        # constant or variable
+        if (isinstance(expr, str)):
+            if (expr.startswith('Int_')):
+                return z3.Int(expr)
+            else:
+                return z3.Bool(expr)
+        else:
+            # constant
+            if (isinstance(expr), bool):
+                return z3.BoolVal(expr)
+            else:
+                return z3.IntVal(str(expr))
+    else:
+        # function application
+        smtfier_name = '_to_smt_%s' % expr[0]
+        smtfier = getattr(sys.modules[__name__], smtfier_name)
+        return smtfier(expr)
 
 
 class ConcreteEvaluator(object):

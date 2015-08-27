@@ -100,6 +100,16 @@ def partitions(n, k):
                 accum = accum + 1
         yield retval
 
+def is_subsequence_of(iterable1, iterable2):
+    """Tests if :iterable1: is a subsequence of :iterable2:."""
+    if (len(iterable1) > len(iterable2)):
+        return False
+
+    for i in range(len(iterable1)):
+        if (iterable1[i] != iterable2[i]):
+            return False
+
+    return True
 
 #
 # utils.py ends here

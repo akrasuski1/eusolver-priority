@@ -53,6 +53,9 @@ if __name__ == '__main__':
 def default_hash_function(obj):
     return hash(obj)
 
+def default_containment_function(obj1, obj2):
+    return (obj1 == obj2)
+
 
 class HashCacheEntry(object):
     """An entry in the HashCache"""
@@ -121,7 +124,8 @@ class HashCache(object):
 
     def __init__(self, num_sets, associativity,
                  replacement_function = RandomReplacementFunction(),
-                 hash_function = default_hash_function):
+                 hash_function = default_hash_function,
+                 containment_function = default_containment_function):
         """Constructs a HashCache.
         Args:
             num_sets (int): number of sets in the hash table, will be rounded up
@@ -134,7 +138,9 @@ class HashCache(object):
                                  < 1 - illegal.
             replacement_function: A function from list(object) -> index, indicating
                                   which index is to be replaced.
-            hash_function: A function object -> int which hashes the object
+            hash_function: A function object -> int which hashes the object.
+            containment_function: A function object -> object -> bool which is used to
+                                  check if an object is already present.
         """
 
         self.num_sets = utils.round_to_next_higher_prime(num_sets)
@@ -173,7 +179,8 @@ class HashCache(object):
         if (self.associativity > 1):
             return self._lookup_in_set(set_index, key)
         else:
-            if (self.hash_table[set_index] != None and self.hash_table[set_index].data == key):
+            if ((self.hash_table[set_index] != None) and
+                (self.containment_function(self.hash_table[set_index].data, key))):
                 self.hash_table[set_index].num_hits += 1
                 self.hash_table[set_index].timestamp = self.monotonic_timestamp
                 return self.hash_table[set_index].data
