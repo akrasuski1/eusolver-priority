@@ -63,13 +63,39 @@ def ExpressionKinds(IntEnum):
 
 
 _VariableExpression =
-collections.namedtuple('VariableExpression', ['expr_kind', 'expr_type', 'var_id'])
+collections.namedtuple('VariableExpression', ['expr_kind', 'variable_info'])
 
 _ConstantExpression =
-collections.namedtuple('ConstantExpression', ['expr_kind', 'expr_type, const_value'])
+collections.namedtuple('ConstantExpression', ['expr_kind', 'value_object'])
 
 _FunctionExpression =
 collections.namedtuple('FunctionExpression', ['expr_kind', 'function_info', 'children'])
+
+_Value = collections.namedtuple('Value', ['value_object', 'value_type'])
+
+def Value(value_object, value_type):
+    return _Value(value_object, value_type)
+
+def value_to_string(the_value):
+    if (the_value.value_type.type_code == exprtypes.TypeCodes.boolean_type):
+        if (the_value.value_object == True):
+            return 'true'
+        else:
+            return 'false'
+    elif (the_value.value_type.type_code == exprtypes.TypeCodes.integer_type):
+        return str(the_value.value_object)
+    elif (the_value.value_type.type_code == exprtypes.TypeCodes.bit_vector_type):
+        return utils.bitvector_to_string(the_value.value_object, the_value.value_type.size)
+
+
+class VariableInfo(object):
+    __slots__ = ['variable_type', 'variable_eval_offset', 'variable_name']
+    _undefined_offset = 1000000000
+
+    def __init__(self, variable_type, variable_name):
+        self.variable_name = variable_name
+        self.variable_type = variable_type
+        self.variable_eval_offset = _undefined_offset
 
 
 def ExprManager(object):
@@ -138,14 +164,7 @@ def _constant_to_string(constant_type, constant_value):
         constant_type == exprtypes.IntType()):
         return str(constant_value)
     else:
-        num_bits = constant_type.size
-        if (num_bits % 4 == 0):
-            format_string = '0%dX' % num_bits / 4
-            prefix_string = '#x'
-        else:
-            format_string = '0%db' % num_bits
-            prefix_string = '#b'
-        return prefix_string + format(constant_value, format_string)
+        return utils.bitvector_to_string(constant_value, constant_type.size)
 
 
 def expression_to_string(expr):
@@ -162,6 +181,19 @@ def expression_to_string(expr):
             retval += ' '
         retval += ')'
         return retval
+
+
+def get_expression_type(expr):
+    """Returns the type of the expression."""
+
+    if (expr.expr_kind == ExpressionKinds.variable_expression):
+        return expr.variable_info.variable_type
+    elif (expr.expr_kind == ExpressionKinds.constant_expression):
+        return expr.value_object.value_type
+    elif (expr.expr_kind == ExpressionKinds.function_expression):
+        return expr.function_info.range_type
+    else:
+        raise basetypes.UnhandledCaseError('Odd expression kind: %s' % expr.expr_kind)
 
 #
 # exprs.py ends here

@@ -308,7 +308,7 @@ def _generate_test_generators(validator = None):
 
 def test_generators():
     start_generator = _generate_test_generators()
-    start_generator.set_size(8)
+    start_generator.set_size(3)
     for exp in start_generator.generate():
         print(exp)
 

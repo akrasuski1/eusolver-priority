@@ -44,6 +44,7 @@ import basetypes
 from enum import IntEnum
 import utils
 import collections
+import z3smt
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -74,6 +75,9 @@ class TypeBase(object):
     def __repr__(self):
         raise basetypes.AbstractMethodError('TypeBase.__repr__()')
 
+    def get_smt_type(self, smt_context_object):
+        raise basetypes.AbstractMethodError('TypeBase.get_smt_type()')
+
 
 class _BoolType(TypeBase):
     """A Boolean Type."""
@@ -86,6 +90,9 @@ class _BoolType(TypeBase):
 
     def __repr__(self):
         return 'BooleanType'
+
+    def get_smt_type(self, smt_context_object):
+        return smt_context_object.make_bool_sort()
 
 _boolean_type_instance = _BoolType()
 
@@ -104,6 +111,9 @@ class _IntType(TypeBase):
 
     def __repr__(self):
         return 'IntegerType'
+
+    def get_smt_type(self, smt_context_object):
+        return smt_context_object.make_int_sort()
 
 _integer_type_instance = _IntType()
 
@@ -124,6 +134,9 @@ class _BitVectorType(TypeBase):
 
     def __repr__(self):
         return self.__str__()
+
+    def get_smt_type(self, smt_context_object):
+        return smt_context_object.make_bitvector_sort(self.size)
 
     def __eq__(self, other):
         if (not isinstance(other, _BitVectorType)):

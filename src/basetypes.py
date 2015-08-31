@@ -78,5 +78,16 @@ class AbstractMethodError(Exception):
     def __repr__(self):
         return self.__str__()
 
+class UnhandledCaseError(Exception):
+    def __init__(self, error_msg):
+        self.error_msg = error_msg
+
+    def __str__(self):
+        return
+        """Unhandled case, could be new subclass, or just a non-exhaustive
+        pattern/case match. Details: """ + error_msg
+
+
+
 #
 # basetypes.py ends here

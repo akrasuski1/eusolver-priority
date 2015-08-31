@@ -3,7 +3,7 @@
 #
 # Filename: evaluation.py
 # Author: Abhishek Udupa
-# Created: Mon Aug 24 14:03:03 2015 (-0400)
+# Created: Mon Aug 31 16:29:35 2015 (-0400)
 #
 #
 # Copyright (c) 2015, Abhishek Udupa, University of Pennsylvania
@@ -39,197 +39,70 @@
 # Code:
 
 import utils
-import exprtypes
-import sys
-import functools
-import hashcache
-import z3
-
-# if __name__ == '__main__':
-#     utils.print_module_misuse_and_exit()
-
-def _evaluate_and(expr, point_map):
-    eval_values = [evaluate(x, point_map) for x in expr[1:]]
-    return functools.reduce(lambda x, y: (x and y), eval_values)
-
-def _evaluate_or(expr, point_map):
-    eval_values = [evaluate(x, point_map) for x in expr[1:]]
-    return functools.reduce(lambda x, y: (x or y), eval_values)
-
-def _evaluate_not(expr, point_map):
-    res = evaluate(expr[1], point_map)
-    return (not res)
-
-def _evaluate_implies(expr, point_map):
-    ant = evaluate(expr[1], point_map)
-    con = evaluate(expr[2], point_map)
-    return ((not ant) or con)
-
-def _evaluate_xor(expr, point_map):
-    eval_values = [evaluate(x, point_map) for x in expr[1:]]
-    return (eval_values[0] != eval_values[1])
-
-def _evaluate_eq(expr, point_map):
-    eval_values = [evaluate(x, point_map) for x in expr[1:]]
-    return (eval_values[0] == eval_values[1])
-
-def _evaluate_ne(expr, point_map):
-    eval_values = [evaluate(x, point_map) for x in expr[1:]]
-    return (eval_values[0] != eval_values[1])
-
-def _evaluate_ite(expr, point_map):
-    eval_cond = evaluate(expr[1], point_map)
-    if (eval_cond):
-        return evaluate(expr[2], point_map)
-    else:
-        return evaluate(expr[3], point_map)
-
-def _evaluate_add(expr, point_map):
-    return functools.reduce(lambda x, y: (x + y), [evaluate(x, point_map) for x in expr[1:]])
-
-def _evaluate_sub(expr, point_map):
-    return functools.reduce(lambda x, y: (x - y), [evaluate(x, point_map) for x in expr[2:]], evaluate(expr[1], point_map))
-
-def _evaluate_le(expr, point_map):
-    return (evaluate(expr[1], point_map) <= evaluate(expr[2], point_map))
-
-def _evaluate_ge(expr, point_map):
-    return (evaluate(expr[1], point_map) >= evaluate(expr[2], point_map))
-
-def _evaluate_lt(expr, point_map):
-    return (evaluate(expr[1], point_map) < evaluate(expr[2], point_map))
-
-def _evaluate_gt(expr, point_map):
-    return (evaluate(expr[1], point_map) > evaluate(expr[2], point_map))
-
-def evaluate(expr, point_map):
-    if (not isinstance(expr, tuple)):
-        # constant or variable
-        if (isinstance(expr, str)):
-            # variable
-            return point_map[expr]
-        else:
-            # constant
-            return expr
-    else:
-        # function application
-        evaluator_name = '_evaluate_%s' % expr[0]
-        evaluator = getattr(sys.modules[__name__], evaluator_name)
-        return evaluator(expr, point_map)
-
-
-# functions for smtfication
-def _to_smt_and(expr):
-    return z3.And(*[to_smt(x) for x in expr[1:]])
-
-def _to_smt_or(expr):
-    return z3.Or(*[to_smt(x) for x in expr[1:]])
-
-def _to_smt_not(expr):
-    return z3.Not(to_smt(expr[1]))
-
-def _to_smt_implies(expr):
-    return z3.Implies(to_smt(expr[1]), to_smt(expr[2]))
-
-def _to_smt_xor(expr):
-    return z3.Xor(to_smt(expr[1]), to_smt(expr[2]))
-
-def _to_smt_eq(expr):
-    return (to_smt(expr[1]) == to_smt(expr[2]))
-
-def _to_smt_ne(expr):
-    return z3.Not(_to_smt_eq(expr))
-
-def _to_smt_ite(expr):
-    return z3.If(to_smt(expr[1]), to_smt(expr[2]), to_smt(expr[3]))
-
-def _to_smt_add(expr):
-    return z3.Sum(*[to_smt(x) for x in expr[1:]])
-
-def _to_smt_sub(expr):
-    return functools.reduce(lambda x, y: (x - y),
-                            [to_smt(x) for x in expr[2:]],
-                            to_smt(expr[1]))
-
-def _to_smt_le(expr):
-    return (to_smt(expr[1]) <= to_smt(expr[2]))
-
-def _to_smt_ge(expr):
-    return (to_smt(expr[1]) >= to_smt(expr[2]))
-
-def _to_smt_lt(expr):
-    return (to_smt(expr[1]) < to_smt(expr[2]))
-
-def _to_smt_gt(expr):
-    return (to_smt(expr[1]) > to_smt(expr[2]))
-
-def to_smt(expr):
-    if (not isinstance(expr, tuple)):
-        # constant or variable
-        if (isinstance(expr, str)):
-            if (expr.startswith('Int_')):
-                return z3.Int(expr)
-            else:
-                return z3.Bool(expr)
-        else:
-            # constant
-            if (isinstance(expr), bool):
-                return z3.BoolVal(expr)
-            else:
-                return z3.IntVal(str(expr))
-    else:
-        # function application
-        smtfier_name = '_to_smt_%s' % expr[0]
-        smtfier = getattr(sys.modules[__name__], smtfier_name)
-        return smtfier(expr)
-
-
-class ConcreteEvaluator(object):
-    def __init__(self, hash_cache_num_sets = (1 << 20),
-                 hash_cache_associativity = 1,
-                 hash_cache_replacement_function = hashcache.RandomReplacementFunction(),
-                 hash_cache_hash_function = hashcache.default_hash_function):
-        self.points = []
-        self.signature_cache = hashcache.HashCache(hash_cache_num_sets,
-                                                   hash_cache_associativity,
-                                                   hash_cache_replacement_function,
-                                                   hash_cache_hash_function)
-
-    def add_point(self, point_map):
-        self.points.append(point_map)
-
-    def compute_signature(self, expr):
-        return tuple([evaluate(expr, x) for x in self.points])
-
-    def validate(self, expr):
-        sig = self.compute_signature(expr)
-        if (self.signature_cache.exists(sig)):
-            return False
-        else:
-            self.signature_cache.insert(sig)
-            return True
-
-
-def test_evaluation():
-    enumerator_module = __import__('enumerators')
-    assert(enumerator_module != None)
-
-    concrete_evaluator = ConcreteEvaluator()
-
-    generator = enumerator_module._generate_test_generators()
-    generator.set_size(8)
-
-    concrete_evaluator.add_point({'varA' : 3, 'varB' : 5, 'varC' : 4})
-    concrete_evaluator.add_point({'varA' : 5, 'varB' : 10, 'varC' : 2})
-    concrete_evaluator.add_point({'varA' : 15, 'varB' : 6, 'varC' : 10})
-    concrete_evaluator.add_point({'varA' : 42, 'varB' : 4, 'varC' : 8})
-    concrete_evaluator.add_point({'varA' : 4, 'varB' : 42, 'varC' : 84})
-
-    for expr in generator.generate():
-        print(concrete_evaluator.compute_signature(expr))
+import exprs
 
 if __name__ == '__main__':
-    test_evaluation()
+    utils.print_module_misuse_and_exit()
 
+def evaluate_expr(expr_object, eval_context, leave_on_stack = False):
+    kind = expr_object.expr_kind
+    if (kind == ExpressionKinds.variable_expression):
+        o = expr_object.variable_info.variable_eval_offset
+        if (leave_on_stack):
+            eval_context.push(o)
+            return
+        else:
+            return exprs.Value(eval_context.valuation_map[o],
+                               expr_object.variable_info.variable_type)
+
+    elif (kind == ExpressionKinds.constant_expression):
+        if (leave_on_stack):
+            eval_context.push(expr_object.value_object.value_object)
+            return
+        else:
+            return expr_object.value_object
+
+    elif (kind == ExpressionKinds.function_expression):
+        fun_info = expr_object.function_info
+        fun_info.evaluate(expr_object, eval_context)
+        if (leave_on_stack):
+            return
+        else:
+            v = eval_context.peek()
+            eval_context.pop()
+            return exprs.Value(v, fun_info.range_type)
+    else:
+        raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+
+
+class EvaluationContext(object):
+    def __init__(self, eval_stack_size = 32768):
+        self.eval_stack = [int(0)] * eval_stack_size
+        self.eval_stack_size = eval_stack_size
+        self.eval_stack_top = 0
+        self.valuation_map = None
+        self.interpretation_map = None
+
+    def peek(self, peek_depth = 0):
+        return self.eval_stack[self.eval_stack_top - 1 - peek_depth]
+
+    def peek_items(self, peek_depth = 1):
+        top_index = self.eval_stack_top - 1
+        return self.eval_stack[(top_index - peek_depth):top_index]
+
+    def pop(self, num_elems = 1):
+        self.eval_stack_top -= num_elems
+
+    def set_valuation_map(self, valuation_map):
+        self.valuation_map = valuation_map
+
+    def clear_valuation_map(self):
+        self.valuation_map = None
+
+    def set_interpretation_map(self, interpretation_map):
+        self.interpretation_map = interpretation_map
+
+    def clear_interpretation_map(self):
+        self.interpretation_map = None
 #
 # evaluation.py ends here

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# operators.py ---
+# semantics_core.py ---
 #
-# Filename: operators.py
+# Filename: semantics_core.py
 # Author: Abhishek Udupa
 # Created: Tue Aug 18 16:25:53 2015 (-0400)
 #
@@ -37,131 +37,19 @@
 #
 
 # Code:
+"""This module implements the semantics for the core theory,
+i.e., equality, conditionals and basic boolean operations."""
 
-import utils
 import basetypes
 from enum import IntEnum
+import exprs
+import exprtypes
 import functools
+import utils
 import z3
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
-
-class FunctionKinds(IntEnum):
-    """Function Kinds.
-    builtin_function: represents a builtin function.
-    macro_function: represents a user defined macro.
-    unknown_function: represents a function to be synthesized for.
-    """
-    builtin_function = 1
-    macro_function = 2
-    unknown_function = 3
-
-
-class _FunctionBase(object):
-    """A base class for function.
-    Manages the following aspects of a function:
-    Arity: negative values indicate arbitrary arity,
-        i.e., the function is associative and commutative
-    DomainTypes: A tuple that indicates the types of the domain of the function.
-        The tuple should have the same size as the arity, unless the arity is
-        negative, in which case, the tuple ought to contain only one element.
-    RangeType: The type of the range of the function
-    """
-    def __init__(self, function_kind, function_name,
-                 function_arity, domain_types, range_type):
-        assert function_arity != 0, "Arity of functions cannot be zero!"
-
-        self.function_kind = function_kind
-        self.function_name = function_name
-        self.function_arity = function_arity
-        self.domain_types = domain_types
-        self.range_type = range_type
-
-        if (function_arity > 0):
-            assert (len(domain_types) == function_arity), "Size of domain must be equal to arity!"
-        else:
-            assert len(domain_types) == 1, ("Only one domain type is allowed for " +
-                                            "associative and commutative functions")
-        # build the mangled function name
-        self.mangled_function_name = '_'.join(self.function_name +
-                                              [str(dom_type.type_id)
-                                               for dom_type in self.domain_types])
-
-    def to_smt(self, expr_object, smt_context_object):
-        raise AbstractMethodError('OperatorBase.to_smt()')
-
-    def evaluate(self, expr_object, eval_context_object):
-        raise AbstractMethodError('OperatorBase.evaluate()')
-
-    def _children_to_smt(self, expr_object, smt_context_object):
-        """Returns a tuple containing the smt terms representing the children."""
-        return (tuple(x.function_info.to_smt(x, smt_context_object)
-                      for x in expr_object.children))
-
-    def _evaluate_children(self, expr_object, eval_context_object):
-        """Pushes the values obtained from the evaluation of the children
-        onto the evaluation stack of the eval_context_object."""
-        for child in expr_object.children:
-            child.function_info.evaluate(child, eval_context_object)
-
-
-class BuiltInFunctionCodes(IntEnum):
-    """Represents codes for the set of built-in functions"""
-    # builtins for the CORE logic
-    builtin_function_eq = 1
-    builtin_function_and = 2
-    builtin_function_or = 3
-    builtin_function_not = 4
-    builtin_function_implies = 5
-    builtin_function_iff = 6
-    builtin_function_xor = 7
-    builtin_function_xnor = 8
-    builtin_function_ite = 9
-
-    # builtins for LIA
-    builtin_function_add = 10
-    builtin_function_sub = 11
-    builtin_function_minus = 12
-    builtin_function_mul = 13
-    builtin_function_div = 14
-
-    # builtins for BV
-    builtin_function_bvconcat = 15
-    builtin_function_bvextract = 16
-    builtin_function_bvnot = 17
-    builtin_function_bvand = 18
-    builtin_function_bvor = 19
-    builtin_function_bvneg = 20
-    builtin_function_bvadd = 21
-    builtin_function_bvmul = 22
-    builtin_function_bvudiv = 23
-    builtin_function_bvurem = 24
-    builtin_function_bvshl = 25
-    builtin_function_bvlshr = 26
-    builtin_function_bvult = 27
-    builtin_function_bvnand = 28
-    builtin_function_bvnor = 29
-    builtin_function_bvxor = 30
-    builtin_function_bvxnor = 31
-    builtin_function_bvcomp = 32
-    builtin_function_bvsub = 33
-    builtin_function_bvsdiv = 34
-    builtin_function_bvsrem = 35
-    builtin_function_bvsmod = 36
-    builtin_function_bvashr = 37
-    builtin_function_bvule = 38
-    builtin_function_bvugt = 39
-    builtin_function_bvuge = 40
-    builtin_function_bvslt = 41
-    builtin_function_bvsle = 42
-    builtin_function_bvsgt = 43
-    builtin_function_bvsge = 44
-
-    # all builtin functions must be below this
-    # value
-    builtin_function_max_sentinel = 1000000
-
 
 class _BuiltinFunctionBase(_FunctionBase):
     """A base class for builtin functions."""
@@ -273,7 +161,66 @@ class IffFunction(_BuiltinFunctionBase):
                          (exprtypes.BoolType(), exprtypes.BoolType()), exprtypes.BoolType())
 
     def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object)
+        return (child_terms[0] == child_terms[1])
 
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object):
+        result = (eval_context_object.peek(0).actual_value ==
+                  eval_context_object.peek(1).actual_value)
 
+        eval_context_object.pop(2)
+        eval_context_object.push_raw_value(result)
+
+class XorFunction(_BuiltinFunctionBase):
+    def __init__(self):
+        super().__init__(BuiltInFunctionCodes.builtin_function_xor, 'xor', 2,
+                         (exprtypes.BoolType(), exprtypes.BoolType()), exprtypes.BoolType())
+
+    def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object)
+        return z3.Xor(child_terms[0], child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object):
+        result = (eval_context_object.peek(0).actual_value !=
+                  eval_context_object.peek(1).actual_value)
+
+        eval_context_object.pop(2)
+        eval_context_object.push_raw_value(result)
+
+class IteFunction(_BuiltinFunctionBase):
+    def __init__(self, range_type):
+        super().__init__(BuiltInFunctionCodes.builtin_function_ite, 'ite', 3,
+                         (exprtypes.BoolType(), range_type, range_type), range_type)
+
+    def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object);
+        return z3.If(child_terms[0], child_terms[1], child_terms[2])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_expr(expr_object.children[0], eval_context_object)
+        condition = eval_context_object.peek(0).actual_value
+        eval_context_object.pop(1)
+        if (condition):
+            self._evaluate_expr(expr_object.children[1], eval_context_object)
+        else:
+            self._evaluate_expr(expr_object.children[2], eval_context_object)
+
+class AddFunction(_BuiltinFunctionBase):
+    def __init__(self):
+        super().__init__(BuiltInFunctionCodes.builtin_function_add, 'add', -1,
+                         (exprtypes.IntType(), ), exprtypes.IntType())
+
+    def to_smt(self, expr_object, smt_context_object):
+        child_terms = self._children_to_smt(expr_object, smt_context_object)
+        return z3.Sum(*child_terms)
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        num_children = len(expr_object.children)
+        retval = 0
+        for i in range(num_children):
+            retval += eval_context_object.peek(i)
 #
 # operators.py ends here
