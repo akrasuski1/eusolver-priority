@@ -80,6 +80,21 @@ class SubFunction(InterpretedFunctionBase):
         eval_context_object.push(retval)
 
 
+class MinusFunction(InterpretedFunctionBase):
+    def __init__(self):
+        super().__init__('sub', 1, (exprtypes.IntType(),), exprtypes.IntType())
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return -(child_terms[0])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        retval = -(eval_context_object.peek())
+        eval_context_object.pop()
+        eval_context_object.push(retval)
+
+
 class MulFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('mul', -1 (exprtypes.IntType(), ), exprtypes.IntType())
@@ -187,59 +202,69 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
             self.mul_instance = MulFunction()
         return self.mul_instance
 
+    def _get_canonical_function_name(self, function_name):
+        if (function_name == '+' or function_name == 'add'):
+            return 'add'
+        elif (function_name == '-' or function_name == 'sub'):
+            return 'sub'
+        elif (function_name == '*' or function_name == 'mul'):
+            return 'mul'
+        elif (function_name == '/' or function_name == 'div'):
+            return 'div'
+        elif (function_name == 'le' or function_name == '<='):
+            return 'le'
+        elif (function_name == 'ge' or function_name == '>='):
+            return 'ge'
+        elif (function_name == 'lt' or function_name == '<'):
+            return 'lt'
+        elif (function_name == 'gt' or function_name == '>'):
+            return 'gt'
+        else:
+            return function_name
+
     def _do_instantiation(self, function_name, mangled_name, arg_types):
-        if (function_name == 'add' or function_name == '+' or
-            function_name == 'mul' or function_name == '*'):
+        if (function_name == 'add' or function_name == 'mul'):
             if (len(arg_types) < 2 or
-                (not utils.all_of(arg_types, lambda t: t.type_code == exprtypes.TypeCodes.boolean_type))):
+                (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):
                 self._raise_failure(function_name, arg_types)
 
-            if (function_name == 'add' or function_name == '+'):
+            if (function_name == 'add')
                 return self._get_add_instance()
             else:
                 return self._get_mul_instance()
 
-        elif (function_name == 'div' or function_name == '/' or
-            function_name == 'sub' or function_name == '-'):
+        elif (function_name == 'div' or function_name == 'sub'):
             if (len(arg_types) != 2 or
-                (not all_of(arg_types, lambda t: t.type_code == exprtypes.TypeCodes.boolean_type))):
+                (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):
                 self._raise_failure(function_name, arg_types)
 
-            if (function_name == 'div' or function_name == '/'):
+            if (function_name == 'div')
                 return DivFunction()
             else:
                 return SubFunction()
 
-        elif (function_name == 'le' or function_name == '<=' or
-              function_name == 'ge' or function_name == '>=' or
-              function_name == 'gt' or function_name == '>' or
-              function_name == 'lt' or function_name == '<'):
+        elif (function_name == 'minus'):
+            if (len(arg_types != 1) or arg_types[0].type_code != exprtypes.TypeCodes.integer_type):
+                self._raise_failure(function_name, arg_types)
+            return MinusFunction()
+
+        elif (function_name == 'le' or function_name == 'ge' or
+              function_name == 'gt' or function_name == 'lt')
             if (len(arg_types) != 2 or
-                (not (utils.all_of(arg_types, lambda t: t.type_code == exprtypes.TypeCodes.boolean_type)))):
+                (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):
                 self._raise_failure(function_name, arg_types)
 
-            if (function_name == 'le' or function_name == '<='):
+            if (function_name == 'le')
                 return LEFunction()
-            elif (function_name == 'ge' or function_name == '>='):
+            elif (function_name == 'ge')
                 return GEFunction()
-            elif (function_name == 'lt' or function_name == '<'):
+            elif (function_name == 'lt')
                 return LTFunction()
             else:
                 return GTFunction()
 
         else:
             self._raise_failure(function_name, arg_types)
-
-    def instantiate(self, function_name, child_exps):
-        arg_types = [exprs.get_expression_type(x) for x in child_exps]
-        mangled_name = semantics_types.mangle_function_name(function_name, arg_types)
-        cached = self.find_cached(mangled_name)
-        if (cached != None):
-            return cached
-
-        retval = self._do_instantiation(function_name, mangled_name, arg_types)
-        self.add_to_cache(mangled_name, retval)
-        return retval
 
 #
 # semantics_lia.py ends here

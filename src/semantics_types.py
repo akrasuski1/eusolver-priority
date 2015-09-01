@@ -223,12 +223,32 @@ class InstantiatorBase(object):
         self.function_object_map[mangled_function_name] = function_object
 
     def instantiate(function_name, child_exps):
-        raise basetypes.AbstractMethodError('InstantiatorBase.instantiate()')
+        canonical_function_name = self._get_canonical_function_name(function_name)
+        arg_types = [exprs.get_expression_type(x) for x in child_exps]
+        mangled_name = semantics_types.mangle_function_name(canonical_function_name, arg_types)
+        cached = self.find_cached(mangled_name)
+        if (cached != None):
+            return cached
+
+        retval = self._do_instantiation(function_name, mangled_name, arg_types)
+        self.add_to_cache(retval.mangled_function_name, retval)
+        return retval
+
+    def _is_all_of_type(self, iterable, type_code):
+        return utils.all_of(iterable, lambda t: t.type_code == type_code)
 
     def _raise_failure(function_name, arg_types):
         error_msg = 'Could not instantiate function ' + function_name
         error_msg += ' with argument types ('
         error_msg += (', '.join([str(arg_type) for arg_type in arg_types]) + ')')
         raise TypeError(error_msg)
+
+    def _do_instantiation(self, function_name, mangled_name, arg_types):
+        raise basetypes.AbstractMethodError('InstantiatorBase._do_instantiation()')
+
+    def _get_canonical_function_name(self, function_name):
+        raise basetypes.AbstractMethodError('InstantiatorBase._get_canonical_function_name()')
+
+
 #
 # semantics_types.py ends here

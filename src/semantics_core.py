@@ -144,7 +144,8 @@ class NotFunction(InterpretedFunctionBase):
 
 class ImpliesFunction(InterpretedFunctionBase):
     def __init__(self):
-        super().__init__('implies', 2, (exprtypes.BoolType(), exprtypes.BoolType()), exprtypes.BoolType())
+        super().__init__('implies', 2, (exprtypes.BoolType(), exprtypes.BoolType()),
+                         exprtypes.BoolType())
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
@@ -161,7 +162,8 @@ class ImpliesFunction(InterpretedFunctionBase):
 
 class IffFunction(InterpretedFunctionBase):
     def __init__(self):
-        super().__init__('iff', 2, (exprtypes.BoolType(), exprtypes.BoolType()), exprtypes.BoolType())
+        super().__init__('iff', 2, (exprtypes.BoolType(), exprtypes.BoolType()),
+                         exprtypes.BoolType())
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
@@ -176,7 +178,8 @@ class IffFunction(InterpretedFunctionBase):
 
 class XorFunction(InterpretedFunctionBase):
     def __init__(self):
-        super().__init__('xor', 2, (exprtypes.BoolType(), exprtypes.BoolType()), exprtypes.BoolType())
+        super().__init__('xor', 2, (exprtypes.BoolType(), exprtypes.BoolType()),
+                         exprtypes.BoolType())
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
@@ -224,18 +227,25 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
             self.or_instance = OrFunction()
         return self.or_instance
 
+    def _get_canonical_function_name(self, function_name):
+        if (function_name == '=' or function_name == 'eq'):
+            return 'eq'
+        elif (function_name == '!=' or function_name == 'ne'):
+            return 'ne'
+        else:
+            return function_name
+
     def _do_instantiation(self, function_name, mangled_name, arg_types):
-        if (function_name == '=' or function_name == 'eq' or
-            function_name == '!=' or function_name == 'ne'):
+        if (function_name == 'eq' or function_name == 'ne')
             if (len(arg_types) != 2 or arg_types[0] != arg_types[1]):
                 self._raise_failure(function_name, arg_types)
-            if (function_name == '=' or function_name == 'eq'):
+            if (function_name == 'eq'):
                 return EqFunction(arg_types[0])
             else:
                 return NeFunction(arg_types[0])
 
         elif (function_name == 'and' or function_name == 'or'):
-            if (not utils.all_of(arg_types, lambda t: t.type_code == exprtypes.TypeCodes.boolean_type)):
+            if (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.boolean_type)):
                 self._raise_failure(function_name, arg_types)
             if (len(arg_types) < 2):
                 self._raise_failure(function_name, arg_types)
@@ -248,7 +258,7 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
 
         elif (function_name == 'implies' or function_name == 'iff' or function_name == 'xor'):
             if (len(arg_types) != 2 or
-                (not utils.all_of(arg_types, lambda t: t.type_code == exprtypes.TypeCodes.boolean_type))):
+                (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.boolean_type))):
                 self._raise_failure(function_name, arg_types)
             if (function_name == 'implies'):
                 return ImpliesFunction()
@@ -266,17 +276,6 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
 
         else:
             self._raise_failure(function_name, arg_types)
-
-    def instantiate(self, function_name, child_exps):
-        arg_types = [exprs.get_expression_type(x) for x in child_exps]
-        mangled_name = semantics_types.mangle_function_name(function_name, arg_types)
-        cached = self.find_cached(mangled_name)
-        if (cached != None):
-            return cached
-
-        retval = self._do_instantiation(function_name, mangled_name, arg_types)
-        self.add_to_cache(mangled_name, retval)
-        return retval
 
 #
 # semantics_core.py ends here
