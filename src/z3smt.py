@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
 class Z3SMTContext(object):
     """A simple wrapper around the z3.Context class."""
-    def __init__(self, *args, *kwargs):
+    def __init__(self, *args, **kwargs):
         self.context_obj = z3.Context(args, kwargs)
         self.interpretation_map = None
 

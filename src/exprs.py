@@ -51,7 +51,7 @@ import exprtypes
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
-def ExpressionKinds(IntEnum):
+class ExpressionKinds(IntEnum):
     """Expression Kinds
     variable_expression: An expression representing a typed variable.
     constant_expression: An expression representing a typed constant.
@@ -62,14 +62,14 @@ def ExpressionKinds(IntEnum):
     function_expression = 3
 
 
-_VariableExpression =
-collections.namedtuple('VariableExpression', ['expr_kind', 'variable_info'])
+_VariableExpression = collections.namedtuple('VariableExpression',
+                                             ['expr_kind', 'variable_info'])
 
-_ConstantExpression =
-collections.namedtuple('ConstantExpression', ['expr_kind', 'value_object'])
+_ConstantExpression = collections.namedtuple('ConstantExpression',
+                                             ['expr_kind', 'value_object'])
 
-_FunctionExpression =
-collections.namedtuple('FunctionExpression', ['expr_kind', 'function_info', 'children'])
+_FunctionExpression = collections.namedtuple('FunctionExpression',
+                                             ['expr_kind', 'function_info', 'children'])
 
 _Value = collections.namedtuple('Value', ['value_object', 'value_type'])
 
@@ -119,9 +119,9 @@ def ExprManager(object):
         assert(isinstance(var_type, exprtypes.TypeBase))
 
         interned_var = sys.intern(var_name)
-        var_id = self.variables_map.get(interned_var)
+        var_id = self.variables_map.get((interned_var, var_type))
         if (var_id == None):
-            self.variables_map[interned_var] = self.next_var_id
+            self.variables_map[(interned_var, var_type)] = self.next_var_id
             var_id = self.next_var_id
             self.next_var_id += 1
         return _VariableExpression(ExpressionKinds.variable_expression, var_type, var_id)

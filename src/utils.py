@@ -120,5 +120,11 @@ def bitvector_to_string(bitvec_value, bitvec_size):
         prefix_string = '#b'
     return prefix_string + format(bitvec_value, format_string)
 
+
+def all_of(iterable, predicate):
+    for elem in iterable:
+        if (not predicate(elem)):
+            return False
+    return True
 #
 # utils.py ends here

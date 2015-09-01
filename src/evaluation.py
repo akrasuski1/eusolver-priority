@@ -44,33 +44,51 @@ import exprs
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
-def evaluate_expr(expr_object, eval_context, leave_on_stack = False):
+def evaluate_expression(expr_object, eval_context)
     kind = expr_object.expr_kind
-    if (kind == ExpressionKinds.variable_expression):
+    if (kind == exprs.ExpressionKinds.variable_expression):
         o = expr_object.variable_info.variable_eval_offset
-        if (leave_on_stack):
-            eval_context.push(o)
-            return
-        else:
-            return exprs.Value(eval_context.valuation_map[o],
-                               expr_object.variable_info.variable_type)
+        return exprs.Value(eval_context.valuation_map[o],
+                           expr_object.variable_info.variable_type)
 
-    elif (kind == ExpressionKinds.constant_expression):
-        if (leave_on_stack):
-            eval_context.push(expr_object.value_object.value_object)
-            return
-        else:
-            return expr_object.value_object
+    elif (kind == exprs.ExpressionKinds.constant_expression):
+        return expr_object.value_object
 
-    elif (kind == ExpressionKinds.function_expression):
+    elif (kind == exprs.ExpressionKinds.function_expression):
         fun_info = expr_object.function_info
         fun_info.evaluate(expr_object, eval_context)
-        if (leave_on_stack):
-            return
-        else:
-            v = eval_context.peek()
-            eval_context.pop()
-            return exprs.Value(v, fun_info.range_type)
+        v = eval_context.peek()
+        eval_context.pop()
+        return exprs.Value(v, fun_info.range_type)
+    else:
+        raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+
+def evaluate_expression_on_stack(expr_object, eval_context):
+    kind = expr_object.expr_kind
+    if (kind == exprs.ExpressionKinds.variable_expression):
+        o = expr_object.variable_info.variable_eval_offset
+        eval_context.push(eval_context.valuation_map[o])
+    elif (kind == exprs.ExpressionKinds.constant_expression):
+        eval_context.push(expr_object.value_object.value_object)
+    elif (kind == exprs.ExpressionKinds.function_expression):
+        fun_info = expr_object.function_info
+        fun_info.evaluate(expr_object, eval_context)
+    else:
+        raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+
+def evaluate_expression_raw(expr_object, eval_context):
+    kind = expr_object.expr_kind
+    if (kind == exprs.ExpressionKinds.variable_expression):
+        o = expr_object.variable_info.variable_eval_offset
+        return eval_context.valuation_map[o]
+    elif (kind == exprs.ExpressionKinds.constant_expression):
+        return expr_object.value_object.value_object
+    elif (kind == exprs.ExpressionKinds.function_expression):
+        fun_info = expr_object.function_info
+        fun_info.evaluate(expr_object, eval_context)
+        v = eval_context.peek()
+        eval_context.pop()
+        return v
     else:
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
 

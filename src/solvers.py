@@ -164,7 +164,6 @@ def test_cegsolver():
                                                            [start_generator_ph,
                                                             start_generator_ph])]))
 
-    max3_spec = ('and', ('ge', '__output__', 'Int_varA'
 
 if __name__ == '__main__':
     test_cegsolver()
