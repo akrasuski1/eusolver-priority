@@ -194,8 +194,9 @@ class XorFunction(InterpretedFunctionBase):
 
 class IteFunction(InterpretedFunctionBase):
     def __init__(self, range_type):
-        super().__init__(BuiltInFunctionCodes.builtin_function_ite, 'ite', 3,
-                         (exprtypes.BoolType(), range_type, range_type), range_type)
+        super().__init__('ite', 3, (exprtypes.BoolType(),
+                                    range_type, range_type),
+                         range_type)
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
@@ -236,7 +237,7 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
             return function_name
 
     def _do_instantiation(self, function_name, mangled_name, arg_types):
-        if (function_name == 'eq' or function_name == 'ne')
+        if (function_name == 'eq' or function_name == 'ne'):
             if (len(arg_types) != 2 or arg_types[0] != arg_types[1]):
                 self._raise_failure(function_name, arg_types)
             if (function_name == 'eq'):
@@ -275,7 +276,7 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
             return IteFunction(arg_types[1])
 
         else:
-            self._raise_failure(function_name, arg_types)
+            return None
 
 #
 # semantics_core.py ends here

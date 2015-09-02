@@ -117,7 +117,7 @@ class _IntType(TypeBase):
 
 _integer_type_instance = _IntType()
 
-def IntType(TypeBase):
+def IntType():
     return _integer_type_instance
 
 

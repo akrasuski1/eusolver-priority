@@ -71,10 +71,17 @@ _ConstantExpression = collections.namedtuple('ConstantExpression',
 _FunctionExpression = collections.namedtuple('FunctionExpression',
                                              ['expr_kind', 'function_info', 'children'])
 
-_Value = collections.namedtuple('Value', ['value_object', 'value_type'])
+Value = collections.namedtuple('Value', ['value_object', 'value_type'])
 
-def Value(value_object, value_type):
-    return _Value(value_object, value_type)
+def VariableExpression(variable_info):
+    return _VariableExpression(ExpressionKinds.variable_expression, variable_info)
+
+def ConstantExpression(value_object):
+    return _ConstantExpression(ExpressionKinds.constant_expression, value_object)
+
+def FunctionExpression(function_info, children):
+    return _FunctionExpression(ExpressionKinds.function_expression,
+                               function_info, children)
 
 def value_to_string(the_value):
     if (the_value.value_type.type_code == exprtypes.TypeCodes.boolean_type):
@@ -92,13 +99,14 @@ class VariableInfo(object):
     __slots__ = ['variable_type', 'variable_eval_offset', 'variable_name']
     _undefined_offset = 1000000000
 
-    def __init__(self, variable_type, variable_name):
+    def __init__(self, variable_type, variable_name,
+                 variable_eval_offset = _undefined_offset):
         self.variable_name = variable_name
         self.variable_type = variable_type
-        self.variable_eval_offset = _undefined_offset
+        self.variable_eval_offset = variable_eval_offset
 
 
-def ExprManager(object):
+class ExprManager(object):
     """A class for managing expression objects.
     Note that the expression types themselves are private.
     The only way to create expressions is thus intended to
@@ -137,7 +145,7 @@ def ExprManager(object):
         "Makes a typed function expression applied to the given child expressions."""
         function_info = None
         for instantiator in self.function_instantiators:
-            function_info = instantiator.instantiate_function(function_name, child_exps)
+            function_info = instantiator.instantiate(function_name, child_exps)
             if (function_info != None):
                 break
 
@@ -148,6 +156,15 @@ def ExprManager(object):
 
         return _FunctionExpression(ExpressionKinds.function_expression, function_info,
                                    tuple(child_exps))
+
+    def get_function_descriptor(self, function_name, *arg_types):
+        function_info = None
+        for instantiator in self.function_instantiators:
+            function_info = instantiator.instantiate(function_name, arg_types)
+            if (function_info != None):
+                break
+
+        return function_info
 
     def make_true_expr(self):
         """Makes an expression representing the Boolean constant TRUE."""
@@ -171,14 +188,15 @@ def expression_to_string(expr):
     """Returns a string representation of an expression"""
 
     if (expr.expr_kind == ExpressionKinds.variable_expression):
-        return expr.var_name
+        return expr.variable_info.variable_name
     elif (expr.expr_kind == ExpressionKinds.constant_expression):
-        return _constant_to_string(expr.expr_type, expr.const_value)
+        return _constant_to_string(expr.value_object.value_type,
+                                   expr.value_object.value_object)
     else:
-        retval = '(' + expr.function_info.function_name + ' '
+        retval = '(' + expr.function_info.function_name
         for child in expr.children:
-            retval += expression_to_string(child)
             retval += ' '
+            retval += expression_to_string(child)
         retval += ')'
         return retval
 

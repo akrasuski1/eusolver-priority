@@ -44,11 +44,12 @@ various function symbols."""
 import basetypes
 import utils
 import exprtypes
-from evaluation import evaluate_expression, evaluate_expression_raw,
+from evaluation import evaluate_expression, evaluate_expression_raw
 from evaluation import evaluate_expression_on_stack
 import evaluation
 import exprs
 import z3
+from enum import IntEnum
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -63,7 +64,7 @@ class FunctionKinds(IntEnum):
     unknown_function = 2
 
 def mangle_function_name(function_name, domain_types):
-    return '_'.join([function_name] + [str(dom_type.typeid) for dom_type in domain_types])
+    return '_'.join([function_name] + [str(dom_type.type_id) for dom_type in domain_types])
 
 
 def _to_smt_variable_expression(expr_object, smt_context_object, var_subst_map):
@@ -191,7 +192,7 @@ class MacroFunction(InterpretedFunctionBase):
     def __init__(self, function_name, function_arity,
                  domain_types, range_type, interpretation_expression):
         super().__init__(FunctionKinds.interpreted_function, function_name, function_arity,
-                         domain_types, range_type):
+                         domain_types, range_type)
         assert (len(domain_types) == function_arity)
         self.interpretation_expression = interpretation_expression
 
@@ -222,22 +223,28 @@ class InstantiatorBase(object):
     def add_to_cache(self, mangled_function_name, function_object):
         self.function_object_map[mangled_function_name] = function_object
 
-    def instantiate(function_name, child_exps):
+    def instantiate(self, function_name, child_exps):
         canonical_function_name = self._get_canonical_function_name(function_name)
-        arg_types = [exprs.get_expression_type(x) for x in child_exps]
-        mangled_name = semantics_types.mangle_function_name(canonical_function_name, arg_types)
+        if (not isinstance(child_exps[0], exprtypes.TypeBase)):
+            arg_types = [exprs.get_expression_type(x) for x in child_exps]
+        else:
+            arg_types = child_exps
+
+        mangled_name = mangle_function_name(canonical_function_name, arg_types)
         cached = self.find_cached(mangled_name)
         if (cached != None):
             return cached
 
         retval = self._do_instantiation(function_name, mangled_name, arg_types)
-        self.add_to_cache(retval.mangled_function_name, retval)
+        if (retval != None):
+            self.add_to_cache(retval.mangled_function_name, retval)
+
         return retval
 
     def _is_all_of_type(self, iterable, type_code):
         return utils.all_of(iterable, lambda t: t.type_code == type_code)
 
-    def _raise_failure(function_name, arg_types):
+    def _raise_failure(self, function_name, arg_types):
         error_msg = 'Could not instantiate function ' + function_name
         error_msg += ' with argument types ('
         error_msg += (', '.join([str(arg_type) for arg_type in arg_types]) + ')')

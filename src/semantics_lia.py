@@ -228,7 +228,7 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
                 (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):
                 self._raise_failure(function_name, arg_types)
 
-            if (function_name == 'add')
+            if (function_name == 'add'):
                 return self._get_add_instance()
             else:
                 return self._get_mul_instance()
@@ -238,7 +238,7 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
                 (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):
                 self._raise_failure(function_name, arg_types)
 
-            if (function_name == 'div')
+            if (function_name == 'div'):
                 return DivFunction()
             else:
                 return SubFunction()
@@ -249,16 +249,16 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
             return MinusFunction()
 
         elif (function_name == 'le' or function_name == 'ge' or
-              function_name == 'gt' or function_name == 'lt')
+              function_name == 'gt' or function_name == 'lt'):
             if (len(arg_types) != 2 or
                 (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):
                 self._raise_failure(function_name, arg_types)
 
-            if (function_name == 'le')
+            if (function_name == 'le'):
                 return LEFunction()
-            elif (function_name == 'ge')
+            elif (function_name == 'ge'):
                 return GEFunction()
-            elif (function_name == 'lt')
+            elif (function_name == 'lt'):
                 return LTFunction()
             else:
                 return GTFunction()

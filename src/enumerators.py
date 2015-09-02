@@ -42,6 +42,10 @@ import utils
 import basetypes
 import copy
 import itertools
+import exprs
+import exprtypes
+import semantics_core
+import semantics_lia
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -157,7 +161,7 @@ class FunctionalGenerator(GeneratorBase):
         for partition in utils.partitions(self.allowed_size - 1, self.arity):
             self._set_sub_generator_sizes(partition)
             for product_tuple in _cartesian_product_of_generators(*self.sub_generators):
-                retval = (self.function_descriptor, ) + product_tuple
+                retval = exprs.FunctionExpression(self.function_descriptor, product_tuple)
                 if (self.object_validator.validate(retval)):
                     yield retval
 
@@ -184,10 +188,10 @@ class AlternativesGenerator(GeneratorBase):
 
     def generate(self):
         for sub_generator in self.sub_generators:
-            yield from sub_generator.generate()
+            # yield from sub_generator.generate()
             # # audupa: comment out above and uncomment below for python3 < 3.3
-            # for obj in sub_generator.generate():
-            #     yield obj
+            for obj in sub_generator.generate():
+                yield obj
 
     def clone(self):
         return AlternativesGenerator([x.clone() for x in self.sub_generators],
@@ -219,10 +223,10 @@ class _RecursiveGeneratorPlaceholder(GeneratorBase):
         if (self.actual_generator == None):
             return
         else:
-            yield from self.actual_generator.generate()
+            # yield from self.actual_generator.generate()
             # # audupa: comment out above and uncomment below for python3 < 3.3
-            # for obj in self.actual_generator.generate():
-            #     yield obj
+            for obj in self.actual_generator.generate():
+                yield obj
 
     def clone(self):
         return _RecursiveGeneratorPlaceholder(self.factory, self.identifier)
@@ -261,25 +265,51 @@ class RecursiveGeneratorFactory(object):
 # TEST CASES and utils for other test cases.
 ############################################################
 def _generate_test_generators(validator = None):
-    var_generator = LeafGenerator(['varA', 'varB', 'varC'], validator, 'Variable Generator')
-    const_generator = LeafGenerator([0, 1], validator, 'Constant Generator')
+    var_a_info = exprs.VariableInfo(exprtypes.IntType(), 'varA', 0)
+    var_b_info = exprs.VariableInfo(exprtypes.IntType(), 'varB', 0)
+    var_c_info = exprs.VariableInfo(exprtypes.IntType(), 'varC', 0)
+
+    var_a = exprs.VariableExpression(var_a_info)
+    var_b = exprs.VariableExpression(var_b_info)
+    var_c = exprs.VariableExpression(var_c_info)
+
+    zero_value = exprs.Value(0, exprtypes.IntType())
+    one_value = exprs.Value(1, exprtypes.IntType())
+    zero_exp = exprs.ConstantExpression(zero_value)
+    one_exp = exprs.ConstantExpression(one_value)
+
+    var_generator = LeafGenerator([var_a, var_b, var_c], validator, 'Variable Generator')
+    const_generator = LeafGenerator([zero_exp, one_exp], validator, 'Constant Generator')
     leaf_generator = AlternativesGenerator([var_generator, const_generator], validator,
                                            'Leaf Term Generator')
     generator_factory = RecursiveGeneratorFactory()
     start_generator_ph = generator_factory.make_placeholder('Start')
     start_bool_generator_ph = generator_factory.make_placeholder('StartBool')
 
+    expr_mgr = exprs.ExprManager(semantics_core.CoreInstantiator(),
+                                 semantics_lia.LIAInstantiator())
+    add_fun = expr_mgr.get_function_descriptor('add', exprtypes.IntType(), exprtypes.IntType())
+    sub_fun = expr_mgr.get_function_descriptor('sub', exprtypes.IntType(), exprtypes.IntType())
+    ite_fun = expr_mgr.get_function_descriptor('ite', exprtypes.BoolType(),
+                                               exprtypes.IntType(), exprtypes.IntType())
+    and_fun = expr_mgr.get_function_descriptor('and', exprtypes.BoolType(), exprtypes.BoolType())
+    or_fun = expr_mgr.get_function_descriptor('or', exprtypes.BoolType(), exprtypes.BoolType())
+    not_fun = expr_mgr.get_function_descriptor('not', exprtypes.BoolType())
+    le_fun = expr_mgr.get_function_descriptor('le', exprtypes.IntType(), exprtypes.IntType())
+    ge_fun = expr_mgr.get_function_descriptor('ge', exprtypes.IntType(), exprtypes.IntType())
+    eq_fun = expr_mgr.get_function_descriptor('eq', exprtypes.IntType(), exprtypes.IntType())
+
     start_generator = \
     generator_factory.make_generator('Start',
                                      AlternativesGenerator,
                                      ([leaf_generator] +
-                                      [FunctionalGenerator('add',
+                                      [FunctionalGenerator(add_fun,
                                                            [start_generator_ph,
                                                             start_generator_ph], validator),
-                                       FunctionalGenerator('sub',
+                                       FunctionalGenerator(sub_fun,
                                                            [start_generator_ph,
                                                             start_generator_ph], validator),
-                                       FunctionalGenerator('ite',
+                                       FunctionalGenerator(ite_fun,
                                                            [start_bool_generator_ph,
                                                             start_generator_ph,
                                                             start_generator_ph], validator)], validator, None))
@@ -287,30 +317,31 @@ def _generate_test_generators(validator = None):
     start_bool_generator = \
     generator_factory.make_generator('StartBool',
                                      AlternativesGenerator,
-                                     ([FunctionalGenerator('and',
+                                     ([FunctionalGenerator(and_fun,
                                                            [start_bool_generator_ph,
                                                             start_bool_generator_ph], validator),
-                                       FunctionalGenerator('or',
+                                       FunctionalGenerator(or_fun,
                                                            [start_bool_generator_ph,
                                                             start_bool_generator_ph], validator),
-                                       FunctionalGenerator('not',
+                                       FunctionalGenerator(not_fun,
                                                            [start_bool_generator_ph], validator),
-                                       FunctionalGenerator('le',
+                                       FunctionalGenerator(le_fun,
                                                            [start_generator_ph,
                                                             start_generator_ph], validator),
-                                       FunctionalGenerator('eq',
+                                       FunctionalGenerator(eq_fun,
                                                            [start_generator_ph,
                                                             start_generator_ph], validator),
-                                       FunctionalGenerator('ge',
+                                       FunctionalGenerator(ge_fun,
                                                            [start_generator_ph,
                                                             start_generator_ph], validator)], validator, None))
     return start_generator
 
 def test_generators():
     start_generator = _generate_test_generators()
-    start_generator.set_size(3)
+    start_generator.set_size(8)
     for exp in start_generator.generate():
-        print(exp)
+        print(exprs.expression_to_string(exp))
+        # print ('*')
 
 if __name__ == '__main__':
     test_generators()
