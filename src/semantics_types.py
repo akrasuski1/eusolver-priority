@@ -116,7 +116,7 @@ class FunctionBase(object):
     Provides some convenience methods for evaluating children, etc.
     """
     def __init__(self, function_kind, function_name, function_arity,
-                 domain_types, range_type):
+                 domain_types, range_type, synthesis_ctx = None):
         assert function_arity != 0, "Arity of functions cannot be zero!"
 
         self.function_kind = function_kind
@@ -124,6 +124,7 @@ class FunctionBase(object):
         self.function_arity = function_arity
         self.domain_types = domain_types
         self.range_type = range_type
+        self.synthesis_ctx = synthesis_ctx
 
         if (function_arity > 0):
             assert (len(domain_types) == function_arity), "Size of domain must be equal to arity!"
@@ -156,9 +157,9 @@ class UnknownFunctionBase(FunctionBase):
     _undefined_function_id = 1000000000
     def __init__(self, function_name, function_arity, domain_types, range_type):
         super().__init__(FunctionKinds.unknown_function, function_name, function_arity,
-                         domain_types, range_type)
+                         domain_types, range_type, unknown_function_id = _undefined_function_id)
         assert (len(domain_types) == function_arity)
-        self.unknown_function_id = _undefined_function_id
+        self.unknown_function_id = unknown_function_id
 
     def evaluate(self, expr_object, eval_context_object):
         """The eval_context_object is assumed to have a map called interpretations.
@@ -256,6 +257,8 @@ class InstantiatorBase(object):
     def _get_canonical_function_name(self, function_name):
         raise basetypes.AbstractMethodError('InstantiatorBase._get_canonical_function_name()')
 
+    def validate_function(self, function_info):
+        return (self.find_cached(function_info.mangled_function_name) != None)
 
 #
 # semantics_types.py ends here

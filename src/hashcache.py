@@ -147,17 +147,7 @@ class HashCache(object):
         self.associativity = associativity
         self.replacement_function = replacement_function
         self.hash_function = hash_function
-        self.monotonic_timestamp = 0
-
-        if (self.associativity == 1):
-            self.hash_table = [None] * self.num_sets
-        elif (self.associativity > 1):
-            self.hash_table = [None] * self.num_sets
-            for i in range(self.num_sets):
-                self.hash_table[i] = [None] * self.associativity
-        else:
-            raise basetypes.OptionError('Associativity out of bounds ' +
-                                        'in HashCache.__init__()')
+        self.clear()
 
     def _lookup_in_set(self, set_index, key):
         set_entry = self.hash_table[set_index]
@@ -218,6 +208,18 @@ class HashCache(object):
         else:
             self.hash_table[set_index] = HashCacheEntry(key, self.monotonic_timestamp)
             self.monotonic_timestamp += 1
+
+    def clear(self):
+        self.monotonic_timestamp = 0
+        if (self.associativity == 1):
+            self.hash_table = [None] * self.num_sets
+        elif (self.associativity > 1):
+            self.hash_table = [None] * self.num_sets
+            for i in range(self.num_sets):
+                self.hash_table[i] = [None] * self.associativity
+        else:
+            raise basetypes.OptionError('Associativity out of bounds ' +
+                                        'in HashCache.__init__()')
 
 #
 # hashcache.py ends here

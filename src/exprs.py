@@ -96,85 +96,18 @@ def value_to_string(the_value):
 
 
 class VariableInfo(object):
-    __slots__ = ['variable_type', 'variable_eval_offset', 'variable_name']
+    __slots__ = ['variable_type', 'variable_eval_offset',
+                 'variable_name', 'synthesis_ctx']
     _undefined_offset = 1000000000
 
     def __init__(self, variable_type, variable_name,
-                 variable_eval_offset = _undefined_offset):
+                 variable_eval_offset = _undefined_offset,
+                 synthesis_ctx = None):
         self.variable_name = variable_name
         self.variable_type = variable_type
         self.variable_eval_offset = variable_eval_offset
+        self.synthesis_ctx = None
 
-
-class ExprManager(object):
-    """A class for managing expression objects.
-    Note that the expression types themselves are private.
-    The only way to create expressions is thus intended to
-    be through an instance of this class.
-    Args:
-    function_instantiator: an object that instantiates operators based on
-    the name of the operator and types of the arguments provided to the operator.
-    """
-
-    def __init__(self, *function_instantiators):
-        self.function_instantiators = function_instantiators
-        self.variables_map = {}
-        self.next_var_id = 1
-
-    def make_variable_expr(self, var_type, var_name):
-        """Makes a variable expression of the given name and type."""
-
-        assert(isinstance(var_type, exprtypes.TypeBase))
-
-        interned_var = sys.intern(var_name)
-        var_id = self.variables_map.get((interned_var, var_type))
-        if (var_id == None):
-            self.variables_map[(interned_var, var_type)] = self.next_var_id
-            var_id = self.next_var_id
-            self.next_var_id += 1
-        return _VariableExpression(ExpressionKinds.variable_expression, var_type, var_id)
-
-    def make_constant_expr(self, const_type, const_value):
-        """Makes a typed constant expression with the given value."""
-
-        assert(isinstance(const_type, exprtypes.TypeBase))
-
-        return _ConstantExpression(ExpressionKinds.constant_expression, const_type, const_value)
-
-    def make_function_expr(self, function_name, *child_exps):
-        "Makes a typed function expression applied to the given child expressions."""
-        function_info = None
-        for instantiator in self.function_instantiators:
-            function_info = instantiator.instantiate(function_name, child_exps)
-            if (function_info != None):
-                break
-
-        if (function_info == None):
-            raise ArgumentError('Could not instantiate function named "' + function_name +
-                                '" with argument types: (' +
-                                ', '.join([str(x.expr_type) for x in child_exps]) + ')')
-
-        return _FunctionExpression(ExpressionKinds.function_expression, function_info,
-                                   tuple(child_exps))
-
-    def get_function_descriptor(self, function_name, *arg_types):
-        function_info = None
-        for instantiator in self.function_instantiators:
-            function_info = instantiator.instantiate(function_name, arg_types)
-            if (function_info != None):
-                break
-
-        return function_info
-
-    def make_true_expr(self):
-        """Makes an expression representing the Boolean constant TRUE."""
-        return _ConstantExpression(ExpressionKinds.constant_expression,
-                                   exprtypes.BoolType(), True)
-
-    def make_false_expr(self):
-        """Makes an expression representing the boolean constant FALSE."""
-        return _ConstantExpression(ExpressionKinds.constant_expression,
-                                   exprtypes.BoolType(), True)
 
 def _constant_to_string(constant_type, constant_value):
     if (constant_type == exprtypes.BoolType() or

@@ -41,49 +41,27 @@
 import evaluation
 from enumerators import *
 import functools
+import hashcache
 
 class PointDescriptor(object):
     def __init__(self, point_map):
         self.point_map = point_map
-        self.satisfied = False
-        self.sat_exprs = []
+        self.satisfying_exprs = []
 
     def reset(self):
         self.satisfied = False
-        self.sat_exprs = []
+        self.satisfying_exprs = []
 
 
-class ConcreteSolver(object):
+class TermSolver(object):
+    """A solver for terms. Assumes that the spec is single-invocation/separable."""
     def __init__(self):
         self.points = []
         self.spec = None
+        self.evaluation_context = evaluation.EvaluationContext()
 
-    def _compute_signature(self, expr):
-        return [evaluation.evaluate(expr, x.point_map) for x in self.points]
-
-    def add_spec(self, spec):
-        self.spec = spec
-
-    def add_point(self, point):
-        self.points.append(PointDescriptor(point_map))
-
-    def _check_expr(self, expr):
-        sig = self.compute_signature(expr)
-        if (len(sig) == 0):
-            return True
-
-        for i in range(len(sig)):
-            self.points[i].point_map['__output__'] = sig[i]
-            if (evaluation.evaluate(spec, self.points[i].point_map)):
-                self.points[i].satisfied = True
-                self.points[i].sat_exprs.append(expr)
-
-        return functools.reduce(lambda x, y: (x and y), [x.satisfied for x in self.points])
-
-    def solve(self, generator):
-        for expr in generator.generate():
-            if (self._check_expr(expr)):
-                return
+    def solve(*generators):
+        for exprs in enumerators.cartesian_product_of_generators(generators):
 
 
 class CEGSolver(object):

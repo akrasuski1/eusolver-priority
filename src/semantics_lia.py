@@ -60,7 +60,7 @@ class AddFunction(InterpretedFunctionBase):
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
         num_children = len(expr_object.children)
-        retval = sum(eval_context_object.peek(num_children))
+        retval = sum(eval_context_object.peek_items(num_children))
         eval_context_object.pop(num_children)
         eval_context_object.push(retval)
 
@@ -136,7 +136,7 @@ class LEFunction(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = self.peek(1) <= self.peek(0)
+        res = (eval_context_object.peek(1) <= eval_context_object.peek(0))
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
@@ -151,7 +151,7 @@ class LTFunction(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = self.peek(1) < self.peek(0)
+        res = (eval_context_object.peek(1) < eval_context_object.peek(0))
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
@@ -166,7 +166,7 @@ class GEFunction(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = self.peek(1) >= self.peek(0)
+        res = (eval_context_object.peek(1) >= eval_context_object.peek(0))
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
@@ -181,7 +181,7 @@ class GTFunction(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = self.peek(1) > self.peek(0)
+        res = (eval_context_object.peek(1) > eval_context_object.peek(0))
         eval_context_object.pop(2)
         eval_context_object.push(res)
 

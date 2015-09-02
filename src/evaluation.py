@@ -41,27 +41,8 @@
 import utils
 import exprs
 
-if __name__ == '__main__':
-    utils.print_module_misuse_and_exit()
-
-def evaluate_expression(expr_object, eval_context):
-    kind = expr_object.expr_kind
-    if (kind == exprs.ExpressionKinds.variable_expression):
-        o = expr_object.variable_info.variable_eval_offset
-        return exprs.Value(eval_context.valuation_map[o],
-                           expr_object.variable_info.variable_type)
-
-    elif (kind == exprs.ExpressionKinds.constant_expression):
-        return expr_object.value_object
-
-    elif (kind == exprs.ExpressionKinds.function_expression):
-        fun_info = expr_object.function_info
-        fun_info.evaluate(expr_object, eval_context)
-        v = eval_context.peek()
-        eval_context.pop()
-        return exprs.Value(v, fun_info.range_type)
-    else:
-        raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+# if __name__ == '__main__':
+#     utils.print_module_misuse_and_exit()
 
 def evaluate_expression_on_stack(expr_object, eval_context):
     kind = expr_object.expr_kind
@@ -77,21 +58,15 @@ def evaluate_expression_on_stack(expr_object, eval_context):
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
 
 def evaluate_expression_raw(expr_object, eval_context):
-    kind = expr_object.expr_kind
-    if (kind == exprs.ExpressionKinds.variable_expression):
-        o = expr_object.variable_info.variable_eval_offset
-        return eval_context.valuation_map[o]
-    elif (kind == exprs.ExpressionKinds.constant_expression):
-        return expr_object.value_object.value_object
-    elif (kind == exprs.ExpressionKinds.function_expression):
-        fun_info = expr_object.function_info
-        fun_info.evaluate(expr_object, eval_context)
-        v = eval_context.peek()
-        eval_context.pop()
-        return v
-    else:
-        raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+    evaluate_expression_on_stack(expr_object, eval_context)
+    retval = eval_context.peek()
+    eval_context.pop()
+    return retval
 
+def evaluate_expression(expr_object, eval_context):
+    retval = evaluate_expression_raw(expr_object, eval_context)
+    retval = exprs.Value(retval, exprs.get_expression_type(expr_object))
+    return retval
 
 class EvaluationContext(object):
     def __init__(self, eval_stack_size = 32768):
@@ -105,11 +80,14 @@ class EvaluationContext(object):
         return self.eval_stack[self.eval_stack_top - 1 - peek_depth]
 
     def peek_items(self, peek_depth = 1):
-        top_index = self.eval_stack_top - 1
-        return self.eval_stack[(top_index - peek_depth):top_index]
+        return self.eval_stack[(self.eval_stack_top - peek_depth):self.eval_stack_top]
 
     def pop(self, num_elems = 1):
         self.eval_stack_top -= num_elems
+
+    def push(self, value_object):
+        self.eval_stack[self.eval_stack_top] = value_object
+        self.eval_stack_top += 1
 
     def set_valuation_map(self, valuation_map):
         self.valuation_map = valuation_map
@@ -122,5 +100,23 @@ class EvaluationContext(object):
 
     def clear_interpretation_map(self):
         self.interpretation_map = None
+
+
+def test_evaluation():
+    import enumerators
+    generator = enumerators._generate_test_generators()
+    generator.set_size(8)
+    points = [(1, 2, 3), (2, 5, 6), (6, 1, 3), (10, 4, 6), (7, 1, 5)]
+    eval_context = EvaluationContext()
+    for expr in generator.generate():
+        cur_sig = [None] * len(points)
+        for i in range(len(points)):
+            eval_context.set_valuation_map(points[i])
+            cur_sig[i] = evaluate_expression_raw(expr, eval_context)
+        print((exprs.expression_to_string(expr), tuple(cur_sig)))
+
+if __name__ == '__main__':
+    test_evaluation()
+
 #
 # evaluation.py ends here
