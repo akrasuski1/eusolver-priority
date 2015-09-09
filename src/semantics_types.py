@@ -78,7 +78,7 @@ def _to_smt_variable_expression(expr_object, smt_context_object, var_subst_map):
         return var_subst_map[var_info.variable_eval_offset]
 
 def _to_smt_constant_expression(expr_object, smt_context_object):
-    val_obj = expr_object.val_obj
+    val_obj = expr_object.value_object
     constant_type = val_obj.value_type
     if (constant_type.type_code == exprtypes.TypeCodes.boolean_type):
         return z3.BoolVal(val_obj.value_object, smt_context_object.ctx())
@@ -147,7 +147,7 @@ class FunctionBase(object):
         for child in expr_object.children:
             evaluate_expression_on_stack(child, eval_context_object)
 
-    def _to_smt_children(self, expr_object, smt_context_object, var_subst_map = None):
+    def _children_to_smt(self, expr_object, smt_context_object, var_subst_map = None):
         assert (expr_object.expr_kind == exprs.ExpressionKinds.function_expression)
         return [expression_to_smt(child, smt_context_object, var_subst_map)
                 for child in expr_object.children]
@@ -155,9 +155,10 @@ class FunctionBase(object):
 
 class UnknownFunctionBase(FunctionBase):
     _undefined_function_id = 1000000000
-    def __init__(self, function_name, function_arity, domain_types, range_type):
+    def __init__(self, function_name, function_arity, domain_types, range_type,
+                 unknown_function_id = _undefined_function_id):
         super().__init__(FunctionKinds.unknown_function, function_name, function_arity,
-                         domain_types, range_type, unknown_function_id = _undefined_function_id)
+                         domain_types, range_type, )
         assert (len(domain_types) == function_arity)
         self.unknown_function_id = unknown_function_id
 
@@ -179,7 +180,7 @@ class UnknownFunctionBase(FunctionBase):
         eval_context_object.valuation_map = orig_valuation_map
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._to_smt_children(expr_object, smt_context_object, var_subst_map)
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
         interpretation = smt_context_object.interpretation_map[self.unknown_function_id]
         return expression_to_smt(interpretation, smt_context_object, child_terms)
 

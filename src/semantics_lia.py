@@ -262,9 +262,7 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
                 return LTFunction()
             else:
                 return GTFunction()
-
         else:
-            self._raise_failure(function_name, arg_types)
-
+            return None
 #
 # semantics_lia.py ends here

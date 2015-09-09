@@ -108,6 +108,11 @@ class VariableInfo(object):
         self.variable_eval_offset = variable_eval_offset
         self.synthesis_ctx = None
 
+    def __str__(self):
+        return ('VariableInfo(%s, %s, %s)' % (str(self.variable_type),
+                                              self.variable_name,
+                                              str(self.variable_eval_offset)))
+
 
 def _constant_to_string(constant_type, constant_value):
     if (constant_type == exprtypes.BoolType() or

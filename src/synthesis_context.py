@@ -58,7 +58,7 @@ class SynthesisContext(object):
         self.function_instantiators = function_instantiators
         self.variables_map = {}
         self.unknown_function_map = {}
-        self.specification_clauses = {}
+        self.specification_clauses = []
         self.spec = None
 
     def make_variable(self, var_type, var_name,
@@ -73,6 +73,7 @@ class SynthesisContext(object):
                                  'been created with type %s') % (var_name, str(existing.var_type)))
         else:
             retval = exprs.VariableInfo(var_type, var_name, var_eval_offset)
+            retval.synthesis_ctx = self
             self.variables_map[var_name] = retval
             return retval
 
@@ -127,7 +128,7 @@ class SynthesisContext(object):
     def make_function_expr(self, function_name_or_info, *child_exps):
         """Makes a typed function expression applied to the given child expressions."""
         if (isinstance(function_name_or_info, str)):
-            function_info = self.make_function(function_name, *child_exps)
+            function_info = self.make_function(function_name_or_info, *child_exps)
             function_name = function_name_or_info
         else:
             assert (isinstance(function_name_or_info, semantics_types.FunctionBase))
@@ -171,9 +172,13 @@ class SynthesisContext(object):
 
     def get_synthesis_spec(self):
         if (self.spec == None and len(self.specification_clauses) > 0):
-            ret_spec = self.make_function_expr('and', *self.specification_clauses)
-            variables_list, functions_list = expr_transforms.canonicalize_specification(ret_spec)
-            self.spec = (ret_spec, variables_list, functions_list)
+            if (len(self.specification_clauses) == 1):
+                actual_spec = self.specification_clauses[0]
+            else:
+                actual_spec = self.make_function_expr('and', *self.specification_clauses)
+            variables_list, functions_list = \
+            expr_transforms.canonicalize_specification(actual_spec, self)
+            self.spec = (actual_spec, variables_list, functions_list)
         return self.spec
 
     def clear_assertions(self):

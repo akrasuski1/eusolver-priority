@@ -59,7 +59,7 @@ class EqFunction(InterpretedFunctionBase):
         super().__init__('=', 2, (domain_type, domain_type), exprtypes.BoolType())
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._to_smt_children(expr_object, smt_context_object, var_subst_map)
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
         return (child_terms[0] == child_terms[1])
 
     def evaluate(self, expr_object, eval_context_object):
@@ -74,7 +74,7 @@ class NeFunction(InterpretedFunctionBase):
         super().__init__('ne', 2, (domain_type, domain_type), exprtypes.BoolType())
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._to_smt_children(expr_object, smt_context_object, var_subst_map)
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
         return (child_terms[0] != child_terms[1])
 
     def evaluate(self, expr_object, eval_context_object):
@@ -91,7 +91,7 @@ class AndFunction(InterpretedFunctionBase):
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.And(*child_terms)
+        return z3.And(*(child_terms + [child_terms[0].ctx]))
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
@@ -112,7 +112,7 @@ class OrFunction(InterpretedFunctionBase):
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.Or(*child_terms)
+        return z3.Or(*(child_terms + [child_terms[0].ctx]))
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)

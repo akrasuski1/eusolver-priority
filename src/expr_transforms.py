@@ -130,9 +130,9 @@ def canonicalize_specification(expr, syn_ctx):
     num_vars = len(variable_list)
     num_funs = len(unknown_function_list)
     for i in range(num_vars):
-        variable_list[i].var_eval_offset = i
+        variable_list[i].variable_eval_offset = i
     for i in range(num_funs):
-        unknown_function_list.unknown_function_id = i
+        unknown_function_list[i].unknown_function_id = i
 
     return (variable_list, unknown_function_list)
 
