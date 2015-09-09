@@ -121,7 +121,7 @@ class DivFunction(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = self.peek(1) / self.peek(0)
+        res = eval_context_object.peek(1) / eval_context_object.peek(0)
         eval_context_object.pop(2)
         eval_context_object.push(res)
 

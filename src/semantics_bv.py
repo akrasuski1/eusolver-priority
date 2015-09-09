@@ -83,7 +83,7 @@ class BVConcat(InterpretedFunctionBase):
 # new bitvector of size n, where n = i - j + 1
 
 class BVExtract(InterpretedFunctionBase):
-    def __init__(self, start_offset, end_offset, bv_type):
+    def __init__(self, start_offset, end_offset, bv_size):
         super().__init__('extract', 1, (exprtypes.BitVectorType(bv_size),),
                          exprtypes.BitVectorType(end_offset - start_offset + 1))
 
@@ -108,20 +108,120 @@ class BVExtract(InterpretedFunctionBase):
 # (bvnot (_ BitVec m) (_ BitVec m))
 # - bitwise negation
 
+class BVNot(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvnot', 1, (exprtypes.BitVectorType(bv_size),),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (not child_terms[0])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = ~(eval_context_object.peek(0))
+        eval_context_object.pop()
+        eval_context_object.push(res)
+
 # (bvand (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - bitwise and
+
+class BVAnd(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvand', 2 (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (child_terms[0] and child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = (eval_context_object.peek(0) & eval_context_object.peek(1))
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
 
 # (bvor (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - bitwise or
 
+class BVOr(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvor', 2 (exprtypes.BitVectorType(bv_size),
+                                    exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (child_terms[0] or child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = (eval_context_object.peek(0) | eval_context_object.peek(1))
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
 # (bvneg (_ BitVec m) (_ BitVec m))
 # - 2's complement unary minus
+
+class BVNeg(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvneg', 1, (exprtypes.BitVectorType(bv_size),),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (-child_terms[0])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = (-(eval_context_object.peek(0)))
+        eval_context_object.pop()
+        eval_context_object.push(res)
 
 # (bvadd (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - addition modulo 2^m
 
+class BVAdd(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvadd', 2 (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (child_terms[0] + child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = (eval_context_object.peek(0) + eval_context_object.peek(1))
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
 # (bvmul (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - multiplication modulo 2^m
+
+class BVMul(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvmul', 2 (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (child_terms[0] * child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = (eval_context_object.peek(0) * eval_context_object.peek(1))
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
 
 # (bvudiv (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - unsigned division, truncating towards 0 (undefined if divisor is 0)

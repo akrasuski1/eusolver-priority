@@ -42,6 +42,7 @@ import utils
 import semantics_types
 import exprs
 import exprtypes
+import expr_transforms
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -57,6 +58,8 @@ class SynthesisContext(object):
         self.function_instantiators = function_instantiators
         self.variables_map = {}
         self.unknown_function_map = {}
+        self.specification_clauses = {}
+        self.spec = None
 
     def make_variable(self, var_type, var_name,
                       var_eval_offset = exprs.VariableInfo._undefined_offset):
@@ -72,6 +75,15 @@ class SynthesisContext(object):
             retval = exprs.VariableInfo(var_type, var_name, var_eval_offset)
             self.variables_map[var_name] = retval
             return retval
+
+    def get_variable(self, var_name):
+        return self.variables_map.get(var_name, None)
+
+    def set_eval_offset_for_variable(self, var_name, var_eval_offset):
+        var_info = self.get_variable(var_name)
+        if (var_info == None):
+            raise ArgumentError('Could not find a variable named %s in context' % var_name)
+        var_info.var_eval_offset = var_eval_offset
 
     def make_variable_expr(self, var_type, var_name,
                            var_eval_offset = exprs.VariableInfo._undefined_offset):
@@ -151,6 +163,21 @@ class SynthesisContext(object):
         if (variable_info.synthesis_ctx is not self):
             return False
         return (self.variables_map.get(variable_info.variable_name, None) != None)
+
+    def assert_spec(self, spec_clause):
+        self.spec = None
+        expr_transforms.check_expr_binding_to_context(spec_clause, self)
+        self.specification_clauses.append(spec_clause)
+
+    def get_synthesis_spec(self):
+        if (self.spec == None and len(self.specification_clauses) > 0):
+            ret_spec = self.make_function_expr('and', *self.specification_clauses)
+            variables_list, functions_list = expr_transforms.canonicalize_specification(ret_spec)
+            self.spec = (ret_spec, variables_list, functions_list)
+        return self.spec
+
+    def clear_assertions(self):
+        self.specification_clauses = []
 
 #
 # synthesis_context.py ends here

@@ -42,6 +42,7 @@ import evaluation
 from enumerators import *
 import functools
 import hashcache
+import expr_transforms
 
 class PointDescriptor(object):
     def __init__(self, point_map):
@@ -53,68 +54,29 @@ class PointDescriptor(object):
         self.satisfying_exprs = []
 
 
-class TermSolver(object):
-    """A solver for terms. Assumes that the spec is single-invocation/separable."""
-    def __init__(self):
-        self.points = []
-        self.spec = None
-        self.evaluation_context = evaluation.EvaluationContext()
-
-    def solve(*generators):
-        for exprs in enumerators.cartesian_product_of_generators(generators):
-
-
-class CEGSolver(object):
-    def __init__(self, spec = None):
-        self.spec = spec
-        self.variables = set()
-        self.var_to_smt_exprs = {}
-
-    def add_spec(self, spec):
-        self.spec = spec
-
-    def add_variable(self, var_name):
-        self.variables.add(var_name)
-        self.var_to_smt_exprs[var_name] = evaluation.to_smt(var_name)
-
-    def _model_to_point_map(self, model):
-        point_map = {}
-        for (var_name, var_smt_expr) in self.var_to_smt_exprs:
-            point_map[var_name] = model.evaluate(var_smt_expr)
-        return point_map
-
-
-    def solve(self, term_generator, pred_generator):
-        """Solves for the spec given the term and predicate generators."""
-
-        term_solver = ConcreteSolver()
-        pred_solver = ConcreteSolver()
-
-        # add at least one point to the term solver
-        solver = z3.Solver()
-
-        solver.push()
-        solver.add(evaluation.to_smt(spec))
-        res = solver.check()
-        if (res != z3.sat):
-            return None
-
-        model = solver.model()
-        point_map = self._model_to_point_map(model)
-
-        term_solver.add_spec(spec)
-        term_solver.add_point(point_map)
-
-        term_solver.solve(generator)
 
 
 ########################################################################
 # TEST CASES
 ########################################################################
 
-def test_cegsolver():
-    var_generator = LeafGenerator(['Int_varA', 'Int_varB', 'Int_varC'],
-                                  validator, 'Variable Generator')
+def test_cegsolver_max(num_vars):
+    import synthesis_context
+    import semantics_core
+    import semantics_lia
+    import enumerators
+
+    syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
+                                                 semantics_lia.LIAInstantiator())
+    var_infos = [syn_ctx.make_variable(exprtypes.IntType(), 'x%d' % x, x)
+                 for x in range(num_vars)]
+    var_exprs = [exprs.VariableExpression(var_info) for var_info in var_infos]
+    var_generator = enumerators.LeafGenerator(var_exprs, 'Variable Generator')
+    const_generator = enumerators.LeafGenerator([exprs.Value(0, exprtypes.IntType()),
+                                                 exprs.Value(1, exprtypes.IntType())])
+    leaf_generator = AlternativesGenerator([var_generator, const_generator],
+                                           'Leaf Term Generator')
+
     generator_factory = RecursiveGeneratorFactory()
     start_generator_ph = generator_factory.make_placeholder('Start')
     start_bool_generator_ph = generator_factory.make_placeholder('StartBool')

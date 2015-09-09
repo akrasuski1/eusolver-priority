@@ -146,5 +146,18 @@ def get_expression_type(expr):
     else:
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % expr.expr_kind)
 
+def get_expression_size(expr):
+    """Returns the (syntactic) size of the expression."""
+    if (expr.expr_kind == ExpressionKinds.variable_expression or
+        expr.expr_kind == ExpressionKinds.constant_expression):
+        return 1
+    elif (expr.expr_kind == ExpressionKinds.function_expression):
+        retval = 1
+        for child in expr.children:
+            retval += get_expression_size(child)
+        return retval
+    else:
+        raise basetypes.UnhandledCaseError('Odd expression kind: %s' % expr.expr_kind)
+
 #
 # exprs.py ends here

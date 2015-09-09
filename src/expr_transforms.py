@@ -85,11 +85,56 @@ def check_single_invocation_property(expr):
         raise TypeError(('The (specification) expression: %s does not have the single ' +
                          'invocation property!') % exprs.expression_to_string(expr))
 
-def canonicalize_specification(expr, syn_ctx):
-    """Rewrites the (specification) expression, such that it has the following properties:
-    """
-    assert (exprs.get_expression_type(expr) == exprtypes.BoolType())
+def _gather_variables(expr, accumulator):
+    kind = expr.expr_kind
+    if (kind == exprs.ExpressionKinds.variable_expression):
+        accumulator.add(expr)
+    elif (kind == exprs.ExpressionKinds.function_expression):
+        for child in expr.children:
+            _gather_variables(child, accumulator)
 
+def gather_variables(expr):
+    """Gets the set of variable expressions present in the expr."""
+    var_set = set()
+    _gather_variables(expr, var_set)
+    return var_set
+
+def _gather_unknown_functions(expr, fun_set):
+    kind = expr.expr_kind
+    if (kind == exprs.ExpressionKinds.function_expression):
+        if (isinstance(expr.function_info, semantics_types.UnknownFunctionBase)):
+            fun_set.add(expr.function_info)
+        for child in expr.children:
+            _gather_unknown_functions(child, fun_set)
+
+def gather_unknown_functions(expr):
+    fun_set = set()
+    _gather_unknown_functions(expr, fun_set)
+    return fun_set
+
+def canonicalize_specification(expr, syn_ctx):
+    """Assigns variable offsets for all the vars appearing in the spec.
+    Assigns function ids for unknown functions appearing in the spec.
+    Returns a pair containing:
+    1. A list of variable_info objects, with the position each variable_info
+       being equal to its var_eval_offset.
+    2. A list of UnknownFunctionBase objects, with the position of each function_info
+       being equal to its unknown_function_id
+    """
+    check_expr_binding_to_context(expr, syn_ctx)
+    unknown_function_set = gather_unknown_functions(expr)
+    variable_set = gather_variables(expr)
+
+    unknown_function_list = list(unknown_function_set)
+    variable_list = [expr.variable_info for expr in variable_set]
+    num_vars = len(variable_list)
+    num_funs = len(unknown_function_list)
+    for i in range(num_vars):
+        variable_list[i].var_eval_offset = i
+    for i in range(num_funs):
+        unknown_function_list.unknown_function_id = i
+
+    return (variable_list, unknown_function_list)
 
 #
 # expr_transforms.py ends here
