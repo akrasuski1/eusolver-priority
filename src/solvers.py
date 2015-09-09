@@ -42,16 +42,125 @@ import evaluation
 from enumerators import *
 import functools
 import hashcache
+import exprs
 import expr_transforms
+import z3
+import z3smt
+import semantics_types
+import enum import Enum
 
-class PointDescriptor(object):
-    def __init__(self, point_map):
-        self.point_map = point_map
-        self.satisfying_exprs = []
+def model_to_point(model, var_smt_expr_list, var_info_list):
+    num_vars = len(var_smt_expr_list)
+    point = [None] * num_vars
+    for i in range(num_vars):
+        eval_value = model.evaluate(var_smt_expr_list[i], True)
+        if (var_info_list[i].variable_type == exprtypes.BoolType):
+            point[i] = bool(str(eval_value))
+        else:
+            point[i] = int(str(eval_value))
+    return tuple(point)
+
+class UnifStatus(Enum):
+    synthesis_complete = 1
+    uncovered_new_point = 2
+
+class TermSolver(object):
+    def __init__(self):
+        self.points = []
+        self.point_set = set()
+        self.reset()
 
     def reset(self):
-        self.satisfied = False
-        self.satisfying_exprs = []
+        self.spec = None
+        self.var_info_list = None
+        self.var_smt_expr_list = None
+        self.fun_list = None
+        self.smt_ctx = None
+        self.eval_ctx = None
+        self.solver = None
+        self.sat_point_set = None
+        self.sat_expr_list = None
+
+    def add_point(self, point):
+        if point in self.point_set:
+            raise basetypes.ArgumentError('Duplicate point added: %s' % str(point))
+        self.point_set.add(point)
+        self.points.append(point)
+
+    def add_point_from_model(self, model):
+        point = model_to_point(model, self.var_smt_expr_list, self.var_info_list)
+        self.add_point(point)
+
+    def test_expr(self, expr):
+        num_points = len(self.points)
+        eval_ctx = self.eval_ctx
+        points = self.points
+        eval_ctx.set_interpretation_map([expr])
+
+        points_satisfied = []
+        for i in range(num_points):
+            eval_ctx.set_valuation_map(points[i])
+            res = evaluation.evaluate_expression_raw(expr, eval_ctx)
+            if (res):
+                self.sat_point_set.add(i)
+                points_satisfied.append(i)
+
+        if (len(points_satisfied) > 0):
+            self.sat_expr_list.append((expr, set(points_satisfied)))
+            if (len(self.sat_point_set) == num_points):
+                return True
+
+        return False
+
+    def get_next_term_from_sat_expr_list(self, covered_points)
+        index = 0
+        num_points = len(self.points)
+        while (self.sat_expr_list[index][1].is_subset(covered_points) and index < num_points):
+            index += 1
+        if (index >= num_points):
+            return None
+        else:
+            (expr, points_covered_by_expr) = sat_expr_list[index]
+            newly_covered_points = points_covered_by_expr - covered_points
+            for i in range(num_points):
+                (old_expr, old_points) = self.sat_expr_list[i]
+                self.sat_expr_list[i] = (old_expr, old_points - newly_covered_points)
+            self.sat_expr_list.sort(key=lambda x: len(x[1]))
+            return (expr, newly_covered_points, self.point_set - covered_points - newly_covered_points)
+
+
+    def try_unification(self, pred_generator):
+        num_points = len(self.points)
+        self.sat_expr_list.sort(key=lambda x: len(x[1]))
+        smt_predicates_so_far = z3.BoolVal(False)
+        index_in_sat_expr_list = 0
+        term_guard_list = []
+        while (len(covered_points) != num_points):
+            cur_term, pos_pts, neg_pts = self.get_next_term_from_sat_expr_list(covered_points)
+            covered_points = covered_points | pos_pts
+            if (len(covered_points) == num_points):
+                # last point, no pred required
+                term_guard_list.append((cur_term, None))
+                return term_guard_list
+            # learn a guard for the point
+
+    def solve(self, syn_ctx, generator, predicate_generator):
+        self.spec, self.var_info_list, self.fun_list = syn_ctx.get_synthesis_spec()
+        self.smt_ctx = z3smt.Z3SMTContext()
+        self.eval_ctx = evaluation.EvaluationContext()
+        var_expr_list = [exprs.VariableExpression(var_info) for var_info in var_info_list]
+        self.var_smt_expr_list = [semantics_types.expression_to_smt(expr, smt_ctx)
+                                  for expr in var_expr_list]
+        self.sat_point_set = set()
+        self.sat_expr_list = []
+        solver = z3.Solver(smt_ctx.ctx())
+
+        while (True):
+            for expr in generator.generate():
+                done = self.test_expr(expr)
+                if (done):
+                    self.try_unification(predicate_generator)
+
 
 
 
