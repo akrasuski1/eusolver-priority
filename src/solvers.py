@@ -96,16 +96,16 @@ class TermSolver(object):
         points = self.points
         eval_ctx.set_interpretation_map([expr])
 
-        points_satisfied = []
+        points_satisfied = set()
         for i in range(num_points):
             eval_ctx.set_valuation_map(points[i])
             res = evaluation.evaluate_expression_raw(self.spec, eval_ctx)
             if (res):
                 self.sat_point_set.add(i)
-                points_satisfied.append(i)
+                points_satisfied.add(i)
 
         if (len(points_satisfied) > 0):
-            self.sat_expr_list.append((expr, set(points_satisfied)))
+            self.sat_expr_list.append((expr, points_satisfied))
             if (len(self.sat_point_set) == num_points):
                 return True
 
@@ -125,16 +125,18 @@ class TermSolver(object):
                 (old_expr, old_points) = self.sat_expr_list[i]
                 self.sat_expr_list[i] = (old_expr, old_points - newly_covered_points)
             self.sat_expr_list.sort(key=lambda x: len(x[1]))
-            return (expr, newly_covered_points, (self.point_set -
+            return (expr, newly_covered_points, (set(range(num_points)) -
                                                  covered_points -
                                                  newly_covered_points))
 
     def test_guard(self, guard, term, smt_uncovered_region):
         self.smt_ctx.set_interpretation_map([term])
         test_formula = z3.And(smt_uncovered_region,
-                              semantics_types.expression_to_smt(guard, self.smt_ctx))
+                              semantics_types.expression_to_smt(guard, self.smt_ctx),
+                              smt_uncovered_region.ctx)
         test_formula = z3.Implies(test_formula,
-                                  semantics_types.expression_to_smt(self.spec, self.smt_ctx))
+                                  semantics_types.expression_to_smt(self.spec, self.smt_ctx),
+                                  test_formula.ctx)
         self.solver.push()
         self.solver.add(z3.Not(test_formula))
         res = self.solver.check()
@@ -146,26 +148,27 @@ class TermSolver(object):
             return True
 
 
-    def learn_guard(self, term, pos_pts, neg_pts,
+    def learn_guard(self, term, pos_pt_indices, neg_pt_indices,
                     smt_uncovered_region, pred_generator):
         covered_neg_pts = set()
-        num_pos_pts = len(pos_pts)
-        num_neg_pts = len(neg_pts)
+        num_pos_pts = len(pos_pt_indices)
+        num_neg_pts = len(neg_pt_indices)
         exprs_covering_pos_pts = [set() for x in range(num_pos_pts)]
         exprs_covering_neg_pts = [set() for x in range(num_neg_pts)]
         eval_ctx = self.eval_ctx
 
-        for expr in generator.generate(10):
+        pred_generator.set_size(3)
+        for expr in pred_generator.generate():
             pos_pts_covered_by_expr = set()
             neg_pts_covered_by_expr = set()
-            for i in range(num_pos_pts):
-                eval_ctx.set_valuation_map(point)
+            for pos_pt_index in pos_pt_indices:
+                eval_ctx.set_valuation_map(self.points[pos_pt_index])
                 if(evaluation.evaluate_expression_raw(expr, eval_ctx)):
-                    pos_pts_covered_by_expr.add(i)
-            for i in range(num_neg_pts):
-                eval_ctx.set(valuation_map(point))
+                    pos_pts_covered_by_expr.add(pos_pt_index)
+            for neg_pt_index in neg_pt_indices:
+                eval_ctx.set_valuation_map(self.points[neg_pt_index])
                 if (evaluation.evaluate_expression_raw(expr, eval_ctx)):
-                    neg_pts_covered_by_expr.add(i)
+                    neg_pts_covered_by_expr.add(neg_pt_index)
 
             if (len(pos_pts_covered_by_expr) > 0 and len(neg_pts_covered_by_expr) > 0):
                 continue
@@ -208,6 +211,7 @@ class TermSolver(object):
         covered_points = set()
         while (len(covered_points) != num_points):
             cur_term, pos_pts, neg_pts = self.get_next_term_from_sat_expr_list(covered_points)
+            print('Neg Points: %s' % str(neg_pts))
             covered_points = covered_points | pos_pts
             if (len(covered_points) == num_points):
                 # last point, no pred required
@@ -254,6 +258,7 @@ class TermSolver(object):
         self.spec, self.var_info_list, self.fun_list = syn_ctx.get_synthesis_spec()
         self.smt_ctx = z3smt.Z3SMTContext()
         self.eval_ctx = evaluation.EvaluationContext()
+        self.syn_ctx = syn_ctx
         var_expr_list = [exprs.VariableExpression(var_info)
                          for var_info in self.var_info_list]
         # for var_expr in var_expr_list:
@@ -263,6 +268,7 @@ class TermSolver(object):
         self.solver = z3.Solver(ctx=self.smt_ctx.ctx())
 
         while (True):
+            print('Restarting...')
             self.sat_point_set = set()
             self.sat_expr_list = []
             generator.set_size(3)
@@ -271,6 +277,7 @@ class TermSolver(object):
                 print('Trying: %s' % exprs.expression_to_string(expr))
                 done = self.test_expr(expr)
                 if (done):
+                    print(self.sat_expr_list)
                     if (len(self.points) > 0):
                         term_guard_list = self.try_unification(predicate_generator)
                         final_expr = self.make_expr_from_term_guard_list(term_guard_list)
