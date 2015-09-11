@@ -88,6 +88,5 @@ class UnhandledCaseError(Exception):
         pattern/case match. Details: """ + error_msg
 
 
-
 #
 # basetypes.py ends here

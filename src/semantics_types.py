@@ -131,6 +131,10 @@ class FunctionBase(object):
         else:
             assert len(domain_types) == 1, ("Only one domain type is allowed for " +
                                             "associative and commutative functions")
+            # make it a binary function at least!
+            domain_types = domain_types + (domain_types[0],)
+            self.domain_types = domain_types
+
         # build the mangled function name
         self.mangled_function_name = mangle_function_name(self.function_name, self.domain_types)
 

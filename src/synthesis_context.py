@@ -142,6 +142,12 @@ class SynthesisContext(object):
 
         return exprs.FunctionExpression(function_info, tuple(child_exps))
 
+    def make_ac_function_expr(self, function_name_or_info, *child_exps):
+        if (len(child_exps) == 1):
+            return child_exps[0]
+
+        return self.make_function_expr(function_name_or_info, *child_exps)
+
     def make_true_expr(self):
         """Makes an expression representing the Boolean constant TRUE."""
         return ConstantExpression(exprs.Value)
