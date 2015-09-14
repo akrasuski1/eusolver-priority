@@ -126,5 +126,19 @@ def all_of(iterable, predicate):
         if (not predicate(elem)):
             return False
     return True
+
+class UIDGenerator(object):
+    def __init__(self):
+        self.next_uid = 0
+
+    def get_uid(self):
+        r = self.next_uid
+        self.next_uid += 1
+        return r
+
+    def get_string_uid(self, prefix = ''):
+        r = ((prefix + '%s') % self.next_uid)
+        self.next_uid += 1
+        return r
 #
 # utils.py ends here

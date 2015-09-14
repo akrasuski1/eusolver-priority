@@ -42,9 +42,146 @@ import utils
 import exprs
 import exprtypes
 import semantics_types
+import itertools
+import functools
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
+
+class ExprTransformerBase(object):
+    def __init__(self, transform_name):
+        self.transform_name = transform_name
+        self.expr_stack = []
+
+    def _matches_expression(self, expr_object, fun_name):
+        return (expr_object.expr_kind == exprs.ExpressionKinds.function_expression and
+                expr_object.function_info.function_name == fun_name)
+
+    def _matches_expression_any(self, expr_object, *fun_names):
+        fun_name_set = set(fun_names)
+        if (expr_object.expr_kind != exprs.ExpressionKinds.function_expression):
+            return False
+        return (expr_object.function_info.function_name in fun_name_set)
+
+
+class NNFConverter(ExprTransformerBase):
+    def __init__(self):
+        super().__init__('NNFConverter')
+
+    def _eliminate_complex(self, expr_object, syn_ctx):
+        kind = expr_object.expr_kind
+        if (kind != exprs.ExpressionKinds.function_expression):
+            return expr_object
+        elif (not self._matches_expression_any(expr_object, 'and', 'or',
+                                               'implies', 'iff', 'xor',
+                                               'not')):
+            return expr_object
+        else:
+            function_info = expr_object.function_info
+            function_name = function_info.function_name
+            transformed_children = [self._eliminate_complex(x, syn_ctx)
+                                    for x in expr_object.children]
+            if (function_name == 'implies'):
+                c1 = syn_ctx.make_function_expr('not', transformed_children[0])
+                return syn_ctx.make_ac_function_expr('or', c1, transformed_children[1])
+            elif (function_name == 'iff'):
+                c1 = transformed_children[0]
+                c2 = transformed_children[1]
+                not_c1 = syn_ctx.make_function_expr('not', c1)
+                not_c2 = syn_ctx.make_function_expr('not', c2)
+                c1_implies_c2 = syn_ctx.make_ac_function_expr('or', not_c1, c2)
+                c2_implies_c1 = syn_ctx.make_ac_function_expr('or', not_c2, c1)
+                return syn_ctx.make_ac_function_expr('and', c1_implies_c2, c2_implies_c1)
+            elif (function_name == 'xor'):
+                c1 = transformed_children[0]
+                c2 = transformed_children[1]
+                not_c1 = syn_ctx.make_function_expr('not', c1)
+                not_c2 = syn_ctx.make_function_expr('not', c2)
+                c1_and_not_c2 = syn_ctx.make_ac_function_expr('and', c1, not_c2)
+                c2_and_not_c1 = syn_ctx.make_ac_function_expr('and', c2, not_c1)
+                return syn_ctx.make_ac_function_expr('or', c1_and_not_c2, c2_and_not_c1)
+            else:
+                return syn_ctx.make_function_expr(function_name, *transformed_children)
+
+
+    def _do_transform(self, expr_object, syn_ctx, polarity):
+        kind = expr_object.expr_kind
+        if (kind != exprs.ExpressionKinds.function_expression):
+            return expr_object
+        else:
+            function_info = expr_object.function_info
+            function_name = function_info.function_name
+            if (function_name == 'not'):
+                child_polarity = (not polarity)
+            else:
+                child_polarity = polarity
+
+            transformed_children = [self._convert_to_basic(x, syn_ctx, child_polarity)
+                                    for x in expr_object.children]
+
+            if (function_name == 'and'):
+                if (polarity):
+                    return syn_ctx.make_ac_function_expr('and', *transformed_children)
+                else:
+                    return syn_ctx.make_ac_function_expr('or', *transformed_children)
+            elif (function_name == 'or'):
+                if (polarity):
+                    return syn_ctx.make_ac_function_expr('or', *transformed_children)
+                else:
+                    return syn_ctx.make_ac_function_expr('and', *transformed_children)
+            elif (function_name == 'not'):
+                return transformed_children[0]
+            else:
+                if (polarity):
+                    return syn_ctx.make_function_expr(function_name, *transformed_children)
+
+    def apply(self, *args):
+        if (len(args) != 2):
+            raise basetypes.ArgumentError('NNFConverter.apply() must be called with an ' +
+                                          'expression object and a synthesis context object')
+        simple_expr = self._eliminate_complex(args[0], args[1])
+        return self._do_transform(simple_expr, args[1], True)
+
+class CNFConverter(ExprTransformerBase):
+    def __init__(self):
+        super().__init__('CNFConverter')
+
+    def _do_transform(expr_object, syn_ctx):
+        """Requires: we are provided the result of
+        _convert_to_basic(expr_object, syn_ctx)."""
+
+        kind = expr_object.expr_kind
+        if (kind != exprs.ExpressionKinds.function_expression):
+            return [expr_object]
+        else:
+            function_info = expr_object.function_info
+            num_children = len(expr_object.children)
+            if (function_info.function_name == 'and'):
+                clauses = []
+                for i in range(num_children):
+                    child = expr_object.children[i]
+                    clauses.extend(self._do_transform(child, syn_ctx))
+                return clauses
+            elif (function_info.function_name == 'or'):
+                transformed_children = []
+                for i in range(num_children):
+                    child = expr_object.children[i]
+                    transformed_children.append(self._do_transform(child, syn_ctx))
+
+                clauses = []
+                for prod_tuple in itertools.product(*transformed_children):
+                    clauses.append(syn_ctx.make_ac_function_expr('or', *prod_tuple))
+                return clauses
+
+
+
+    def apply(self, *args):
+        if (len(args) != 2):
+            raise basetypes.ArgumentError('CNFConverter.apply() must be called with ' +
+                                          'an expression and a synthesis context object')
+        nnf_converter = NNFConverter()
+        nnf_expr = nnf_converter.apply(args[0], args[1])
+        return _do_transform(nnf_expr, args[1])
 
 def check_expr_binding_to_context(expr, syn_ctx):
     kind = expr.expr_kind
@@ -135,6 +272,8 @@ def canonicalize_specification(expr, syn_ctx):
         unknown_function_list[i].unknown_function_id = i
 
     return (variable_list, unknown_function_list)
+
+
 
 #
 # expr_transforms.py ends here

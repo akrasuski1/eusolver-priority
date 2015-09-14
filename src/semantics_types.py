@@ -61,7 +61,8 @@ class FunctionKinds(IntEnum):
     unknown_function: represents a function to be synthesized for.
     """
     interpreted_function = 1
-    unknown_function = 2
+    uninterpreted_function = 2
+    unknown_function = 3
 
 def mangle_function_name(function_name, domain_types):
     return '_'.join([function_name] + [str(dom_type.type_id) for dom_type in domain_types])
