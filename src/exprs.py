@@ -164,5 +164,16 @@ def get_expression_size(expr):
     else:
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % expr.expr_kind)
 
+def substitute(expr, old_term, new_term, syn_ctx):
+    if (expr == old_term):
+        return new_term
+    kind = expr.expr_kind
+    if (kind == ExpressionKinds.function_expression):
+        subst_children = [substitute(x, old_term, new_term, syn_ctx)
+                          for x in expr.children]
+        return syn_ctx.make_function_expr(expr.function_info, *subst_children)
+    else:
+        return expr
+
 #
 # exprs.py ends here

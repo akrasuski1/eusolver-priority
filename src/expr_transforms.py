@@ -108,6 +108,13 @@ class NNFConverter(ExprTransformerBase):
         kind = expr_object.expr_kind
         if (kind != exprs.ExpressionKinds.function_expression):
             return expr_object
+
+        elif (not self._matches_expression_any(expr_object, 'and', 'or', 'not')):
+            if (polarity):
+                return expr_object
+            else:
+                return syn_ctx.make_function_expr('not', expr_object)
+
         else:
             function_info = expr_object.function_info
             function_name = function_info.function_name
@@ -132,8 +139,8 @@ class NNFConverter(ExprTransformerBase):
             elif (function_name == 'not'):
                 return transformed_children[0]
             else:
-                if (polarity):
-                    return syn_ctx.make_function_expr(function_name, *transformed_children)
+                assert False
+
 
     def apply(self, *args):
         if (len(args) != 2):
@@ -152,6 +159,8 @@ class CNFConverter(ExprTransformerBase):
 
         kind = expr_object.expr_kind
         if (kind != exprs.ExpressionKinds.function_expression):
+            return [expr_object]
+        elif (not in self._matches_expression_any(expr_object, 'and', 'or')):
             return [expr_object]
         else:
             function_info = expr_object.function_info
@@ -173,15 +182,14 @@ class CNFConverter(ExprTransformerBase):
                     clauses.append(syn_ctx.make_ac_function_expr('or', *prod_tuple))
                 return clauses
 
-
-
     def apply(self, *args):
         if (len(args) != 2):
             raise basetypes.ArgumentError('CNFConverter.apply() must be called with ' +
                                           'an expression and a synthesis context object')
         nnf_converter = NNFConverter()
         nnf_expr = nnf_converter.apply(args[0], args[1])
-        return _do_transform(nnf_expr, args[1])
+        clauses = _do_transform(nnf_expr, args[1])
+        return (clauses, args[1].make_ac_function_expr('and', *clauses))
 
 def check_expr_binding_to_context(expr, syn_ctx):
     kind = expr.expr_kind
