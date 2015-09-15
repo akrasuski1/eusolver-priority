@@ -45,8 +45,8 @@ import semantics_types
 import itertools
 import functools
 
-if __name__ == '__main__':
-    utils.print_module_misuse_and_exit()
+# if __name__ == '__main__':
+#     utils.print_module_misuse_and_exit()
 
 class ExprTransformerBase(object):
     def __init__(self, transform_name):
@@ -123,7 +123,7 @@ class NNFConverter(ExprTransformerBase):
             else:
                 child_polarity = polarity
 
-            transformed_children = [self._convert_to_basic(x, syn_ctx, child_polarity)
+            transformed_children = [self._eliminate_complex(x, syn_ctx)
                                     for x in expr_object.children]
 
             if (function_name == 'and'):
@@ -153,14 +153,13 @@ class CNFConverter(ExprTransformerBase):
     def __init__(self):
         super().__init__('CNFConverter')
 
-    def _do_transform(expr_object, syn_ctx):
-        """Requires: we are provided the result of
-        _convert_to_basic(expr_object, syn_ctx)."""
+    def _do_transform(self, expr_object, syn_ctx):
+        """Requires: expression is in NNF."""
 
         kind = expr_object.expr_kind
         if (kind != exprs.ExpressionKinds.function_expression):
             return [expr_object]
-        elif (not in self._matches_expression_any(expr_object, 'and', 'or')):
+        elif (not self._matches_expression_any(expr_object, 'and', 'or')):
             return [expr_object]
         else:
             function_info = expr_object.function_info
@@ -188,7 +187,7 @@ class CNFConverter(ExprTransformerBase):
                                           'an expression and a synthesis context object')
         nnf_converter = NNFConverter()
         nnf_expr = nnf_converter.apply(args[0], args[1])
-        clauses = _do_transform(nnf_expr, args[1])
+        clauses = self._do_transform(nnf_expr, args[1])
         return (clauses, args[1].make_ac_function_expr('and', *clauses))
 
 def check_expr_binding_to_context(expr, syn_ctx):
@@ -203,32 +202,48 @@ def check_expr_binding_to_context(expr, syn_ctx):
                              'context!') % exprs.expression_to_string(expr))
         for child in expr.children:
             check_expr_binding_to_context(child, syn_ctx)
+    elif (kind == exprs.ExpressionKinds.formal_parameter_expression):
+        raise TypeError(('Expression %s contains a formal parameter! Specifications ' +
+                         'are not allowed to contain formal ' +
+                         'parameters!') % (exprs.expression_to_string(expr)))
     else:
         return
 
-def _check_single_invocation_property(expr, unknown_function_terms):
+def _get_unknown_function_invocation_args(expr):
     kind = expr.expr_kind
+    retval = set()
     if (kind == exprs.ExpressionKinds.function_expression):
-        fun_info = expr.function_info
-        if (function_info.function_kind == semantics_types.FunctionKinds.unknown_function):
-            if (len(unknown_function_terms) == 0):
-                unknown_function_terms.add(expr)
-            elif (expr not in unknown_function_terms):
-                return False
-
+        if (expr.function_info.function_kind == semantics_types.FunctionKinds.unknown_function):
+            retval.add(expr.children)
         for child in expr.children:
-            return _check_single_invocation_property(child, unknown_function_terms)
-    else:
-        return True
+            retval = retval | _get_unknown_function_invocation_args(child)
+    return retval
 
-
-def check_single_invocation_property(expr):
+def check_single_invocation_property(expr, syn_ctx = None):
     """Checks if the expression has only one unknown function, and also
     that the expression satisfies the single invocation property, i.e.,
     the unknown function appears only in one syntactic form in the expression."""
-    if (not _check_single_invocation_property(expr, set())):
-        raise TypeError(('The (specification) expression: %s does not have the single ' +
-                         'invocation property!') % exprs.expression_to_string(expr))
+    if (not isinstance(expr, list)):
+        unknown_function_set = gather_unknown_functions(expr)
+    else:
+        unknown_function_set = set()
+        for clause in expr:
+            unknown_function_set = unknown_function_set | gather_unknown_functions(clause)
+
+    if (len(unknown_function_set) > 1):
+        return False
+
+    if (not isinstance(expr, list)):
+        cnf_converter = CNFConverter()
+        (clauses, cnf_expr) = cnf_converter.apply(expr, syn_ctx)
+    else:
+        clauses = expr
+
+    for clause in clauses:
+        fun_arg_tuples = _get_unknown_function_invocation_args(clause)
+        if (len(fun_arg_tuples) > 1):
+            return False
+    return True
 
 def _gather_variables(expr, accumulator):
     kind = expr.expr_kind
@@ -258,13 +273,20 @@ def gather_unknown_functions(expr):
     return fun_set
 
 def canonicalize_specification(expr, syn_ctx):
-    """Assigns variable offsets for all the vars appearing in the spec.
-    Assigns function ids for unknown functions appearing in the spec.
-    Returns a pair containing:
-    1. A list of variable_info objects, with the position each variable_info
-       being equal to its var_eval_offset.
-    2. A list of UnknownFunctionBase objects, with the position of each function_info
-       being equal to its unknown_function_id
+    """Performs a bunch of operations:
+    1. Checks that the expr is "well-bound" to the syn_ctx object.
+    2. Checks that the specification has the single-invocation property.
+    3. Gathers the set of unknown functions (should be only one).
+    4. Gathers the variables used in the specification.
+    5. Converts the specification to CNF (as part of the single-invocation test)
+    6. For each clause, returns a mapping from the formal arguments to terms
+    Returns a tuple containing:
+    1. A list of 'variable_info' objects corresponding to the variables used in the spec
+    2. A list of unknown functions (should be a singleton list)
+    3. A list of clauses corresponding to the CNF specification
+    4. A list of NEGATED clauses
+    5. A list of lists, one list for each clause, mapping the formal parameters
+       to terms.
     """
     check_expr_binding_to_context(expr, syn_ctx)
     unknown_function_set = gather_unknown_functions(expr)
@@ -279,9 +301,63 @@ def canonicalize_specification(expr, syn_ctx):
     for i in range(num_funs):
         unknown_function_list[i].unknown_function_id = i
 
-    return (variable_list, unknown_function_list)
+    cnf_converter = CNFConverter()
+    clauses, cnf_expr = cnf_converter.apply(expr, syn_ctx)
+    neg_clauses = [syn_ctx.make_function_expr('not', clause) for clause in clauses]
+    if (not check_single_invocation_property(clauses)):
+        raise basetypes.ArgumentError('Spec:\n%s\nis not single-invocation!' %
+                                      exprs.expression_to_string(expr))
+    mapping_list = []
+    for clause in clauses:
+        arg_tuples = list(_get_unknown_function_invocation_args(clause))
+        assert (len(arg_tuples) <= 1)
+        if (len(arg_tuples) == 0):
+            mapping_list.append([])
+        else:
+            mapping_list.append(list(arg_tuples[0]))
 
+    return (variable_list, unknown_function_list, clauses, neg_clauses, mapping_list)
 
+#######################################################################
+# TEST CASES
+#######################################################################
+
+def test_cnf_conversion():
+    import synthesis_context
+    import semantics_core
+    import semantics_lia
+    syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
+                                                 semantics_lia.LIAInstantiator())
+    var_exprs = [syn_ctx.make_variable_expr(exprtypes.IntType(), 'x%d' % i) for i in range(10)]
+    max_fun = syn_ctx.make_unknown_function('max', [exprtypes.IntType()] * 10,
+                                            exprtypes.IntType())
+    max_app = syn_ctx.make_function_expr(max_fun, *var_exprs)
+    max_ge_vars = [syn_ctx.make_function_expr('ge', max_app, var_expr) for var_expr in var_exprs]
+    max_eq_vars = [syn_ctx.make_function_expr('eq', max_app, var_expr) for var_expr in var_exprs]
+    formula1 = syn_ctx.make_ac_function_expr('or', *max_eq_vars)
+    formula2 = syn_ctx.make_ac_function_expr('and', *max_ge_vars)
+    formula = syn_ctx.make_ac_function_expr('and', formula1, formula2)
+
+    cnf_converter = CNFConverter()
+    cnf_clauses, cnf_expr = cnf_converter.apply(formula, syn_ctx)
+    print(exprs.expression_to_string(cnf_expr))
+    print([exprs.expression_to_string(cnf_clause) for cnf_clause in cnf_clauses])
+
+    print(check_single_invocation_property(formula, syn_ctx))
+    binary_max = syn_ctx.make_unknown_function('max2', [exprtypes.IntType(),
+                                                        exprtypes.IntType()],
+                                               exprtypes.IntType())
+    binary_max_app = syn_ctx.make_function_expr(binary_max, var_exprs[0], var_exprs[1])
+    binary_max_app_rev = syn_ctx.make_function_expr(binary_max, var_exprs[1], var_exprs[0])
+    non_separable = syn_ctx.make_function_expr('eq', binary_max_app, binary_max_app_rev)
+    print(check_single_invocation_property(non_separable, syn_ctx))
+
+    max_rec = syn_ctx.make_function_expr(binary_max, binary_max_app, binary_max_app)
+    non_separable2 = syn_ctx.make_function_expr('eq', max_rec, binary_max_app)
+    print(check_single_invocation_property(non_separable2, syn_ctx))
+
+if __name__ == '__main__':
+    test_cnf_conversion()
 
 #
 # expr_transforms.py ends here

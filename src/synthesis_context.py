@@ -43,6 +43,7 @@ import semantics_types
 import exprs
 import exprtypes
 import expr_transforms
+import basetypes
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -89,7 +90,7 @@ class SynthesisContext(object):
     def make_variable_expr(self, var_type, var_name,
                            var_eval_offset = exprs.VariableInfo._undefined_offset):
         var_info = self.make_variable(var_type, var_name, var_eval_offset)
-        return expr.VariableExpression(var_info)
+        return exprs.VariableExpression(var_info)
 
     def make_constant_expr(self, const_type, const_value):
         """Makes a typed constant expression with the given value."""
@@ -136,9 +137,10 @@ class SynthesisContext(object):
             function_name = function_info.function_name
 
         if (function_info == None):
-            raise ArgumentError('Could not instantiate function named "' + function_name +
-                                '" with argument types: (' +
-                                ', '.join([str(x.expr_type) for x in child_exps]) + ')')
+            raise basetypes.ArgumentError('Could not instantiate function named "' +
+                                          function_name + '" with argument types: (' +
+                                          ', '.join([str(exprs.get_expression_type(x))
+                                                     for x in child_exps]) + ')')
 
         return exprs.FunctionExpression(function_info, tuple(child_exps))
 
@@ -182,13 +184,15 @@ class SynthesisContext(object):
                 actual_spec = self.specification_clauses[0]
             else:
                 actual_spec = self.make_function_expr('and', *self.specification_clauses)
-            variables_list, functions_list = \
+            variables_list, functions_list, clauses, neg_clauses, mapping_list = \
             expr_transforms.canonicalize_specification(actual_spec, self)
-            self.spec = (actual_spec, variables_list, functions_list)
+            self.spec = (actual_spec, variables_list, functions_list, clauses,
+                         neg_clauses, mapping_list)
         return self.spec
 
     def clear_assertions(self):
         self.specification_clauses = []
+        self.spec = None
 
 #
 # synthesis_context.py ends here

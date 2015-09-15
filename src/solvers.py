@@ -271,7 +271,8 @@ class TermSolver(object):
             return expr
 
     def solve(self, syn_ctx, generator, predicate_generator):
-        self.spec, self.var_info_list, self.fun_list = syn_ctx.get_synthesis_spec()
+        (self.spec, self.var_info_list, self.fun_list,
+         self.clauses, self.neg_clauses, self.mapping_list) = syn_ctx.get_synthesis_spec()
         self.smt_ctx = z3smt.Z3SMTContext()
         self.eval_ctx = evaluation.EvaluationContext()
         self.syn_ctx = syn_ctx
@@ -325,11 +326,9 @@ def test_solver_max(num_vars):
     ge_fun = syn_ctx.make_function('ge', exprtypes.IntType(), exprtypes.IntType())
     eq_fun = syn_ctx.make_function('eq', exprtypes.IntType(), exprtypes.IntType())
 
-    param_infos = [syn_ctx.make_variable(exprtypes.IntType(), 'arg%d' % x, x)
-                   for x in range(num_vars)]
-
-    param_exprs = [exprs.VariableExpression(var_info) for var_info in param_infos]
-    param_generator = enumerators.LeafGenerator(param_exprs, 'Variable Generator')
+    param_exprs = [exprs.FormalParameterExpression(max_fun, exprtypes.IntType(), i)
+                   for i in range(num_vars)]
+    param_generator = enumerators.LeafGenerator(param_exprs, 'Argument Generator')
     zero_value = exprs.Value(0, exprtypes.IntType())
     one_value = exprs.Value(1, exprtypes.IntType())
     const_generator = enumerators.LeafGenerator([exprs.ConstantExpression(zero_value),

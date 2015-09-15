@@ -58,12 +58,19 @@ class ExpressionKinds(IntEnum):
     function_expression: An expression representing a function application.
     """
     variable_expression = 1
-    constant_expression = 2
-    function_expression = 3
+    formal_parameter_expression = 2
+    constant_expression = 3
+    function_expression = 4
 
 
 _VariableExpression = collections.namedtuple('VariableExpression',
                                              ['expr_kind', 'variable_info'])
+
+_FormalParameterExpression = collections.namedtuple('FormalParameterExpression',
+                                                    ['expr_kind',
+                                                     'unknown_function_info',
+                                                     'parameter_type',
+                                                     'parameter_position'])
 
 _ConstantExpression = collections.namedtuple('ConstantExpression',
                                              ['expr_kind', 'value_object'])
@@ -82,6 +89,11 @@ def ConstantExpression(value_object):
 def FunctionExpression(function_info, children):
     return _FunctionExpression(ExpressionKinds.function_expression,
                                function_info, children)
+
+def FormalParameterExpression(unknown_function_info, parameter_type, parameter_position):
+    return _FormalParameterExpression(ExpressionKinds.formal_parameter_expression,
+                                      unknown_function_info, parameter_type,
+                                      parameter_position)
 
 def value_to_string(the_value):
     if (the_value.value_type.type_code == exprtypes.TypeCodes.boolean_type):
@@ -127,6 +139,8 @@ def expression_to_string(expr):
 
     if (expr.expr_kind == ExpressionKinds.variable_expression):
         return expr.variable_info.variable_name
+    elif (expr.expr_kind == ExpressionKinds.formal_parameter_expression):
+        return '_arg_%d' % expr.parameter_position
     elif (expr.expr_kind == ExpressionKinds.constant_expression):
         return _constant_to_string(expr.value_object.value_type,
                                    expr.value_object.value_object)
@@ -144,6 +158,8 @@ def get_expression_type(expr):
 
     if (expr.expr_kind == ExpressionKinds.variable_expression):
         return expr.variable_info.variable_type
+    elif (expr.expr_kind == ExpressionKinds.formal_parameter_expression):
+        return expr.parameter_type
     elif (expr.expr_kind == ExpressionKinds.constant_expression):
         return expr.value_object.value_type
     elif (expr.expr_kind == ExpressionKinds.function_expression):
@@ -154,7 +170,8 @@ def get_expression_type(expr):
 def get_expression_size(expr):
     """Returns the (syntactic) size of the expression."""
     if (expr.expr_kind == ExpressionKinds.variable_expression or
-        expr.expr_kind == ExpressionKinds.constant_expression):
+        expr.expr_kind == ExpressionKinds.constant_expression or
+        expr.expr_kind == ExpressionKinds.formal_parameter_expression):
         return 1
     elif (expr.expr_kind == ExpressionKinds.function_expression):
         retval = 1
