@@ -442,7 +442,7 @@ def test_solver_max(num_vars):
                                                                        [term_generator_ph,
                                                                         term_generator_ph])],))
 
-    # construct the spec
+   # construct the spec
     uvar_infos = [syn_ctx.make_variable(exprtypes.IntType(), 'x%d' % x, x)
                   for x in range(num_vars)]
     uvar_exprs = [exprs.VariableExpression(var_info) for var_info in uvar_infos]
