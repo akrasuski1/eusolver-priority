@@ -95,6 +95,7 @@ class TermSolver(object):
             raise basetypes.ArgumentError('Duplicate point added: %s' % str(point))
         self.point_set.add(point)
         self.points.append(point)
+        print('Current point set = %s' % [str(point) for point in self.points])
 
     def add_point_from_model(self, model):
         """Adds a point from a Z3 model object."""
@@ -149,6 +150,9 @@ class TermSolver(object):
 
     def prove_guard(self, guard, term, uncovered_region):
         num_clauses = len(self.neg_clauses)
+        print(('Trying to prove guard %s correct for term %s with uncovered region ' +
+               '%s') % (_expr_to_str(guard), _expr_to_str(term),
+                        _expr_to_str(uncovered_region)))
         self.smt_ctx.set_interpretation_map([term])
         for i in range(num_clauses):
             guard_smt = _expr_to_smt(guard, self.smt_ctx, self.smt_mapping_list[i])
@@ -179,8 +183,9 @@ class TermSolver(object):
         covered_pos_pts = set()
         num_pos_pts = len(pos_pt_indices)
         num_neg_pts = len(neg_pt_indices)
-        exprs_covering_pos_pts = [set() for x in range(num_pos_pts)]
-        exprs_covering_neg_pts = [set() for x in range(num_neg_pts)]
+        num_points = len(self.points)
+        exprs_covering_pos_pts = [set() for x in range(num_points)]
+        exprs_covering_neg_pts = [set() for x in range(num_points)]
         eval_ctx = self.eval_ctx
 
         pred_generator.set_size(3)
@@ -188,16 +193,20 @@ class TermSolver(object):
             pos_pts_covered_by_expr = set()
             neg_pts_covered_by_expr = set()
             print('Trying guard: %s' % _expr_to_str(expr))
-            for i in range(num_pos_pts):
-                pos_pt_index = pos_pt_indices[i]
-                eval_ctx.set_valuation_map(self.points[pos_pt_index])
-                if(evaluation.evaluate_expression_raw(expr, eval_ctx)):
-                    pos_pts_covered_by_expr.add(i)
-            for i in range(num_neg_pts):
-                neg_pt_index = neg_pt_indices[i]
-                eval_ctx.set_valuation_map(self.points[neg_pt_index])
-                if (evaluation.evaluate_expression_raw(expr, eval_ctx)):
-                    neg_pts_covered_by_expr.add(i)
+            for i in range(num_points):
+                if (i not in pos_pt_indices and i not in neg_pt_indices):
+                    continue
+                if (i in pos_pt_indices):
+                    eval_ctx.set_valuation_map(self.points[i])
+                    if(evaluation.evaluate_expression_raw(expr, eval_ctx)):
+                        print('Covers positive point %s' % str(self.points[i]))
+                        pos_pts_covered_by_expr.add(i)
+
+                if (i in neg_pt_indices):
+                    eval_ctx.set_valuation_map(self.points[i])
+                    if (evaluation.evaluate_expression_raw(expr, eval_ctx)):
+                        print('Covers negative point %s' % str(self.points[i]))
+                        neg_pts_covered_by_expr.add(i)
 
             if (len(pos_pts_covered_by_expr) > 0 and len(neg_pts_covered_by_expr) > 0):
                 continue
@@ -213,7 +222,10 @@ class TermSolver(object):
 
             # termination checks
             if (len(covered_neg_pts) == num_neg_pts):
-                witnesses = set([expr_set.pop() for expr_set in exprs_covering_neg_pts])
+                witnesses = set()
+                for i in range(num_points):
+                    if (i in neg_pt_indices):
+                        witnesses.add(exprs_covering_neg_pts[i].pop())
                 neg_witnesses = [self.syn_ctx.make_function_expr('not', witness)
                                  for witness in witnesses]
                 guard = self.syn_ctx.make_ac_function_expr('and', *neg_witnesses)
@@ -224,7 +236,10 @@ class TermSolver(object):
                     return None
 
             if (len(covered_pos_pts) == num_pos_pts):
-                witnesses = set([expr_set.pop() for expr_set in exprs_covering_pos_pts])
+                witnesses = set()
+                for i in range(num_points):
+                    if (i in pos_pt_indices):
+                        witnesses.add(exprs_covering_pos_pts[i].pop())
                 guard = self.syn_ctx.make_ac_function_expr('or', *witnesses)
                 prove_stat = self.prove_guard(guard, term, uncovered_region)
                 if (prove_stat == GuardProofStatus.proved_ok):
@@ -249,8 +264,9 @@ class TermSolver(object):
                 best_set_of_points_satisfied = new_points_covered
 
         if (max_idx >= 0):
+            print('max_idx = %d' % max_idx)
             self.sat_term_list.remove(self.sat_term_list[max_idx])
-            return (term,
+            return (best_term,
                     best_set_of_points_satisfied,
                     self.all_point_idx_set -
                     already_covered_points -
@@ -286,7 +302,10 @@ class TermSolver(object):
                 print('Learned guard %s for term %s' % (exprs.expression_to_string(guard),
                                                         exprs.expression_to_string(cur_term)))
                 term_guard_list.append((cur_term, guard))
-                uncovered_region = self.syn_ctx.make_ac_function_expr('and', uncovered_region, guard)
+                neg_guard = self.syn_ctx.make_function_expr('not', guard);
+                uncovered_region = self.syn_ctx.make_ac_function_expr('and',
+                                                                      uncovered_region,
+                                                                      neg_guard)
             else:
                 # we've added a point that's not covered
                 return None
@@ -444,11 +463,26 @@ def test_solver_max(num_vars):
 
     solver = TermSolver()
     expr = solver.solve(syn_ctx, term_generator, pred_generator)
-    print(exprs.expression_to_string(expr))
+    return expr
 
 
 if __name__ == '__main__':
-    test_solver_max(2)
+    import time
+    import sys
+    if (len(sys.argv) < 3):
+        print('Usage: %s <num args to max function> <log file name>' % sys.argv[0])
+        exit(1)
+    max_cardinality = int(sys.argv[1])
+    log_file = open(sys.argv[2], 'a')
+    start_time = time.clock()
+    sol = test_solver_max(max_cardinality)
+    end_time = time.clock()
+    total_time = end_time - start_time
+    log_file.write('max of %d arguments:\n%s\ncomputed in %s seconds\n' % (max_cardinality,
+                                                                           exprs.expression_to_string(sol),
+                                                                           str(total_time)))
+
+
 
 #
 # solvers.py ends here
