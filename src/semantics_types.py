@@ -68,15 +68,12 @@ def mangle_function_name(function_name, domain_types):
     return '_'.join([function_name] + [str(dom_type.type_id) for dom_type in domain_types])
 
 
-def _to_smt_variable_expression(expr_object, smt_context_object, var_subst_map):
+def _to_smt_variable_expression(expr_object, smt_context_object):
     var_info = expr_object.variable_info
-    if (var_subst_map == None):
-        var_type = var_info.variable_type
-        var_type_smt = var_type.get_smt_type(smt_context_object)
-        var_name = var_info.variable_name
-        return z3.Const(var_name, var_type_smt)
-    else:
-        return var_subst_map[var_info.variable_eval_offset]
+    var_type = var_info.variable_type
+    var_type_smt = var_type.get_smt_type(smt_context_object)
+    var_name = var_info.variable_name
+    return z3.Const(var_name, var_type_smt)
 
 def _to_smt_constant_expression(expr_object, smt_context_object):
     val_obj = expr_object.value_object
@@ -95,7 +92,9 @@ def _to_smt_constant_expression(expr_object, smt_context_object):
 def expression_to_smt(expr_object, smt_context_object, var_subst_map = None):
     kind = expr_object.expr_kind
     if (kind == exprs.ExpressionKinds.variable_expression):
-        return _to_smt_variable_expression(expr_object, smt_context_object, var_subst_map)
+        return _to_smt_variable_expression(expr_object, smt_context_object)
+    elif (kind == exprs.ExpressionKinds.formal_parameter_expression):
+        return var_subst_map[expr_object.parameter_position]
     elif (kind == exprs.ExpressionKinds.constant_expression):
         return _to_smt_constant_expression(expr_object, smt_context_object)
     elif (kind == exprs.ExpressionKinds.function_expression):

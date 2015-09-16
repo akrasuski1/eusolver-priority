@@ -48,6 +48,15 @@ import expr_transforms
 import z3
 import z3smt
 import semantics_types
+from enum import IntEnum
+
+_expr_to_str = exprs.expression_to_string
+_expr_to_smt = semantics_types.expression_to_smt
+
+class GuardProofStatus(IntEnum):
+    proved_ok = 1
+    unproved_continue = 2
+    unproved_restart = 3
 
 def model_to_point(model, var_smt_expr_list, var_info_list):
     num_vars = len(var_smt_expr_list)
@@ -68,6 +77,7 @@ class TermSolver(object):
         self.reset()
 
     def reset(self):
+        """Resets the solver."""
         self.spec = None
         self.var_info_list = None
         self.var_smt_expr_list = None
@@ -76,9 +86,10 @@ class TermSolver(object):
         self.eval_ctx = None
         self.solver = None
         self.sat_point_set = None
-        self.sat_expr_list = None
+        self.sat_term_list = None
 
     def add_point(self, point):
+        """Adds a point, which is really just a tuple of values."""
         print('Adding point: %s' % str(point))
         if point in self.point_set:
             raise basetypes.ArgumentError('Duplicate point added: %s' % str(point))
@@ -86,76 +97,86 @@ class TermSolver(object):
         self.points.append(point)
 
     def add_point_from_model(self, model):
+        """Adds a point from a Z3 model object."""
         point = model_to_point(model, self.var_smt_expr_list, self.var_info_list)
         self.add_point(point)
 
-    def test_expr(self, expr):
+    def test_term_on_points(self, term):
+        """Tests a term over the points accumulated so far.
+        Effects: if the expression satisfies the specification at one or more of the points,
+                 then the expression is "remembered", along with the points at which it satisfies
+                 the specification.
+        Return Value: If ALL points are covered by some set of expressions "remembered" so far,
+                      then return True, otherwise, return False
+        """
         num_points = len(self.points)
         if (num_points == 0):
             return True
         eval_ctx = self.eval_ctx
         points = self.points
-        eval_ctx.set_interpretation_map([expr])
+        eval_ctx.set_interpretation_map([term])
 
         points_satisfied = set()
         for i in range(num_points):
             eval_ctx.set_valuation_map(points[i])
             res = evaluation.evaluate_expression_raw(self.spec, eval_ctx)
             if (res):
-                self.sat_point_set.add(i)
+                print('pass: %s' % str(points[i]))
+                self.sat_point_idx_set.add(i)
                 points_satisfied.add(i)
 
         if (len(points_satisfied) > 0):
-            self.sat_expr_list.append((expr, points_satisfied))
-            if (len(self.sat_point_set) == num_points):
+            self.sat_term_list.append((term, points_satisfied))
+            if (len(self.sat_point_idx_set) == num_points):
                 return True
 
         return False
 
-    def get_next_term_from_sat_expr_list(self, covered_points):
-        index = 0
-        num_points = len(self.points)
-        while (self.sat_expr_list[index][1].issubset(covered_points) and index < num_points):
-            index += 1
-        if (index >= num_points):
-            return None
-        else:
-            (expr, points_covered_by_expr) = self.sat_expr_list[index]
-            newly_covered_points = points_covered_by_expr - covered_points
-            for i in range(num_points):
-                (old_expr, old_points) = self.sat_expr_list[i]
-                self.sat_expr_list[i] = (old_expr, old_points - newly_covered_points)
-            self.sat_expr_list.sort(key=lambda x: len(x[1]))
-            return (expr, newly_covered_points, (set(range(num_points)) -
-                                                 covered_points -
-                                                 newly_covered_points))
+    def check_if_any_term_covers_point(self, point):
+        self.eval_ctx.set_valuation_map(point)
+        point_idx = len(self.points)
+        self.add_point(point)
+        retval = False
 
-    def test_guard(self, guard, term, smt_uncovered_region):
+        for i in range(len(self.sat_term_list)):
+            (term, set_of_point_indices_satisfied) = self.sat_term_list[i]
+            self.eval_ctx.set_interpretation_map([term])
+            res = evaluation.evaluate_expression_raw(self.spec, self.eval_ctx)
+            if (res):
+                self.sat_term_list[i][1].add(point_idx)
+                retval = True
+        return retval
+
+    def prove_guard(self, guard, term, uncovered_region):
+        num_clauses = len(self.neg_clauses)
         self.smt_ctx.set_interpretation_map([term])
-        guard_smt = semantics_types.expression_to_smt(guard, self.smt_ctx)
-        test_formula = z3.And(smt_uncovered_region, guard_smt, smt_uncovered_region.ctx)
-        test_formula = z3.Implies(test_formula,
-                                  semantics_types.expression_to_smt(self.spec, self.smt_ctx),
-                                  test_formula.ctx)
-        self.solver.push()
-        print('Testing guard %s' % exprs.expression_to_string(guard))
-        print(z3.Not(test_formula))
-        self.solver.add(z3.Not(test_formula))
-        res = self.solver.check()
-        self.solver.pop()
-        if (res == z3.sat):
-            self.add_point_from_model(self.solver.model())
-            return False
-        else:
-            return True
-
+        for i in range(num_clauses):
+            guard_smt = _expr_to_smt(guard, self.smt_ctx, self.smt_mapping_list[i])
+            neg_smt_clause = _expr_to_smt(self.neg_clauses[i], self.smt_ctx)
+            smt_uncovered_region = _expr_to_smt(uncovered_region, self.smt_ctx, self.smt_mapping_list[i])
+            query = z3.And(smt_uncovered_region, guard_smt, neg_smt_clause, self.smt_ctx.ctx())
+            self.solver.push()
+            self.solver.add(query)
+            sat_res = self.solver.check()
+            self.solver.pop()
+            if (sat_res == z3.sat):
+                model = self.solver.model()
+                point = model_to_point(model, self.var_smt_expr_list, self.var_info_list)
+                if (self.check_if_any_term_covers_point(point)):
+                    return GuardProofStatus.unproved_continue
+                else:
+                    return GuardProofStatus.unproved_restart
+            else:
+                continue
+        return GuardProofStatus.proved_ok
 
     def learn_guard(self, term, pos_pt_indices, neg_pt_indices,
-                    smt_uncovered_region, pred_generator):
-        print('Synthesizing guard for term %s' % exprs.expression_to_string(term))
+                    uncovered_region, pred_generator):
+        print('Synthesizing guard for term %s' % _expr_to_str(term))
         print('With positive points: %s' % str([self.points[i] for i in pos_pt_indices]))
         print('With negative points: %s' % str([self.points[i] for i in neg_pt_indices]))
         covered_neg_pts = set()
+        covered_pos_pts = set()
         num_pos_pts = len(pos_pt_indices)
         num_neg_pts = len(neg_pt_indices)
         exprs_covering_pos_pts = [set() for x in range(num_pos_pts)]
@@ -166,15 +187,17 @@ class TermSolver(object):
         for expr in pred_generator.generate():
             pos_pts_covered_by_expr = set()
             neg_pts_covered_by_expr = set()
-            print('Trying guard: %s' % exprs.expression_to_string(expr))
-            for pos_pt_index in pos_pt_indices:
+            print('Trying guard: %s' % _expr_to_str(expr))
+            for i in range(num_pos_pts):
+                pos_pt_index = pos_pt_indices[i]
                 eval_ctx.set_valuation_map(self.points[pos_pt_index])
                 if(evaluation.evaluate_expression_raw(expr, eval_ctx)):
-                    pos_pts_covered_by_expr.add(pos_pt_index)
-            for neg_pt_index in neg_pt_indices:
+                    pos_pts_covered_by_expr.add(i)
+            for i in range(num_neg_pts):
+                neg_pt_index = neg_pt_indices[i]
                 eval_ctx.set_valuation_map(self.points[neg_pt_index])
                 if (evaluation.evaluate_expression_raw(expr, eval_ctx)):
-                    neg_pts_covered_by_expr.add(neg_pt_index)
+                    neg_pts_covered_by_expr.add(i)
 
             if (len(pos_pts_covered_by_expr) > 0 and len(neg_pts_covered_by_expr) > 0):
                 continue
@@ -182,47 +205,74 @@ class TermSolver(object):
             if (len(pos_pts_covered_by_expr) > 0):
                 for point_idx in pos_pts_covered_by_expr:
                     exprs_covering_pos_pts[point_idx].add(expr)
+                    covered_pos_pts.add(point_idx)
             if (len(neg_pts_covered_by_expr) > 0):
                 for point_idx in neg_pts_covered_by_expr:
                     exprs_covering_neg_pts[point_idx].add(expr)
                     covered_neg_pts.add(point_idx)
 
             # termination checks
-            common_pos = functools.reduce(lambda x, y: x.intersection(y), exprs_covering_pos_pts)
-            if (len(common_pos) > 0):
-                guard = self.syn_ctx.make_function_expr('and', *common_pos)
-                if (self.test_guard(guard, term, smt_uncovered_region)):
-                    return guard
-                else:
-                    return None
-
             if (len(covered_neg_pts) == num_neg_pts):
                 witnesses = set([expr_set.pop() for expr_set in exprs_covering_neg_pts])
                 neg_witnesses = [self.syn_ctx.make_function_expr('not', witness)
                                  for witness in witnesses]
                 guard = self.syn_ctx.make_ac_function_expr('and', *neg_witnesses)
-                if (self.test_guard(guard, term, smt_uncovered_region)):
+                prove_stat = self.prove_guard(guard, term, uncovered_region)
+                if (prove_stat == GuardProofStatus.proved_ok):
                     return guard
                 else:
                     return None
 
+            if (len(covered_pos_pts) == num_pos_pts):
+                witnesses = set([expr_set.pop() for expr_set in exprs_covering_pos_pts])
+                guard = self.syn_ctx.make_ac_function_expr('or', *witnesses)
+                prove_stat = self.prove_guard(guard, term, uncovered_region)
+                if (prove_stat == GuardProofStatus.proved_ok):
+                    return guard
+                else:
+                    return None
 
-    def try_unification(self, pred_generator):
+    def pop_maximally_covering_sat_term(self, already_covered_points):
+        max_new_points_covered = -1
+        max_idx = -1
+        num_terms = len(self.sat_term_list)
+        best_term = None
+        best_set_of_point_indices_satisfied = None
+        for i in range(num_terms):
+            (term, set_of_point_indices_satisfied) = self.sat_term_list[i]
+            new_points_covered = set_of_point_indices_satisfied - already_covered_points
+            num_new_points_covered = len(new_points_covered)
+            if (num_new_points_covered > max_new_points_covered):
+                max_idx = i
+                max_new_points_covered = num_new_points_covered
+                best_term = term
+                best_set_of_points_satisfied = new_points_covered
+
+        if (max_idx >= 0):
+            self.sat_term_list.remove(self.sat_term_list[max_idx])
+            return (term,
+                    best_set_of_points_satisfied,
+                    self.all_point_idx_set -
+                    already_covered_points -
+                    best_set_of_points_satisfied)
+        else:
+            return None
+
+    def unify_terms(self, pred_generator):
         num_points = len(self.points)
-        self.sat_expr_list.sort(key=lambda x: len(x[1]))
 
         print('Trying to unify terms:')
-        for i in range(len(self.sat_expr_list)):
-            print('%s which satisfies %s' % (exprs.expression_to_string(self.sat_expr_list[i][0]),
-                                             str([self.points[j] for j in self.sat_expr_list[i][1]])))
+        _format_str = '%s which satisfies points: %s'
+        for i in range(len(self.sat_term_list)):
+            print(_format_str % (_expr_to_str(self.sat_term_list[i][0]),
+                                 str([self.points[j] for j in self.sat_term_list[i][1]])))
 
-        smt_uncovered_region = z3.BoolVal(True, self.smt_ctx.ctx())
-        index_in_sat_expr_list = 0
+        uncovered_region = self.syn_ctx.make_true_expr()
         term_guard_list = []
         expr_to_smt = semantics_types.expression_to_smt
         covered_points = set()
         while (len(covered_points) != num_points):
-            cur_term, pos_pts, neg_pts = self.get_next_term_from_sat_expr_list(covered_points)
+            cur_term, pos_pts, neg_pts = self.pop_maximally_covering_sat_term(covered_points)
             covered_points = covered_points | pos_pts
             if (len(covered_points) == num_points):
                 # last point, no pred required
@@ -230,25 +280,25 @@ class TermSolver(object):
                 return term_guard_list
             # learn a guard for the point
             guard = self.learn_guard(cur_term, pos_pts, neg_pts,
-                                     smt_uncovered_region, pred_generator)
+                                     uncovered_region, pred_generator)
             if (guard != None):
                 # we've learnt a new guard
                 print('Learned guard %s for term %s' % (exprs.expression_to_string(guard),
                                                         exprs.expression_to_string(cur_term)))
-                term_guard_list.append(cur_term, guard)
-                smt_uncovered_region = z3.And(smt_uncovered_region,
-                                              z3.Not(expr_to_smt(guard, self.smt_ctx)))
+                term_guard_list.append((cur_term, guard))
+                uncovered_region = self.syn_ctx.make_ac_function_expr('and', uncovered_region, guard)
             else:
                 # we've added a point that's not covered
                 return None
 
-    def prove_expr(self, expr):
-        print(('Attempting to prove expression: %s' +
+    def prove_solution(self, expr):
+        print(('Attempting to prove solution: %s' +
                ' which passes on points %s') % (exprs.expression_to_string(expr),
                                                 str(self.points)))
         self.smt_ctx.set_interpretation_map([expr])
         formula = semantics_types.expression_to_smt(self.spec, self.smt_ctx)
         formula = z3.Not(formula)
+        print('Formula: %s' % formula)
         self.solver.push()
         self.solver.add(formula)
         res = self.solver.check()
@@ -264,17 +314,26 @@ class TermSolver(object):
         if (num_terms == 1):
             return term_guard_list[0][0]
         else:
-            expr = term_guard_list[num_terms - 1]
+            expr = term_guard_list[num_terms - 1][0]
             for i in reversed(range(num_terms - 1)):
                 expr = self.syn_ctx.make_function_expr('ite', term_guard_list[i][1],
                                                        term_guard_list[i][0], expr)
             return expr
 
-    def solve(self, syn_ctx, generator, predicate_generator):
+    def solve(self, syn_ctx, term_generator, pred_generator):
         (self.spec, self.var_info_list, self.fun_list,
          self.clauses, self.neg_clauses, self.mapping_list) = syn_ctx.get_synthesis_spec()
+        print([str(x) for x in self.var_info_list])
+
+        for mapping in self.mapping_list:
+            print([_expr_to_str(x) for x in mapping])
+
         self.smt_ctx = z3smt.Z3SMTContext()
         self.eval_ctx = evaluation.EvaluationContext()
+        self.smt_mapping_list = []
+        for mapping in self.mapping_list:
+            self.smt_mapping_list.append([_expr_to_smt(x, self.smt_ctx) for x in mapping])
+
         self.syn_ctx = syn_ctx
         var_expr_list = [exprs.VariableExpression(var_info)
                          for var_info in self.var_info_list]
@@ -284,23 +343,24 @@ class TermSolver(object):
 
         while (True):
             print('Restarting...')
-            self.sat_point_set = set()
-            self.sat_expr_list = []
-            generator.set_size(3)
-            predicate_generator.set_size(3)
-            for expr in generator.generate():
-                print('Trying: %s' % exprs.expression_to_string(expr))
-                done = self.test_expr(expr)
-                if (done):
+            self.sat_point_idx_set = set()
+            self.all_point_idx_set = set([x for x in range(len(self.points))])
+            self.sat_term_list = []
+            term_generator.set_size(1)
+            pred_generator.set_size(3)
+            for term in term_generator.generate():
+                print('Trying: %s' % _expr_to_str(term))
+                all_points_sat = self.test_term_on_points(term)
+                if (all_points_sat):
                     if (len(self.points) > 0):
-                        term_guard_list = self.try_unification(predicate_generator)
+                        term_guard_list = self.unify_terms(pred_generator)
                         if (term_guard_list == None):
                             break
                         else:
                             final_expr = self.make_expr_from_term_guard_list(term_guard_list)
                     else:
-                        final_expr = expr
-                    if (self.prove_expr(final_expr)):
+                        final_expr = term
+                    if (self.prove_solution(final_expr)):
                         return final_expr
                     else:
                         break

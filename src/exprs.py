@@ -155,7 +155,6 @@ def expression_to_string(expr):
 
 def get_expression_type(expr):
     """Returns the type of the expression."""
-
     if (expr.expr_kind == ExpressionKinds.variable_expression):
         return expr.variable_info.variable_type
     elif (expr.expr_kind == ExpressionKinds.formal_parameter_expression):

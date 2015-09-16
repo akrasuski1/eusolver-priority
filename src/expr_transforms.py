@@ -294,6 +294,7 @@ def canonicalize_specification(expr, syn_ctx):
 
     unknown_function_list = list(unknown_function_set)
     variable_list = [expr.variable_info for expr in variable_set]
+    variable_list.sort(key=lambda x: x.variable_name)
     num_vars = len(variable_list)
     num_funs = len(unknown_function_list)
     for i in range(num_vars):

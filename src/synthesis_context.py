@@ -152,12 +152,11 @@ class SynthesisContext(object):
 
     def make_true_expr(self):
         """Makes an expression representing the Boolean constant TRUE."""
-        return ConstantExpression(exprs.Value)
+        return exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
 
     def make_false_expr(self):
         """Makes an expression representing the boolean constant FALSE."""
-        return _ConstantExpression(ExpressionKinds.constant_expression,
-                                   exprtypes.BoolType(), True)
+        return exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
 
     def validate_function(self, function_info):
         if (function_info.synthesis_ctx is not self):

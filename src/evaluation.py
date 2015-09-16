@@ -40,6 +40,7 @@
 
 import utils
 import exprs
+import basetypes
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -48,6 +49,9 @@ def evaluate_expression_on_stack(expr_object, eval_context):
     kind = expr_object.expr_kind
     if (kind == exprs.ExpressionKinds.variable_expression):
         o = expr_object.variable_info.variable_eval_offset
+        eval_context.push(eval_context.valuation_map[o])
+    elif (kind == exprs.ExpressionKinds.formal_parameter_expression):
+        o = expr_object.parameter_position
         eval_context.push(eval_context.valuation_map[o])
     elif (kind == exprs.ExpressionKinds.constant_expression):
         eval_context.push(expr_object.value_object.value_object)
