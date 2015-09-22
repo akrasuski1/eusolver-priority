@@ -39,6 +39,8 @@
 # Code:
 
 import basetypes
+import bitset
+from bitset import BitSet
 import evaluation
 import functools
 import hashcache
@@ -102,7 +104,7 @@ class TermSolver(object):
         point = model_to_point(model, self.var_smt_expr_list, self.var_info_list)
         self.add_point(point)
 
-    def test_term_on_points(self, term):
+    def test_term_on_points(self, term, term_signature_set):
         """Tests a term over the points accumulated so far.
         Effects: if the expression satisfies the specification at one or more of the points,
                  then the expression is "remembered", along with the points at which it satisfies
@@ -117,7 +119,7 @@ class TermSolver(object):
         points = self.points
         eval_ctx.set_interpretation_map([term])
 
-        points_satisfied = set()
+        points_satisfied = BitSet(num_points)
         for i in range(num_points):
             eval_ctx.set_valuation_map(points[i])
             res = evaluation.evaluate_expression_raw(self.spec, eval_ctx)
@@ -339,6 +341,25 @@ class TermSolver(object):
                                                        term_guard_list[i][0], expr)
             return expr
 
+    def synthesize_terms_for_points(self, term_generator, size_limit):
+        num_points = len(self.points)
+
+        # no points available: any term will do!
+        if (num_points == 0):
+            term_generator.set_size(1)
+            for term in term_generator.generate():
+                return [(term, None)]
+
+        # the more interesting case when we actually need
+        # to satisfy the spec at some points
+        covered_point_idx_set = BitSet(num_points)
+        term_signature_set = set()
+        for current_size in range(1, size_limit + 1):
+            term_generator.set_size(current_size)
+            for term in term_generator.generate():
+
+
+
     def solve(self, syn_ctx, term_generator, pred_generator):
         (self.spec, self.var_info_list, self.fun_list,
          self.clauses, self.neg_clauses, self.mapping_list) = syn_ctx.get_synthesis_spec()
@@ -358,31 +379,16 @@ class TermSolver(object):
                          for var_info in self.var_info_list]
         self.var_smt_expr_list = [semantics_types.expression_to_smt(expr, self.smt_ctx)
                                   for expr in var_expr_list]
-        self.solver = z3.Solver(ctx=self.smt_ctx.ctx())
+        self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
 
+        max_term_size = 1
         while (True):
             print('Restarting...')
-            self.sat_point_idx_set = set()
-            self.all_point_idx_set = set([x for x in range(len(self.points))])
-            self.sat_term_list = []
-            term_generator.set_size(1)
-            pred_generator.set_size(3)
-            for term in term_generator.generate():
-                print('Trying: %s' % _expr_to_str(term))
-                all_points_sat = self.test_term_on_points(term)
-                if (all_points_sat):
-                    if (len(self.points) > 0):
-                        term_guard_list = self.unify_terms(pred_generator)
-                        if (term_guard_list == None):
-                            break
-                        else:
-                            final_expr = self.make_expr_from_term_guard_list(term_guard_list)
-                    else:
-                        final_expr = term
-                    if (self.prove_solution(final_expr)):
-                        return final_expr
-                    else:
-                        break
+            term_pointidx_set_list = self.synthesize_terms_for_points(term_generator,
+                                                                      max_term_size)
+            if (term_pointidx_set_list == None):
+                # could not synthesize terms, bump up the max term size
+                max_term_size += 1
 
 
 ########################################################################

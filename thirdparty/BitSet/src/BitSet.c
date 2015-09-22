@@ -200,7 +200,7 @@ void bitset_set_bit_in_bitset(u64 bit_number, BitSet* bitset)
     if (!check_bounds(bitset, bit_number)) {
         return;
     }
-    u64 offset = BITS_TO_NUM_ELEMS(bit_number) - 1;
+    u64 offset = BITS_TO_NUM_ELEMS(bit_number + 1) - 1;
     u64 position = bit_number % BITS_PER_BIT_VECTOR_ELEMENT;
     u64 mask = construct_mask(position);
     bitset->m_bit_vector[offset] |= mask;
@@ -253,7 +253,7 @@ void bitset_clear_all_bits_in_bitset(BitSet* bitset)
 {
     bitset_last_error_code_ = BITSET_ERROR_CODE_OK;
     u64 len = BITS_TO_NUM_ELEMS(bitset->m_num_bits);
-    memset(bitset->m_bit_vector, 0, len);
+    memset(bitset->m_bit_vector, 0, sizeof(u64) * len);
 }
 
 void bitset_set_all_bits_in_bitset(BitSet* bitset)

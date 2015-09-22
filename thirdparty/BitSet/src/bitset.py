@@ -392,8 +392,15 @@ class BitSet(object):
     def __and__(self, other):
         return BitSet(bitset_and_bitsets_functional(self.bitset_object, other.bitset_object))
 
+    def __iand__(self, other):
+        bitset_and_bitsets(self.bitset_object, other.bitset_object)
+        return self
+
     def __or__(self, other):
         return BitSet(bitset_or_bitsets_functional(self.bitset_object, other.bitset_object))
+
+    def __ior__(self, other):
+        return bitset_or_bitsets(self.bitset_object, other.bitset_object)
 
     def __not__(self):
         return Bitset(bitset_negate_bitset_functional(self.bitset_object))
@@ -401,8 +408,16 @@ class BitSet(object):
     def __xor__(self, other):
         return BitSet(bitset_xor_bitsets_functional(self.bitset_object, other.bitset_object))
 
+    def __ixor__(self, other):
+        bitset_xor_bitsets(self.bitset_object, other.bitset_object)
+        return self
+
     def __sub__(self, other):
         return BitSet(bitset_negate_and_bitsets_functional(self.bitset_object, other.bitset_object))
+
+    def __isub__(self, other):
+        bitset_negate_and_bitsets(self.bitset_object, other.bitset_object)
+        return self
 
     def __le__(self, other):
         return self.issubset(other)
@@ -573,6 +588,52 @@ def test_bitsets():
     a.clear_all()
     a = a & b
     assert(len(a) == 0)
+
+    a.add(0)
+    a.add(3)
+    a.add(4)
+
+    assert(hash(a) != None and hash(a) == hash(a) and hash(a) != 0)
+
+    # check immutability
+    try:
+        try:
+            a.add(123)
+        except BitSetException as e:
+            print('Caught exception (expected behavior)\n%s' % str(e))
+            raise e
+        assert False
+    except BitSetException as e:
+        pass
+
+
+    a = BitSet(1024)
+    a.add(0)
+    a.add(3)
+    a.add(4)
+    b.clear_all()
+    b.add(0)
+    b.add(4)
+    a &= b
+    assert(len(a) == 2)
+    assert(0 in a)
+    assert(4 in a)
+    assert(3 not in a)
+
+    a.clear_all()
+    b.clear_all()
+
+    a.add(0)
+    a.add(1023)
+    a.add(42)
+
+    b.add(1)
+    b.add(1022)
+    b.add(42)
+
+    a ^= b
+    assert(len(a) == 4)
+    assert(str(a) == 'BitSet: {0, 1, 1022, 1023}')
 
 if __name__ == '__main__':
     test_bitsets()
