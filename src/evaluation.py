@@ -49,10 +49,10 @@ def evaluate_expression_on_stack(expr_object, eval_context):
     kind = expr_object.expr_kind
     if (kind == exprs.ExpressionKinds.variable_expression):
         o = expr_object.variable_info.variable_eval_offset
-        eval_context.push(eval_context.valuation_map[o])
+        eval_context.push(eval_context.valuation_map[o].value_object)
     elif (kind == exprs.ExpressionKinds.formal_parameter_expression):
         o = expr_object.parameter_position
-        eval_context.push(eval_context.valuation_map[o])
+        eval_context.push(eval_context.valuation_map[o].value_object)
     elif (kind == exprs.ExpressionKinds.constant_expression):
         eval_context.push(expr_object.value_object.value_object)
     elif (kind == exprs.ExpressionKinds.function_expression):
@@ -73,7 +73,7 @@ def evaluate_expression(expr_object, eval_context):
     return retval
 
 class EvaluationContext(object):
-    def __init__(self, eval_stack_size = 32768):
+    def __init__(self, eval_stack_size = 131072):
         self.eval_stack = [int(0)] * eval_stack_size
         self.eval_stack_size = eval_stack_size
         self.eval_stack_top = 0

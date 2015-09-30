@@ -302,6 +302,46 @@ u64 bitset_get_num_zero_bits(const BitSet* bitset)
     return (bitset->m_num_bits - one_bits);
 }
 
+bool bitset_is_full_set(const BitSet* bitset)
+{
+    bitset_last_error_code_ = BITSET_ERROR_CODE_OK;
+    u64 num_bits = bitset->m_num_bits;
+    u64 len = BITS_TO_NUM_ELEMS(num_bits);
+    u64 rem = num_bits % BITS_PER_BIT_VECTOR_ELEMENT;
+    u64* vec = bitset->m_bit_vector;
+    if (rem != 0) {
+        for (u64 i = 0; i < len - 1; ++i) {
+            if (vec[i] != (u64)0xFFFFFFFFFFFFFFFF) {
+                return false;
+            }
+        }
+        u64 mask = ((u64)1 << rem);
+        --mask;
+        return ((vec[len-1] & mask) == mask);
+    } else {
+        for (u64 i = 0; i < len; ++i) {
+            if (vec[i] != (u64)0xFFFFFFFFFFFFFFFF) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+bool bitset_is_empty_set(const BitSet* bitset)
+{
+    bitset_last_error_code_ = BITSET_ERROR_CODE_OK;
+    u64 num_bits = bitset->m_num_bits;
+    u64 len = BITS_TO_NUM_ELEMS(num_bits);
+    u64* vec = bitset->m_bit_vector;
+    for (u64 i = 0; i < len; ++i) {
+        if (vec[i] != (u64)0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool bitset_are_bitsets_disjoint(const BitSet* bitset1, const BitSet* bitset2)
 {
     bitset_last_error_code_ = BITSET_ERROR_CODE_OK;

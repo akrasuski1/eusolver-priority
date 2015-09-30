@@ -55,340 +55,133 @@ from enum import IntEnum
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
 
-class GuardProofStatus(IntEnum):
-    proved_ok = 1
-    unproved_continue = 2
-    unproved_restart = 3
-
 def model_to_point(model, var_smt_expr_list, var_info_list):
     num_vars = len(var_smt_expr_list)
     point = [None] * num_vars
     for i in range(num_vars):
         eval_value = model.evaluate(var_smt_expr_list[i], True)
-        if (var_info_list[i].variable_type == exprtypes.BoolType):
-            point[i] = bool(str(eval_value))
+        if (var_info_list[i].variable_type == exprtypes.BoolType()):
+            point[i] = exprs.Value(bool(str(eval_value)), exprtypes.BoolType())
+        elif (var_info_list[i].variable_type == exprtypes.IntType()):
+            point[i] = expr.Value(int(str(eval_value)), exprtypes.IntType())
+        elif (var_info_list[i].variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
+            point[i] = expr.Value(int(str(eval_value)), var_info_list.variable_type)
         else:
-            point[i] = int(str(eval_value))
+            raise basetypes.UnhandledCaseError('solvers.In model_to_point')
     return tuple(point)
 
 
+class DuplicatePointException(Exception):
+    def __init__(self, point):
+        self.point = point
+
+    def __str__(self):
+        return 'Duplicate Point: %s' % str(self.point)
+
+
 class TermSolver(object):
-    def __init__(self):
-        self.points = []
-        self.point_set = set()
+    def __init__(self, spec, term_generator):
+        self.spec = spec
+        self.term_generator = term_generator
+
+    def compute_term_signature(self, term, spec, eval_ctx):
+        points = self.points
+        num_points = len(points)
+        retval = self.signature_factory()
+        eval_ctx.set_interpretation_map([term])
+
+        for i in range(num_points):
+            eval_ctx.set_valuation_map(points[i])
+            res = evaluation.evaluate_expression_raw(spec, eval_ctx)
+            if (res):
+                retval.add(i)
+        return retval
+
+    def _trivial_solve(self):
+        for term in self.term_generator.generate():
+            return (True, {term : None})
+        return (False, None)
+
+    def continue_solve(self):
+        self.current_term_size += 1
+        generator.set_size(self.current_term_size)
+
+        num_points = self.num_points
+        if (num_points == 0):
+            return self._trivial_solve()
+
+        signature_set = self.signature_set
+        term_to_signature = self.term_to_signature
+        generator = self.term_generator
+        spec_satisfied_at_points = self.spec_satisfied_at_points
+
+        for term in generator.generate():
+            sig = self.compute_term_signature(term, spec, eval_ctx)
+            if (sig in signature_set):
+                continue
+            # sig not in signature_set
+            signature_set.add(sig)
+            term_to_signature[term] = sig
+            spec_satisfied_at_points |= sig
+            if (spec_satisfied_at_points.is_full()):
+                return (True, term_to_signature)
+
+       return (False, None)
+
+
+    def solve(self, term_size, points, spec, eval_ctx):
+        self.points = points
+        self.signature_set = set()
+        self.term_to_signature = {}
+        self.num_points = len(points)
+        self.signature_factory = BitSet.make_factory(num_points)
+        self.current_term_size = term_size - 1
+        self.spec_satisfied_at_points = self.signature_factory()
+
+        return self.continue_solve()
+
+
+class Solver(object):
+    def __init__(self, syn_ctx, specification = None):
+        self.syn_ctx = syn_ctx
+        self.spec = specification
         self.reset()
 
     def reset(self):
-        """Resets the solver."""
         self.spec = None
-        self.var_info_list = None
-        self.var_smt_expr_list = None
-        self.fun_list = None
-        self.smt_ctx = None
-        self.eval_ctx = None
-        self.solver = None
-        self.sat_point_set = None
-        self.sat_term_list = None
+        self.eval_ctx = evaluation.EvaluationContext()
+        self.smt_ctx = z3smt.Z3SMTContext()
+        self.points = []
+        self.point_set = set()
 
     def add_point(self, point):
-        """Adds a point, which is really just a tuple of values."""
-        print('Adding point: %s' % str(point))
-        if point in self.point_set:
-            raise basetypes.ArgumentError('Duplicate point added: %s' % str(point))
+        if (point in self.point_set):
+            raise DuplicatePointException(point)
         self.point_set.add(point)
         self.points.append(point)
-        print('Current point set = %s' % [str(point) for point in self.points])
 
     def add_point_from_model(self, model):
-        """Adds a point from a Z3 model object."""
-        point = model_to_point(model, self.var_smt_expr_list, self.var_info_list)
-        self.add_point(point)
+        point = model_to_point
 
-    def test_term_on_points(self, term, term_signature_set):
-        """Tests a term over the points accumulated so far.
-        Effects: if the expression satisfies the specification at one or more of the points,
-                 then the expression is "remembered", along with the points at which it satisfies
-                 the specification.
-        Return Value: If ALL points are covered by some set of expressions "remembered" so far,
-                      then return True, otherwise, return False
-        """
-        num_points = len(self.points)
-        if (num_points == 0):
-            return True
-        eval_ctx = self.eval_ctx
-        points = self.points
-        eval_ctx.set_interpretation_map([term])
-
-        points_satisfied = BitSet(num_points)
-        for i in range(num_points):
-            eval_ctx.set_valuation_map(points[i])
-            res = evaluation.evaluate_expression_raw(self.spec, eval_ctx)
-            if (res):
-                print('pass: %s' % str(points[i]))
-                self.sat_point_idx_set.add(i)
-                points_satisfied.add(i)
-
-        if (len(points_satisfied) > 0):
-            self.sat_term_list.append((term, points_satisfied))
-            if (len(self.sat_point_idx_set) == num_points):
-                return True
-
-        return False
-
-    def check_if_any_term_covers_point(self, point):
-        self.eval_ctx.set_valuation_map(point)
-        point_idx = len(self.points)
-        self.add_point(point)
-        retval = False
-
-        for i in range(len(self.sat_term_list)):
-            (term, set_of_point_indices_satisfied) = self.sat_term_list[i]
-            self.eval_ctx.set_interpretation_map([term])
-            res = evaluation.evaluate_expression_raw(self.spec, self.eval_ctx)
-            if (res):
-                self.sat_term_list[i][1].add(point_idx)
-                retval = True
-        return retval
-
-    def prove_guard(self, guard, term, uncovered_region):
-        num_clauses = len(self.neg_clauses)
-        print(('Trying to prove guard %s correct for term %s with uncovered region ' +
-               '%s') % (_expr_to_str(guard), _expr_to_str(term),
-                        _expr_to_str(uncovered_region)))
-        self.smt_ctx.set_interpretation_map([term])
-        for i in range(num_clauses):
-            guard_smt = _expr_to_smt(guard, self.smt_ctx, self.smt_mapping_list[i])
-            neg_smt_clause = _expr_to_smt(self.neg_clauses[i], self.smt_ctx)
-            smt_uncovered_region = _expr_to_smt(uncovered_region, self.smt_ctx, self.smt_mapping_list[i])
-            query = z3.And(smt_uncovered_region, guard_smt, neg_smt_clause, self.smt_ctx.ctx())
-            self.solver.push()
-            self.solver.add(query)
-            sat_res = self.solver.check()
-            self.solver.pop()
-            if (sat_res == z3.sat):
-                model = self.solver.model()
-                point = model_to_point(model, self.var_smt_expr_list, self.var_info_list)
-                if (self.check_if_any_term_covers_point(point)):
-                    return GuardProofStatus.unproved_continue
-                else:
-                    return GuardProofStatus.unproved_restart
-            else:
-                continue
-        return GuardProofStatus.proved_ok
-
-    def learn_guard(self, term, pos_pt_indices, neg_pt_indices,
-                    uncovered_region, pred_generator):
-        print('Synthesizing guard for term %s' % _expr_to_str(term))
-        print('With positive points: %s' % str([self.points[i] for i in pos_pt_indices]))
-        print('With negative points: %s' % str([self.points[i] for i in neg_pt_indices]))
-        covered_neg_pts = set()
-        covered_pos_pts = set()
-        num_pos_pts = len(pos_pt_indices)
-        num_neg_pts = len(neg_pt_indices)
-        num_points = len(self.points)
-        exprs_covering_pos_pts = [set() for x in range(num_points)]
-        exprs_covering_neg_pts = [set() for x in range(num_points)]
-        eval_ctx = self.eval_ctx
-
-        pred_generator.set_size(3)
-        for expr in pred_generator.generate():
-            pos_pts_covered_by_expr = set()
-            neg_pts_covered_by_expr = set()
-            print('Trying guard: %s' % _expr_to_str(expr))
-            for i in range(num_points):
-                if (i not in pos_pt_indices and i not in neg_pt_indices):
-                    continue
-                if (i in pos_pt_indices):
-                    eval_ctx.set_valuation_map(self.points[i])
-                    if(evaluation.evaluate_expression_raw(expr, eval_ctx)):
-                        print('Covers positive point %s' % str(self.points[i]))
-                        pos_pts_covered_by_expr.add(i)
-
-                if (i in neg_pt_indices):
-                    eval_ctx.set_valuation_map(self.points[i])
-                    if (evaluation.evaluate_expression_raw(expr, eval_ctx)):
-                        print('Covers negative point %s' % str(self.points[i]))
-                        neg_pts_covered_by_expr.add(i)
-
-            if (len(pos_pts_covered_by_expr) > 0 and len(neg_pts_covered_by_expr) > 0):
-                continue
-
-            if (len(pos_pts_covered_by_expr) > 0):
-                for point_idx in pos_pts_covered_by_expr:
-                    exprs_covering_pos_pts[point_idx].add(expr)
-                    covered_pos_pts.add(point_idx)
-            if (len(neg_pts_covered_by_expr) > 0):
-                for point_idx in neg_pts_covered_by_expr:
-                    exprs_covering_neg_pts[point_idx].add(expr)
-                    covered_neg_pts.add(point_idx)
-
-            # termination checks
-            if (len(covered_neg_pts) == num_neg_pts):
-                witnesses = set()
-                for i in range(num_points):
-                    if (i in neg_pt_indices):
-                        witnesses.add(exprs_covering_neg_pts[i].pop())
-                neg_witnesses = [self.syn_ctx.make_function_expr('not', witness)
-                                 for witness in witnesses]
-                guard = self.syn_ctx.make_ac_function_expr('and', *neg_witnesses)
-                prove_stat = self.prove_guard(guard, term, uncovered_region)
-                if (prove_stat == GuardProofStatus.proved_ok):
-                    return guard
-                else:
-                    return None
-
-            if (len(covered_pos_pts) == num_pos_pts):
-                witnesses = set()
-                for i in range(num_points):
-                    if (i in pos_pt_indices):
-                        witnesses.add(exprs_covering_pos_pts[i].pop())
-                guard = self.syn_ctx.make_ac_function_expr('or', *witnesses)
-                prove_stat = self.prove_guard(guard, term, uncovered_region)
-                if (prove_stat == GuardProofStatus.proved_ok):
-                    return guard
-                else:
-                    return None
-
-    def pop_maximally_covering_sat_term(self, already_covered_points):
-        max_new_points_covered = -1
-        max_idx = -1
-        num_terms = len(self.sat_term_list)
-        best_term = None
-        best_set_of_point_indices_satisfied = None
-        for i in range(num_terms):
-            (term, set_of_point_indices_satisfied) = self.sat_term_list[i]
-            new_points_covered = set_of_point_indices_satisfied - already_covered_points
-            num_new_points_covered = len(new_points_covered)
-            if (num_new_points_covered > max_new_points_covered):
-                max_idx = i
-                max_new_points_covered = num_new_points_covered
-                best_term = term
-                best_set_of_points_satisfied = new_points_covered
-
-        if (max_idx >= 0):
-            print('max_idx = %d' % max_idx)
-            self.sat_term_list.remove(self.sat_term_list[max_idx])
-            return (best_term,
-                    best_set_of_points_satisfied,
-                    self.all_point_idx_set -
-                    already_covered_points -
-                    best_set_of_points_satisfied)
+    def add_specification(self, specification):
+        syn_ctx = self.syn_ctx
+        if (self.spec == None):
+            self.spec = specification
         else:
-            return None
+            self.spec = syn_ctx.make_ac_function_expr('and', self.spec,
+                                                      specification)
 
-    def unify_terms(self, pred_generator):
-        num_points = len(self.points)
-
-        print('Trying to unify terms:')
-        _format_str = '%s which satisfies points: %s'
-        for i in range(len(self.sat_term_list)):
-            print(_format_str % (_expr_to_str(self.sat_term_list[i][0]),
-                                 str([self.points[j] for j in self.sat_term_list[i][1]])))
-
-        uncovered_region = self.syn_ctx.make_true_expr()
-        term_guard_list = []
-        expr_to_smt = semantics_types.expression_to_smt
-        covered_points = set()
-        while (len(covered_points) != num_points):
-            cur_term, pos_pts, neg_pts = self.pop_maximally_covering_sat_term(covered_points)
-            covered_points = covered_points | pos_pts
-            if (len(covered_points) == num_points):
-                # last point, no pred required
-                term_guard_list.append((cur_term, None))
-                return term_guard_list
-            # learn a guard for the point
-            guard = self.learn_guard(cur_term, pos_pts, neg_pts,
-                                     uncovered_region, pred_generator)
-            if (guard != None):
-                # we've learnt a new guard
-                print('Learned guard %s for term %s' % (exprs.expression_to_string(guard),
-                                                        exprs.expression_to_string(cur_term)))
-                term_guard_list.append((cur_term, guard))
-                neg_guard = self.syn_ctx.make_function_expr('not', guard);
-                uncovered_region = self.syn_ctx.make_ac_function_expr('and',
-                                                                      uncovered_region,
-                                                                      neg_guard)
-            else:
-                # we've added a point that's not covered
-                return None
-
-    def prove_solution(self, expr):
-        print(('Attempting to prove solution: %s' +
-               ' which passes on points %s') % (exprs.expression_to_string(expr),
-                                                str(self.points)))
-        self.smt_ctx.set_interpretation_map([expr])
-        formula = semantics_types.expression_to_smt(self.spec, self.smt_ctx)
-        formula = z3.Not(formula)
-        print('Formula: %s' % formula)
-        self.solver.push()
-        self.solver.add(formula)
-        res = self.solver.check()
-        self.solver.pop()
-        if (res == z3.sat):
-            self.add_point_from_model(self.solver.model())
-            return False
-        else:
-            return True
-
-    def make_expr_from_term_guard_list(self, term_guard_list):
-        num_terms = len(term_guard_list)
-        if (num_terms == 1):
-            return term_guard_list[0][0]
-        else:
-            expr = term_guard_list[num_terms - 1][0]
-            for i in reversed(range(num_terms - 1)):
-                expr = self.syn_ctx.make_function_expr('ite', term_guard_list[i][1],
-                                                       term_guard_list[i][0], expr)
-            return expr
-
-    def synthesize_terms_for_points(self, term_generator, size_limit):
-        num_points = len(self.points)
-
-        # no points available: any term will do!
-        if (num_points == 0):
-            term_generator.set_size(1)
-            for term in term_generator.generate():
-                return [(term, None)]
-
-        # the more interesting case when we actually need
-        # to satisfy the spec at some points
-        covered_point_idx_set = BitSet(num_points)
-        term_signature_set = set()
-        for current_size in range(1, size_limit + 1):
-            term_generator.set_size(current_size)
-            for term in term_generator.generate():
+    def solve(self):
+        t = expr_transforms.canonicalize_specification(self.spec)
+        var_list, uf_list, clauses, neg_clauses, mapping_list = t
+        self.var_info_list = var_list
+        var_expr_list = [exprs.VariableExpression(x) for x in var_list]
+        self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
 
 
 
-    def solve(self, syn_ctx, term_generator, pred_generator):
-        (self.spec, self.var_info_list, self.fun_list,
-         self.clauses, self.neg_clauses, self.mapping_list) = syn_ctx.get_synthesis_spec()
-        print([str(x) for x in self.var_info_list])
 
-        for mapping in self.mapping_list:
-            print([_expr_to_str(x) for x in mapping])
 
-        self.smt_ctx = z3smt.Z3SMTContext()
-        self.eval_ctx = evaluation.EvaluationContext()
-        self.smt_mapping_list = []
-        for mapping in self.mapping_list:
-            self.smt_mapping_list.append([_expr_to_smt(x, self.smt_ctx) for x in mapping])
-
-        self.syn_ctx = syn_ctx
-        var_expr_list = [exprs.VariableExpression(var_info)
-                         for var_info in self.var_info_list]
-        self.var_smt_expr_list = [semantics_types.expression_to_smt(expr, self.smt_ctx)
-                                  for expr in var_expr_list]
-        self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
-
-        max_term_size = 1
-        while (True):
-            print('Restarting...')
-            term_pointidx_set_list = self.synthesize_terms_for_points(term_generator,
-                                                                      max_term_size)
-            if (term_pointidx_set_list == None):
-                # could not synthesize terms, bump up the max term size
-                max_term_size += 1
 
 
 ########################################################################

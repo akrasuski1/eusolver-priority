@@ -36,8 +36,8 @@
 
 /* Code: */
 
-#if !defined BIT_SET_H__
-#define BIT_SET_H__
+#if !defined EUSOLVER_BITSET_H_
+#define EUSOLVER_BITSET_H_
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -76,6 +76,9 @@ extern "C" {
     u64 bitset_get_bitset_size(const BitSet* bitset);
     u64 bitset_get_num_one_bits(const BitSet* bitset);
     u64 bitset_get_num_zero_bits(const BitSet* bitset);
+
+    bool bitset_is_full_set(const BitSet* bitset);
+    bool bitset_is_empty_set(const BitSet* bitset);
 
     BitSet* bitset_and_bitsets_functional(const BitSet* bitset1, const BitSet* bitset2);
     BitSet* bitset_or_bitsets_functional(const BitSet* bitset1, const BitSet* bitset2);
@@ -124,6 +127,6 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif /* BIT_SET_H__ */
+#endif /* EUSOLVER_BITSET_H_ */
 
 /* BitSet.h ends here */

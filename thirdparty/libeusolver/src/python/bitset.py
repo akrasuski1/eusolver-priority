@@ -124,6 +124,12 @@ def init(path_to_lib):
     _loaded_lib.bitset_get_num_zero_bits.argtypes = [BitSetObject]
     _loaded_lib.bitset_get_num_zero_bits.restype = ctypes.c_ulong
 
+    _loaded_lib.bitset_is_full_set.argtypes = [BitSetObject]
+    _loaded_lib.bitset_is_full_set.restype = ctypes.c_bool
+
+    _loaded_lib.bitset_is_empty_set.argtypes = [BitSetObject]
+    _loaded_lib.bitset_is_empty_set.restype = ctypes.c_bool
+
     _loaded_lib.bitset_are_bitsets_equal.argtypes = [BitSetObject, BitSetObject]
     _loaded_lib.bitset_are_bitsets_equal.restype = ctypes.c_bool
 
@@ -257,6 +263,16 @@ def bitset_get_num_zero_bits(a0):
     _raise_exception_if_error()
     return r
 
+def bitset_is_full_set(a0):
+    r = lib().bitset_is_full_set(a0)
+    _raise_exception_if_error()
+    return r
+
+def bitset_is_empty_set(a0):
+    r = lib().bitset_is_empty_set(a0)
+    _raise_exception_if_error()
+    return r
+
 def bitset_are_bitsets_disjoint(a0, a1):
     r = lib().bitset_are_bitsets_disjoint(a0, a1)
     _raise_exception_if_error()
@@ -359,6 +375,13 @@ class BitSet(object):
         else:
             raise NotImplemented
         self.cached_hash_code = None
+
+
+    @classmethod
+    def make_factory(cls, size_of_universe):
+        def _factory_function():
+            return cls(size_of_universe)
+        return _factory_function
 
     def _check_mutability(self):
         if (self.cached_hash_code != None):
@@ -480,6 +503,12 @@ class BitSet(object):
         self._check_mutability()
         return bitset_set_all_bits_in_bitset(self.bitset_object)
 
+    def is_full(self):
+        return bitset_is_full_set(self.bitset_object)
+
+    def is_empty(self):
+        return bitset_is_empty_set(self.bitset_object)
+
     def isdisjoint(self, other):
         return bitset_are_bitsets_disjoint(self.bitset_object, other.bitset_object)
 
@@ -600,7 +629,7 @@ def test_bitsets():
         try:
             a.add(123)
         except BitSetException as e:
-            print('Caught exception (expected behavior)\n%s' % str(e))
+            print('Caught exception (expected behavior, not an error!)\n%s' % str(e))
             raise e
         assert False
     except BitSetException as e:
@@ -634,6 +663,28 @@ def test_bitsets():
     a ^= b
     assert(len(a) == 4)
     assert(str(a) == 'BitSet: {0, 1, 1022, 1023}')
+
+    a = BitSet(1024)
+    assert (a.is_empty())
+    assert (not a.is_full())
+
+    a.set_all()
+    assert (a.is_full)
+    assert (not a.is_empty())
+
+    a.clear_all()
+    assert (a.is_empty())
+    assert (not a.is_full())
+
+    a[128] = True
+    assert (not a.is_empty())
+    assert (not a.is_full())
+
+    factory = BitSet.make_factory(300)
+    new_bs = factory()
+    assert (new_bs.size_of_universe() == 300)
+    assert (new_bs.is_empty())
+    assert (not new_bs.is_full())
 
 if __name__ == '__main__':
     test_bitsets()
