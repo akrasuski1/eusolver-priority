@@ -160,6 +160,7 @@ public:
     class ConstIterator : public std::iterator<std::bidirectional_iterator_tag,
                                                const u64, i64, const u64*, const u64&>
     {
+        friend BitSet;
     private:
         const BitSet* m_bitset;
         i64 m_bit_position;
@@ -269,7 +270,6 @@ public:
 
     u64 hash() const;
 
-    void resize(u64 new_num_bits, bool initial_value = false);
     std::string to_string() const;
     BitSet* clone() const;
 };

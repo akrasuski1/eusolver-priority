@@ -35,7 +35,10 @@
 
 // Code:
 
+#include <sstream>
+
 #include "BitSet.hpp"
+#include "FNVHash64.h"
 
 namespace eusolver {
 
@@ -394,6 +397,561 @@ inline void BitSet::xor_bitsets(const BitSet* bitset1, const BitSet* bitset2, Bi
     apply_binary_function_on_bitsets<OpFun>(bitset1, bitset2, result);
 }
 
+BitSet::BitSet()
+    : m_bit_vector(nullptr), m_size_of_universe(0)
+{
+    // Nothing here
+}
+
+BitSet::BitSet(const BitSet& other)
+    : BitSet()
+{
+    allocate(other.m_size_of_universe);
+    initialize(other);
+}
+
+BitSet::BitSet(BitSet&& other)
+    : BitSet()
+{
+    std::swap(m_bit_vector, other.m_bit_vector);
+    std::swap(m_size_of_universe, other.m_size_of_universe);
+}
+
+BitSet::BitSet(u64 size_of_universe)
+    : BitSet(size_of_universe, false)
+{
+    // Nothing here
+}
+
+BitSet::BitSet(u64 size_of_universe, bool initial_value)
+    : BitSet()
+{
+    allocate(size_of_universe);
+    initialize(size_of_universe, initial_value);
+}
+
+BitSet::~BitSet()
+{
+    if (m_bit_vector != nullptr) {
+        free(m_bit_vector);
+    }
+}
+
+BitSet& BitSet::operator = (const BitSet& other)
+{
+    if (&other == this) {
+        return *this;
+    }
+    if (m_bit_vector != nullptr) {
+        free(m_bit_vector);
+        m_bit_vector = nullptr;
+    }
+    allocate(other.m_size_of_universe);
+    initialize(other);
+    return *this;
+}
+
+BitSet& BitSet::operator = (BitSet&& other)
+{
+    if (&other == this) {
+        return *this;
+    }
+    std::swap(m_bit_vector, other.m_bit_vector);
+    std::swap(m_size_of_universe, other.m_size_of_universe);
+    return *this;
+}
+
+bool BitSet::operator == (const BitSet& other) const
+{
+    if (m_size_of_universe != other.m_size_of_universe) {
+        return false;
+    }
+    auto const len = num_words_for_bits(m_size_of_universe);
+    return (memcmp(m_bit_vector, other.m_bit_vector, len * sizeof(WordType)) == 0);
+}
+
+bool BitSet::operator != (const BitSet& other) const
+{
+    return (!((*this) == other));
+}
+
+bool BitSet::operator < (const BitSet& other) const
+{
+    check_equality_of_universes(this, &other);
+    auto const len = m_size_of_universe;
+    auto cur_ptr_this = m_bit_vector;
+    auto cur_ptr_other = other.m_bit_vector;
+
+    bool proper = false;
+    for (u64 i = 0; i < len; ++i) {
+        if ((*cur_ptr_this & *cur_ptr_other) != *cur_ptr_this) {
+            return false;
+        }
+        proper = (proper || (*cur_ptr_this != *cur_ptr_other));
+        ++cur_ptr_this;
+        ++cur_ptr_other;
+    }
+    return proper;
+}
+
+bool BitSet::operator <= (const BitSet& other) const
+{
+    check_equality_of_universes(this, &other);
+    auto const len = m_size_of_universe;
+    auto cur_ptr_this = m_bit_vector;
+    auto cur_ptr_other = other.m_bit_vector;
+
+    for (u64 i = 0; i < len; ++i) {
+        if ((*cur_ptr_this & *cur_ptr_other) != *cur_ptr_this) {
+            return false;
+        }
+        ++cur_ptr_this;
+        ++cur_ptr_other;
+    }
+    return true;
+}
+
+bool BitSet::operator > (const BitSet& other) const
+{
+    return (!((*this) <= other));
+}
+
+bool BitSet::operator >= (const BitSet& other) const
+{
+    return (!((*this) < other));
+}
+
+void BitSet::set_bit(u64 bit_num)
+{
+    check_out_of_bounds(bit_num);
+    auto const mask = construct_mask(bit_num);
+    auto const offset = bit_num / bits_per_word();
+    m_bit_vector[offset] |= mask;
+}
+
+void BitSet::clear_bit(u64 bit_num)
+{
+    check_out_of_bounds(bit_num);
+    auto const mask = construct_mask(bit_num);
+    auto const offset = bit_num / bits_per_word();
+    m_bit_vector[offset] &= (~mask);
+}
+
+bool BitSet::test_bit(u64 bit_num) const
+{
+    check_out_of_bounds(bit_num);
+    auto const mask = construct_mask(bit_num);
+    auto const offset = bit_num / bits_per_word();
+    return ((m_bit_vector[offset] & mask) != 0);
+}
+
+bool BitSet::flip_bit(u64 bit_num)
+{
+    check_out_of_bounds(bit_num);
+    auto const mask = construct_mask(bit_num);
+    auto const offset = bit_num / bits_per_word();
+    auto const retval = ((m_bit_vector[offset] & mask) != 0);
+    m_bit_vector[offset] ^= mask;
+    return retval;
+}
+
+void BitSet::set_all()
+{
+    auto const len = num_words_for_bits(m_size_of_universe);
+    auto const actual_num_bits = len * bits_per_word();
+    auto const rem = actual_num_bits - m_size_of_universe;
+    if (rem == 0) {
+        memset(m_bit_vector, 0xFF, len * sizeof(WordType));
+    } else {
+        memset(m_bit_vector, 0xFF, (len - 1) * sizeof(WordType));
+        const u64 mask = ((u64)1 << rem) - 1;
+        m_bit_vector[len - 1] |= mask;
+    }
+}
+
+void BitSet::clear_all()
+{
+    auto const len = num_words_for_bits(m_size_of_universe);
+    memset(m_bit_vector, 0, len * sizeof(WordType));
+}
+
+void BitSet::flip_all()
+{
+    auto const len = num_words_for_bits(m_size_of_universe);
+    auto const actual_num_bits = len * bits_per_word();
+    auto const rem = actual_num_bits - m_size_of_universe;
+    if (rem == 0) {
+        memset(m_bit_vector, 0xFF, len * sizeof(WordType));
+    } else {
+        memset(m_bit_vector, 0xFF, (len - 1) * sizeof(WordType));
+        const u64 mask = ((u64)1 << rem) - 1;
+        m_bit_vector[len - 1] ^= mask;
+    }
+}
+
+u64 BitSet::get_size_of_universe() const
+{
+    return m_size_of_universe;
+}
+
+u64 BitSet::length() const
+{
+    u64 retval = (u64)0;
+    u64* first = m_bit_vector;
+    u64* last = first + num_words_for_bits(m_size_of_universe);
+
+    for (u64* current = first; current != last; ++current) {
+        u64 temp = *current;
+        temp = temp - ((temp >> 1) & (u64)0x5555555555555555);
+        temp = (temp & (u64)0x3333333333333333) + ((temp >> 2) & (u64)0x3333333333333333);
+        temp = (temp + (temp >> 4)) & (u64)0x0F0F0F0F0F0F0F0F;
+        retval += ((u64)(temp * (u64)0x0101010101010101) >> 56);
+    }
+
+    return retval;
+}
+
+u64 BitSet::size() const
+{
+    return length();
+}
+
+bool BitSet::is_full() const
+{
+    auto const len = num_words_for_bits(m_size_of_universe);
+    auto const actual_num_bits = len * bits_per_word();
+    auto const rem = actual_num_bits - m_size_of_universe;
+    auto const max_index = ((rem == 0) ? len : (len - 1));
+    const u64 all_ones_mask = ((((WordType)1 << (bits_per_word() - 1)) - 1) << 1) | 1;
+    for (u64 i = 0; i < max_index; ++i) {
+        if (m_bit_vector[i] != all_ones_mask) {
+            return false;
+        }
+    }
+    if (rem != 0) {
+        auto const mask = ((u64)1 << rem) - 1;
+        return ((m_bit_vector[len - 1] & mask) == mask);
+    }
+    return true;
+}
+
+bool BitSet::is_empty() const
+{
+    auto const len = num_words_for_bits(m_size_of_universe);
+    for (u64 i = 0; i < len; ++i) {
+        if (m_bit_vector[i] != (u64)0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+BitSet BitSet::operator & (const BitSet& other) const
+{
+    BitSet retval(m_size_of_universe);
+    and_bitsets(this, &other, &retval);
+    return retval;
+}
+
+BitSet BitSet::operator | (const BitSet& other) const
+{
+    BitSet retval(m_size_of_universe);
+    or_bitsets(this, &other, &retval);
+    return retval;
+}
+
+BitSet BitSet::operator ^ (const BitSet& other) const
+{
+    BitSet retval(m_size_of_universe);
+    xor_bitsets(this, &other, &retval);
+    return retval;
+}
+
+BitSet BitSet::operator ~ () const
+{
+    BitSet retval(m_size_of_universe);
+    negate_bitset(this, &retval);
+    return retval;
+}
+
+BitSet BitSet::operator ! () const
+{
+    return (~(*this));
+}
+
+BitSet BitSet::operator - (const BitSet& other) const
+{
+    BitSet retval(m_size_of_universe);
+    and_with_negated_second_bitsets(this, &other, &retval);
+    return retval;
+}
+
+BitSet& BitSet::operator &= (const BitSet& other)
+{
+    and_bitsets(this, &other, this);
+    return *this;
+}
+
+BitSet& BitSet::operator |= (const BitSet& other)
+{
+    or_bitsets(this, &other, this);
+    return *this;
+}
+
+BitSet& BitSet::operator ^= (const BitSet& other)
+{
+    xor_bitsets(this, &other, this);
+    return *this;
+}
+
+BitSet& BitSet::operator -= (const BitSet& other)
+{
+    and_with_negated_second_bitsets(this, &other, this);
+    return *this;
+}
+
+BitSet* BitSet::intersection_with(const BitSet* other) const
+{
+    check_equality_of_universes(this, other);
+    auto retval = new BitSet(m_size_of_universe);
+    and_bitsets(this, other, retval);
+    return retval;
+}
+
+void BitSet::intersect_with_in_place(const BitSet* other)
+{
+    and_bitsets(this, other, this);
+}
+
+BitSet* BitSet::union_with(const BitSet* other) const
+{
+    check_equality_of_universes(this, other);
+    auto retval = new BitSet(m_size_of_universe);
+    or_bitsets(this, other, retval);
+    return retval;
+}
+
+void BitSet::union_with_in_place(const BitSet* other)
+{
+    or_bitsets(this, other, this);
+}
+
+BitSet* BitSet::symmetric_difference_with(const BitSet* other) const
+{
+    check_equality_of_universes(this, other);
+    auto retval = new BitSet(m_size_of_universe);
+    xor_bitsets(this, other, retval);
+    return retval;
+}
+
+void BitSet::symmetric_difference_with_in_place(const BitSet* other)
+{
+    xor_bitsets(this, other, this);
+}
+
+BitSet* BitSet::negate() const
+{
+    auto retval = new BitSet(m_size_of_universe);
+    negate_bitset(this, retval);
+    return retval;
+}
+
+void BitSet::negate_in_place()
+{
+    negate_bitset(this, this);
+}
+
+BitSet* BitSet::difference_with(const BitSet* other) const
+{
+    check_equality_of_universes(this, other);
+    auto retval = new BitSet(m_size_of_universe);
+    and_with_negated_second_bitsets(this, other, retval);
+    return retval;
+}
+
+void BitSet::difference_with_in_place(const BitSet* other)
+{
+    and_with_negated_second_bitsets(this, other, this);
+}
+
+bool BitSet::operator [] (u64 position) const
+{
+    return test_bit(position);
+}
+
+BitSet::BitRef BitSet::operator [] (u64 position)
+{
+    check_out_of_bounds(position);
+    return BitRef(this, position);
+}
+
+bool BitSet::at(u64 bit_num) const
+{
+    return test_bit(bit_num);
+}
+
+BitSet::BitRef BitSet::at(u64 bit_num)
+{
+    return (*this)[bit_num];
+}
+
+BitSet::Iterator BitSet::begin() const
+{
+    auto first = get_next_element_greater_than_or_equal_to(0);
+    return Iterator(this, first);
+}
+
+BitSet::Iterator BitSet::end() const
+{
+    return Iterator(this, m_size_of_universe);
+}
+
+void BitSet::insert(u64 bit_num)
+{
+    set_bit(bit_num);
+}
+
+void BitSet::erase(u64 bit_num)
+{
+    clear_bit(bit_num);
+}
+
+void BitSet::erase(const Iterator& position)
+{
+    clear_bit(position.m_bit_position);
+}
+
+void BitSet::clear()
+{
+    clear_all();
+}
+
+i64 BitSet::get_next_element_greater_than_or_equal_to(u64 position) const
+{
+    if (position >= m_size_of_universe) {
+        return position;
+    }
+
+    auto const len = num_words_for_bits(m_size_of_universe);
+    auto offset = position / bits_per_word();
+    auto bit_position = position % bits_per_word();
+    u64 mask = ((bit_position != 0) ? ((u64)1 << bit_position) : (u64)1);
+    while (bit_position < bits_per_word()) {
+        if ((m_bit_vector[offset] & mask) != 0) {
+            return ((offset * bits_per_word()) + bit_position);
+        }
+        mask <<= 1;
+    }
+    ++offset;
+
+    // We're now at a word boundary
+    while (m_bit_vector[offset] == 0 && offset < len) {
+        ++offset;
+    }
+
+    if (offset >= len) {
+        return m_size_of_universe;
+    }
+
+    bit_position = 0;
+    mask = 1;
+    while (bit_position < bits_per_word()) {
+        if ((m_bit_vector[offset] & mask) != 0) {
+            return ((offset * bits_per_word()) + bit_position);
+        }
+        mask <<= 1;
+    }
+    // should never come here!
+    throw BitSetException((std::string)"Internal Error: Unreachable code hit in call to "
+                          "BitSet::get_next_element_greater_than_or_equal_to()");
+    return 0;
+}
+
+i64 BitSet::get_next_element_greater_than(u64 position) const
+{
+    return get_next_element_greater_than_or_equal_to(position + 1);
+}
+
+i64 BitSet::get_prev_element_lesser_than_or_equal_to(u64 position) const
+{
+    if (position == 0 && test_bit(0)) {
+        return 0;
+    }
+
+    position = std::min(position, m_size_of_universe - 1);
+
+    i64 offset = position / bits_per_word();
+    i64 bit_position = position % bits_per_word();
+    u64 mask = ((bit_position != 0) ? ((u64)1 << bit_position) : (u64)1);
+    while (bit_position >= 0) {
+        if ((m_bit_vector[offset] & mask) != 0) {
+            return ((offset * bits_per_word()) + bit_position);
+        }
+        mask >>= 1;
+    }
+
+    --offset;
+    // we're at a word boundary
+    while (m_bit_vector[offset] == 0 && offset >= 0) {
+        --offset;
+    }
+
+    if (offset < 0) {
+        return -1;
+    }
+
+    bit_position = bits_per_word() - 1;
+    mask = ((WordType)1 << bit_position);
+    while (bit_position >= 0) {
+        if ((m_bit_vector[offset] & mask) != 0) {
+            return ((offset * bits_per_word()) + bit_position);
+        }
+        mask >>= 1;
+    }
+
+    // should never be reached
+    throw BitSetException((std::string)"Internal Error: Unreachable code hit in call to "
+                          "BitSet::get_prev_element_lesser_than_or_equal_to()");
+    return 0;
+}
+
+i64 BitSet::get_prev_element_lesser_than(u64 position) const
+{
+    if (position == 0) {
+        return -1;
+    }
+    return get_prev_element_lesser_than_or_equal_to(position - 1);
+}
+
+u64 BitSet::hash() const
+{
+    return fnv_64a_buf(m_bit_vector,
+                       sizeof(WordType) * num_words_for_bits(m_size_of_universe),
+                       FNV1A_64_INIT);
+}
+
+std::string BitSet::to_string() const
+{
+    std::ostringstream sstr;
+    sstr << "BitSet(" << m_size_of_universe << "): {";
+    bool printed_one = false;
+    for (u64 i = 0; i < m_size_of_universe; ++i) {
+        if (test_bit(i)) {
+            if (printed_one) {
+                sstr << ", ";
+            }
+            sstr << i;
+            printed_one = true;
+        }
+    }
+    sstr << "}";
+    return sstr.str();
+}
+
+BitSet* BitSet::clone() const
+{
+    return new BitSet(*this);
+}
 
 } /* end namespace eusolver */
 
