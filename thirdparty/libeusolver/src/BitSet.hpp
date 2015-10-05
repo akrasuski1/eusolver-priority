@@ -274,16 +274,7 @@ public:
     BitSet* clone() const;
 };
 
-
-
-
 } /* end namespace eusolver */
-
-#undef BITSET_NUM_WORDS_FOR_BITS
-#undef BITSET_BITS_PER_WORD
-#undef BITSET_BYTES_PER_WORD
-#undef BITSET_BITS_PER_BYTE
-#undef BITSET_WORD_TYPE
 
 #endif /* EUSOLVER_BITSET_HPP_ */
 
