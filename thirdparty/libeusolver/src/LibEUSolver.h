@@ -35,8 +35,8 @@
 
 /* Code: */
 
-#if !defined LIB_EU_SOLVER_H_
-#define LIB_EU_SOLVER_H_
+#if !defined EUSOLVER_LIB_EU_SOLVER_H_
+#define EUSOLVER_LIB_EU_SOLVER_H_
 
 /* This file defines the C api for using libeusolver */
 
@@ -105,7 +105,7 @@ const char* eus_get_last_error_string();
 }
 #endif
 
-#endif /* LIB_EU_SOLVER_H_ */
+#endif /* EUSOLVER_LIB_EU_SOLVER_H_ */
 
 
 /* LibEUSolver.h ends here */

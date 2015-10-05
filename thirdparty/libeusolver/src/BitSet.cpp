@@ -44,19 +44,25 @@ namespace eusolver {
 
 // Implementation of BitSetException
 BitSetException::BitSetException() noexcept
-: m_exception_info("No information.")
+    : m_exception_info("BitSetException: No information.")
 {
     // Nothing here
 }
 
 BitSetException::BitSetException(const BitSetException& other) noexcept
-: m_exception_info(other.m_exception_info)
+    : m_exception_info(other.m_exception_info)
 {
     // Nothing here
 }
 
 BitSetException::BitSetException(BitSetException&& other) noexcept
-: m_exception_info(std::move(other.m_exception_info))
+    : m_exception_info(std::move(other.m_exception_info))
+{
+    // Nothing here
+}
+
+BitSetException::BitSetException(const std::string& exception_info) noexcept
+    : m_exception_info((std::string)"BitSetException: " + exception_info)
 {
     // Nothing here
 }

@@ -65,7 +65,7 @@ public:
     BitSetException& operator = (const BitSetException& other) noexcept;
     BitSetException& operator = (BitSetException&& other) noexcept;
     const std::string& get_exception_info() const noexcept;
-    virtual const char* what() const noexcept;
+    virtual const char* what() const noexcept override;
 };
 
 class BitSet
