@@ -67,10 +67,10 @@ typedef uint64_t Fnv64_t;
 #define FNV_64_PRIME ((Fnv64_t)0x100000001b3ULL)
 
 static inline Fnv64_t
-fnv_64a_buf(void* buf, size_t len, Fnv64_t hval)
+fnv_64a_buf(const void* buf, size_t len, Fnv64_t hval)
 {
-    unsigned char *bp = (unsigned char *)buf;	/* start of buffer */
-    unsigned char *be = bp + len;		/* beyond end of buffer */
+    const unsigned char *bp = (unsigned char *)buf;	/* start of buffer */
+    const unsigned char *be = bp + len;		/* beyond end of buffer */
 
     while (bp < be) {
         /* xor the bottom with the current octet */
@@ -96,9 +96,9 @@ fnv_64a_buf(void* buf, size_t len, Fnv64_t hval)
  * 	 hval arg on the first call to either fnv_64a_buf() or fnv_64a_str().
  */
 static inline Fnv64_t
-fnv_64a_str(char *str, Fnv64_t hval)
+fnv_64a_str(const char *str, Fnv64_t hval)
 {
-    unsigned char *s = (unsigned char *)str;	/* unsigned string */
+    const unsigned char *s = (unsigned char *)str;	/* unsigned string */
 
     /*
      * FNV-1a hash each octet of the string

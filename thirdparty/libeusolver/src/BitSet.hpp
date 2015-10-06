@@ -72,18 +72,49 @@ class BitSet
 {
 private:
     typedef u64 WordType;
+    struct HashStruct
+    {
+        bool m_hash_valid : 1;
+        u64 m_hash_value : 63;
+    };
+
+    static_assert(sizeof(WordType) <= 8,
+                  "WordType in BitSet must be <= 8 bytes");
+
     // helper functions for determining sizes, etc.
-    // these MUST be changed accordingly if the typedef for WordType above is changed
+    static constexpr u64 internal_rep_length()
+    {
+        return (sizeof(WordType*) + sizeof(HashStruct));
+    }
+
     static constexpr u64 bits_per_byte() { return 8; }
-    static constexpr u64 bytes_per_word() { return 8; }
+    static constexpr u64 bytes_per_word() { return sizeof(WordType); }
     static constexpr u64 bits_per_word() { return (bits_per_byte() * bytes_per_word()); }
     static constexpr u64 num_words_for_bits(u64 num_bits)
     {
         return ((u64)((num_bits + (bits_per_word() - 1)) / bits_per_word()));
     }
 
-    WordType* m_bit_vector;
+    static constexpr WordType all_ones_mask()
+    {
+        return (~((WordType)0));
+    }
+
     u64 m_size_of_universe;
+    static constexpr u64 sc_internal_bitvec_num_bytes = sizeof(WordType*) + sizeof(HashStruct);
+    static constexpr u64 sc_internal_bitvec_num_words =
+        sc_internal_bitvec_num_bytes / sizeof(WordType);
+    static constexpr u64 sc_preallocated_num_bits =
+        sc_internal_bitvec_num_words * sizeof(WordType) * 8;
+
+    union {
+        WordType m_internal_bits[sc_internal_bitvec_num_words];
+        struct {
+            WordType* m_bit_vector;
+            HashStruct m_hash_object;
+        } m_external_bits;
+    } m_set_object;
+
 
     // Inner types
     class BitRef
@@ -111,12 +142,15 @@ private:
 
     // helper and utility functions
     inline void allocate(u64 size_of_universe);
-    inline void initialize(u64 size_of_universe, bool initial_value);
+    inline void initialize(bool initial_value);
     inline void initialize(const BitSet& other);
     inline void check_out_of_bounds(u64 bit_position) const;
+    inline WordType* get_bitvec_ptr();
+    inline const WordType* get_bitvec_ptr() const;
+    inline void invalidate_hash();
 
     // static private helper methods
-    static inline u64 construct_mask(u64 bit_position);
+    static inline WordType construct_mask(u64 bit_position);
     static inline void check_equality_of_universes(const BitSet* bitset1,
                                                    const BitSet* bitset2);
     static inline void negate_bitset(const BitSet* bitset, BitSet* result);
@@ -128,9 +162,9 @@ private:
     {
         check_equality_of_universes(bitset1, bitset2);
         auto const len = num_words_for_bits(bitset1->m_size_of_universe);
-        auto src_ptr1 = bitset1->m_bit_vector;
-        auto src_ptr2 = bitset2->m_bit_vector;
-        auto dst_ptr = result->m_bit_vector;
+        auto src_ptr1 = bitset1->get_bitvec_ptr();
+        auto src_ptr2 = bitset2->get_bitvec_ptr();
+        auto dst_ptr = result->get_bitvec_ptr();
         Fun fun;
 
         for (u64 i = 0; i < len; ++i) {
@@ -139,7 +173,7 @@ private:
             ++src_ptr2;
             ++dst_ptr;
         }
-
+        result->invalidate_hash();
         return;
     }
 
