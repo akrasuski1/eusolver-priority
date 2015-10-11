@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# bitset.py ---
+# eusolver.py ---
 #
-# Filename: bitset.py
+# Filename: eusolver.py
 # Author: Abhishek Udupa
 # Created: Mon Sep 21 16:03:49 2015 (-0400)
 #
@@ -62,11 +62,11 @@ def lib():
     global _loaded_lib
     if (_loaded_lib == None):
         mydir = os.path.dirname(os.path.abspath(__file__))
-        lib_dir = os.path.join(mydir, './libbitset.so')
+        lib_dir = os.path.join(mydir, './libeusolver.so')
         try:
             init(lib_dir)
         except Exception as e:
-            print('Could not load libbitset.so!')
+            print('Could not load libeusolver.so!')
             raise e
 
     return _loaded_lib
@@ -88,280 +88,152 @@ def init(path_to_lib):
     global _loaded_lib
     _loaded_lib = ctypes.CDLL(path_to_lib)
 
-    _loaded_lib.bitset_create_bitset.argtypes = [ctypes.c_ulong]
-    _loaded_lib.bitset_create_bitset.restype = BitSetObject
+    _loaded_lib.eus_bitset_construct.argtypes = [ctypes.c_ulong, ctypes.c_bool]
+    _loaded_lib.eus_bitset_construct.restype = BitSetObject
 
-    _loaded_lib.bitset_destroy_bitset.argtypes = [BitSetObject]
-    _loaded_lib.bitset_destroy_bitset.restype = None
+    _loaded_lib.eus_bitset_destroy.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_destroy.restype = None
 
-    _loaded_lib.bitset_resize_bitset.argtypes = [BitSetObject]
-    _loaded_lib.bitset_resize_bitset.restype = None
+    _loaded_lib.eus_bitsets_equal.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitsets_equal.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_set_bit_in_bitset.argtypes = [ctypes.c_ulong, BitSetObject]
-    _loaded_lib.bitset_set_bit_in_bitset.restype = None
+    _loaded_lib.eus_bitsets_not_equal.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitsets_not_equal.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_clear_bit_in_bitset.argtypes = [ctypes.c_ulong, BitSetObject]
-    _loaded_lib.bitset_clear_bit_in_bitset.restype = None
+    _loaded_lib.eus_bitset_is_proper_subset.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_is_proper_subset.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_flip_bit_in_bitset.argtypes = [ctypes.c_ulong, BitSetObject]
-    _loaded_lib.bitset_flip_bit_in_bitset.restype = ctypes.c_bool
+    _loaded_lib.eus_bitset_is_subset.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_is_subset.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_test_bit_in_bitset.argtypes = [ctypes.c_ulong, BitSetObject]
-    _loaded_lib.bitset_test_bit_in_bitset.restype = ctypes.c_bool
+    _loaded_lib.eus_bitset_is_proper_superset.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_is_proper_superset.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_clear_all_bits_in_bitset.argtypes = [BitSetObject]
-    _loaded_lib.bitset_clear_all_bits_in_bitset.restype = None
+    _loaded_lib.eus_bitset_is_superset.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_is_superset.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_set_all_bits_in_bitset.argtypes = [BitSetObject]
-    _loaded_lib.bitset_set_all_bits_in_bitset.restype = None
+    _loaded_lib.eus_bitset_set_bit.argtypes = [BitSetObject, ctypes.c_ulong]
+    _loaded_lib.eus_bitset_set_bit.restype = None
 
-    _loaded_lib.bitset_get_bitset_size.argtypes = [BitSetObject]
-    _loaded_lib.bitset_get_bitset_size.restype = ctypes.c_ulong
+    _loaded_lib.eus_bitset_clear_bit.argtypes = [BitSetObject, ctypes.c_ulong]
+    _loaded_lib.eus_bitset_clear_bit.restype = None
 
-    _loaded_lib.bitset_get_num_one_bits.argtypes = [BitSetObject]
-    _loaded_lib.bitset_get_num_one_bits.restype = ctypes.c_ulong
+    _loaded_lib.eus_bitset_flip_bit.argtypes = [BitSetObject, ctypes.c_ulong]
+    _loaded_lib.eus_bitset_flip_bit.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_get_num_zero_bits.argtypes = [BitSetObject]
-    _loaded_lib.bitset_get_num_zero_bits.restype = ctypes.c_ulong
+    _loaded_lib.eus_bitset_test_bit.argtypes = [BitSetObject, ctypes.c_ulong]
+    _loaded_lib.eus_bitset_test_bit.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_is_full_set.argtypes = [BitSetObject]
-    _loaded_lib.bitset_is_full_set.restype = ctypes.c_bool
+    _loaded_lib.eus_bitset_set_all.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_set_all.restype = None
 
-    _loaded_lib.bitset_is_empty_set.argtypes = [BitSetObject]
-    _loaded_lib.bitset_is_empty_set.restype = ctypes.c_bool
+    _loaded_lib.eus_bitset_clear_all.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_clear_all.restype = None
 
-    _loaded_lib.bitset_are_bitsets_equal.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_are_bitsets_equal.restype = ctypes.c_bool
+    _loaded_lib.eus_bitset_flip_all.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_flip_all.restype = None
 
-    _loaded_lib.bitset_are_bitsets_disjoint.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_are_bitsets_disjoint.restype = ctypes.c_bool
+    _loaded_lib.eus_bitset_get_size_of_universe.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_get_size_of_universe.restype = ctypes.c_ulong
 
-    _loaded_lib.bitset_is_first_subset_of_second.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_is_first_subset_of_second.restype = ctypes.c_bool
+    _loaded_lib.eus_bitset_get_length.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_get_length.restype = ctypes.c_ulong
 
-    _loaded_lib.bitset_is_first_proper_subset_of_second.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_is_first_proper_subset_of_second.restype = ctypes.c_bool
+    _loaded_lib.eus_bitset_is_full.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_is_full.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_and_bitsets_functional.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_and_bitsets_functional.restype = BitSetObject
+    _loaded_lib.eus_bitset_is_empty.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_is_empty.restype = ctypes.c_bool
 
-    _loaded_lib.bitset_or_bitsets_functional.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_or_bitsets_functional.restype = BitSetObject
+    _loaded_lib.eus_bitset_and_functional.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_and_functional.restype = BitSetObject
 
-    _loaded_lib.bitset_xor_bitsets_functional.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_xor_bitsets_functional.restype = BitSetObject
+    _loaded_lib.eus_bitset_or_functional.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_or_functional.restype = BitSetObject
 
-    _loaded_lib.bitset_negate_and_bitsets_functional.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_negate_and_bitsets_functional.restype = BitSetObject
+    _loaded_lib.eus_bitset_xor_functional.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_xor_functional.restype = BitSetObject
 
-    _loaded_lib.bitset_and_bitsets.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_and_bitsets.restype = None
+    _loaded_lib.eus_bitset_minus_functional.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_minus_functional.restype = BitSetObject
 
-    _loaded_lib.bitset_or_bitsets.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_or_bitsets.restype = None
+    _loaded_lib.eus_bitset_negate_functional.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_negate_functional.restype = BitSetObject
 
-    _loaded_lib.bitset_xor_bitsets.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_xor_bitsets.restype = None
+    _loaded_lib.eus_bitset_inplace_and.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_inplace_and.restype = None
 
-    _loaded_lib.bitset_negate_and_bitsets.argtypes = [BitSetObject, BitSetObject]
-    _loaded_lib.bitset_negate_and_bitsets.restype = None
+    _loaded_lib.eus_bitset_inplace_or.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_inplace_or.restype = None
 
-    _loaded_lib.bitset_negate_bitset_functional.argtypes = [BitSetObject]
-    _loaded_lib.bitset_negate_bitset_functional.restype = BitSetObject
+    _loaded_lib.eus_bitset_inplace_xor.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_inplace_xor.restype = None
 
-    _loaded_lib.bitset_negate_bitset.argtypes = [BitSetObject]
-    _loaded_lib.bitset_negate_bitset.restype = None
+    _loaded_lib.eus_bitset_inplace_minus.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_inplace_minus.restype = None
 
-    _loaded_lib.bitset_clone_bitset.argtypes = [BitSetObject]
-    _loaded_lib.bitset_clone_bitset.restype = BitSetObject
+    _loaded_lib.eus_bitset_inplace_negate.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_inplace_negate.restype = None
 
-    _loaded_lib.bitset_get_error_code.argtypes = []
-    _loaded_lib.bitset_get_error_code.restype = ctypes.c_ulong
+    _loaded_lib.eus_bitset_get_next_element_greater_than_or_equal_to.argtypes = [BitSetObject, ctypes.c_ulong]
+    _loaded_lib.eus_bitset_get_next_element_greater_than_or_equal_to.restype = ctypes.c_long
 
-    _loaded_lib.bitset_get_error_string_for_error_code.argtypes = [ctypes.c_ulong]
-    _loaded_lib.bitset_get_error_string_for_error_code.restype = ctypes.c_char_p
+    _loaded_lib.eus_bitset_get_next_element_greater_than.argtypes = [BitSetObject, ctypes.c_ulong]
+    _loaded_lib.eus_bitset_get_next_element_greater_than.restype = ctypes.c_long
 
-    _loaded_lib.bitset_get_error_string_for_last_error.argtypes = []
-    _loaded_lib.bitset_get_error_string_for_last_error.restype = ctypes.c_char_p
+    _loaded_lib.eus_bitset_get_prev_element_lesser_than_or_equal_to.argtypes = [BitSetObject, ctypes.c_ulong]
+    _loaded_lib.eus_bitset_get_prev_element_lesser_than_or_equal_to.restype = ctypes.c_long
 
-    # hashing
-    _loaded_lib.bitset_compute_bitset_hash.argtypes = [BitSetObject]
-    _loaded_lib.bitset_compute_bitset_hash.restype = ctypes.c_ulong
+    _loaded_lib.eus_bitset_get_prev_element_lesser_than.argtypes = [BitSetObject, ctypes.c_ulong]
+    _loaded_lib.eus_bitset_get_prev_element_lesser_than.restype = ctypes.c_long
 
-    # debug functions
-    _loaded_lib.bitset_debug_print_bitset.argtypes = [BitSetObject]
-    _loaded_lib.bitset_debug_print_bitset.restype = None
+    _loaded_lib.eus_bitset_get_hash.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_get_hash.restype = ctypes.c_ulong
 
-def bitset_get_error_code():
-    return lib().bitset_get_error_code()
+    _loaded_lib.eus_bitset_to_string.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_to_string.restype = ctypes.c_char_p
 
-def bitset_get_error_string_for_error_code(error_code):
-    return lib().bitset_get_error_string_for_error_code(error_code)
+    _loaded_lib.eus_bitset_clone.argtypes = [BitSetObject]
+    _loaded_lib.eus_bitset_clone.restype = BitSetObject
 
-def bitset_get_error_string_for_last_error():
-    return lib().bitset_get_error_string_for_last_error()
+    _loaded_lib.eus_check_error.argtypes = []
+    _loaded_lib.eus_check_error.restype = ctypes.c_bool
 
-def bitset_check_error():
-    return (bitset_get_error_code() != 0)
+    _loaded_lib.eus_get_last_error_string.argtypes = []
+    _loaded_lib.eus_get_last_error_string.restype = ctypes.c_char_p
+
+
+def eus_check_error():
+    return eus_check_error()
+
+def eus_get_last_error_string():
+    return _to_pystr(lib().eus_get_last_error_string())
 
 def _raise_exception_if_error():
-    if (bitset_check_error()):
-        raise BitSetException(_to_pystr(bitset_get_error_string_for_last_error()))
+    if (eus_check_error()):
+        raise BitSetException(eus_get_last_error_string())
 
-def bitset_create_bitset(a0):
-    r = lib().bitset_create_bitset(a0)
+def eus_bitset_construct(a0, a1):
+    r = lib().eus_bitset_construct(a0, a1)
     _raise_exception_if_error()
     return r
 
-def bitset_destroy_bitset(a0):
-    r = lib().bitset_destroy_bitset(a0)
+def eus_bitset_destroy(a0):
+    r = lib().eus_bitset_destroy(a0)
     _raise_exception_if_error()
     return r
 
-def bitset_set_bit_in_bitset(a0, a1):
-    r = lib().bitset_set_bit_in_bitset(a0, a1)
+def eus_bitsets_equal(a0, a1):
+    r = lib().eus_bitsets_equal(a0, a1)
     _raise_exception_if_error()
     return r
 
-def bitset_clear_bit_in_bitset(a0, a1):
-    r = lib().bitset_clear_bit_in_bitset(a0, a1)
+def eus_bitsets_not_equal(a0, a1):
+    r = lib().eus_bitsets_not_equal(a0, a1)
     _raise_exception_if_error()
     return r
 
-def bitset_flip_bit_in_bitset(a0, a1):
-    r = lib().bitset_flip_bit_in_bitset(a0, a1)
-    _raise_exception_if_error()
-    return r
 
-def bitset_test_bit_in_bitset(a0, a1):
-    r = lib().bitset_test_bit_in_bitset(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_clear_all_bits_in_bitset(a0):
-    r = lib().bitset_clear_all_bits_in_bitset(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_set_all_bits_in_bitset(a0):
-    r = lib().bitset_set_all_bits_in_bitset(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_get_bitset_size(a0):
-    r = lib().bitset_get_bitset_size(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_get_num_one_bits(a0):
-    r = lib().bitset_get_num_one_bits(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_get_num_zero_bits(a0):
-    r = lib().bitset_get_num_zero_bits(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_is_full_set(a0):
-    r = lib().bitset_is_full_set(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_is_empty_set(a0):
-    r = lib().bitset_is_empty_set(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_are_bitsets_disjoint(a0, a1):
-    r = lib().bitset_are_bitsets_disjoint(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_are_bitsets_equal(a0, a1):
-    r = lib().bitset_are_bitsets_equal(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_is_first_subset_of_second(a0, a1):
-    r = lib().bitset_is_first_subset_of_second(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_is_first_proper_subset_of_second(a0, a1):
-    r = lib().bitset_is_first_proper_subset_of_second(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_and_bitsets_functional(a0, a1):
-    r = lib().bitset_and_bitsets_functional(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_or_bitsets_functional(a0, a1):
-    r = lib().bitset_or_bitsets_functional(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_xor_bitsets_functional(a0, a1):
-    r = lib().bitset_xor_bitsets_functional(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_negate_and_bitsets_functional(a0, a1):
-    r = lib().bitset_xor_bitsets_functional(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_and_bitsets(a0, a1):
-    r = lib().bitset_and_bitsets(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_or_bitsets(a0, a1):
-    r = lib().bitset_or_bitsets(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_xor_bitsets(a0, a1):
-    r = lib().bitset_xor_bitsets(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_negate_and_bitsets(a0, a1):
-    r = lib().bitset_xor_bitsets(a0, a1)
-    _raise_exception_if_error()
-    return r
-
-def bitset_negate_bitset_functional(a0):
-    r = lib().bitset_negate_bitset_functional(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_negate_bitset(a0):
-    r = lib().bitset_negate_bitset(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_resize_bitset(a0):
-    r = lib().bitset_resize_bitset(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_clone_bitset(a0):
-    r = lib().bitset_clone_bitset(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_compute_bitset_hash(a0):
-    r = lib().bitset_compute_bitset_hash(a0)
-    _raise_exception_if_error()
-    return r
-
-def bitset_debug_print_bitset(a0):
-    r = lib().bitset_debug_print_bitset(a0)
-    _raise_exception_if_error()
-    return r
 
 
 class BitSet(object):
@@ -691,4 +563,4 @@ if __name__ == '__main__':
 
 
 #
-# bitset.py ends here
+# eusolver.py ends here
