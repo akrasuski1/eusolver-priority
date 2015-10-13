@@ -528,7 +528,7 @@ bool BitSet::operator != (const BitSet& other) const
 bool BitSet::operator < (const BitSet& other) const
 {
     check_equality_of_universes(this, &other);
-    auto const len = m_size_of_universe;
+    auto const len = num_words_for_bits(m_size_of_universe);
     auto cur_ptr_this = get_bitvec_ptr();
     auto cur_ptr_other = other.get_bitvec_ptr();
 
@@ -547,7 +547,7 @@ bool BitSet::operator < (const BitSet& other) const
 bool BitSet::operator <= (const BitSet& other) const
 {
     check_equality_of_universes(this, &other);
-    auto const len = m_size_of_universe;
+    auto const len = num_words_for_bits(m_size_of_universe);
     auto cur_ptr_this = get_bitvec_ptr();
     auto cur_ptr_other = other.get_bitvec_ptr();
 
@@ -569,6 +569,26 @@ bool BitSet::operator > (const BitSet& other) const
 bool BitSet::operator >= (const BitSet& other) const
 {
     return (!((*this) < other));
+}
+
+bool BitSet::is_disjoint_from(const BitSet& other) const
+{
+    check_equality_of_universes(this, &other);
+    auto const len = num_words_for_bits(m_size_of_universe);
+    auto cur_ptr_this = get_bitvec_ptr();
+    auto cur_ptr_other = other.get_bitvec_ptr();
+
+    for (u64 i = 0; i < len; ++i) {
+        if (((*cur_ptr_this) & (*cur_ptr_other)) != (WordType)0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool BitSet::is_disjoint_from(const eusolver::BitSet* other) const
+{
+    return this->is_disjoint_from(*other);
 }
 
 void BitSet::set_bit(u64 bit_num)

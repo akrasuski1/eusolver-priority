@@ -241,6 +241,10 @@ public:
     bool operator > (const BitSet& other) const;
     // is this a superset of other?
     bool operator >= (const BitSet& other) const;
+
+    bool is_disjoint_from(const BitSet& other) const;
+    bool is_disjoint_from(const BitSet* other) const;
+
     void set_bit(u64 bit_num);
     void clear_bit(u64 bit_num);
     bool test_bit(u64 bit_num) const;

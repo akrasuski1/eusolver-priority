@@ -54,11 +54,11 @@ class BitSetObject(ctypes.c_void_p):
         super().__init__(bitset_ptr)
 
     def __del__(self):
-        bitset_destroy_bitset(self)
+        eus_bitset_destroy(self)
 
 _loaded_lib = None
 
-def lib():
+def _lib():
     global _loaded_lib
     if (_loaded_lib == None):
         mydir = os.path.dirname(os.path.abspath(__file__))
@@ -175,6 +175,9 @@ def init(path_to_lib):
     _loaded_lib.eus_bitset_inplace_negate.argtypes = [BitSetObject]
     _loaded_lib.eus_bitset_inplace_negate.restype = None
 
+    _loaded_lib.eus_bitsets_are_disjoint.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitsets_are_disjoint.restype = ctypes.c_bool
+
     _loaded_lib.eus_bitset_get_next_element_greater_than_or_equal_to.argtypes = [BitSetObject, ctypes.c_ulong]
     _loaded_lib.eus_bitset_get_next_element_greater_than_or_equal_to.restype = ctypes.c_long
 
@@ -207,33 +210,196 @@ def eus_check_error():
     return eus_check_error()
 
 def eus_get_last_error_string():
-    return _to_pystr(lib().eus_get_last_error_string())
+    return _to_pystr(_lib().eus_get_last_error_string())
 
 def _raise_exception_if_error():
     if (eus_check_error()):
         raise BitSetException(eus_get_last_error_string())
 
 def eus_bitset_construct(a0, a1):
-    r = lib().eus_bitset_construct(a0, a1)
+    r = _lib().eus_bitset_construct(a0, a1)
     _raise_exception_if_error()
     return r
 
 def eus_bitset_destroy(a0):
-    r = lib().eus_bitset_destroy(a0)
+    r = _lib().eus_bitset_destroy(a0)
     _raise_exception_if_error()
     return r
 
 def eus_bitsets_equal(a0, a1):
-    r = lib().eus_bitsets_equal(a0, a1)
+    r = _lib().eus_bitsets_equal(a0, a1)
     _raise_exception_if_error()
     return r
 
 def eus_bitsets_not_equal(a0, a1):
-    r = lib().eus_bitsets_not_equal(a0, a1)
+    r = _lib().eus_bitsets_not_equal(a0, a1)
     _raise_exception_if_error()
     return r
 
+def eus_bitset_is_proper_subset(a0, a1):
+    r = _lib().eus_bitset_is_proper_subset(a0, a1)
+    _raise_exception_if_error()
+    return r
 
+def eus_bitset_is_subset(a0, a1):
+    r = _lib().eus_bitset_is_subset(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_is_proper_superset(a0, a1):
+    r = _lib().eus_bitset_is_proper_superset(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_is_superset(a0, a1):
+    r = _lib().eus_bitset_is_superset(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_set_bit(a0, a1):
+    r = _lib().eus_bitset_set_bit(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_clear_bit(a0, a1):
+    r = _lib().eus_bitset_clear_bit(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_flip_bit(a0, a1):
+    r = _lib().eus_bitset_flip_bit(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_test_bit(a0, a1):
+    r = _lib().eus_bitset_test_bit(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_set_all(a0, a1):
+    r = _lib().eus_bitset_set_all(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_clear_all(a0, a1):
+    r = _lib().eus_bitset_clear_all(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_flip_all(a0, a1):
+    r = _lib().eus_bitset_flip_all(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_get_size_of_universe(a0):
+    r = _lib().eus_bitset_get_size_of_universe()
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_get_length(a0):
+    r = _lib().eus_bitset_get_length()
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_is_full(a0):
+    r = _lib().eus_bitset_is_full(a0)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_is_empty(a0):
+    r = _lib().eus_bitset_is_empty(a0)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_and_functional(a0, a1):
+    r = _lib().eus_bitset_and_functional(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_or_functional(a0, a1):
+    r = _lib().eus_bitset_or_functional(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_xor_functional(a0, a1):
+    r = _lib().eus_bitset_xor_functional(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_minus_functional(a0, a1):
+    r = _lib().eus_bitset_minus_functional(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_negate_functional(a0):
+    r = _lib().eus_bitset_negate_functional(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_inplace_and(a0, a1):
+    r = _lib().eus_bitset_inplace_and(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_inplace_or(a0, a1):
+    r = _lib().eus_bitset_inplace_or(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_inplace_xor(a0, a1):
+    r = _lib().eus_bitset_inplace_xor(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_inplace_minus(a0, a1):
+    r = _lib().eus_bitset_inplace_minus(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_inplace_negate(a0):
+    r = _lib().eus_bitset_inplace_negate(a0)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitsets_are_disjoint(a0, a1):
+    r = _lib().eus_bitsets_are_disjoint(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_get_next_element_greater_than_or_equal_to(a0, a1):
+    r = _lib().eus_bitset_get_next_element_greater_than_or_equal_to(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_get_next_element_greater_than(a0, a1):
+    r = _lib().eus_bitset_get_next_element_greater_than(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_get_prev_element_lesser_than_or_equal_to(a0, a1):
+    r = _lib().eus_bitset_get_prev_element_lesser_than_or_equal_to(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_get_prev_element_lesser_than(a0, a1):
+    r = _lib().eus_bitset_get_prev_element_lesser_than(a0, a1)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_get_hash(a0):
+    r = _lib().eus_bitset_get_hash()
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_to_string(a0):
+    r = _lib().eus_bitset_to_string(a0)
+    _raise_exception_if_error()
+    return _to_pystr(r)
+
+def eus_bitset_clone(a0):
+    r = _lib().eus_bitset_clone(a0)
+    _raise_exception_if_error()
+    return r
 
 
 class BitSet(object):
@@ -241,7 +407,7 @@ class BitSet(object):
 
     def __init__(self, num_bits_or_bitset_object):
         if (isinstance(num_bits_or_bitset_object, int)):
-            self.bitset_object = bitset_create_bitset(num_bits_or_bitset_object)
+            self.bitset_object = eus_bitset_create(num_bits_or_bitset_object)
         elif (isinstance(num_bits_or_bitset_object, BitSetObject)):
             self.bitset_object = num_bits_or_bitset_object
         else:
@@ -260,19 +426,20 @@ class BitSet(object):
             raise BitSetException('Attempted to modify a "frozen" BitSet object!')
 
     def __iter__(self):
-        num_bits = bitset_get_bitset_size(self.bitset_object)
-        for i in range(num_bits):
-            if (bitset_test_bit_in_bitset(i, self.bitset_object)):
-                yield i
+        bs_obj = self.bitset_object
+        num_bits = bitset_get_bitset_size(bs_obj)
+        r = eus_bitset_get_next_element_greater_than_or_equal_to(bs_obj, 0)
+        size_of_universe = eus_bitset_get_size_of_universe(bs_obj)
+        while (r < size_of_universe):
+            yield r
+            r = eus_bitset_get_next_element_greater_than(bs_obj, r)
         return
 
     def __contains__(self, elem):
-        return bitset_test_bit_in_bitset(elem, self.bitset_object)
+        return eus_bitset_test_bit(self.bitset_object, elem)
 
     def __str__(self):
-        retval = ', '.join([str(x) for x in self])
-        retval = 'BitSet: {' + retval + '}'
-        return retval
+        return eus_bitset_to_string(self.bitset_object)
 
     def __getitem__(self, index):
         return (index in self)
@@ -280,38 +447,39 @@ class BitSet(object):
     def __setitem__(self, key, value):
         self._check_mutability()
         if (value):
-            bitset_set_bit_in_bitset(key, self.bitset_object)
+            eus_bitset_set_bit(self.bitset_object, key)
         else:
-            bitset_clear_bit_in_bitset(key, self.bitset_object)
+            eus_bitset_clear_bit(self.bitset_object, key)
 
     def __and__(self, other):
-        return BitSet(bitset_and_bitsets_functional(self.bitset_object, other.bitset_object))
+        return BitSet(eus_bitset_and_functional(self.bitset_object, other.bitset_object))
 
     def __iand__(self, other):
-        bitset_and_bitsets(self.bitset_object, other.bitset_object)
+        eus_bitset_inplace_and(self.bitset_object, other.bitset_object)
         return self
 
     def __or__(self, other):
-        return BitSet(bitset_or_bitsets_functional(self.bitset_object, other.bitset_object))
+        return BitSet(eus_bitset_or_functional(self.bitset_object, other.bitset_object))
 
     def __ior__(self, other):
-        return bitset_or_bitsets(self.bitset_object, other.bitset_object)
+        eus_bitset_inplace_or(self.bitset_object, other.bitset_object)
+        return self
 
     def __not__(self):
-        return Bitset(bitset_negate_bitset_functional(self.bitset_object))
+        return Bitset(eus_bitset_negate_functional(self.bitset_object))
 
     def __xor__(self, other):
-        return BitSet(bitset_xor_bitsets_functional(self.bitset_object, other.bitset_object))
+        return BitSet(eus_bitset_xor_functional(self.bitset_object, other.bitset_object))
 
     def __ixor__(self, other):
-        bitset_xor_bitsets(self.bitset_object, other.bitset_object)
+        eus_bitset_inplace_xor(self.bitset_object, other.bitset_object)
         return self
 
     def __sub__(self, other):
-        return BitSet(bitset_negate_and_bitsets_functional(self.bitset_object, other.bitset_object))
+        return BitSet(eus_bitset_minus_functional(self.bitset_object, other.bitset_object))
 
     def __isub__(self, other):
-        bitset_negate_and_bitsets(self.bitset_object, other.bitset_object)
+        eus_bitset_inplace_minus(self.bitset_object, other.bitset_object)
         return self
 
     def __le__(self, other):
@@ -327,17 +495,17 @@ class BitSet(object):
         return self.is_proper_superset(other)
 
     def __eq__(self, other):
-        return bitset_are_bitsets_equal(self.bitset_object, other.bitset_object)
+        return eus_bitsets_equal(self.bitset_object, other.bitset_object)
 
     def __ne__(self, other):
         return (not (self == other))
 
     def __len__(self):
-        return bitset_get_num_one_bits(self.bitset_object)
+        return eus_bitset_get_length(self.bitset_object)
 
     def __hash__(self):
         if (self.cached_hash_code == None):
-            self.cached_hash_code = bitset_compute_bitset_hash(self.bitset_object)
+            self.cached_hash_code = eus_bitset_get_hash(self.bitset_object)
         return self.cached_hash_code
 
     def union(self, other):
@@ -345,14 +513,14 @@ class BitSet(object):
 
     def in_place_union(self, other):
         self._check_mutability()
-        bitset_or_bitsets(self.bitset_object, other.bitset_object)
+        eus_bitset_inplace_or(self.bitset_object, other.bitset_object)
 
     def intersection(self, other):
         return (self and other)
 
     def in_place_intersection(self, other):
         self._check_mutability()
-        bitset_and_bitsets(self.bitset_object, other.bitset_object)
+        eus_bitset_inplace_and(self.bitset_object, other.bitset_object)
 
     def inter(self, other):
         return (self and other)
@@ -365,63 +533,60 @@ class BitSet(object):
 
     def add(self, elem):
         self._check_mutability()
-        return bitset_set_bit_in_bitset(elem, self.bitset_object)
+        eus_bitset_set_bit(self.bitset_object, elem)
 
     def clear_all(self):
         self._check_mutability()
-        return bitset_clear_all_bits_in_bitset(self.bitset_object)
+        eus_bitset_clear_all(self.bitset_object)
 
     def set_all(self):
         self._check_mutability()
-        return bitset_set_all_bits_in_bitset(self.bitset_object)
+        return eus_bitset_set_all(self.bitset_object)
 
     def is_full(self):
-        return bitset_is_full_set(self.bitset_object)
+        return eus_bitset_is_full(self.bitset_object)
 
     def is_empty(self):
-        return bitset_is_empty_set(self.bitset_object)
+        return eus_bitset_is_empty(self.bitset_object)
 
     def isdisjoint(self, other):
-        return bitset_are_bitsets_disjoint(self.bitset_object, other.bitset_object)
+        return eus_bitsets_are_disjoint(self.bitset_object, other.bitset_object)
 
     def issubset(self, other):
-        return bitset_is_first_subset_of_second(self.bitset_object, other.bitset_object)
+        return eus_bitset_is_subset(self.bitset_object, other.bitset_object)
 
     def is_proper_subset(self, other):
-        return bitset_is_first_proper_subset_of_second(self.bitset_object, other.bitset_object)
+        return eus_bitset_is_proper_subset(self.bitset_object, other.bitset_object)
 
     def issuperset(self, other):
-        return bitset_is_first_subset_of_second(other.bitset_object, self.bitset_object)
+        return eus_bitset_is_superset(self.bitset_object, other.bitset_object)
 
     def is_proper_superset(self, other):
-        return bitset_is_first_proper_subset_of_second(other.bitset_object, self.bitset_object)
+        return eus_bitset_is_proper_superset(self.bitset_object, other.bitset_object)
 
     def difference(self, other):
         return (self - other)
 
     def in_place_difference(self, other):
         self._check_mutability()
-        bitset_negate_and_bitsets(self.bitset_object, other.bitset_object)
+        eus_bitset_inplace_minus(self.bitset_object, other.bitset_object)
 
     def in_place_negate(self):
         self._check_mutability()
-        bitset_negate_bitset(self.bitset_object)
+        eus_bitset_inplace_negate(self.bitset_object)
 
     def symmetric_difference(self, other):
         return (self ^ other)
 
     def in_place_symmetric_difference(self, other):
         self._check_mutability()
-        bitset_xor_bitsets(self.bitset_object, other.bitset_object)
+        eus_bitset_inplace_xor(self.bitset_object, other.bitset_object)
 
     def copy(self):
-        return BitSet(bitset_clone_bitset(self.bitset_object))
+        return BitSet(eus_bitset_clone(self.bitset_object))
 
     def clone(self):
         return self.copy()
-
-    def debug_print(self):
-        bitset_debug_print_bitset(self.bitset_object)
 
 
 ################################################################################

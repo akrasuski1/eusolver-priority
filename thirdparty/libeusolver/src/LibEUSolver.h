@@ -89,6 +89,8 @@ void eus_bitset_inplace_xor(void* bitset1_and_result, const void* bitset2);
 void eus_bitset_inplace_minus(void* bitset1_and_result, const void* bitset2);
 void eus_bitset_inplace_negate(void* bitset_and_result);
 
+bool eus_bitsets_are_disjoint(const void* bitset1, const void* bitset2);
+
 i64 eus_bitset_get_next_element_greater_than_or_equal_to(const void* bitset, u64 position);
 i64 eus_bitset_get_next_element_greater_than(const void* bitset, u64 position);
 i64 eus_bitset_get_prev_element_lesser_than_or_equal_to(const void* bitset, u64 position);

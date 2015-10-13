@@ -280,6 +280,14 @@ void eus_bitset_inplace_negate(void* bitset_and_result)
     END_CHECKED_BLOCK_;
 }
 
+bool eus_bitsets_are_disjoint(const void* bitset1, const void* bitset2)
+{
+    BEGIN_CHECKED_BLOCK_;
+    return as_bs(bitset1)->is_disjoint_from(as_bs(bitset2));
+    END_CHECKED_BLOCK_;
+    return false;
+}
+
 i64 eus_bitset_get_next_element_greater_than_or_equal_to(const void* bitset, u64 position)
 {
     BEGIN_CHECKED_BLOCK_;
