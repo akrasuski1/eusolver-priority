@@ -41,6 +41,12 @@ add_library(eusolver
   ${LIBEUSOLVER_C_SOURCE_FILES}
   )
 
+add_custom_command(TARGET eusolver
+  POST_BUILD
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/src/python/*.py ${CMAKE_BINARY_DIR}
+  COMMAND python3 -m py_compile *.py
+  )
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release
     CACHE STRING "Build Type: One of Release, ReleaseNOLTO, Debug" FORCE)
