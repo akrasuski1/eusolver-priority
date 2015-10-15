@@ -207,7 +207,7 @@ def init(path_to_lib):
 
 
 def eus_check_error():
-    return eus_check_error()
+    return _lib().eus_check_error()
 
 def eus_get_last_error_string():
     return _to_pystr(_lib().eus_get_last_error_string())
@@ -216,7 +216,7 @@ def _raise_exception_if_error():
     if (eus_check_error()):
         raise BitSetException(eus_get_last_error_string())
 
-def eus_bitset_construct(a0, a1):
+def eus_bitset_construct(a0, a1 = False):
     r = _lib().eus_bitset_construct(a0, a1)
     _raise_exception_if_error()
     return r
@@ -276,28 +276,28 @@ def eus_bitset_test_bit(a0, a1):
     _raise_exception_if_error()
     return r
 
-def eus_bitset_set_all(a0, a1):
-    r = _lib().eus_bitset_set_all(a0, a1)
+def eus_bitset_set_all(a0):
+    r = _lib().eus_bitset_set_all(a0)
     _raise_exception_if_error()
     return r
 
-def eus_bitset_clear_all(a0, a1):
-    r = _lib().eus_bitset_clear_all(a0, a1)
+def eus_bitset_clear_all(a0):
+    r = _lib().eus_bitset_clear_all(a0)
     _raise_exception_if_error()
     return r
 
-def eus_bitset_flip_all(a0, a1):
-    r = _lib().eus_bitset_flip_all(a0, a1)
+def eus_bitset_flip_all(a0):
+    r = _lib().eus_bitset_flip_all(a0)
     _raise_exception_if_error()
     return r
 
 def eus_bitset_get_size_of_universe(a0):
-    r = _lib().eus_bitset_get_size_of_universe()
+    r = _lib().eus_bitset_get_size_of_universe(a0)
     _raise_exception_if_error()
     return r
 
 def eus_bitset_get_length(a0):
-    r = _lib().eus_bitset_get_length()
+    r = _lib().eus_bitset_get_length(a0)
     _raise_exception_if_error()
     return r
 
@@ -387,7 +387,7 @@ def eus_bitset_get_prev_element_lesser_than(a0, a1):
     return r
 
 def eus_bitset_get_hash(a0):
-    r = _lib().eus_bitset_get_hash()
+    r = _lib().eus_bitset_get_hash(a0)
     _raise_exception_if_error()
     return r
 
@@ -407,7 +407,7 @@ class BitSet(object):
 
     def __init__(self, num_bits_or_bitset_object):
         if (isinstance(num_bits_or_bitset_object, int)):
-            self.bitset_object = eus_bitset_create(num_bits_or_bitset_object)
+            self.bitset_object = eus_bitset_construct(num_bits_or_bitset_object)
         elif (isinstance(num_bits_or_bitset_object, BitSetObject)):
             self.bitset_object = num_bits_or_bitset_object
         else:
@@ -427,7 +427,6 @@ class BitSet(object):
 
     def __iter__(self):
         bs_obj = self.bitset_object
-        num_bits = bitset_get_bitset_size(bs_obj)
         r = eus_bitset_get_next_element_greater_than_or_equal_to(bs_obj, 0)
         size_of_universe = eus_bitset_get_size_of_universe(bs_obj)
         while (r < size_of_universe):
@@ -529,7 +528,7 @@ class BitSet(object):
         self.in_place_intersection(other)
 
     def size_of_universe(self):
-        return bitset_get_bitset_size(self.bitset_object)
+        return eus_bitset_get_size_of_universe(self.bitset_object)
 
     def add(self, elem):
         self._check_mutability()
@@ -601,7 +600,7 @@ def test_bitsets():
     assert (4 in a)
     assert (3 not in a)
     assert (42 not in a)
-    assert (str(a) == 'BitSet: {1, 4}')
+    assert (str(a) == 'BitSet(1024): {1, 4}')
     assert (len(a) == 2)
 
     a[2] = True
@@ -635,7 +634,7 @@ def test_bitsets():
     assert (a == b)
     a = a - b
     assert (len(a) == 0)
-    assert (str(a) == 'BitSet: {}')
+    assert (str(a) == 'BitSet(1024): {}')
 
     a.set_all()
     b.clear_all()
@@ -699,7 +698,7 @@ def test_bitsets():
 
     a ^= b
     assert(len(a) == 4)
-    assert(str(a) == 'BitSet: {0, 1, 1022, 1023}')
+    assert(str(a) == 'BitSet(1024): {0, 1, 1022, 1023}')
 
     a = BitSet(1024)
     assert (a.is_empty())

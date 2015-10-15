@@ -21,7 +21,7 @@ set(CMAKE_CXX_FLAGS_DEBUG
   "-pipe -Wall -pedantic -ggdb3 -fno-inline -O0 -fPIC -std=c++14"
   CACHE STRING "C++ compiler flags for debug build" FORCE)
 
-set(CMAKE_CXX_FLAGS_DEBUG
+set(CMAKE_C_FLAGS_DEBUG
   "-pipe -Wall -pedantic -ggdb3 -fno-inline -O0 -fPIC -std=c11"
   CACHE STRING "C compiler flags for debug build" FORCE)
 
@@ -41,10 +41,24 @@ add_library(eusolver
   ${LIBEUSOLVER_C_SOURCE_FILES}
   )
 
-add_custom_command(TARGET eusolver
-  POST_BUILD
-  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/src/python/*.py ${CMAKE_BINARY_DIR}
-  COMMAND python3 -m py_compile *.py
+add_custom_target(eusolver_python
+  ALL
+  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/src/python/eusolver.py ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND python3 -m py_compile ${CMAKE_CURRENT_BINARY_DIR}/eusolver.py
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/python/eusolver.py
+  )
+
+# tests
+add_executable(eusolver_bitset_tests
+  tests/BitSetTests.cpp)
+target_link_libraries(eusolver_bitset_tests
+  eusolver)
+set_target_properties(eusolver_bitset_tests
+  PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests)
+
+add_custom_target(eusolver_all_tests
+  ALL
+  DEPENDS eusolver_bitset_tests
   )
 
 if(NOT CMAKE_BUILD_TYPE)

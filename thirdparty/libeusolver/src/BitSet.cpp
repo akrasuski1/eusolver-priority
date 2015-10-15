@@ -689,9 +689,11 @@ u64 BitSet::length() const
     for (auto current = first; current != last; ++current) {
         WordType temp = *current;
 
+        temp = temp - ((temp >> 1) & (all_ones_mask() / 3));
+
         temp = ((temp & ((all_ones_mask() / 15) * 3)) +
                 ((temp >> 2) & ((all_ones_mask() / 15) * 3)));
-        temp = temp - ((temp >> 1) & (all_ones_mask() / 3));
+
         temp = (temp + (temp >> 4)) & ((all_ones_mask() / 255) * 15);
         retval += ((WordType)(temp * (all_ones_mask() / 255)) >>
                    ((sizeof(WordType) - 1) * bits_per_byte()));
@@ -939,6 +941,7 @@ i64 BitSet::get_next_element_greater_than_or_equal_to(u64 position) const
         if ((bit_vec_ptr[offset] & mask) != 0) {
             return ((offset * bits_per_word()) + bit_position);
         }
+        ++bit_position;
         mask <<= 1;
     }
     ++offset;
@@ -958,6 +961,7 @@ i64 BitSet::get_next_element_greater_than_or_equal_to(u64 position) const
         if ((bit_vec_ptr[offset] & mask) != 0) {
             return ((offset * bits_per_word()) + bit_position);
         }
+        ++bit_position;
         mask <<= 1;
     }
     // should never come here!
@@ -987,6 +991,7 @@ i64 BitSet::get_prev_element_lesser_than_or_equal_to(u64 position) const
         if ((bit_vec_ptr[offset] & mask) != 0) {
             return ((offset * bits_per_word()) + bit_position);
         }
+        --bit_position;
         mask >>= 1;
     }
 
@@ -1007,6 +1012,7 @@ i64 BitSet::get_prev_element_lesser_than_or_equal_to(u64 position) const
             return ((offset * bits_per_word()) + bit_position);
         }
         mask >>= 1;
+        --bit_position;
     }
 
     // should never be reached

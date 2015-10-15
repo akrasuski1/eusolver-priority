@@ -226,7 +226,7 @@ public:
     BitSet();
     BitSet(const BitSet& other);
     BitSet(BitSet&& other);
-    BitSet(u64 size_of_universe);
+    explicit BitSet(u64 size_of_universe);
     BitSet(u64 size_of_universe, bool initial_value);
     ~BitSet();
     BitSet& operator = (const BitSet& other);

@@ -85,7 +85,7 @@ get_entropy_for_split(const InputVector& attribute_vector,
                       const InputVector& labelling_vector,
                       u64 attribute_to_split_on)
 {
-
+    return 0;
 }
 
 static inline const DecisionTreeNodeBase*
