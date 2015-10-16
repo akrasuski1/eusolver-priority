@@ -40,6 +40,7 @@
 #if !defined EUSOLVER_DECISION_TREE_HPP_
 #define EUSOLVER_DECISION_TREE_HPP_
 
+#include <type_traits>
 #include "EUSolverTypes.h"
 
 namespace eusolver {
@@ -55,6 +56,39 @@ public:
 
     void inc_ref_count() const;
     void dec_ref_count() const;
+
+    template <typename T>
+    inline T* as()
+    {
+        static_assert(std::is_convertible<T*, DecisionTreeNodeBase*>::value,
+                      "Bad static/dynamic cast!");
+        return dynamic_cast<T*>(this);
+    }
+
+    template <typename T>
+    inline const T* as() const
+    {
+        static_assert(std::is_convertible<T*, DecisionTreeNodeBase*>::value,
+                      "Bad static/dynamic cast!");
+        return dynamic_cast<const T*>(this);
+    }
+
+    template <typename T>
+    inline T* sas()
+    {
+        static_assert(std::is_convertible<T*, DecisionTreeNodeBase*>::value,
+                      "Bad static/dynamic cast!");
+        return static_cast<T*>(this);
+    }
+
+    template <typename T>
+    inline const T* sas() const
+    {
+        static_assert(std::is_convertible<T*, DecisionTreeNodeBase*>::value,
+                      "Bad static/dynamic cast!");
+        return static_cast<const T*>(this);
+    }
+
 };
 
 class DecisionTreeSplitNode : public DecisionTreeNodeBase

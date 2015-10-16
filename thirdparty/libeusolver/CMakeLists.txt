@@ -29,6 +29,8 @@ set(LIBEUSOLVER_CXX_SOURCE_FILES
   src/BitSet.cpp
   src/BitSetCAPI.cpp
   src/DecisionTree.cpp
+  src/DecisionTreeCAPI.cpp
+  src/LibEUSolver.cpp
   src/MultiLabelDecisionTreeLearner.cpp
   )
 

@@ -100,8 +100,19 @@ u64 eus_bitset_get_hash(const void* bitset);
 const char* eus_bitset_to_string(const void* bitset);
 void* eus_bitset_clone(const void* bitset);
 
+/* error handling */
 bool eus_check_error();
 const char* eus_get_last_error_string();
+
+/* decision tree traversal */
+bool eus_decision_tree_is_split_node(const void* node);
+bool eus_decision_tree_is_leaf_node(const void* node);
+void eus_decision_tree_inc_ref(const void* node);
+void eus_decision_tree_dec_ref(const void* node);
+const void* eus_decision_tree_get_positive_child(const void* node);
+const void* eus_decision_tree_get_negative_child(const void* node);
+u64 eus_decision_tree_get_split_attribute_id(const void* node);
+u64 eus_decision_tree_get_label_id(const void* node);
 
 #ifdef __cplusplus
 }
