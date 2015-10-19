@@ -71,7 +71,12 @@ DecisionTreeSplitNode::DecisionTreeSplitNode(u64 split_attribute_id,
     : DecisionTreeNodeBase(), m_split_attribute_id(split_attribute_id),
       m_positive_child(positive_child), m_negative_child(negative_child)
 {
-    // Nothing here
+    if (m_positive_child != nullptr) {
+        m_positive_child->inc_ref_count();
+    }
+    if (m_negative_child != nullptr) {
+        m_negative_child->inc_ref_count();
+    }
 }
 
 DecisionTreeSplitNode::~DecisionTreeSplitNode()
