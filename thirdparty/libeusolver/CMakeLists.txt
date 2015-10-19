@@ -32,6 +32,7 @@ set(LIBEUSOLVER_CXX_SOURCE_FILES
   src/DecisionTreeCAPI.cpp
   src/LibEUSolver.cpp
   src/MultiLabelDecisionTreeLearner.cpp
+  src/MultiLabelDecisionTreeLearnerCAPI.cpp
   )
 
 set(LIBEUSOLVER_C_SOURCE_FILES

@@ -114,6 +114,12 @@ const void* eus_decision_tree_get_negative_child(const void* node);
 u64 eus_decision_tree_get_split_attribute_id(const void* node);
 u64 eus_decision_tree_get_label_id(const void* node);
 
+/* learning methods */
+const void* eus_learn_decision_tree_for_ml_data(void** pred_signatures,
+                                                void** term_signatures,
+                                                u64 num_preds,
+                                                u64 num_terms);
+
 #ifdef __cplusplus
 }
 #endif

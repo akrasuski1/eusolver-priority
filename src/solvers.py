@@ -84,7 +84,7 @@ class TermSolver(object):
         self.spec = spec
         self.term_generator = term_generator
 
-    def compute_term_signature(self, term, spec, eval_ctx):
+    def _compute_term_signature(self, term, spec, eval_ctx):
         points = self.points
         num_points = len(points)
         retval = self.signature_factory()
@@ -104,41 +104,51 @@ class TermSolver(object):
 
     def continue_solve(self):
         self.current_term_size += 1
+        generator = self.term_generator
+
         generator.set_size(self.current_term_size)
 
         num_points = self.num_points
         if (num_points == 0):
             return self._trivial_solve()
 
-        signature_set = self.signature_set
-        term_to_signature = self.term_to_signature
-        generator = self.term_generator
+        signature_to_term = self.signature_to_term
         spec_satisfied_at_points = self.spec_satisfied_at_points
 
         for term in generator.generate():
-            sig = self.compute_term_signature(term, spec, eval_ctx)
-            if (sig in signature_set):
+            sig = self._compute_term_signature(term, self.spec, eval_ctx)
+            if (sig in signature_to_term):
                 continue
             # sig not in signature_set
-            signature_set.add(sig)
-            term_to_signature[term] = sig
+            signature_set[sig] = term
             spec_satisfied_at_points |= sig
             if (spec_satisfied_at_points.is_full()):
-                return (True, term_to_signature)
+                return (True, signature_to_term)
 
        return (False, None)
 
 
-    def solve(self, term_size, points, spec, eval_ctx):
+    def solve(self, term_size, points):
         self.points = points
-        self.signature_set = set()
-        self.term_to_signature = {}
+        self.signature_to_term = {}
         self.num_points = len(points)
         self.signature_factory = BitSet.make_factory(num_points)
         self.current_term_size = term_size - 1
         self.spec_satisfied_at_points = self.signature_factory()
+        self.eval_ctx = evaluation.EvaluationContext()
 
         return self.continue_solve()
+
+class Unifier(object):
+    def __init__(self, clauses, neg_clauses, pred_generator):
+        self.pred_generator = pred_generator
+        self.clauses = clauses
+        self.neg_clauses = neg_clauses
+
+    def unify(self, signature_to_term):
+        while (True):
+
+
 
 
 class Solver(object):
@@ -171,12 +181,22 @@ class Solver(object):
             self.spec = syn_ctx.make_ac_function_expr('and', self.spec,
                                                       specification)
 
-    def solve(self):
+    def solve(self, term_generator, pred_generator):
         t = expr_transforms.canonicalize_specification(self.spec)
         var_list, uf_list, clauses, neg_clauses, mapping_list = t
         self.var_info_list = var_list
         var_expr_list = [exprs.VariableExpression(x) for x in var_list]
         self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
+
+        while (True):
+            term_solver = TermSolver(self.spec, term_generator)
+            # iterate until we have terms that are "sufficient"
+            (terms_done, sig_to_term) = term_solver.solve(0, self.points)
+            while (not terms_done):
+                (terms_done, sig_to_term) = term_solver.continue_solve()
+            # we now have a sufficient set of terms
+            unifier = Unifier(clauses, neg_clauses, pred_generator)
+
 
 
 

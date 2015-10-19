@@ -50,6 +50,10 @@ namespace multilabel_decision_tree_learner {
 
 namespace detail_ {
 
+// we need at least this much of an information gain ratio
+// to consider things a good split
+static constexpr double sc_info_gain_threshold = 0.0001;
+
 typedef std::vector<const BitSet*> InputVector;
 
 static inline void
@@ -234,6 +238,11 @@ learn_dt_for_ml_data(const InputVector& attribute_to_point_vector,
     }
 
     // early exit not possible, determine the locally optimal split
+    // but before that determine the entropy of the current set
+    auto const current_entropy = get_entropy_for_set(labelling_to_point_vector,
+                                                     point_to_labelling_vector,
+                                                     point_filter);
+
     double min_split_entropy = std::numeric_limits<double>::max();
     i64 attribute_with_minimal_split_entropy = -1;
 
@@ -244,7 +253,9 @@ learn_dt_for_ml_data(const InputVector& attribute_to_point_vector,
                                                                           point_to_attribute_vector,
                                                                           point_to_labelling_vector,
                                                                           point_filter, i);
-        if (cur_split_entropy < min_split_entropy) {
+        auto const info_gain = current_entropy - cur_split_entropy;
+        if ((info_gain / current_entropy >= sc_info_gain_threshold) &&
+            (cur_split_entropy < min_split_entropy)) {
             min_split_entropy = cur_split_entropy;
             attribute_with_minimal_split_entropy = i;
         }
