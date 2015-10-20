@@ -191,5 +191,10 @@ def substitute(expr, old_term, new_term, syn_ctx):
     else:
         return expr
 
+def is_expression(obj):
+    return (isinstance(obj, _VariableExpression) or
+            isinstance(obj, _ConstantExpression) or
+            isinstance(obj, _FunctionExpression))
+
 #
 # exprs.py ends here

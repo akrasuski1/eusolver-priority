@@ -44,6 +44,7 @@ import exprtypes
 import semantics_types
 import itertools
 import functools
+import z3smt
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()

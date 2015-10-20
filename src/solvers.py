@@ -54,6 +54,7 @@ from enum import IntEnum
 
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
+_is_expr = exprs.is_expression
 
 def model_to_point(model, var_smt_expr_list, var_info_list):
     num_vars = len(var_smt_expr_list)
@@ -99,7 +100,7 @@ class TermSolver(object):
 
     def _trivial_solve(self):
         for term in self.term_generator.generate():
-            return (True, {term : None})
+            return (True, {None : term})
         return (False, None)
 
     def continue_solve(self):
@@ -144,11 +145,39 @@ class Unifier(object):
         self.pred_generator = pred_generator
         self.clauses = clauses
         self.neg_clauses = neg_clauses
+        self.true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
+        self.false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
+
+    def _verify_term(self, term, validity_region):
+
+
+    def _try_trivial_unification(self, signature_to_term):
+        # we can trivially unify if there exists a term
+        # which satisfies the spec at all points
+        trivial_term = None
+        for (sig, term) in signature_to_term.items():
+            if (sig.is_full()):
+                trivial_term = term
+                break
+
+        if (trivial_term == None):
+            return None
+
+        # try to verify the trivial term
+        (verified, cex_point) = self._verify_term(trivial_term, self.true_expr)
+        if (verified == False):
+            return cex_point
+        else:
+            return trivial_term
+
 
     def unify(self, signature_to_term):
+        triv = self._try_trivial_unification(signature_to_term)
+        if (triv != None):
+            return triv
+
+        # cannot be trivially unified
         while (True):
-
-
 
 
 class Solver(object):
