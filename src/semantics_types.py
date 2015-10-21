@@ -174,7 +174,8 @@ class UnknownFunctionBase(FunctionBase):
 
         num_children = len(expr_object.children)
         self._evaluate_children(expr_object, eval_context_object)
-        parameter_map = eval_context_object.peek_items(num_children)
+        parameter_map = [exprs.Value(eval_context_object.peek(i), self.domain_types[i])
+                         for i in range(len(self.domain_types))]
         eval_context_object.pop(num_children)
 
         orig_valuation_map = eval_context_object.valuation_map
@@ -185,7 +186,10 @@ class UnknownFunctionBase(FunctionBase):
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        interpretation = smt_context_object.interpretation_map.get(self.unknown_function_id, None)
+        if (smt_context_object.interpretation_map != None):
+            interpretation = smt_context_object.interpretation_map[self.unknown_function_id]
+        else:
+            interpretation = None
 
         if (interpretation == None):
             # treat this as an uninterpreted function

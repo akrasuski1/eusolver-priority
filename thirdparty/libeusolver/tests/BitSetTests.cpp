@@ -97,6 +97,10 @@ int main()
 {
     auto bitset_a = new eusolver::BitSet(96);
     run_bitset_tests(bitset_a);
+
+    eusolver::BitSet bitset_b(1);
+    bitset_b.set_bit(0);
+    assert(bitset_b.is_full());
 }
 
 //

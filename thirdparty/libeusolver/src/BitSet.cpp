@@ -299,8 +299,7 @@ inline void BitSet::initialize(bool initial_value)
 {
     if (initial_value) {
         auto const num_words = num_words_for_bits(m_size_of_universe);
-        auto const bits_allocated = num_words * bits_per_word();
-        auto const rem = bits_allocated - m_size_of_universe;
+        auto const rem = m_size_of_universe % bits_per_word();
         auto bitvec_ptr = get_bitvec_ptr();
 
         if (rem == 0) {
@@ -378,8 +377,7 @@ inline void BitSet::negate_bitset(const BitSet* bitset, BitSet* result)
 {
     auto const size_of_universe = bitset->m_size_of_universe;
     auto const len = num_words_for_bits(size_of_universe);
-    auto const actual_num_bits = len * bits_per_word();
-    auto const rem = actual_num_bits - size_of_universe;
+    auto const rem = size_of_universe % bits_per_word();
     auto const start_ptr = bitset->get_bitvec_ptr();
     auto const end_ptr = start_ptr + (rem == 0 ? len : (len - 1));
     auto dst_ptr = result->get_bitvec_ptr();
@@ -636,8 +634,7 @@ void BitSet::set_all()
 {
     invalidate_hash();
     auto const len = num_words_for_bits(m_size_of_universe);
-    auto const actual_num_bits = len * bits_per_word();
-    auto const rem = actual_num_bits - m_size_of_universe;
+    auto const rem = m_size_of_universe % bits_per_word();
     auto bit_vec_ptr = get_bitvec_ptr();
     if (rem == 0) {
         memset(bit_vec_ptr, 0xFF, len * sizeof(WordType));
@@ -659,8 +656,7 @@ void BitSet::flip_all()
 {
     invalidate_hash();
     auto const len = num_words_for_bits(m_size_of_universe);
-    auto const actual_num_bits = len * bits_per_word();
-    auto const rem = actual_num_bits - m_size_of_universe;
+    auto const rem = m_size_of_universe % bits_per_word();
     auto bit_vec_ptr = get_bitvec_ptr();
     auto const xor_mask = all_ones_mask();
     const u64 max_index = ((rem == 0) ? len : (len - 1));
@@ -717,8 +713,7 @@ u64 BitSet::size() const
 bool BitSet::is_full() const
 {
     auto const len = num_words_for_bits(m_size_of_universe);
-    auto const actual_num_bits = len * bits_per_word();
-    auto const rem = actual_num_bits - m_size_of_universe;
+    auto const rem = m_size_of_universe % bits_per_word();
     auto const max_index = ((rem == 0) ? len : (len - 1));
     auto const all_ones = all_ones_mask();
     auto bit_vec_ptr = get_bitvec_ptr();

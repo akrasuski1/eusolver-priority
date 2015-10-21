@@ -863,6 +863,10 @@ def test_bitsets():
     assert (new_bs.is_empty())
     assert (not new_bs.is_full())
 
+    a = BitSet(1)
+    a.add(0)
+    assert (a.is_full())
+
 if __name__ == '__main__':
     test_bitsets()
 

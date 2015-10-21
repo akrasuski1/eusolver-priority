@@ -50,7 +50,7 @@ class Z3SMTContext(object):
     """A simple wrapper around the z3.Context class."""
     def __init__(self, *args, **kwargs):
         self.context_obj = z3.Context(*args, **kwargs)
-        self.interpretation_map = {}
+        self.interpretation_map = None
 
     def ctx(self):
         return self.context_obj
@@ -74,7 +74,7 @@ class Z3SMTContext(object):
         self.interpretation_map = interpretation_map
 
     def clear_interpretation_map(self):
-        self.interpretation_map = {}
+        self.interpretation_map = None
 
 
 #

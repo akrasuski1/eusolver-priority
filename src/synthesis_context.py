@@ -183,7 +183,7 @@ class SynthesisContext(object):
                 actual_spec = self.specification_clauses[0]
             else:
                 actual_spec = self.make_function_expr('and', *self.specification_clauses)
-            variables_list, functions_list, clauses, neg_clauses, canon_spec, intro_vars = \
+            variables_list, functions_list, canon_spec, clauses, neg_clauses, intro_vars = \
             expr_transforms.canonicalize_specification(actual_spec, self)
             self.spec = (actual_spec, variables_list, functions_list, clauses,
                          neg_clauses, canon_spec, intro_vars)

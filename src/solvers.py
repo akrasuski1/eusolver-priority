@@ -64,7 +64,7 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
         if (var_info_list[i].variable_type == exprtypes.BoolType()):
             point[i] = exprs.Value(bool(str(eval_value)), exprtypes.BoolType())
         elif (var_info_list[i].variable_type == exprtypes.IntType()):
-            point[i] = expr.Value(int(str(eval_value)), exprtypes.IntType())
+            point[i] = exprs.Value(int(str(eval_value)), exprtypes.IntType())
         elif (var_info_list[i].variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
             point[i] = expr.Value(int(str(eval_value)), var_info_list.variable_type)
         else:
@@ -96,6 +96,21 @@ def decision_tree_to_guard_term_list(decision_tree, pred_list, term_list, syn_ct
     _decision_tree_to_guard_term_list_internal(decision_tree, pred_list,
                                                term_list, syn_ctx, retval, [])
     return retval
+
+def guard_term_list_to_expr(guard_term_list, syn_ctx):
+    num_segments = len(guard_term_list)
+    retval = guard_term_list[num_segments - 1][1]
+    for i in reversed(range(len(num_segments) - 1)):
+        retval = syn_ctx.make_function_expr('ite', guard_term_list[i][0],
+                                            guard_term_list[i][1], retval)
+    return retval
+
+def decision_tree_to_expr(decision_tree, pred_list, term_list, syn_ctx):
+    guard_term_list = decision_tree_to_guard_term_list(decision_tree,
+                                                       pred_list,
+                                                       term_list,
+                                                       syn_ctx)
+    return guard_term_list_to_expr(guard_term_list, syn_ctx)
 
 
 class DuplicatePointException(Exception):
@@ -143,13 +158,16 @@ class TermSolver(object):
         spec_satisfied_at_points = self.spec_satisfied_at_points
 
         for term in generator.generate():
-            sig = self._compute_term_signature(term, self.spec, eval_ctx)
+            print('Generated term %s' % _expr_to_str(term))
+            sig = self._compute_term_signature(term, self.spec, self.eval_ctx)
             if (sig in signature_to_term):
                 continue
-            # sig not in signature_set
-            signature_set[sig] = term
+            signature_to_term[sig] = term
             spec_satisfied_at_points |= sig
+            print(spec_satisfied_at_points)
             if (spec_satisfied_at_points.is_full()):
+                print('Term Solve complete!')
+                print({str(x) : _expr_to_str(y) for (x, y) in signature_to_term.items()})
                 return (True, signature_to_term)
 
         return (False, None)
@@ -173,27 +191,58 @@ class TermSolver(object):
         return self.continue_solve()
 
 class Unifier(object):
-    def __init__(self, syn_ctx, pred_generator)
+    def __init__(self, syn_ctx, points, pred_generator):
         self.pred_generator = pred_generator
         self.syn_ctx = syn_ctx
         self.true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
         self.false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
         spec_tuple = syn_ctx.get_synthesis_spec()
         act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = spec_tuple
+        self.var_list = var_list
         self.canon_spec = canon_spec
         self.clauses = clauses
         self.neg_clauses = neg_clauses
         self.intro_vars = intro_vars
+        self.points = points
 
-    def _verify_term(self, term, validity_region):
+    def _compute_pred_signature(self, pred):
+        points = self.points
+        num_points = len(points)
+        retval = self.signature_factory()
+        for i in range(num_points):
+            valuation_map = [points[intro_vars[j].variable_info.variable_eval_offset]
+                             for j in range(len(intro_vars))]
+            eval_ctx.set_valuation_map(valuation_map)
+            res = evaluation.evaluate_expression_raw(spec, eval_ctx)
+            if (res):
+                retval.add(i)
+        return retval
 
+    def _verify_expr(self, term):
+        smt_ctx = z3smt.Z3SMTContext()
+        syn_ctx = self.syn_ctx
+        smt_ctx.set_interpretation_map([term])
+        neg_canon_spec = self.syn_ctx.make_function_expr('not', self.canon_spec)
+        cnstr = _expr_to_smt(neg_canon_spec, smt_ctx)
+        smt_solver = z3.Solver(ctx=smt_ctx.ctx())
+        smt_solver.add(cnstr)
+        r = smt_solver.check()
+        var_info_list = self.var_list
+        var_expr_list = [exprs.VariableExpression(e) for e in var_info_list]
+        var_smt_expr_list = [_expr_to_smt(e, smt_ctx) for e in var_expr_list]
+        if (r == z3.sat):
+            model = smt_solver.model()
+            print('Model: %s' % str(model))
+            return (False, model_to_point(model, var_smt_expr_list, var_info_list))
+        else:
+            return (True, term)
 
     def _try_trivial_unification(self, signature_to_term):
         # we can trivially unify if there exists a term
         # which satisfies the spec at all points
         trivial_term = None
         for (sig, term) in signature_to_term.items():
-            if (sig.is_full()):
+            if (sig is None or sig.is_full()):
                 trivial_term = term
                 break
 
@@ -201,21 +250,57 @@ class Unifier(object):
             return None
 
         # try to verify the trivial term
-        (verified, cex_point) = self._verify_term(trivial_term, self.true_expr)
+        (verified, cex_point) = self._verify_expr(trivial_term)
         if (verified == False):
             return cex_point
         else:
             return trivial_term
 
+    def _try_decision_tree_learning(self, signature_to_term, signature_to_pred):
+        term_list = []
+        term_sig_list = []
+        pred_list = []
+        pred_sig_list = []
+        for (term_sig, term) in signature_to_term.items():
+            term_list.append(term)
+            term_sig_list.append(term_sig)
+        for (pred_sig, pred) in signature_to_pred.items():
+            pred_list.append(pred)
+            pred_sig_list.append(pred_sig)
+
+        dt = eusolver.eus_learn_decision_tree_for_ml_data(pred_sig_list,
+                                                          term_sig_list)
+        if (dt == None):
+            return None
+        else:
+            return (term_list, term_sig_list, pred_list, pred_sig_list, dt)
 
     def unify(self, signature_to_term):
         triv = self._try_trivial_unification(signature_to_term)
         if (triv != None):
             return triv
 
+        self.signature_factory = BitSet.make_factory(len(num_points))
+        pred_size = 0
         # cannot be trivially unified
+        pred_generator = self.pred_generator
+        signature_to_pred = {}
         while (True):
-            pass
+            pred_size += 1
+            for pred in pred_generator.generate():
+                sig = self._compute_pred_signature(pred)
+                if (sig not in signature_to_pred):
+                    signature_to_pred[sig] = pred
+            # we've generated a bunch of predicates
+            # try to learn a decision tree
+            dt_tuple = self._try_decision_tree_learning(signature_to_term,
+                                                        signature_to_pred)
+            if (dt_tuple == None):
+                continue
+            (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
+            expr = decision_tree_to_guard_term_list(dt, pred_list, term_list, self.syn_ctx)
+            return self._verify_expr(expr)
+
 
 class Solver(object):
     def __init__(self, syn_ctx):
@@ -254,20 +339,21 @@ class Solver(object):
         self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
 
         while (True):
-            term_solver = TermSolver(self.spec, term_generator)
+            term_solver = TermSolver(canon_spec, term_generator)
             # iterate until we have terms that are "sufficient"
             (terms_done, sig_to_term) = term_solver.solve(0, self.points)
             while (not terms_done):
                 (terms_done, sig_to_term) = term_solver.continue_solve()
             # we now have a sufficient set of terms
-            unifier = Unifier(clauses, neg_clauses, pred_generator)
-
-
-
-
-
-
-
+            unifier = Unifier(self.syn_ctx, self.points, pred_generator)
+            r = unifier.unify(sig_to_term)
+            if (exprs.is_expression(r)):
+                return r
+            else:
+                # this is a counterexample
+                self.add_point(r)
+                print('Solver: Added point %s' % str([c.value_object for c in r]))
+                continue
 
 ########################################################################
 # TEST CASES
