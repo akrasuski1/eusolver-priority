@@ -185,7 +185,19 @@ class UnknownFunctionBase(FunctionBase):
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        interpretation = smt_context_object.interpretation_map[self.unknown_function_id]
+        interpretation = smt_context_object.interpretation_map.get(self.unknown_function_id, None)
+
+        if (interpretation == None):
+            # treat this as an uninterpreted function
+            child_types = [exprs.get_expression_type(child)
+                           for child in expr_object.children]
+            child_types = [t.get_smt_type(smt_context_object)
+                           for t in child_types]
+            child_types.append(self.range_type.get_smt_type(smt_context_object))
+            fun = z3.Function(self.function_name, *child_types)
+            return fun(*child_terms)
+
+        # we have an interpretation, recurse on that
         return expression_to_smt(interpretation, smt_context_object, child_terms)
 
 

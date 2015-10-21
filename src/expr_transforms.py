@@ -45,9 +45,12 @@ import semantics_types
 import itertools
 import functools
 import z3smt
+import z3
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
+
+_expr_to_str = exprs.expression_to_string
 
 class ExprTransformerBase(object):
     def __init__(self, transform_name):
@@ -220,7 +223,8 @@ def _get_unknown_function_invocation_args(expr):
             retval = retval | _get_unknown_function_invocation_args(child)
     return retval
 
-def check_single_invocation_property(expr, syn_ctx = None):
+
+def check_single_invocation_property(expr, syn_ctx):
     """Checks if the expression has only one unknown function, and also
     that the expression satisfies the single invocation property, i.e.,
     the unknown function appears only in one syntactic form in the expression."""
@@ -244,6 +248,7 @@ def check_single_invocation_property(expr, syn_ctx = None):
         fun_arg_tuples = _get_unknown_function_invocation_args(clause)
         if (len(fun_arg_tuples) > 1):
             return False
+
     return True
 
 def _gather_variables(expr, accumulator):
@@ -273,6 +278,30 @@ def gather_unknown_functions(expr):
     _gather_unknown_functions(expr, fun_set)
     return fun_set
 
+def _intro_new_universal_vars(clauses, syn_ctx, uf_info):
+    intro_vars = [syn_ctx.make_variable_expr(uf_info.domain_types[i], '_intro_var_%d' % i)
+                  for i in range(len(uf_info.domain_types))]
+    retval = []
+    for clause in clauses:
+        arg_tuple = _get_unknown_function_invocation_args(clause).pop()
+        eq_constraints = []
+        for i in range(len(arg_tuple)):
+            arg = arg_tuple[i]
+            var = intro_vars[i]
+            eq_constraints.append(syn_ctx.make_function_expr('ne', arg, var))
+        if (clause.expr_kind == exprs.ExpressionKinds.function_expression and
+            clause.function_info.function_name == 'or'):
+            clause_disjuncts = clause.children
+        else:
+            clause_disjuncts = [clause]
+
+        for i in range(len(arg_tuple)):
+            clause_disjuncts = [exprs.substitute(c, arg_tuple[i], intro_vars[i], syn_ctx)
+                                for c in clause_disjuncts]
+        eq_constraints.extend(clause_disjuncts)
+        retval.append(syn_ctx.make_ac_function_expr('or', *eq_constraints))
+    return (retval, intro_vars)
+
 def canonicalize_specification(expr, syn_ctx):
     """Performs a bunch of operations:
     1. Checks that the expr is "well-bound" to the syn_ctx object.
@@ -280,45 +309,53 @@ def canonicalize_specification(expr, syn_ctx):
     3. Gathers the set of unknown functions (should be only one).
     4. Gathers the variables used in the specification.
     5. Converts the specification to CNF (as part of the single-invocation test)
-    6. For each clause, returns a mapping from the formal arguments to terms
+    6. Given that the spec is single invocation, rewrites the CNF spec (preserving and sat)
+       by introducing new variables that correspond to a uniform way of invoking the
+       (single) unknown function
+
     Returns a tuple containing:
     1. A list of 'variable_info' objects corresponding to the variables used in the spec
     2. A list of unknown functions (should be a singleton list)
     3. A list of clauses corresponding to the CNF specification
     4. A list of NEGATED clauses
-    5. A list of lists, one list for each clause, mapping the formal parameters
-       to terms.
+    5. A list containing the set of formal parameters that all appearances of the unknown
+       functions are invoked with.
     """
     check_expr_binding_to_context(expr, syn_ctx)
     unknown_function_set = gather_unknown_functions(expr)
-    variable_set = gather_variables(expr)
-
     unknown_function_list = list(unknown_function_set)
+    num_funs = len(unknown_function_list)
+
+    cnf_converter = CNFConverter()
+    clauses, cnf_expr = cnf_converter.apply(expr, syn_ctx)
+
+    # check single invocation/separability properties
+    if (not check_single_invocation_property(clauses, syn_ctx)):
+        raise basetypes.ArgumentError('Spec:\n%s\nis not single-invocation!' %
+                                      exprs.expression_to_string(expr))
+
+    (intro_clauses, intro_vars) = _intro_new_universal_vars(clauses, syn_ctx,
+                                                            unknown_function_list[0])
+    for c in intro_clauses:
+        print(_expr_to_str(c))
+
+    variable_set = set()
+    for c in intro_clauses:
+        variable_set |= gather_variables(c)
+
     variable_list = [expr.variable_info for expr in variable_set]
     variable_list.sort(key=lambda x: x.variable_name)
     num_vars = len(variable_list)
-    num_funs = len(unknown_function_list)
     for i in range(num_vars):
         variable_list[i].variable_eval_offset = i
     for i in range(num_funs):
         unknown_function_list[i].unknown_function_id = i
 
-    cnf_converter = CNFConverter()
-    clauses, cnf_expr = cnf_converter.apply(expr, syn_ctx)
-    neg_clauses = [syn_ctx.make_function_expr('not', clause) for clause in clauses]
-    if (not check_single_invocation_property(clauses)):
-        raise basetypes.ArgumentError('Spec:\n%s\nis not single-invocation!' %
-                                      exprs.expression_to_string(expr))
-    mapping_list = []
-    for clause in clauses:
-        arg_tuples = list(_get_unknown_function_invocation_args(clause))
-        assert (len(arg_tuples) <= 1)
-        if (len(arg_tuples) == 0):
-            mapping_list.append([])
-        else:
-            mapping_list.append(list(arg_tuples[0]))
+    neg_clauses = [syn_ctx.make_function_expr('not', clause) for clause in intro_clauses]
+    canon_spec = syn_ctx.make_function_expr('and', *intro_clauses);
 
-    return (variable_list, unknown_function_list, clauses, neg_clauses, mapping_list)
+    return (variable_list, unknown_function_list, canon_spec,
+            clauses, neg_clauses, intro_vars)
 
 #######################################################################
 # TEST CASES
@@ -328,6 +365,7 @@ def test_cnf_conversion():
     import synthesis_context
     import semantics_core
     import semantics_lia
+
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_lia.LIAInstantiator())
     var_exprs = [syn_ctx.make_variable_expr(exprtypes.IntType(), 'x%d' % i) for i in range(10)]
@@ -357,6 +395,21 @@ def test_cnf_conversion():
     max_rec = syn_ctx.make_function_expr(binary_max, binary_max_app, binary_max_app)
     non_separable2 = syn_ctx.make_function_expr('eq', max_rec, binary_max_app)
     print(check_single_invocation_property(non_separable2, syn_ctx))
+
+    canonicalize_specification(formula, syn_ctx)
+
+    separable1 = syn_ctx.make_function_expr('ge', binary_max_app, var_exprs[0])
+    separable2 = syn_ctx.make_function_expr('ge', binary_max_app_rev, var_exprs[0])
+    separable3 = syn_ctx.make_ac_function_expr('or',
+                                               syn_ctx.make_function_expr('eq',
+                                                                          binary_max_app,
+                                                                          var_exprs[0]),
+                                               syn_ctx.make_function_expr('eq',
+                                                                          binary_max_app,
+                                                                          var_exprs[1]))
+    separable = syn_ctx.make_ac_function_expr('and', separable1, separable2, separable3)
+    print(check_single_invocation_property(separable, syn_ctx))
+    canonicalize_specification(separable, syn_ctx)
 
 if __name__ == '__main__':
     test_cnf_conversion()

@@ -39,8 +39,8 @@
 # Code:
 
 import basetypes
-import bitset
-from bitset import BitSet
+import eusolver
+from eusolver import BitSet
 import evaluation
 import functools
 import hashcache
@@ -70,6 +70,32 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
         else:
             raise basetypes.UnhandledCaseError('solvers.In model_to_point')
     return tuple(point)
+
+def _decision_tree_to_guard_term_list_internal(decision_tree, pred_list, term_list,
+                                               syn_ctx, retval, guard_stack):
+    if (decision_tree.is_leaf()):
+        retval.append((syn_ctx.make_ac_function_expr('and', *guard_stack),
+                       term_list[decision_tree.get_label_id()]))
+    else:
+        # split node
+        attr_id = decision_tree.get_split_attribute_id()
+        guard_stack.append(pred_list[attr_id])
+        _decision_tree_to_guard_term_list_internal(decision_tree.get_positive_child(),
+                                                   pred_list, term_list, syn_ctx,
+                                                   retval, guard_stack)
+        guard_stack.pop()
+        guard_stack.append(syn_ctx.make_function_expr('not', pred_list[attr_id]))
+        _decision_tree_to_guard_term_list_internal(decision_tree.get_negative_child(),
+                                                   pred_list, term_list, syn_ctx,
+                                                   retval, guard_stack)
+        guard_stack.pop()
+
+
+def decision_tree_to_guard_term_list(decision_tree, pred_list, term_list, syn_ctx):
+    retval = []
+    _decision_tree_to_guard_term_list_internal(decision_tree, pred_list,
+                                               term_list, syn_ctx, retval, [])
+    return retval
 
 
 class DuplicatePointException(Exception):
@@ -126,27 +152,38 @@ class TermSolver(object):
             if (spec_satisfied_at_points.is_full()):
                 return (True, signature_to_term)
 
-       return (False, None)
+        return (False, None)
 
 
     def solve(self, term_size, points):
         self.points = points
         self.signature_to_term = {}
         self.num_points = len(points)
-        self.signature_factory = BitSet.make_factory(num_points)
+        num_points = self.num_points
+        if (num_points > 0):
+            self.signature_factory = BitSet.make_factory(num_points)
+            self.spec_satisfied_at_points = self.signature_factory()
+        else:
+            self.signature_factory = None
+            self.spec_satisfied_at_points = None
+
         self.current_term_size = term_size - 1
-        self.spec_satisfied_at_points = self.signature_factory()
         self.eval_ctx = evaluation.EvaluationContext()
 
         return self.continue_solve()
 
 class Unifier(object):
-    def __init__(self, clauses, neg_clauses, pred_generator):
+    def __init__(self, syn_ctx, pred_generator)
         self.pred_generator = pred_generator
-        self.clauses = clauses
-        self.neg_clauses = neg_clauses
+        self.syn_ctx = syn_ctx
         self.true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
         self.false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
+        spec_tuple = syn_ctx.get_synthesis_spec()
+        act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = spec_tuple
+        self.canon_spec = canon_spec
+        self.clauses = clauses
+        self.neg_clauses = neg_clauses
+        self.intro_vars = intro_vars
 
     def _verify_term(self, term, validity_region):
 
@@ -178,12 +215,12 @@ class Unifier(object):
 
         # cannot be trivially unified
         while (True):
-
+            pass
 
 class Solver(object):
-    def __init__(self, syn_ctx, specification = None):
+    def __init__(self, syn_ctx):
         self.syn_ctx = syn_ctx
-        self.spec = specification
+        self.spec_tuple = syn_ctx.get_synthesis_spec()
         self.reset()
 
     def reset(self):
@@ -211,8 +248,7 @@ class Solver(object):
                                                       specification)
 
     def solve(self, term_generator, pred_generator):
-        t = expr_transforms.canonicalize_specification(self.spec)
-        var_list, uf_list, clauses, neg_clauses, mapping_list = t
+        act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
         self.var_info_list = var_list
         var_expr_list = [exprs.VariableExpression(x) for x in var_list]
         self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
@@ -309,8 +345,8 @@ def test_solver_max(num_vars):
                                                                        *eq_constraints))
     syn_ctx.assert_spec(constraint)
 
-    solver = TermSolver()
-    expr = solver.solve(syn_ctx, term_generator, pred_generator)
+    solver = Solver(syn_ctx)
+    expr = solver.solve(term_generator, pred_generator)
     return expr
 
 
