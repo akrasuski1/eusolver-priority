@@ -37,6 +37,7 @@
 
 // Code:
 
+#include <sstream>
 #include "DecisionTree.hpp"
 
 namespace eusolver {
@@ -104,6 +105,24 @@ u64 DecisionTreeSplitNode::get_split_attribute_id() const
     return m_split_attribute_id;
 }
 
+std::string DecisionTreeSplitNode::to_indented_string(u32 indent_level) const
+{
+    std::ostringstream sstr;
+    const std::string indent_string(indent_level * 2, ' ');
+    auto pos_str = m_positive_child->to_indented_string(indent_level + 1);
+    auto neg_str = m_negative_child->to_indented_string(indent_level + 1);
+    sstr << indent_string << "if split(" << m_split_attribute_id << ")" << std::endl
+         << pos_str << std::endl
+         << indent_string << "else" << std::endl
+         << neg_str;
+    return sstr.str();
+}
+
+std::string DecisionTreeSplitNode::to_string() const
+{
+    return to_indented_string(0);
+}
+
 DecisionTreeLeafNode::DecisionTreeLeafNode(u64 label_id)
     : DecisionTreeNodeBase(), m_label_id(label_id)
 {
@@ -118,6 +137,17 @@ DecisionTreeLeafNode::~DecisionTreeLeafNode()
 u64 DecisionTreeLeafNode::get_label_id() const
 {
     return m_label_id;
+}
+
+std::string DecisionTreeLeafNode::to_indented_string(u32 indent_level) const
+{
+    const std::string indent_string(indent_level * 2, ' ');
+    return indent_string + "-> label(" + std::to_string(m_label_id) + ")";
+}
+
+std::string DecisionTreeLeafNode::to_string() const
+{
+    return to_indented_string(0);
 }
 
 } /* end namespace eusolver */

@@ -328,7 +328,8 @@ inline void BitSet::check_out_of_bounds(u64 bit_position) const
 {
     if (bit_position >= m_size_of_universe) {
         throw BitSetException((std::string)"Index " + std::to_string(bit_position) +
-                              " was out of bounds when used to index a BitSet object.");
+                              " was out of bounds when used to index the BitSet object:\n" +
+                              this->to_string());
     }
 }
 

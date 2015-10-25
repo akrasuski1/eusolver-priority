@@ -326,6 +326,10 @@ def canonicalize_specification(expr, syn_ctx):
     unknown_function_list = list(unknown_function_set)
     num_funs = len(unknown_function_list)
 
+    orig_variable_set = gather_variables(expr)
+    orig_variable_list = [x.variable_info for x in orig_variable_set]
+    orig_variable_list.sort(key=lambda x: x.variable_name)
+
     cnf_converter = CNFConverter()
     clauses, cnf_expr = cnf_converter.apply(expr, syn_ctx)
 
@@ -336,15 +340,11 @@ def canonicalize_specification(expr, syn_ctx):
 
     (intro_clauses, intro_vars) = _intro_new_universal_vars(clauses, syn_ctx,
                                                             unknown_function_list[0])
-    for c in intro_clauses:
-        print(_expr_to_str(c))
+    # for c in intro_clauses:
+    #     print(_expr_to_str(c))
 
-    variable_set = set()
-    for c in intro_clauses:
-        variable_set |= gather_variables(c)
-
-    variable_list = [expr.variable_info for expr in variable_set]
-    variable_list.sort(key=lambda x: x.variable_name)
+    # ensure that the intro_vars at the head of the list
+    variable_list = [x.variable_info for x in intro_vars] + orig_variable_list
     num_vars = len(variable_list)
     for i in range(num_vars):
         variable_list[i].variable_eval_offset = i

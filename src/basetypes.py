@@ -87,6 +87,5 @@ class UnhandledCaseError(Exception):
         """Unhandled case, could be new subclass, or just a non-exhaustive
         pattern/case match. Details: """ + error_msg
 
-
 #
 # basetypes.py ends here

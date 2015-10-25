@@ -100,7 +100,7 @@ def decision_tree_to_guard_term_list(decision_tree, pred_list, term_list, syn_ct
 def guard_term_list_to_expr(guard_term_list, syn_ctx):
     num_segments = len(guard_term_list)
     retval = guard_term_list[num_segments - 1][1]
-    for i in reversed(range(len(num_segments) - 1)):
+    for i in reversed(range(num_segments - 1)):
         retval = syn_ctx.make_function_expr('ite', guard_term_list[i][0],
                                             guard_term_list[i][1], retval)
     return retval
@@ -141,13 +141,17 @@ class TermSolver(object):
 
     def _trivial_solve(self):
         for term in self.term_generator.generate():
-            return (True, {None : term})
+            retval = (True, {None : term})
+            print('Term Solve complete!')
+            print({str(x) : _expr_to_str(y) for (x, y) in retval[1].items()})
+            return retval
+
+        print('Term Solve failed!')
         return (False, None)
 
     def continue_solve(self):
         self.current_term_size += 1
         generator = self.term_generator
-
         generator.set_size(self.current_term_size)
 
         num_points = self.num_points
@@ -160,11 +164,11 @@ class TermSolver(object):
         for term in generator.generate():
             print('Generated term %s' % _expr_to_str(term))
             sig = self._compute_term_signature(term, self.spec, self.eval_ctx)
-            if (sig in signature_to_term):
+            if (sig in signature_to_term or sig.is_empty()):
                 continue
             signature_to_term[sig] = term
             spec_satisfied_at_points |= sig
-            print(spec_satisfied_at_points)
+            print('Cumulative specification satisfaction: %s' % str(spec_satisfied_at_points))
             if (spec_satisfied_at_points.is_full()):
                 print('Term Solve complete!')
                 print({str(x) : _expr_to_str(y) for (x, y) in signature_to_term.items()})
@@ -204,16 +208,18 @@ class Unifier(object):
         self.neg_clauses = neg_clauses
         self.intro_vars = intro_vars
         self.points = points
+        self.eval_ctx = evaluation.EvaluationContext()
 
     def _compute_pred_signature(self, pred):
         points = self.points
         num_points = len(points)
         retval = self.signature_factory()
+        intro_vars = self.intro_vars
+        eval_ctx = self.eval_ctx
+
         for i in range(num_points):
-            valuation_map = [points[intro_vars[j].variable_info.variable_eval_offset]
-                             for j in range(len(intro_vars))]
-            eval_ctx.set_valuation_map(valuation_map)
-            res = evaluation.evaluate_expression_raw(spec, eval_ctx)
+            eval_ctx.set_valuation_map(points[i])
+            res = evaluation.evaluate_expression_raw(pred, eval_ctx)
             if (res):
                 retval.add(i)
         return retval
@@ -232,10 +238,9 @@ class Unifier(object):
         var_smt_expr_list = [_expr_to_smt(e, smt_ctx) for e in var_expr_list]
         if (r == z3.sat):
             model = smt_solver.model()
-            print('Model: %s' % str(model))
-            return (False, model_to_point(model, var_smt_expr_list, var_info_list))
+            return model_to_point(model, var_smt_expr_list, var_info_list)
         else:
-            return (True, term)
+            return term
 
     def _try_trivial_unification(self, signature_to_term):
         # we can trivially unify if there exists a term
@@ -250,11 +255,7 @@ class Unifier(object):
             return None
 
         # try to verify the trivial term
-        (verified, cex_point) = self._verify_expr(trivial_term)
-        if (verified == False):
-            return cex_point
-        else:
-            return trivial_term
+        return self._verify_expr(trivial_term)
 
     def _try_decision_tree_learning(self, signature_to_term, signature_to_pred):
         term_list = []
@@ -268,8 +269,11 @@ class Unifier(object):
             pred_list.append(pred)
             pred_sig_list.append(pred_sig)
 
+        print('pred_sig_list: %s' % [str(x) for x in pred_sig_list])
+        print('term_sig_list: %s' % [str(x) for x in term_sig_list], flush=True)
         dt = eusolver.eus_learn_decision_tree_for_ml_data(pred_sig_list,
                                                           term_sig_list)
+        print('Obtained decision tree:\n%s' % str(dt))
         if (dt == None):
             return None
         else:
@@ -280,27 +284,41 @@ class Unifier(object):
         if (triv != None):
             return triv
 
-        self.signature_factory = BitSet.make_factory(len(num_points))
+        num_points = len(self.points)
+        self.signature_factory = BitSet.make_factory(num_points)
         pred_size = 0
         # cannot be trivially unified
         pred_generator = self.pred_generator
         signature_to_pred = {}
         while (True):
             pred_size += 1
+            pred_generator.set_size(pred_size)
+            new_preds_generated = False
             for pred in pred_generator.generate():
                 sig = self._compute_pred_signature(pred)
                 if (sig not in signature_to_pred):
+                    print('Generated pred %s' % _expr_to_str(pred))
                     signature_to_pred[sig] = pred
-            # we've generated a bunch of predicates
+                    new_preds_generated = True
+
+            if (not new_preds_generated):
+                print(('Unifier.unify(): no new predicates generated at size %d, ' +
+                      'continuing...') % pred_size)
+                continue
+
+            # we've generated a bunch of (new) predicates
             # try to learn a decision tree
+            print('Unifier.unify(): Attempting to learn decision tree...', flush=True)
             dt_tuple = self._try_decision_tree_learning(signature_to_term,
                                                         signature_to_pred)
             if (dt_tuple == None):
+                print('Unifier.unify(): Could not learn decision tree!')
                 continue
+            print('Unifier.unify(): Learned a decision tree!')
             (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
-            expr = decision_tree_to_guard_term_list(dt, pred_list, term_list, self.syn_ctx)
+            expr = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
+            print('Obtained expr: %s' % _expr_to_str(expr))
             return self._verify_expr(expr)
-
 
 class Solver(object):
     def __init__(self, syn_ctx):
@@ -338,10 +356,12 @@ class Solver(object):
         var_expr_list = [exprs.VariableExpression(x) for x in var_list]
         self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
 
+        print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
+
         while (True):
             term_solver = TermSolver(canon_spec, term_generator)
             # iterate until we have terms that are "sufficient"
-            (terms_done, sig_to_term) = term_solver.solve(0, self.points)
+            (terms_done, sig_to_term) = term_solver.solve(1, self.points)
             while (not terms_done):
                 (terms_done, sig_to_term) = term_solver.continue_solve()
             # we now have a sufficient set of terms
@@ -427,8 +447,7 @@ def test_solver_max(num_vars):
 
     constraint = syn_ctx.make_function_expr('and', *ge_constraints)
     constraint = syn_ctx.make_function_expr('and', constraint,
-                                            syn_ctx.make_function_expr('or',
-                                                                       *eq_constraints))
+                                            syn_ctx.make_function_expr('or', *eq_constraints))
     syn_ctx.assert_spec(constraint)
 
     solver = Solver(syn_ctx)

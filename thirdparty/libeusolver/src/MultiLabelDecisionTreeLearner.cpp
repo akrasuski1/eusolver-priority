@@ -40,6 +40,7 @@
 #include <limits>
 #include <unordered_map>
 #include <cmath>
+#include <iostream>
 
 #include "MultiLabelDecisionTreeLearner.hpp"
 
@@ -183,6 +184,9 @@ get_entropy_for_set(const InputVector& labelling_to_point_vector,
         auto const prob = label_id_prob_pair.second;
         final_entropy += (prob * std::log2(prob));
     }
+
+    std::cout << "Entropy of set: " << point_set.to_string()
+              << " = " << -final_entropy << std::endl;
     return (-final_entropy);
 }
 
@@ -219,7 +223,7 @@ get_entropy_for_split_on_attribute(const InputVector& attribute_to_point_vector,
                                                           positive_points);
     auto const negative_set_entropy = get_entropy_for_set(labelling_to_point_vector,
                                                           point_to_labelling_vector,
-                                                          positive_points);
+                                                          negative_points);
     return ((positive_set_entropy * positive_ratio) +
             (negative_set_entropy * negative_ratio));
 }
@@ -232,10 +236,19 @@ learn_dt_for_ml_data(const InputVector& attribute_to_point_vector,
                      const BitSet& point_filter)
 {
     // check if we can exit early, that is if we have a common label
+
+    std::cout << "MultiLabelDecisionTreeLearner: Checking common label..." << std::endl;
+
     auto const common_label = get_common_label(point_to_labelling_vector, point_filter);
     if (common_label >= 0) {
+        std::cout << "MultiLabelDecisionTreeLearner: Found common label "
+                  << common_label << std::endl;
         return new DecisionTreeLeafNode(common_label);
     }
+
+    std::cout << "MultiLabelDecisionTreeLearner: No common label!" << std::endl;
+    std::cout << "MultiLabelDecisionTreeLearner: Learning decision tree for points:"
+              << std::endl << point_filter.to_string() << std::endl;
 
     // early exit not possible, determine the locally optimal split
     // but before that determine the entropy of the current set
@@ -248,6 +261,7 @@ learn_dt_for_ml_data(const InputVector& attribute_to_point_vector,
 
     const u64 num_attributes = point_to_attribute_vector[0]->get_size_of_universe();
     for (u64 i = 0; i < num_attributes; ++i) {
+        std::cout << "Evaluating split on attribute " << i << std::endl;
         auto const cur_split_entropy = get_entropy_for_split_on_attribute(attribute_to_point_vector,
                                                                           labelling_to_point_vector,
                                                                           point_to_attribute_vector,
@@ -270,6 +284,11 @@ learn_dt_for_ml_data(const InputVector& attribute_to_point_vector,
     auto const num_points = attribute_to_point_vector[0]->get_size_of_universe();
     BitSet positive_points(num_points);
     BitSet negative_points(num_points);
+
+    std::cout << "MultiLabelDecisionTreeLearner: Splitting on attribute "
+              << attribute_with_minimal_split_entropy << std::endl;
+    std::cout << "Entropy of set before split = " << current_entropy << std::endl;
+    std::cout << "Entropy after split = " << min_split_entropy << std::endl;
 
     for (auto point_id : point_filter) {
         if (attribute_to_point_vector[attribute_with_minimal_split_entropy]->test_bit(point_id)) {
@@ -322,7 +341,7 @@ static inline InputVector transpose_bitset_vector(const InputVector& input_vecto
         auto cur_bitset = new BitSet(num_input_bitsets);
         for (u64 j = 0; j < num_input_bitsets; ++j) {
             if (input_vector[j]->test_bit(i)) {
-                cur_bitset->set_bit(i);
+                cur_bitset->set_bit(j);
             }
         }
         retval[i] = cur_bitset;
@@ -419,8 +438,10 @@ learn_decision_tree_for_multi_labelled_data(const std::vector<const BitSet*>& at
 {
     detail_::check_dt_learning_inputs(attribute_to_point_vector,
                                       labelling_to_point_vector);
+    std::cout << "MultiLabelDecisionTreeLearner: Transposing bitsets..." << std::endl;
     auto point_to_attribute_vector = detail_::transpose_bitset_vector(attribute_to_point_vector);
     auto point_to_labelling_vector = detail_::transpose_bitset_vector(labelling_to_point_vector);
+    std::cout << "MultiLabelDecisionTreeLearner: Done Transposing bitsets!" << std::endl;
     BitSet sample_point_filter(attribute_to_point_vector[0]->get_size_of_universe(), true);
 
     auto retval = detail_::learn_dt_for_ml_data(attribute_to_point_vector,
@@ -430,6 +451,8 @@ learn_decision_tree_for_multi_labelled_data(const std::vector<const BitSet*>& at
                                                 sample_point_filter);
     detail_::free_ptr_vector(point_to_attribute_vector);
     detail_::free_ptr_vector(point_to_labelling_vector);
+    std::cout << "MultiLabelDecisionTreeLearner: returning decision tree:" << std::endl
+              << retval->to_string() << std::endl;
     return retval;
 }
 

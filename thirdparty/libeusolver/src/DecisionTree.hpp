@@ -41,6 +41,7 @@
 #define EUSOLVER_DECISION_TREE_HPP_
 
 #include <type_traits>
+#include <string>
 #include "EUSolverTypes.h"
 
 namespace eusolver {
@@ -89,6 +90,8 @@ public:
         return static_cast<const T*>(this);
     }
 
+    virtual std::string to_indented_string(u32 indent_level) const = 0;
+    virtual std::string to_string() const = 0;
 };
 
 class DecisionTreeSplitNode : public DecisionTreeNodeBase
@@ -107,6 +110,9 @@ public:
     const DecisionTreeNodeBase* get_positive_child() const;
     const DecisionTreeNodeBase* get_negative_child() const;
     u64 get_split_attribute_id() const;
+
+    virtual std::string to_indented_string(u32 indent_level) const override;
+    virtual std::string to_string() const override;
 };
 
 class DecisionTreeLeafNode : public DecisionTreeNodeBase
@@ -119,6 +125,9 @@ public:
     virtual ~DecisionTreeLeafNode();
 
     u64 get_label_id() const;
+
+    virtual std::string to_indented_string(u32 indent_level) const override;
+    virtual std::string to_string() const override;
 };
 
 } /* end namespace eusolver */

@@ -41,13 +41,14 @@
 import ctypes
 import sys
 import os
+import signal
 
-class BitSetException(Exception):
+class LibEUSolverException(Exception):
     def __init__(self, error_msg):
         self.error_msg = error_msg
 
     def __str__(self):
-        return 'BitSetException: ' + self.error_msg
+        return 'LibEUSolverException: ' + self.error_msg
 
 class BitSetObject(ctypes.c_void_p):
     def __init__(self, bitset_ptr):
@@ -59,10 +60,6 @@ class BitSetObject(ctypes.c_void_p):
 class DecisionTreeNodeObject(ctypes.c_void_p):
     def __init__(self, decision_tree_node_ptr):
         super().__init__(decision_tree_node_ptr)
-        eus_decision_tree_inc_ref(self)
-
-    def __del__(self):
-        eus_decision_tree_dec_ref(self);
 
 _loaded_lib = None
 
@@ -76,6 +73,8 @@ def _lib():
         except Exception as e:
             print('Could not load libeusolver.so!')
             raise e
+    # also disable interception of SIGINT
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     return _loaded_lib
 
@@ -240,6 +239,9 @@ def init(path_to_lib):
     _loaded_lib.eus_decision_tree_get_label_id.argtypes = [DecisionTreeNodeObject]
     _loaded_lib.eus_decision_tree_get_label_id.restype = ctypes.c_ulong
 
+    _loaded_lib.eus_decision_tree_to_string.argtypes = [DecisionTreeNodeObject]
+    _loaded_lib.eus_decision_tree_to_string.restype = ctypes.c_char_p
+
     _loaded_lib.eus_learn_decision_tree_for_ml_data.argtypes = [ctypes.POINTER(BitSetObject),
                                                                 ctypes.POINTER(BitSetObject),
                                                                 ctypes.c_ulong, ctypes.c_ulong]
@@ -253,7 +255,7 @@ def eus_get_last_error_string():
 
 def _raise_exception_if_error():
     if (eus_check_error()):
-        raise BitSetException(eus_get_last_error_string())
+        raise LibEUSolverException(eus_get_last_error_string())
 
 def eus_bitset_construct(a0, a1 = False):
     r = _lib().eus_bitset_construct(a0, a1)
@@ -451,12 +453,12 @@ def eus_decision_tree_is_leaf_node(a0):
     return r
 
 def eus_decision_tree_inc_ref(a0):
-    r = lib().eus_decision_tree_inc_ref(a0)
+    r = _lib().eus_decision_tree_inc_ref(a0)
     _raise_exception_if_error()
     return r
 
 def eus_decision_tree_dec_ref(a0):
-    r = lib().eus_decision_tree_dec_ref(a0)
+    r = _lib().eus_decision_tree_dec_ref(a0)
     _raise_exception_if_error()
     return r
 
@@ -480,6 +482,11 @@ def eus_decision_tree_get_label_id(a0):
     _raise_exception_if_error()
     return r
 
+def eus_decision_tree_to_string(a0):
+    r = _to_pystr(_lib().eus_decision_tree_to_string(a0))
+    _raise_exception_if_error()
+    return r
+
 def eus_learn_decision_tree_for_ml_data(pred_signature_list,
                                         term_signature_list):
     assert (isinstance(pred_signature_list, list))
@@ -492,16 +499,16 @@ def eus_learn_decision_tree_for_ml_data(pred_signature_list,
     term_signatures = (BitSetObject * num_terms)()
 
     for i in range(num_preds):
-        pred_signatures[i] = pred_signature_list[i]
+        pred_signatures[i] = pred_signature_list[i].bitset_object
     for i in range(num_terms):
-        term_signatures[i] = term_signature_list[i]
+        term_signatures[i] = term_signature_list[i].bitset_object
 
     r = _lib().eus_learn_decision_tree_for_ml_data(pred_signatures,
                                                    term_signatures,
                                                    num_preds,
                                                    num_terms);
     _raise_exception_if_error()
-    return r
+    return DecisionTreeNode(r)
 
 
 class BitSet(object):
@@ -693,8 +700,12 @@ class BitSet(object):
 class DecisionTreeNode(object):
     def __init__(self, decision_tree_node_object):
         self.decision_tree_node_object = decision_tree_node_object
+        eus_decision_tree_inc_ref(decision_tree_node_object)
         self.is_leaf_node = eus_decision_tree_is_leaf_node(decision_tree_node_object)
         self.is_split_node = eus_decision_tree_is_split_node(decision_tree_node_object)
+
+    def __del__(self):
+        eus_decision_tree_dec_ref(self.decision_tree_node_object)
 
     def is_leaf(self):
         return self.is_leaf_node
@@ -707,14 +718,14 @@ class DecisionTreeNode(object):
             return None
 
         child = eus_decision_tree_get_positive_child(self.decision_tree_node_object)
-        return DecisionTreeNodeObject(child)
+        return DecisionTreeNode(child)
 
     def get_negative_child(self):
         if (self.is_leaf_node):
             return None
 
         child = eus_decision_tree_get_negative_child(self.decision_tree_node_object)
-        return DecisionTreeNodeObject(child)
+        return DecisionTreeNode(child)
 
     def get_split_attribute_id(self):
         if (self.is_leaf_node):
@@ -727,6 +738,9 @@ class DecisionTreeNode(object):
             return None
 
         return eus_decision_tree_get_label_id(self.decision_tree_node_object)
+
+    def __str__(self):
+        return eus_decision_tree_to_string(self.decision_tree_node_object)
 
 
 ################################################################################

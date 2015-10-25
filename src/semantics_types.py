@@ -54,6 +54,8 @@ from enum import IntEnum
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
+_expr_to_str = exprs.expression_to_string
+
 class FunctionKinds(IntEnum):
     """Function Kinds.
     builtin_function: represents a builtin function.
@@ -175,8 +177,12 @@ class UnknownFunctionBase(FunctionBase):
         num_children = len(expr_object.children)
         self._evaluate_children(expr_object, eval_context_object)
         parameter_map = [exprs.Value(eval_context_object.peek(i), self.domain_types[i])
-                         for i in range(len(self.domain_types))]
+                         for i in reversed(range(len(self.domain_types)))]
         eval_context_object.pop(num_children)
+
+        # print('Evaluating unknown function expression:' +
+        #       '\n%s with actual args:\n%s' % (_expr_to_str(expr_object),
+        #                                       str(parameter_map)))
 
         orig_valuation_map = eval_context_object.valuation_map
         eval_context_object.valuation_map = parameter_map

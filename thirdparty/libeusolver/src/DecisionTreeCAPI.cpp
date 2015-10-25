@@ -41,6 +41,8 @@
 #include "DecisionTree.hpp"
 #include "LibEUSolverInternal.hpp"
 
+static std::string s_dt_c_api_output_buffer_;
+
 static inline eusolver::DecisionTreeNodeBase* as_dt(void* ptr)
 {
     return static_cast<eusolver::DecisionTreeNodeBase*>(ptr);
@@ -114,13 +116,15 @@ static inline const eusolver::DecisionTreeSplitNode* sas_split_dt(const void* pt
 bool eus_decision_tree_is_split_node(const void* node)
 {
     eusolver::detail_::g_libeusolver_c_api_error_buffer_.clear();
-    return (as_split_dt(node) != nullptr);
+    return (dynamic_cast<const eusolver::DecisionTreeSplitNode*>
+            (static_cast<const eusolver::DecisionTreeNodeBase*>(node)) != nullptr);
 }
 
 bool eus_decision_tree_is_leaf_node(const void* node)
 {
     eusolver::detail_::g_libeusolver_c_api_error_buffer_.clear();
-    return (as_leaf_dt(node) != nullptr);
+    return (dynamic_cast<const eusolver::DecisionTreeLeafNode*>
+            (static_cast<const eusolver::DecisionTreeNodeBase*>(node)) != nullptr);
 }
 
 void eus_decision_tree_inc_ref(const void* node)
@@ -156,7 +160,14 @@ u64 eus_decision_tree_get_split_attribute_id(const void* node)
 u64 eus_decision_tree_get_label_id(const void* node)
 {
     eusolver::detail_::g_libeusolver_c_api_error_buffer_.clear();
-    return as_split_dt(node)->get_split_attribute_id();
+    return as_leaf_dt(node)->get_label_id();
+}
+
+const char* eus_decision_tree_to_string(const void* node)
+{
+    eusolver::detail_::g_libeusolver_c_api_error_buffer_.clear();
+    s_dt_c_api_output_buffer_ = as_dt(node)->to_string();
+    return s_dt_c_api_output_buffer_.c_str();
 }
 
 //
