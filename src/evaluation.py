@@ -45,17 +45,28 @@ import basetypes
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
 
+_variable_expression = exprs.ExpressionKinds.variable_expression
+_constant_expression = exprs.ExpressionKinds.constant_expression
+_function_expression = exprs.ExpressionKinds.function_expression
+_formal_parameter_expression = exprs.ExpressionKinds.formal_parameter_expression
+
+def evaluate_term_raw(expr_object, eval_context):
+    return evaluate_expression_raw(expr_object, eval_context)
+
+def evaluate_pred_raw(expr_object, eval_context):
+    return evaluate_expression_raw(expr_object, eval_context)
+
 def evaluate_expression_on_stack(expr_object, eval_context):
     kind = expr_object.expr_kind
-    if (kind == exprs.ExpressionKinds.variable_expression):
+    if (kind == _variable_expression):
         o = expr_object.variable_info.variable_eval_offset
         eval_context.push(eval_context.valuation_map[o].value_object)
-    elif (kind == exprs.ExpressionKinds.formal_parameter_expression):
+    elif (kind == _formal_parameter_expression):
         o = expr_object.parameter_position
         eval_context.push(eval_context.valuation_map[o].value_object)
-    elif (kind == exprs.ExpressionKinds.constant_expression):
+    elif (kind == _constant_expression):
         eval_context.push(expr_object.value_object.value_object)
-    elif (kind == exprs.ExpressionKinds.function_expression):
+    elif (kind == _function_expression):
         fun_info = expr_object.function_info
         fun_info.evaluate(expr_object, eval_context)
     else:

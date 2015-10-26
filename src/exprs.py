@@ -64,36 +64,37 @@ class ExpressionKinds(IntEnum):
 
 
 _VariableExpression = collections.namedtuple('VariableExpression',
-                                             ['expr_kind', 'variable_info'])
+                                             ['expr_kind', 'variable_info', 'expr_id'])
 
 _FormalParameterExpression = collections.namedtuple('FormalParameterExpression',
                                                     ['expr_kind',
                                                      'unknown_function_info',
                                                      'parameter_type',
-                                                     'parameter_position'])
+                                                     'parameter_position', 'expr_id'])
 
 _ConstantExpression = collections.namedtuple('ConstantExpression',
-                                             ['expr_kind', 'value_object'])
+                                             ['expr_kind', 'value_object', 'expr_id'])
 
 _FunctionExpression = collections.namedtuple('FunctionExpression',
-                                             ['expr_kind', 'function_info', 'children'])
+                                             ['expr_kind', 'function_info',
+                                              'children', 'expr_id'])
 
 Value = collections.namedtuple('Value', ['value_object', 'value_type'])
 
 def VariableExpression(variable_info):
-    return _VariableExpression(ExpressionKinds.variable_expression, variable_info)
+    return _VariableExpression(ExpressionKinds.variable_expression, variable_info, None)
 
 def ConstantExpression(value_object):
-    return _ConstantExpression(ExpressionKinds.constant_expression, value_object)
+    return _ConstantExpression(ExpressionKinds.constant_expression, value_object, None)
 
 def FunctionExpression(function_info, children):
     return _FunctionExpression(ExpressionKinds.function_expression,
-                               function_info, children)
+                               function_info, children, None)
 
 def FormalParameterExpression(unknown_function_info, parameter_type, parameter_position):
     return _FormalParameterExpression(ExpressionKinds.formal_parameter_expression,
                                       unknown_function_info, parameter_type,
-                                      parameter_position)
+                                      parameter_position, None)
 
 def value_to_string(the_value):
     if (the_value.value_type.type_code == exprtypes.TypeCodes.boolean_type):

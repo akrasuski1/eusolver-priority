@@ -56,6 +56,23 @@ _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
 _is_expr = exprs.is_expression
 
+_term_id_point_id_to_sat = {}
+_pred_id_point_id_to_sat = {}
+
+def _cached_evaluate(term_id_point_id_tuple, eval_dict, not_found_factory):
+    try:
+        return eval_dict[term_id_point_id_tuple]
+    except KeyError:
+        r = not_found_factory()
+        eval_dict[term_id_point_id_tuple] = r
+        return r
+
+def _cached_evaluate_term(term_id_point_id_tuple, not_found_factory):
+    return _cached_evaluate(term_id_point_id_tuple, _term_id_point_id_to_sat, not_found_factory)
+
+def _cached_evaluate_pred(pred_id_point_id_tuple, not_found_factory):
+    return _cached_evaluate(pred_id_point_id_tuple, _pred_id_point_id_to_sat, not_found_factory)
+
 def model_to_point(model, var_smt_expr_list, var_info_list):
     num_vars = len(var_smt_expr_list)
     point = [None] * num_vars
@@ -90,6 +107,16 @@ def _decision_tree_to_guard_term_list_internal(decision_tree, pred_list, term_li
                                                    retval, guard_stack)
         guard_stack.pop()
 
+def _decision_tree_to_expr_internal(decision_tree, pred_list, term_list, syn_ctx):
+    if (decision_tree.is_leaf()):
+        return term_list[decision_tree.get_label_id()]
+    else:
+        if_term = _decision_tree_to_expr_internal(decision_tree.get_positive_child(),
+                                                  pred_list, term_list, syn_ctx)
+        else_term = _decision_tree_to_expr_internal(decision_tree.get_negative_child(),
+                                                    pred_list, term_list, syn_ctx)
+        return syn_ctx.make_function_expr('ite', pred_list[decision_tree.get_split_attribute_id()],
+                                          if_term, else_term)
 
 def decision_tree_to_guard_term_list(decision_tree, pred_list, term_list, syn_ctx):
     retval = []
@@ -105,12 +132,15 @@ def guard_term_list_to_expr(guard_term_list, syn_ctx):
                                             guard_term_list[i][1], retval)
     return retval
 
+# def decision_tree_to_expr(decision_tree, pred_list, term_list, syn_ctx):
+#     guard_term_list = decision_tree_to_guard_term_list(decision_tree,
+#                                                        pred_list,
+#                                                        term_list,
+#                                                        syn_ctx)
+#     return guard_term_list_to_expr(guard_term_list, syn_ctx)
+
 def decision_tree_to_expr(decision_tree, pred_list, term_list, syn_ctx):
-    guard_term_list = decision_tree_to_guard_term_list(decision_tree,
-                                                       pred_list,
-                                                       term_list,
-                                                       syn_ctx)
-    return guard_term_list_to_expr(guard_term_list, syn_ctx)
+    return _decision_tree_to_expr_internal(decision_tree, pred_list, term_list, syn_ctx)
 
 
 class DuplicatePointException(Exception):
@@ -134,7 +164,7 @@ class TermSolver(object):
 
         for i in range(num_points):
             eval_ctx.set_valuation_map(points[i])
-            res = evaluation.evaluate_expression_raw(spec, eval_ctx)
+            res = evaluation.evaluate_term_raw(spec, eval_ctx)
             if (res):
                 retval.add(i)
         return retval
@@ -142,11 +172,11 @@ class TermSolver(object):
     def _trivial_solve(self):
         for term in self.term_generator.generate():
             retval = (True, {None : term})
-            print('Term Solve complete!')
-            print({str(x) : _expr_to_str(y) for (x, y) in retval[1].items()})
+            # print('Term Solve complete!')
+            # print({str(x) : _expr_to_str(y) for (x, y) in retval[1].items()})
             return retval
 
-        print('Term Solve failed!')
+        # print('Term Solve failed!')
         return (False, None)
 
     def continue_solve(self):
@@ -162,22 +192,28 @@ class TermSolver(object):
         spec_satisfied_at_points = self.spec_satisfied_at_points
 
         for term in generator.generate():
-            print('Generated term %s' % _expr_to_str(term))
+            # print('Generated term %s' % _expr_to_str(term))
             sig = self._compute_term_signature(term, self.spec, self.eval_ctx)
             if (sig in signature_to_term or sig.is_empty()):
                 continue
             signature_to_term[sig] = term
             spec_satisfied_at_points |= sig
-            print('Cumulative specification satisfaction: %s' % str(spec_satisfied_at_points))
+            # print('Cumulative specification satisfaction: %s' % str(spec_satisfied_at_points))
             if (spec_satisfied_at_points.is_full()):
-                print('Term Solve complete!')
-                print({str(x) : _expr_to_str(y) for (x, y) in signature_to_term.items()})
+                # print('Term Solve complete!')
+                # print({str(x) : _expr_to_str(y) for (x, y) in signature_to_term.items()})
                 return (True, signature_to_term)
 
         return (False, None)
 
 
     def solve(self, term_size, points):
+        global _term_id_point_id_to_sat
+        global _pred_id_point_id_to_sat
+
+        _term_id_point_id_to_sat = {}
+        _pred_id_point_id_to_sat = {}
+
         self.points = points
         self.signature_to_term = {}
         self.num_points = len(points)
@@ -219,7 +255,7 @@ class Unifier(object):
 
         for i in range(num_points):
             eval_ctx.set_valuation_map(points[i])
-            res = evaluation.evaluate_expression_raw(pred, eval_ctx)
+            res = evaluation.evaluate_pred_raw(pred, eval_ctx)
             if (res):
                 retval.add(i)
         return retval
@@ -269,11 +305,12 @@ class Unifier(object):
             pred_list.append(pred)
             pred_sig_list.append(pred_sig)
 
-        print('pred_sig_list: %s' % [str(x) for x in pred_sig_list])
-        print('term_sig_list: %s' % [str(x) for x in term_sig_list], flush=True)
+        # print('pred_sig_list: %s' % [str(x) for x in pred_sig_list])
+        # print('pred_list: %s' % [_expr_to_str(x) for x in pred_list], flush=True)
+        # print('term_sig_list: %s' % [str(x) for x in term_sig_list], flush=True)
         dt = eusolver.eus_learn_decision_tree_for_ml_data(pred_sig_list,
                                                           term_sig_list)
-        print('Obtained decision tree:\n%s' % str(dt))
+        # print('Obtained decision tree:\n%s' % str(dt))
         if (dt == None):
             return None
         else:
@@ -296,28 +333,30 @@ class Unifier(object):
             new_preds_generated = False
             for pred in pred_generator.generate():
                 sig = self._compute_pred_signature(pred)
-                if (sig not in signature_to_pred):
-                    print('Generated pred %s' % _expr_to_str(pred))
+                # if the predicate evaluates universally to true or false
+                # at all points, then it isn't worth considering it.
+                if (not sig.is_empty() and not sig.is_full() and sig not in signature_to_pred):
+                    # print('Generated pred %s' % _expr_to_str(pred))
                     signature_to_pred[sig] = pred
                     new_preds_generated = True
 
             if (not new_preds_generated):
-                print(('Unifier.unify(): no new predicates generated at size %d, ' +
-                      'continuing...') % pred_size)
+                # print(('Unifier.unify(): no new predicates generated at size %d, ' +
+                #       'continuing...') % pred_size)
                 continue
 
             # we've generated a bunch of (new) predicates
             # try to learn a decision tree
-            print('Unifier.unify(): Attempting to learn decision tree...', flush=True)
+            # print('Unifier.unify(): Attempting to learn decision tree...', flush=True)
             dt_tuple = self._try_decision_tree_learning(signature_to_term,
                                                         signature_to_pred)
             if (dt_tuple == None):
-                print('Unifier.unify(): Could not learn decision tree!')
+                # print('Unifier.unify(): Could not learn decision tree!')
                 continue
-            print('Unifier.unify(): Learned a decision tree!')
+            # print('Unifier.unify(): Learned a decision tree!')
             (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
             expr = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
-            print('Obtained expr: %s' % _expr_to_str(expr))
+            # print('Obtained expr: %s' % _expr_to_str(expr))
             return self._verify_expr(expr)
 
 class Solver(object):
@@ -356,7 +395,7 @@ class Solver(object):
         var_expr_list = [exprs.VariableExpression(x) for x in var_list]
         self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
 
-        print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
+        # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
 
         while (True):
             term_solver = TermSolver(canon_spec, term_generator)
@@ -372,7 +411,7 @@ class Solver(object):
             else:
                 # this is a counterexample
                 self.add_point(r)
-                print('Solver: Added point %s' % str([c.value_object for c in r]))
+                # print('Solver: Added point %s' % str([c.value_object for c in r]))
                 continue
 
 ########################################################################
@@ -452,7 +491,7 @@ def test_solver_max(num_vars):
 
     solver = Solver(syn_ctx)
     expr = solver.solve(term_generator, pred_generator)
-    return expr
+    return (expr, len(solver.points))
 
 
 if __name__ == '__main__':
@@ -464,12 +503,13 @@ if __name__ == '__main__':
     max_cardinality = int(sys.argv[1])
     log_file = open(sys.argv[2], 'a')
     start_time = time.clock()
-    sol = test_solver_max(max_cardinality)
+    (sol, npoints) = test_solver_max(max_cardinality)
     end_time = time.clock()
     total_time = end_time - start_time
     log_file.write('max of %d arguments:\n%s\ncomputed in %s seconds\n' % (max_cardinality,
                                                                            exprs.expression_to_string(sol),
                                                                            str(total_time)))
+    log_file.write('Added %d counterexample points in total\n' % npoints)
 
 
 
