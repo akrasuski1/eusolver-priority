@@ -306,6 +306,10 @@ public:
     i64 get_prev_element_lesser_than_or_equal_to(u64 position) const;
     i64 get_prev_element_lesser_than(u64 position) const;
 
+    // copy in bits from another bitset
+    void copy_in(const BitSet* other);
+    void copy_in(const BitSet& other);
+
     u64 hash() const;
 
     std::string to_string() const;

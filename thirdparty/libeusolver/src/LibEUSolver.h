@@ -99,6 +99,7 @@ i64 eus_bitset_get_prev_element_lesser_than(const void* bitset, u64 position);
 u64 eus_bitset_get_hash(const void* bitset);
 const char* eus_bitset_to_string(const void* bitset);
 void* eus_bitset_clone(const void* bitset);
+void eus_bitset_copy_in(void* bitset1, const void* bitset2);
 
 /* error handling */
 bool eus_check_error();

@@ -70,11 +70,11 @@ def _lib():
         lib_dir = os.path.join(mydir, './libeusolver.so')
         try:
             init(lib_dir)
+            # also disable interception of SIGINT
+            signal.signal(signal.SIGINT, signal.SIG_DFL)
         except Exception as e:
             print('Could not load libeusolver.so!')
             raise e
-    # also disable interception of SIGINT
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     return _loaded_lib
 
@@ -207,6 +207,9 @@ def init(path_to_lib):
 
     _loaded_lib.eus_bitset_clone.argtypes = [BitSetObject]
     _loaded_lib.eus_bitset_clone.restype = BitSetObject
+
+    _loaded_lib.eus_bitset_copy_in.argtypes = [BitSetObject, BitSetObject]
+    _loaded_lib.eus_bitset_copy_in.restype = None
 
     _loaded_lib.eus_check_error.argtypes = []
     _loaded_lib.eus_check_error.restype = ctypes.c_bool
@@ -439,6 +442,11 @@ def eus_bitset_to_string(a0):
 
 def eus_bitset_clone(a0):
     r = _lib().eus_bitset_clone(a0)
+    _raise_exception_if_error()
+    return r
+
+def eus_bitset_copy_in(a0, a1):
+    r = _lib().eus_bitset_copy_in(a0, a1)
     _raise_exception_if_error()
     return r
 
@@ -695,6 +703,10 @@ class BitSet(object):
 
     def clone(self):
         return self.copy()
+
+    def copy_in(self, other):
+        self._check_mutability()
+        eus_bitset_copy_in(self.bitset_object, other.bitset_object)
 
 
 class DecisionTreeNode(object):

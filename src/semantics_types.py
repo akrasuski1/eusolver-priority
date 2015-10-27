@@ -55,6 +55,10 @@ if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
 _expr_to_str = exprs.expression_to_string
+_variable_expression = exprs.ExpressionKinds.variable_expression
+_constant_expression = exprs.ExpressionKinds.constant_expression
+_function_expression = exprs.ExpressionKinds.function_expression
+_formal_parameter_expression = exprs.ExpressionKinds.formal_parameter_expression
 
 class FunctionKinds(IntEnum):
     """Function Kinds.
@@ -93,13 +97,13 @@ def _to_smt_constant_expression(expr_object, smt_context_object):
 
 def expression_to_smt(expr_object, smt_context_object, var_subst_map = None):
     kind = expr_object.expr_kind
-    if (kind == exprs.ExpressionKinds.variable_expression):
+    if (kind == _variable_expression):
         return _to_smt_variable_expression(expr_object, smt_context_object)
-    elif (kind == exprs.ExpressionKinds.formal_parameter_expression):
+    elif (kind == _formal_parameter_expression):
         return var_subst_map[expr_object.parameter_position]
-    elif (kind == exprs.ExpressionKinds.constant_expression):
+    elif (kind == _constant_expression):
         return _to_smt_constant_expression(expr_object, smt_context_object)
-    elif (kind == exprs.ExpressionKinds.function_expression):
+    elif (kind == _function_expression):
         fun_info = expr_object.function_info
         return fun_info.to_smt(expr_object, smt_context_object, var_subst_map)
     else:

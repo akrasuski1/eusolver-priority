@@ -55,6 +55,7 @@ from enum import IntEnum
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
 _is_expr = exprs.is_expression
+_get_expr_with_id = exprs.get_expr_with_id
 
 _term_id_point_id_to_sat = {}
 _pred_id_point_id_to_sat = {}
@@ -148,90 +149,104 @@ class DuplicatePointException(Exception):
         self.point = point
 
     def __str__(self):
-        return 'Duplicate Point: %s' % str(self.point)
+        return 'Duplicate Point %s' % str([self.point[i].value_object
+                                           for i in range(len(self.point))])
 
 
 class TermSolver(object):
-    def __init__(self, spec, term_generator):
+    def __init__(self, spec, term_generator, max_term_size = 20):
         self.spec = spec
         self.term_generator = term_generator
+        self.points = []
+        self.max_term_size = max_term_size
+        self.prev_expr_id_to_sig = {}
+        self.eval_ctx = evaluation.EvaluationContext()
 
-    def _compute_term_signature(self, term, spec, eval_ctx):
+    def _trivial_solve(self):
+        term_size = 1
+        while (term_size <= self.max_term_size):
+            self.term_generator.set_size(term_size)
+            for term in self.term_generator.generate():
+                retval = {None : term}
+                # print('Term Solve complete!')
+                # print({str(x) : _expr_to_str(y) for (x, y) in retval[1].items()})
+                return retval
+            term_size += 1
+
+
+        # print('Term Solve failed!')
+        return None
+
+    def add_point(self, point):
+        self.points.append(point)
+
+    def _compute_term_signature(self, term):
         points = self.points
         num_points = len(points)
         retval = self.signature_factory()
+        eval_ctx = self.eval_ctx
         eval_ctx.set_interpretation_map([term])
+        prev_expr_id_to_sig = self.prev_expr_id_to_sig
+        spec = self.spec
 
-        for i in range(num_points):
-            eval_ctx.set_valuation_map(points[i])
-            res = evaluation.evaluate_term_raw(spec, eval_ctx)
-            if (res):
-                retval.add(i)
-        return retval
-
-    def _trivial_solve(self):
-        for term in self.term_generator.generate():
-            retval = (True, {None : term})
-            # print('Term Solve complete!')
-            # print({str(x) : _expr_to_str(y) for (x, y) in retval[1].items()})
+        try:
+            r = prev_expr_id_to_sig[term.expr_id]
+            retval.copy_in(r)
+            num_old_points = r.size_of_universe()
+            num_new_points = retval.size_of_universe()
+            for i in range(num_old_points, num_new_points):
+                eval_ctx.set_valuation_map(points[i])
+                if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
+                    retval.add(i)
+            return retval
+        except KeyError:
+            # need to actually evaluate at every point :-(
+            for i in range(num_points):
+                eval_ctx.set_valuation_map(points[i])
+                if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
+                    retval.add(i)
             return retval
 
-        # print('Term Solve failed!')
-        return (False, None)
+    def _cache_results(self, sig_to_term):
+        self.prev_expr_id_to_sig = {term.expr_id : sig for (sig, term) in sig_to_term.items()}
 
-    def continue_solve(self):
-        self.current_term_size += 1
-        generator = self.term_generator
-        generator.set_size(self.current_term_size)
-
-        num_points = self.num_points
+    def solve(self):
+        points = self.points;
+        num_points = len(points)
         if (num_points == 0):
             return self._trivial_solve()
 
-        signature_to_term = self.signature_to_term
-        spec_satisfied_at_points = self.spec_satisfied_at_points
+        sig_to_term = {}
+        self.signature_factory = BitSet.make_factory(num_points)
+        spec_satisfied_at_points = self.signature_factory()
 
-        for term in generator.generate():
-            # print('Generated term %s' % _expr_to_str(term))
-            sig = self._compute_term_signature(term, self.spec, self.eval_ctx)
-            if (sig in signature_to_term or sig.is_empty()):
-                continue
-            signature_to_term[sig] = term
-            spec_satisfied_at_points |= sig
-            # print('Cumulative specification satisfaction: %s' % str(spec_satisfied_at_points))
-            if (spec_satisfied_at_points.is_full()):
-                # print('Term Solve complete!')
-                # print({str(x) : _expr_to_str(y) for (x, y) in signature_to_term.items()})
-                return (True, signature_to_term)
+        current_term_size = 1
+        max_term_size = self.max_term_size
+        generator = self.term_generator
+        monotonic_expr_id = 0
+        while (current_term_size <= max_term_size):
+            generator.set_size(current_term_size)
+            for term in generator.generate():
+                term = _get_expr_with_id(term, monotonic_expr_id)
+                monotonic_expr_id += 1
+                sig = self._compute_term_signature(term)
 
-        return (False, None)
+                if (sig in sig_to_term or sig.is_empty()):
+                    continue
 
+                sig_to_term[sig] = term
 
-    def solve(self, term_size, points):
-        global _term_id_point_id_to_sat
-        global _pred_id_point_id_to_sat
+                spec_satisfied_at_points |= sig
+                if (spec_satisfied_at_points.is_full()):
+                    self._cache_results(sig_to_term)
+                    return sig_to_term
 
-        _term_id_point_id_to_sat = {}
-        _pred_id_point_id_to_sat = {}
+            current_term_size += 1
 
-        self.points = points
-        self.signature_to_term = {}
-        self.num_points = len(points)
-        num_points = self.num_points
-        if (num_points > 0):
-            self.signature_factory = BitSet.make_factory(num_points)
-            self.spec_satisfied_at_points = self.signature_factory()
-        else:
-            self.signature_factory = None
-            self.spec_satisfied_at_points = None
-
-        self.current_term_size = term_size - 1
-        self.eval_ctx = evaluation.EvaluationContext()
-
-        return self.continue_solve()
+        return None
 
 class Unifier(object):
-    def __init__(self, syn_ctx, points, pred_generator):
+    def __init__(self, syn_ctx, pred_generator, max_pred_size = 20):
         self.pred_generator = pred_generator
         self.syn_ctx = syn_ctx
         self.true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
@@ -243,22 +258,39 @@ class Unifier(object):
         self.clauses = clauses
         self.neg_clauses = neg_clauses
         self.intro_vars = intro_vars
-        self.points = points
+        self.points = []
         self.eval_ctx = evaluation.EvaluationContext()
+        self.prev_pred_id_to_sig = {}
+        self.max_pred_size = max_pred_size
+
+    def add_point(self, point):
+        self.points.append(point)
 
     def _compute_pred_signature(self, pred):
-        points = self.points
+        points = self.points;
         num_points = len(points)
         retval = self.signature_factory()
-        intro_vars = self.intro_vars
         eval_ctx = self.eval_ctx
-
-        for i in range(num_points):
-            eval_ctx.set_valuation_map(points[i])
-            res = evaluation.evaluate_pred_raw(pred, eval_ctx)
-            if (res):
-                retval.add(i)
-        return retval
+        prev_pred_id_to_sig = self.prev_pred_id_to_sig
+        try:
+            r = prev_pred_id_to_sig[pred.expr_id]
+            retval.copy_in(r)
+            # print('r      = %s' % str(r))
+            num_old_points = r.size_of_universe()
+            num_new_points = retval.size_of_universe()
+            for i in range(num_old_points, num_new_points):
+                eval_ctx.set_valuation_map(points[i])
+                if (evaluation.evaluate_expression_raw(pred, eval_ctx)):
+                    retval.add(i)
+            # print('retval = %s' % str(retval))
+            return retval
+        except KeyError:
+            # need to actually evaluate
+            for i in range(num_points):
+                eval_ctx.set_valuation_map(points[i])
+                if (evaluation.evaluate_expression_raw(pred, eval_ctx)):
+                    retval.add(i)
+            return retval
 
     def _verify_expr(self, term):
         smt_ctx = z3smt.Z3SMTContext()
@@ -319,19 +351,27 @@ class Unifier(object):
     def unify(self, signature_to_term):
         triv = self._try_trivial_unification(signature_to_term)
         if (triv != None):
+            # print('Unifier: returning %s' % str(triv))
             return triv
 
+        # cannot be trivially unified
         num_points = len(self.points)
         self.signature_factory = BitSet.make_factory(num_points)
         pred_size = 0
-        # cannot be trivially unified
-        pred_generator = self.pred_generator
         signature_to_pred = {}
-        while (True):
-            pred_size += 1
-            pred_generator.set_size(pred_size)
+        current_pred_size = 1
+        max_pred_size = self.max_pred_size
+        generator = self.pred_generator
+        monotonic_pred_id = 0
+
+        while (current_pred_size <= max_pred_size):
+            generator.set_size(current_pred_size)
             new_preds_generated = False
-            for pred in pred_generator.generate():
+            for pred in generator.generate():
+                # print('Generated pred: %s' % _expr_to_str(pred), flush=True)
+                pred = _get_expr_with_id(pred, monotonic_pred_id)
+                monotonic_pred_id += 1
+
                 sig = self._compute_pred_signature(pred)
                 # if the predicate evaluates universally to true or false
                 # at all points, then it isn't worth considering it.
@@ -343,6 +383,7 @@ class Unifier(object):
             if (not new_preds_generated):
                 # print(('Unifier.unify(): no new predicates generated at size %d, ' +
                 #       'continuing...') % pred_size)
+                current_pred_size += 1
                 continue
 
             # we've generated a bunch of (new) predicates
@@ -352,11 +393,15 @@ class Unifier(object):
                                                         signature_to_pred)
             if (dt_tuple == None):
                 # print('Unifier.unify(): Could not learn decision tree!')
+                current_pred_size += 1
                 continue
+
             # print('Unifier.unify(): Learned a decision tree!')
             (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
             expr = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
             # print('Obtained expr: %s' % _expr_to_str(expr))
+            self.prev_pred_id_to_sig = {pred.expr_id : sig
+                                        for (sig, pred) in signature_to_pred.items()}
             return self._verify_expr(expr)
 
 class Solver(object):
@@ -396,21 +441,25 @@ class Solver(object):
         self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
 
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
+        term_solver = TermSolver(canon_spec, term_generator)
+        unifier = Unifier(self.syn_ctx, pred_generator)
 
         while (True):
-            term_solver = TermSolver(canon_spec, term_generator)
             # iterate until we have terms that are "sufficient"
-            (terms_done, sig_to_term) = term_solver.solve(1, self.points)
-            while (not terms_done):
-                (terms_done, sig_to_term) = term_solver.continue_solve()
+            sig_to_term = term_solver.solve()
+            if (sig_to_term == None):
+                return None
             # we now have a sufficient set of terms
-            unifier = Unifier(self.syn_ctx, self.points, pred_generator)
+            # print('Term solve complete!')
             r = unifier.unify(sig_to_term)
+            # print('Unification Complete!')
             if (exprs.is_expression(r)):
                 return r
             else:
                 # this is a counterexample
                 self.add_point(r)
+                term_solver.add_point(r)
+                unifier.add_point(r)
                 # print('Solver: Added point %s' % str([c.value_object for c in r]))
                 continue
 
@@ -507,11 +556,9 @@ if __name__ == '__main__':
     end_time = time.clock()
     total_time = end_time - start_time
     log_file.write('max of %d arguments:\n%s\ncomputed in %s seconds\n' % (max_cardinality,
-                                                                           exprs.expression_to_string(sol),
+                                                                               exprs.expression_to_string(sol),
                                                                            str(total_time)))
     log_file.write('Added %d counterexample points in total\n' % npoints)
-
-
 
 #
 # solvers.py ends here

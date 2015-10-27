@@ -1065,6 +1065,28 @@ BitSet* BitSet::clone() const
     return new BitSet(*this);
 }
 
+void BitSet::copy_in(const BitSet& other)
+{
+    copy_in(&other);
+}
+
+void BitSet::copy_in(const BitSet* other)
+{
+    if (other->m_size_of_universe > m_size_of_universe) {
+        throw BitSetException((std::string)"Size of universe of bitset to be copied " +
+                              "in exceeds the size of the universe of the bitset " +
+                              "to be copied into!");
+    }
+    auto other_bitvec_ptr = other->get_bitvec_ptr();
+    auto bitvec_ptr = get_bitvec_ptr();
+
+    clear_all();
+    auto const other_num_words = num_words_for_bits(other->m_size_of_universe);
+    for (u64 i = 0; i < other_num_words; ++i) {
+        bitvec_ptr[i] = other_bitvec_ptr[i];
+    }
+}
+
 } /* end namespace eusolver */
 
 //

@@ -334,5 +334,13 @@ void* eus_bitset_clone(const void* bitset)
     return nullptr;
 }
 
+void eus_bitset_copy_in(void* bitset1, const void* bitset2)
+{
+    EUS_BEGIN_CHECKED_BLOCK_;
+    return as_bs(bitset1)->copy_in(as_bs(bitset2));
+    EUS_END_CHECKED_BLOCK_;
+    return;
+}
+
 //
 // BitSetCAPI.cpp ends here
