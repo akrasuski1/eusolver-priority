@@ -123,26 +123,31 @@ std::string DecisionTreeSplitNode::to_string() const
     return to_indented_string(0);
 }
 
-DecisionTreeLeafNode::DecisionTreeLeafNode(u64 label_id)
-    : DecisionTreeNodeBase(), m_label_id(label_id)
+DecisionTreeLeafNode::DecisionTreeLeafNode(const BitSet& labels)
+    : DecisionTreeNodeBase(), m_labels(labels.clone())
 {
     // Nothing here
 }
 
 DecisionTreeLeafNode::~DecisionTreeLeafNode()
 {
-    // Nothing here
+    delete m_labels;
 }
 
 u64 DecisionTreeLeafNode::get_label_id() const
 {
-    return m_label_id;
+    return m_labels->get_next_element_greater_than_or_equal_to(0);
+}
+
+const BitSet* DecisionTreeLeafNode::get_all_label_ids() const
+{
+    return m_labels;
 }
 
 std::string DecisionTreeLeafNode::to_indented_string(u32 indent_level) const
 {
     const std::string indent_string(indent_level * 2, ' ');
-    return indent_string + "-> label(" + std::to_string(m_label_id) + ")";
+    return indent_string + "-> labels(" + m_labels->to_string() + ")";
 }
 
 std::string DecisionTreeLeafNode::to_string() const

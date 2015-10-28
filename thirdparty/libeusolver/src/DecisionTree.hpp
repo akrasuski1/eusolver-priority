@@ -43,6 +43,7 @@
 #include <type_traits>
 #include <string>
 #include "EUSolverTypes.h"
+#include "BitSet.hpp"
 
 namespace eusolver {
 
@@ -118,13 +119,14 @@ public:
 class DecisionTreeLeafNode : public DecisionTreeNodeBase
 {
 private:
-    u64 m_label_id;
+    const BitSet* m_labels;
 
 public:
-    DecisionTreeLeafNode(u64 label_id);
+    DecisionTreeLeafNode(const BitSet& labels);
     virtual ~DecisionTreeLeafNode();
 
     u64 get_label_id() const;
+    const BitSet* get_all_label_ids() const;
 
     virtual std::string to_indented_string(u32 indent_level) const override;
     virtual std::string to_string() const override;

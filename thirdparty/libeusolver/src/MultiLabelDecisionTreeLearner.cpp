@@ -51,6 +51,17 @@ namespace multilabel_decision_tree_learner {
 
 namespace detail_ {
 
+class BitSetHasher
+{
+public:
+    inline u64 operator () (const BitSet& bitset) const
+    {
+        return bitset.hash();
+    }
+};
+
+static std::unordered_map<BitSet, double, BitSetHasher> entropy_cache;
+
 // we need at least this much of an information gain ratio
 // to consider things a good split
 static constexpr double sc_info_gain_threshold = 0.0001;
@@ -90,18 +101,14 @@ check_dt_learning_inputs(const InputVector& attribute_vector,
 #endif /* EUSOLVER_DEBUG_DT_CHECK_INPUTS_ == 1 */
 }
 
-static inline i64 get_common_label(const InputVector& point_to_labelling_vector,
-                                   const BitSet& point_filter)
+static inline BitSet get_common_labels(const InputVector& point_to_labelling_vector,
+                                       const BitSet& point_filter)
 {
     BitSet intersection_of_labels(point_to_labelling_vector[0]->get_size_of_universe(), true);
     for (auto const& point_id : point_filter) {
         intersection_of_labels &= (*(point_to_labelling_vector[point_id]));
     }
-    if (intersection_of_labels.size() > 0) {
-        return intersection_of_labels.get_next_element_greater_than_or_equal_to(0);
-    } else {
-        return -1;
-    }
+    return intersection_of_labels;
 }
 
 static inline std::unordered_map<u64, u64>
@@ -143,8 +150,28 @@ get_entropy_for_set(const InputVector& labelling_to_point_vector,
                     const InputVector& point_to_labelling_vector,
                     const BitSet& point_set)
 {
+    // audupa: TESTING
+    // return an entropy value of zero if there exists a common label
+    // BitSet intersection_of_labels(point_to_labelling_vector[0]->get_size_of_universe(), true);
+    // for (auto point_id : point_set) {
+    //     intersection_of_labels &= (*(point_to_labelling_vector[point_id]));
+    // }
+
+    // if (!intersection_of_labels.is_empty()) {
+    //     return 0.0;
+    // }
+    // audupa: this seems to increase the number of points needed. REJECT!
+    // audupa: end testing
+
     // first determine the set of possible labels
     // for this set of points
+
+    // audupa: Implement memoization of entropy
+    auto cached_it = detail_::entropy_cache.find(point_set);
+    if (cached_it != detail_::entropy_cache.end()) {
+        return cached_it->second;
+    }
+
     BitSet union_of_labels(point_to_labelling_vector[0]->get_size_of_universe());
     for (auto point_id : point_set) {
         union_of_labels |= (*(point_to_labelling_vector[point_id]));
@@ -187,6 +214,7 @@ get_entropy_for_set(const InputVector& labelling_to_point_vector,
 
     // std::cout << "Entropy of set: " << point_set.to_string()
     //           << " = " << -final_entropy << std::endl;
+    detail_::entropy_cache[point_set] = (-final_entropy);
     return (-final_entropy);
 }
 
@@ -239,11 +267,11 @@ learn_dt_for_ml_data(const InputVector& attribute_to_point_vector,
 
     // std::cout << "MultiLabelDecisionTreeLearner: Checking common label..." << std::endl;
 
-    auto const common_label = get_common_label(point_to_labelling_vector, point_filter);
-    if (common_label >= 0) {
+    auto common_labels = get_common_labels(point_to_labelling_vector, point_filter);
+    if (!common_labels.is_empty()) {
         // std::cout << "MultiLabelDecisionTreeLearner: Found common label "
         //           << common_label << std::endl;
-        return new DecisionTreeLeafNode(common_label);
+        return new DecisionTreeLeafNode(common_labels);
     }
 
     // std::cout << "MultiLabelDecisionTreeLearner: No common label!" << std::endl;
@@ -439,6 +467,7 @@ const DecisionTreeNodeBase*
 learn_decision_tree_for_multi_labelled_data(const std::vector<const BitSet*>& attribute_to_point_vector,
                                             const std::vector<const BitSet*>& labelling_to_point_vector)
 {
+    detail_::entropy_cache.clear();
     detail_::check_dt_learning_inputs(attribute_to_point_vector,
                                       labelling_to_point_vector);
     // std::cout << "MultiLabelDecisionTreeLearner: Transposing bitsets..." << std::endl;

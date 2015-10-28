@@ -9,6 +9,14 @@ set(CMAKE_C_FLAGS_RELEASE
   "-pipe -Wall -pedantic -std=c11 -flto -fPIC -O3"
   CACHE STRING "C compiler flags for release build" FORCE)
 
+set(CMAKE_CXX_FLAGS_PROFILE
+  "-pipe -Wall -pedantic -flto -fPIC -std=c++14 -O3 -pg"
+  CACHE STRING "C++ compiler flags for release build" FORCE)
+
+set(CMAKE_C_FLAGS_PROFILE
+  "-pipe -Wall -pedantic -std=c11 -flto -fPIC -O3 -pg"
+  CACHE STRING "C compiler flags for release build" FORCE)
+
 set(CMAKE_CXX_FLAGS_RELEASENOLTO
   "-pipe -Wall -pedantic -fPIC -std=c++14 -O3"
   CACHE STRING "C++ compiler flags for release build" FORCE)

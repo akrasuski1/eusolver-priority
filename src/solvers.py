@@ -67,6 +67,17 @@ def _point_list_to_str(points):
         retval += '\n'
     return retval
 
+def _guard_term_list_to_str(guard_term_list):
+    retval = ''
+    for (guard, term_list) in guard_term_list:
+        retval += _expr_to_str(guard)
+        retval += ' ->\n'
+        for term in term_list:
+            retval += '        '
+            retval += _expr_to_str(term)
+            retval += '\n'
+    return retval
+
 def model_to_point(model, var_smt_expr_list, var_info_list):
     num_vars = len(var_smt_expr_list)
     point = [None] * num_vars
@@ -86,7 +97,7 @@ def _decision_tree_to_guard_term_list_internal(decision_tree, pred_list, term_li
                                                syn_ctx, retval, guard_stack):
     if (decision_tree.is_leaf()):
         retval.append((syn_ctx.make_ac_function_expr('and', *guard_stack),
-                       term_list[decision_tree.get_label_id()]))
+                       [term_list[x] for x in decision_tree.get_all_label_ids()]))
     else:
         # split node
         attr_id = decision_tree.get_split_attribute_id()
@@ -101,6 +112,12 @@ def _decision_tree_to_guard_term_list_internal(decision_tree, pred_list, term_li
                                                    retval, guard_stack)
         guard_stack.pop()
 
+def decision_tree_to_guard_term_list(decision_tree, pred_list, term_list, syn_ctx):
+    retval = []
+    _decision_tree_to_guard_term_list_internal(decision_tree, pred_list,
+                                               term_list, syn_ctx, retval, [])
+    return retval
+
 def _decision_tree_to_expr_internal(decision_tree, pred_list, term_list, syn_ctx):
     if (decision_tree.is_leaf()):
         return term_list[decision_tree.get_label_id()]
@@ -112,29 +129,16 @@ def _decision_tree_to_expr_internal(decision_tree, pred_list, term_list, syn_ctx
         return syn_ctx.make_function_expr('ite', pred_list[decision_tree.get_split_attribute_id()],
                                           if_term, else_term)
 
-def decision_tree_to_guard_term_list(decision_tree, pred_list, term_list, syn_ctx):
-    retval = []
-    _decision_tree_to_guard_term_list_internal(decision_tree, pred_list,
-                                               term_list, syn_ctx, retval, [])
-    return retval
+def decision_tree_to_expr(decision_tree, pred_list, term_list, syn_ctx):
+    return _decision_tree_to_expr_internal(decision_tree, pred_list, term_list, syn_ctx)
 
 def guard_term_list_to_expr(guard_term_list, syn_ctx):
-    num_segments = len(guard_term_list)
-    retval = guard_term_list[num_segments - 1][1]
-    for i in reversed(range(num_segments - 1)):
+    num_branches = len(guard_term_list)
+    retval = guard_term_list[num_branches-1][1]
+    for i in reversed(range(0, num_branches-1)):
         retval = syn_ctx.make_function_expr('ite', guard_term_list[i][0],
                                             guard_term_list[i][1], retval)
     return retval
-
-# def decision_tree_to_expr(decision_tree, pred_list, term_list, syn_ctx):
-#     guard_term_list = decision_tree_to_guard_term_list(decision_tree,
-#                                                        pred_list,
-#                                                        term_list,
-#                                                        syn_ctx)
-#     return guard_term_list_to_expr(guard_term_list, syn_ctx)
-
-def decision_tree_to_expr(decision_tree, pred_list, term_list, syn_ctx):
-    return _decision_tree_to_expr_internal(decision_tree, pred_list, term_list, syn_ctx)
 
 
 class DuplicatePointException(Exception):
@@ -165,7 +169,6 @@ class TermSolver(object):
                 # print({str(x) : _expr_to_str(y) for (x, y) in retval[1].items()})
                 return retval
             term_size += 1
-
 
         # print('Term Solve failed!')
         return None
@@ -259,6 +262,7 @@ class Unifier(object):
         self.clauses = clauses
         self.neg_clauses = neg_clauses
         self.intro_vars = intro_vars
+        self.smt_intro_vars = [_expr_to_smt(x, self.smt_ctx) for x in self.intro_vars]
         self.points = []
         self.eval_ctx = evaluation.EvaluationContext()
         self.eval_cache = {}
@@ -308,6 +312,7 @@ class Unifier(object):
             eval_cache[pred.expr_id] = retval
             return retval
 
+
     def _verify_expr(self, term):
         smt_ctx = self.smt_ctx
         smt_solver = self.smt_solver
@@ -320,27 +325,51 @@ class Unifier(object):
         smt_solver.pop()
 
         if (r == z3.sat):
-            return model_to_point(smt_solver.model(), self.var_smt_expr_list, self.var_info_list)
+            cex_point = model_to_point(smt_solver.model(),
+                                       self.var_smt_expr_list,
+                                       self.var_info_list)
+            return set([cex_point])
         else:
             return term
 
-    # def _verify_expr(self, term):
-    #     smt_ctx = z3smt.Z3SMTContext()
-    #     syn_ctx = self.syn_ctx
-    #     smt_ctx.set_interpretation_map([term])
-    #     neg_canon_spec = self.syn_ctx.make_function_expr('not', self.canon_spec)
-    #     cnstr = _expr_to_smt(neg_canon_spec, smt_ctx)
-    #     smt_solver = z3.Solver(ctx=smt_ctx.ctx())
-    #     smt_solver.add(cnstr)
-    #     r = smt_solver.check()
-    #     var_info_list = self.var_list
-    #     var_expr_list = [exprs.VariableExpression(e) for e in var_info_list]
-    #     var_smt_expr_list = [_expr_to_smt(e, smt_ctx) for e in var_expr_list]
-    #     if (r == z3.sat):
-    #         model = smt_solver.model()
-    #         return model_to_point(model, var_smt_expr_list, var_info_list)
-    #     else:
-    #         return term
+    def _verify_guard_term_list(self, guard_term_list):
+        smt_ctx = self.smt_ctx
+        smt_solver = self.smt_solver
+        intro_vars = self.smt_intro_vars
+        cex_points = []
+        working_terms_list = []
+
+        at_least_one_branch_failed = False
+        for (pred, term_list) in guard_term_list:
+            smt_solver.push()
+            smt_solver.add(_expr_to_smt(pred, smt_ctx, intro_vars))
+            all_terms_failed = True
+            for term in term_list:
+                smt_ctx.set_interpretation_map([term])
+                eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx);
+                smt_solver.push()
+                smt_solver.add(eq_cnstr)
+                r = smt_solver.check()
+                smt_solver.pop()
+                if (r == z3.sat):
+                    cex_points.append(model_to_point(smt_solver.model(),
+                                                     self.var_smt_expr_list,
+                                                     self.var_info_list))
+                else:
+                    all_terms_failed = False
+                    working_terms_list.append((pred, term))
+                    break
+
+            if (all_terms_failed):
+                at_least_one_branch_failed = True
+            smt_solver.pop()
+
+        if (at_least_one_branch_failed):
+            retval = list(set(cex_points))
+            retval.sort()
+            return retval
+        else:
+            return guard_term_list_to_expr(working_terms_list, self.syn_ctx)
 
     def _try_trivial_unification(self, signature_to_term):
         # we can trivially unify if there exists a term
@@ -440,10 +469,15 @@ class Unifier(object):
 
             # print('Unifier.unify(): Learned a decision tree!')
             (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
-            expr = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
+            # expr = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
+            guard_term_list = decision_tree_to_guard_term_list(dt, pred_list,
+                                                               term_list,
+                                                               self.syn_ctx)
+            # print('Guard term list:\n%s' % _guard_term_list_to_str(guard_term_list))
             # print('Obtained expr: %s' % _expr_to_str(expr))
             # print('Unifier: enumerated %d predicates!' % monotonic_pred_id)
-            return self._verify_expr(expr)
+            # return self._verify_expr(expr)
+            return self._verify_guard_term_list(guard_term_list)
 
 class Solver(object):
     def __init__(self, syn_ctx):
@@ -497,12 +531,14 @@ class Solver(object):
             if (exprs.is_expression(r)):
                 return r
             else:
-                # this is a counterexample
-                self.add_point(r)
-                term_solver.add_point(r)
-                unifier.add_point(r)
-                # print('Solver: Added point %s' % str([c.value_object for c in r]))
-                continue
+                # this is a set of counterexamples
+                # print('Solver: Adding %d points' % len(r))
+                for point in r:
+                    self.add_point(point)
+                    term_solver.add_point(point)
+                    unifier.add_point(point)
+                    # print('Solver: Added point %s' % str([c.value_object for c in point]))
+                    continue
 
 ########################################################################
 # TEST CASES
@@ -581,7 +617,7 @@ def test_solver_max(num_vars):
 
     solver = Solver(syn_ctx)
     expr = solver.solve(term_generator, pred_generator)
-    return (expr, len(solver.points))
+    return (expr, solver.points)
 
 
 if __name__ == '__main__':
@@ -593,13 +629,15 @@ if __name__ == '__main__':
     max_cardinality = int(sys.argv[1])
     log_file = open(sys.argv[2], 'a')
     start_time = time.clock()
-    (sol, npoints) = test_solver_max(max_cardinality)
+    (sol, points) = test_solver_max(max_cardinality)
     end_time = time.clock()
     total_time = end_time - start_time
     log_file.write('max of %d arguments:\n%s\ncomputed in %s seconds\n' % (max_cardinality,
                                                                                exprs.expression_to_string(sol),
                                                                            str(total_time)))
-    log_file.write('Added %d counterexample points in total\n' % npoints)
+    log_file.write('Added %d counterexample points in total\n' % len(points))
+    # log_file.write('Counterexample points:\n')
+    # log_file.write(_point_list_to_str(points))
 
 #
 # solvers.py ends here

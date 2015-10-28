@@ -163,6 +163,12 @@ u64 eus_decision_tree_get_label_id(const void* node)
     return as_leaf_dt(node)->get_label_id();
 }
 
+const void* eus_decision_tree_get_all_label_ids(const void* node)
+{
+    eusolver::detail_::g_libeusolver_c_api_error_buffer_.clear();
+    return as_leaf_dt(node)->get_all_label_ids();
+}
+
 const char* eus_decision_tree_to_string(const void* node)
 {
     eusolver::detail_::g_libeusolver_c_api_error_buffer_.clear();

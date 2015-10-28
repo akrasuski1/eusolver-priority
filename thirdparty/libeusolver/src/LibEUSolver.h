@@ -114,6 +114,7 @@ const void* eus_decision_tree_get_positive_child(const void* node);
 const void* eus_decision_tree_get_negative_child(const void* node);
 u64 eus_decision_tree_get_split_attribute_id(const void* node);
 u64 eus_decision_tree_get_label_id(const void* node);
+const void* eus_decision_tree_get_all_label_ids(const void* node);
 const char* eus_decision_tree_to_string(const void* node);
 
 /* learning methods */

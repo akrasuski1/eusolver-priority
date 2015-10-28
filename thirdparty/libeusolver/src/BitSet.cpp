@@ -943,7 +943,7 @@ i64 BitSet::get_next_element_greater_than_or_equal_to(u64 position) const
     ++offset;
 
     // We're now at a word boundary
-    while (bit_vec_ptr[offset] == 0 && offset < len) {
+    while (offset < len && bit_vec_ptr[offset] == 0) {
         ++offset;
     }
 
@@ -993,7 +993,7 @@ i64 BitSet::get_prev_element_lesser_than_or_equal_to(u64 position) const
 
     --offset;
     // we're at a word boundary
-    while (bit_vec_ptr[offset] == 0 && offset >= 0) {
+    while (offset >= 0 && bit_vec_ptr[offset] == 0) {
         --offset;
     }
 

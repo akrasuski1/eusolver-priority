@@ -54,9 +54,6 @@ class BitSetObject(ctypes.c_void_p):
     def __init__(self, bitset_ptr):
         super().__init__(bitset_ptr)
 
-    def __del__(self):
-        eus_bitset_destroy(self)
-
 class DecisionTreeNodeObject(ctypes.c_void_p):
     def __init__(self, decision_tree_node_ptr):
         super().__init__(decision_tree_node_ptr)
@@ -241,6 +238,9 @@ def init(path_to_lib):
 
     _loaded_lib.eus_decision_tree_get_label_id.argtypes = [DecisionTreeNodeObject]
     _loaded_lib.eus_decision_tree_get_label_id.restype = ctypes.c_ulong
+
+    _loaded_lib.eus_decision_tree_get_all_label_ids.argtypes = [DecisionTreeNodeObject]
+    _loaded_lib.eus_decision_tree_get_all_label_ids.restype = BitSetObject
 
     _loaded_lib.eus_decision_tree_to_string.argtypes = [DecisionTreeNodeObject]
     _loaded_lib.eus_decision_tree_to_string.restype = ctypes.c_char_p
@@ -490,8 +490,14 @@ def eus_decision_tree_get_label_id(a0):
     _raise_exception_if_error()
     return r
 
+def eus_decision_tree_get_all_label_ids(a0):
+    r = _lib().eus_decision_tree_get_all_label_ids(a0)
+    _raise_exception_if_error()
+    return r
+
 def eus_decision_tree_to_string(a0):
     r = _to_pystr(_lib().eus_decision_tree_to_string(a0))
+
     _raise_exception_if_error()
     return r
 
@@ -534,6 +540,8 @@ class BitSet(object):
             raise NotImplemented
         self.cached_hash_code = None
 
+    def __del__(self):
+        eus_bitset_destroy(self.bitset_object)
 
     @classmethod
     def make_factory(cls, size_of_universe):
@@ -753,6 +761,13 @@ class DecisionTreeNode(object):
             return None
 
         return eus_decision_tree_get_label_id(self.decision_tree_node_object)
+
+    def get_all_label_ids(self):
+        if (self.is_split_node):
+            return None
+
+        label_ids = eus_decision_tree_get_all_label_ids(self.decision_tree_node_object)
+        return BitSet(eus_bitset_clone(label_ids))
 
     def __str__(self):
         return eus_decision_tree_to_string(self.decision_tree_node_object)
