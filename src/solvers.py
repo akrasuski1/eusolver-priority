@@ -60,19 +60,12 @@ _get_expr_with_id = exprs.get_expr_with_id
 _term_id_point_id_to_sat = {}
 _pred_id_point_id_to_sat = {}
 
-def _cached_evaluate(term_id_point_id_tuple, eval_dict, not_found_factory):
-    try:
-        return eval_dict[term_id_point_id_tuple]
-    except KeyError:
-        r = not_found_factory()
-        eval_dict[term_id_point_id_tuple] = r
-        return r
-
-def _cached_evaluate_term(term_id_point_id_tuple, not_found_factory):
-    return _cached_evaluate(term_id_point_id_tuple, _term_id_point_id_to_sat, not_found_factory)
-
-def _cached_evaluate_pred(pred_id_point_id_tuple, not_found_factory):
-    return _cached_evaluate(pred_id_point_id_tuple, _pred_id_point_id_to_sat, not_found_factory)
+def _point_list_to_str(points):
+    retval = ''
+    for point in points:
+        retval += str([x.value_object for x in point])
+        retval += '\n'
+    return retval
 
 def model_to_point(model, var_smt_expr_list, var_info_list):
     num_vars = len(var_smt_expr_list)
@@ -159,8 +152,8 @@ class TermSolver(object):
         self.term_generator = term_generator
         self.points = []
         self.max_term_size = max_term_size
-        self.prev_expr_id_to_sig = {}
         self.eval_ctx = evaluation.EvaluationContext()
+        self.eval_cache = {}
 
     def _trivial_solve(self):
         term_size = 1
@@ -180,17 +173,17 @@ class TermSolver(object):
     def add_point(self, point):
         self.points.append(point)
 
-    def _compute_term_signature(self, term):
+    def _compute_term_signature(self, term, sig_to_term):
         points = self.points
         num_points = len(points)
         retval = self.signature_factory()
         eval_ctx = self.eval_ctx
         eval_ctx.set_interpretation_map([term])
-        prev_expr_id_to_sig = self.prev_expr_id_to_sig
         spec = self.spec
+        eval_cache = self.eval_cache
 
         try:
-            r = prev_expr_id_to_sig[term.expr_id]
+            r = eval_cache[term.expr_id]
             retval.copy_in(r)
             num_old_points = r.size_of_universe()
             num_new_points = retval.size_of_universe()
@@ -198,17 +191,18 @@ class TermSolver(object):
                 eval_ctx.set_valuation_map(points[i])
                 if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
                     retval.add(i)
+            if (num_new_points > num_old_points):
+                eval_cache[term.expr_id] = retval
             return retval
+
         except KeyError:
             # need to actually evaluate at every point :-(
             for i in range(num_points):
                 eval_ctx.set_valuation_map(points[i])
                 if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
                     retval.add(i)
+            eval_cache[term.expr_id] = retval
             return retval
-
-    def _cache_results(self, sig_to_term):
-        self.prev_expr_id_to_sig = {term.expr_id : sig for (sig, term) in sig_to_term.items()}
 
     def solve(self):
         points = self.points;
@@ -229,7 +223,7 @@ class TermSolver(object):
             for term in generator.generate():
                 term = _get_expr_with_id(term, monotonic_expr_id)
                 monotonic_expr_id += 1
-                sig = self._compute_term_signature(term)
+                sig = self._compute_term_signature(term, sig_to_term)
 
                 if (sig in sig_to_term or sig.is_empty()):
                     continue
@@ -238,7 +232,7 @@ class TermSolver(object):
 
                 spec_satisfied_at_points |= sig
                 if (spec_satisfied_at_points.is_full()):
-                    self._cache_results(sig_to_term)
+                    # print('Term solver: enumerated %d terms!' % monotonic_expr_id)
                     return sig_to_term
 
             current_term_size += 1
@@ -253,28 +247,46 @@ class Unifier(object):
         self.false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
         spec_tuple = syn_ctx.get_synthesis_spec()
         act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = spec_tuple
-        self.var_list = var_list
+
+        self.smt_ctx = z3smt.Z3SMTContext()
+        self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
+
+        self.var_info_list = var_list
+        self.var_expr_list = [exprs.VariableExpression(x) for x in self.var_info_list]
+        self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in self.var_expr_list]
+
         self.canon_spec = canon_spec
         self.clauses = clauses
         self.neg_clauses = neg_clauses
         self.intro_vars = intro_vars
         self.points = []
         self.eval_ctx = evaluation.EvaluationContext()
-        self.prev_pred_id_to_sig = {}
+        self.eval_cache = {}
         self.max_pred_size = max_pred_size
+
+        fun_app = syn_ctx.make_function_expr(fun_list[0], *intro_vars)
+        fun_app_subst_var = syn_ctx.make_variable_expr(fun_list[0].range_type, '__output__')
+        self.outvar_cnstr = syn_ctx.make_function_expr('eq', fun_app_subst_var, fun_app)
+        canon_spec_with_outvar = exprs.substitute(canon_spec, fun_app, fun_app_subst_var, syn_ctx)
+        # print('Unifier.__init__(), canon_spec_with_outvar:\n%s' % _expr_to_str(canon_spec_with_outvar))
+        neg_canon_spec_with_outvar = syn_ctx.make_function_expr('not', canon_spec_with_outvar)
+        frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)
+        self.smt_solver.add(frozen_smt_cnstr)
 
     def add_point(self, point):
         self.points.append(point)
 
-    def _compute_pred_signature(self, pred):
+    def _compute_pred_signature(self, pred, sig_to_pred):
         points = self.points;
         num_points = len(points)
         retval = self.signature_factory()
         eval_ctx = self.eval_ctx
-        prev_pred_id_to_sig = self.prev_pred_id_to_sig
+        eval_cache = self.eval_cache;
+
         try:
-            r = prev_pred_id_to_sig[pred.expr_id]
+            r = eval_cache[pred.expr_id]
             retval.copy_in(r)
+            # print('computing signature of predicate: %s' % _expr_to_str(pred))
             # print('r      = %s' % str(r))
             num_old_points = r.size_of_universe()
             num_new_points = retval.size_of_universe()
@@ -283,32 +295,52 @@ class Unifier(object):
                 if (evaluation.evaluate_expression_raw(pred, eval_ctx)):
                     retval.add(i)
             # print('retval = %s' % str(retval))
+            if (num_new_points > num_old_points):
+                eval_cache[pred.expr_id] = retval
             return retval
+
         except KeyError:
             # need to actually evaluate
             for i in range(num_points):
                 eval_ctx.set_valuation_map(points[i])
                 if (evaluation.evaluate_expression_raw(pred, eval_ctx)):
                     retval.add(i)
+            eval_cache[pred.expr_id] = retval
             return retval
 
     def _verify_expr(self, term):
-        smt_ctx = z3smt.Z3SMTContext()
-        syn_ctx = self.syn_ctx
+        smt_ctx = self.smt_ctx
+        smt_solver = self.smt_solver
+
         smt_ctx.set_interpretation_map([term])
-        neg_canon_spec = self.syn_ctx.make_function_expr('not', self.canon_spec)
-        cnstr = _expr_to_smt(neg_canon_spec, smt_ctx)
-        smt_solver = z3.Solver(ctx=smt_ctx.ctx())
-        smt_solver.add(cnstr)
+        eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx)
+        smt_solver.push()
+        smt_solver.add(eq_cnstr)
         r = smt_solver.check()
-        var_info_list = self.var_list
-        var_expr_list = [exprs.VariableExpression(e) for e in var_info_list]
-        var_smt_expr_list = [_expr_to_smt(e, smt_ctx) for e in var_expr_list]
+        smt_solver.pop()
+
         if (r == z3.sat):
-            model = smt_solver.model()
-            return model_to_point(model, var_smt_expr_list, var_info_list)
+            return model_to_point(smt_solver.model(), self.var_smt_expr_list, self.var_info_list)
         else:
             return term
+
+    # def _verify_expr(self, term):
+    #     smt_ctx = z3smt.Z3SMTContext()
+    #     syn_ctx = self.syn_ctx
+    #     smt_ctx.set_interpretation_map([term])
+    #     neg_canon_spec = self.syn_ctx.make_function_expr('not', self.canon_spec)
+    #     cnstr = _expr_to_smt(neg_canon_spec, smt_ctx)
+    #     smt_solver = z3.Solver(ctx=smt_ctx.ctx())
+    #     smt_solver.add(cnstr)
+    #     r = smt_solver.check()
+    #     var_info_list = self.var_list
+    #     var_expr_list = [exprs.VariableExpression(e) for e in var_info_list]
+    #     var_smt_expr_list = [_expr_to_smt(e, smt_ctx) for e in var_expr_list]
+    #     if (r == z3.sat):
+    #         model = smt_solver.model()
+    #         return model_to_point(model, var_smt_expr_list, var_info_list)
+    #     else:
+    #         return term
 
     def _try_trivial_unification(self, signature_to_term):
         # we can trivially unify if there exists a term
@@ -337,11 +369,16 @@ class Unifier(object):
             pred_list.append(pred)
             pred_sig_list.append(pred_sig)
 
+        # print('Calling native decision tree learner...')
         # print('pred_sig_list: %s' % [str(x) for x in pred_sig_list])
-        # print('pred_list: %s' % [_expr_to_str(x) for x in pred_list], flush=True)
         # print('term_sig_list: %s' % [str(x) for x in term_sig_list], flush=True)
+        # print('pred_list: %s' % [_expr_to_str(x) for x in pred_list], flush=True)
+        # print('term_list: %s' % [_expr_to_str(x) for x in term_list], flush=True)
+        # print('points   :\n%s' % _point_list_to_str(self.points), flush=True)
         dt = eusolver.eus_learn_decision_tree_for_ml_data(pred_sig_list,
                                                           term_sig_list)
+        # print('Done!', flush=True)
+        # print(dt, flush=True)
         # print('Obtained decision tree:\n%s' % str(dt))
         if (dt == None):
             return None
@@ -372,13 +409,18 @@ class Unifier(object):
                 pred = _get_expr_with_id(pred, monotonic_pred_id)
                 monotonic_pred_id += 1
 
-                sig = self._compute_pred_signature(pred)
+                sig = self._compute_pred_signature(pred, signature_to_pred)
+                # print('Generated predicate %s with sig %s' % (_expr_to_str(pred), str(sig)))
                 # if the predicate evaluates universally to true or false
                 # at all points, then it isn't worth considering it.
                 if (not sig.is_empty() and not sig.is_full() and sig not in signature_to_pred):
                     # print('Generated pred %s' % _expr_to_str(pred))
+                    # print('predicate was new!')
                     signature_to_pred[sig] = pred
                     new_preds_generated = True
+                else:
+                    # print('predicate was already seen!')
+                    continue
 
             if (not new_preds_generated):
                 # print(('Unifier.unify(): no new predicates generated at size %d, ' +
@@ -400,8 +442,7 @@ class Unifier(object):
             (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
             expr = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
             # print('Obtained expr: %s' % _expr_to_str(expr))
-            self.prev_pred_id_to_sig = {pred.expr_id : sig
-                                        for (sig, pred) in signature_to_pred.items()}
+            # print('Unifier: enumerated %d predicates!' % monotonic_pred_id)
             return self._verify_expr(expr)
 
 class Solver(object):

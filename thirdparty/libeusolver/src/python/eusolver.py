@@ -516,6 +516,9 @@ def eus_learn_decision_tree_for_ml_data(pred_signature_list,
                                                    num_preds,
                                                    num_terms);
     _raise_exception_if_error()
+    if (r.value == None):
+        return None
+
     return DecisionTreeNode(r)
 
 
