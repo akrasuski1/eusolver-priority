@@ -504,6 +504,8 @@ class Solver(object):
         self.syn_ctx = syn_ctx
         self.spec_tuple = syn_ctx.get_synthesis_spec()
         self.reset()
+        self.term_solver_time = 0
+        self.unifier_time = 0
 
     def reset(self):
         self.spec = None
@@ -529,6 +531,7 @@ class Solver(object):
                                                       specification)
 
     def solve(self, term_generator, pred_generator):
+        import time
         act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
         term_solver = TermSolver(canon_spec, term_generator)
@@ -536,13 +539,19 @@ class Solver(object):
 
         while (True):
             # iterate until we have terms that are "sufficient"
+            start_time = time.clock()
             sig_to_term = term_solver.solve()
             if (sig_to_term == None):
                 return None
+            end_time = time.clock()
+            self.term_solver_time += end_time - start_time
             # we now have a sufficient set of terms
-            # print('Term solve complete!')
+            print('Term solve complete!')
+            start_time = time.clock()
             r = unifier.unify(sig_to_term)
-            # print('Unification Complete!')
+            end_time = time.clock()
+            self.unifier_time += end_time - start_time
+            print('Unification Complete!')
             if (exprs.is_expression(r)):
                 return r
             else:
@@ -747,6 +756,9 @@ def test_solver_icfp(benchmark_name):
 
     solver = Solver(syn_ctx)
     expr = solver.solve(term_generator, pred_generator)
+
+    # print("Term solver time: ", solver.term_solver_time)
+    # print("Unifier time: ", solver.unifier_time)
     return (expr, solver.points)
 
 def die():
