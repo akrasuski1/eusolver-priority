@@ -91,6 +91,9 @@ class _BoolType(TypeBase):
     def __repr__(self):
         return 'BooleanType'
 
+    def __hash__(self):
+        return hash(TypeCodes.boolean_type)
+
     def get_smt_type(self, smt_context_object):
         return smt_context_object.make_bool_sort()
 
@@ -111,6 +114,9 @@ class _IntType(TypeBase):
 
     def __repr__(self):
         return 'IntegerType'
+
+    def __hash__(self):
+        return hash(TypeCodes.integer_type)
 
     def get_smt_type(self, smt_context_object):
         return smt_context_object.make_int_sort()
@@ -135,6 +141,10 @@ class _BitVectorType(TypeBase):
     def __repr__(self):
         return self.__str__()
 
+    def __hash__(self):
+        return (hash(TypeCodes.bit_vector_type) ^
+                hash(self.size))
+
     def get_smt_type(self, smt_context_object):
         return smt_context_object.make_bitvector_sort(self.size)
 
@@ -149,9 +159,11 @@ class _BitVectorType(TypeBase):
     def get_size(self):
         return size
 
-_bitvector_type_intern_dict = collections.defaultdict(_BitVectorType)
+_bitvector_type_intern_dict = {}
 
 def BitVectorType(size):
+    if size not in _bitvector_type_intern_dict:
+        _bitvector_type_intern_dict[size] = _BitVectorType(size)
     return _bitvector_type_intern_dict[size]
 
 #

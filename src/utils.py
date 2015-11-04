@@ -111,6 +111,7 @@ def is_subsequence_of(iterable1, iterable2):
 
     return True
 
+'''
 def bitvector_to_string(bitvec_value, bitvec_size):
     if (bitvec_size % 4 == 0):
         format_string = '0%dX' % (bitvec_size / 4)
@@ -119,6 +120,9 @@ def bitvector_to_string(bitvec_value, bitvec_size):
         format_string = '0%db' % bitvec_size
         prefix_string = '#b'
     return prefix_string + format(bitvec_value, format_string)
+'''
+def bitvector_to_string(bitvec_value, bitvec_size):
+    return str(bitvec_value)
 
 
 def all_of(iterable, predicate):

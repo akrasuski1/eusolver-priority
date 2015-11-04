@@ -56,6 +56,7 @@ if __name__ == '__main__':
 # - concatenation of bitvectors of size i and j to get a new bitvector of
 # size m, where m = i + j
 
+'''
 class BVConcat(InterpretedFunctionBase):
     def __init__(self, size1, size2):
         super().__init__('concat', 2, (exprtypes.BitVectorType(size1),
@@ -104,6 +105,7 @@ class BVExtract(InterpretedFunctionBase):
         res = eval_context_object.peek() & mask
         eval_context_object.pop()
         eval_context_object.push(mask)
+'''
 
 # (bvnot (_ BitVec m) (_ BitVec m))
 # - bitwise negation
@@ -129,7 +131,7 @@ class BVNot(InterpretedFunctionBase):
 
 class BVAnd(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvand', 2 (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvand', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
         self.bv_size = bv_size
@@ -149,7 +151,7 @@ class BVAnd(InterpretedFunctionBase):
 
 class BVOr(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvor', 2 (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvor', 2, (exprtypes.BitVectorType(bv_size),
                                     exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
         self.bv_size = bv_size
@@ -164,6 +166,7 @@ class BVOr(InterpretedFunctionBase):
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
+'''
 # (bvneg (_ BitVec m) (_ BitVec m))
 # - 2's complement unary minus
 
@@ -182,13 +185,14 @@ class BVNeg(InterpretedFunctionBase):
         res = (-(eval_context_object.peek(0)))
         eval_context_object.pop()
         eval_context_object.push(res)
+'''
 
 # (bvadd (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - addition modulo 2^m
 
 class BVAdd(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvadd', 2 (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvadd', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
         self.bv_size = bv_size
@@ -199,16 +203,56 @@ class BVAdd(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = (eval_context_object.peek(0) + eval_context_object.peek(1))
+        a = eval_context_object.peek(0).uint
+        b = eval_context_object.peek(1).uint
+        res = BitVector(
+                bitstring.BitArray(uint=(a + b) % (2 ** self.bv_size), length=self.bv_size)
+                )
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
+
+class ShrConst(InterpretedFunctionBase):
+    def __init__(self, bv_size, shift_amount):
+        super().__init__('shr'+ str(shift_amount), 1, (exprtypes.BitVectorType(bv_size), ),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+        self.shift_amount = shift_amount
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return z3.LShR(child_terms[0], self.shift_amount)
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = eval_context_object.peek(0) >> self.shift_amount
+        eval_context_object.pop(1)
+        eval_context_object.push(res)
+
+class ShlConst(InterpretedFunctionBase):
+    def __init__(self, bv_size, shift_amount):
+        super().__init__('shl' + str(shift_amount), 1, (exprtypes.BitVectorType(bv_size), ),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+        self.shift_amount = shift_amount
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (child_terms[0] << self.shift_amount)
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = eval_context_object.peek(0) << self.shift_amount
+        eval_context_object.pop(1)
+        eval_context_object.push(res)
+
+'''
 # (bvmul (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - multiplication modulo 2^m
 
 class BVMul(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvmul', 2 (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvmul', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
         self.bv_size = bv_size
@@ -222,6 +266,8 @@ class BVMul(InterpretedFunctionBase):
         res = (eval_context_object.peek(0) * eval_context_object.peek(1))
         eval_context_object.pop(2)
         eval_context_object.push(res)
+
+'''
 
 # (bvudiv (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - unsigned division, truncating towards 0 (undefined if divisor is 0)
@@ -248,6 +294,24 @@ class BVMul(InterpretedFunctionBase):
 
 # (bvxor (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - bitwise exclusive or
+
+class BVXor(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvxor', 2, (exprtypes.BitVectorType(bv_size),
+                                    exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (child_terms[0] ^ child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = (eval_context_object.peek(0) ^ eval_context_object.peek(1))
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
 
 # (bvxnor (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - bitwise equivalence (equivalently, negation of bitwise exclusive or)
@@ -312,6 +376,75 @@ class BVMul(InterpretedFunctionBase):
 
 # (bvsge (_ BitVec m) (_ BitVec m) Bool)
 # - binary predicate for signed greater than or equal
+
+class BVInstantiator(semantics_types.InstantiatorBase):
+    def __init__(self, bv_size):
+        super().__init__('bv')
+        self.instances = {}
+        self.bv_size = bv_size
+
+    def _get_instance(self, function_name):
+        if function_name not in self.instances:
+            if function_name == 'shr1':
+                self.instances[function_name] = ShrConst(self.bv_size, 1)
+            elif function_name == 'shr4':
+                self.instances[function_name] = ShrConst(self.bv_size, 4)
+            elif function_name == 'shr16':
+                self.instances[function_name] = ShrConst(self.bv_size, 16)
+            elif function_name == 'shl1':
+                self.instances[function_name] = ShlConst(self.bv_size, 1)
+            elif function_name == 'bvnot':
+                self.instances[function_name] = BVNot(self.bv_size)
+            elif function_name == 'bvand':
+                self.instances[function_name] = BVAnd(self.bv_size)
+            elif function_name == 'bvor':
+                self.instances[function_name] = BVOr(self.bv_size)
+            elif function_name == 'bvxor':
+                self.instances[function_name] = BVXor(self.bv_size)
+            elif function_name == 'bvadd':
+                self.instances[function_name] = BVAdd(self.bv_size)
+            else:
+                self._raise_failure(function_name, [])
+        return self.instances[function_name]
+
+    def _get_canonical_function_name(self, function_name):
+        return function_name
+
+    def is_unary(self, function_name):
+        return function_name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot' ]
+
+    def is_binary(self, function_name):
+        return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd' ]
+
+    def _do_instantiation(self, function_name, mangled_name, arg_types):
+        if self.is_unary(function_name):
+            if (len(arg_types) != 1 or
+                    (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.bit_vector_type))):
+                self._raise_failure(function_name, arg_types)
+            return self._get_instance(function_name)
+
+        elif self.is_binary(function_name):
+            if (len(arg_types) != 2 or
+                    (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.bit_vector_type))):
+                self._raise_failure(function_name, arg_types)
+            return self._get_instance(function_name)
+
+        else:
+            return None
+
+class BitVector(object):
+    __slots__ = ['value']
+    def __init__(self, value):
+        self.value = value
+
+    def __hash__(self):
+        return hash(str(self.value))
+
+    def __eq__(self, other):
+        return self.value == other
+
+    def __str__(self):
+        return str(self.value)
 
 
 #

@@ -41,6 +41,7 @@
 import basetypes
 import eusolver
 from eusolver import BitSet
+from semantics_bv import BitVector
 import evaluation
 import functools
 import hashcache
@@ -88,7 +89,13 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
         elif (var_info_list[i].variable_type == exprtypes.IntType()):
             point[i] = exprs.Value(int(str(eval_value)), exprtypes.IntType())
         elif (var_info_list[i].variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
-            point[i] = expr.Value(int(str(eval_value)), var_info_list.variable_type)
+            # point[i] = exprs.Value(int(str(eval_value)), var_info_list.variable_type)
+            # Z3 always prints unsigned integers?
+            point[i] = exprs.Value(BitVector(
+                    bitstring.BitArray(
+                        uint=int(str(eval_value)),
+                        length=var_info_list.variable_type.size),
+                    var_info_list.variable_type))
         else:
             raise basetypes.UnhandledCaseError('solvers.In model_to_point')
     return tuple(point)
@@ -328,7 +335,7 @@ class Unifier(object):
             cex_point = model_to_point(smt_solver.model(),
                                        self.var_smt_expr_list,
                                        self.var_info_list)
-            return set([cex_point])
+            return [cex_point]
         else:
             return term
 
@@ -498,9 +505,6 @@ class Solver(object):
         self.point_set.add(point)
         self.points.append(point)
 
-    def add_point_from_model(self, model):
-        point = model_to_point
-
     def add_specification(self, specification):
         syn_ctx = self.syn_ctx
         if (self.spec == None):
@@ -619,23 +623,136 @@ def test_solver_max(num_vars):
     expr = solver.solve(term_generator, pred_generator)
     return (expr, solver.points)
 
+def get_icfp_valuations(benchmark_name):
+    import bitstring
+    test_icfp_valuations =  [
+            (
+                BitVector(bitstring.BitArray(uint=1, length=64)),
+                BitVector(bitstring.BitArray(uint=1, length=64))
+            ),
+            (
+                BitVector(bitstring.BitArray(uint=2, length=64)),
+                BitVector(bitstring.BitArray(uint=2, length=64))
+            ),
+            (
+                BitVector(bitstring.BitArray(uint=3, length=64)),
+                BitVector(bitstring.BitArray(uint=3, length=64))
+            ),
+            (
+                BitVector(bitstring.BitArray(uint=4, length=64)),
+                BitVector(bitstring.BitArray(uint=4, length=64))
+            )
+            ]
+    print("Getting points from benchmark not implemented! Using test points")
+    return test_icfp_valuations
+
+def test_solver_icfp(benchmark_name):
+    import synthesis_context
+    import semantics_core
+    import semantics_bv
+    import enumerators
+    import bitstring
+
+    syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
+                                                 semantics_bv.BVInstantiator(64))
+    synth_fun = syn_ctx.make_unknown_function('f', [exprtypes.BitVectorType(64)],
+                                            exprtypes.BitVectorType(64))
+
+    # Unary
+    unary_funcs = [ syn_ctx.make_function(name, exprtypes.BitVectorType(64))
+            for name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot' ]]
+    # Binary
+    binary_funcs = [ syn_ctx.make_function(name, exprtypes.BitVectorType(64), exprtypes.BitVectorType(64))
+            for name in [ 'bvand', 'bvor', 'bvxor', 'bvadd' ]]
+
+    param_exprs = [exprs.FormalParameterExpression(synth_fun, exprtypes.BitVectorType(64), 0)]
+    param_generator = enumerators.LeafGenerator(param_exprs, 'Argument Generator')
+    zero_value = exprs.Value(BitVector(bitstring.BitArray(uint=0, length=64)), exprtypes.BitVectorType(64))
+    one_value = exprs.Value(BitVector(bitstring.BitArray(uint=1, length=64)), exprtypes.BitVectorType(64))
+    const_generator = enumerators.LeafGenerator([exprs.ConstantExpression(zero_value),
+                                                 exprs.ConstantExpression(one_value)])
+    leaf_generator = enumerators.AlternativesGenerator([param_generator, const_generator],
+                                                       'Leaf Term Generator')
+
+    generator_factory = enumerators.RecursiveGeneratorFactory()
+    term_generator_ph = generator_factory.make_placeholder('TermGenerator')
+    pred_bool_generator_ph = generator_factory.make_placeholder('PredGenerator')
+
+    unary_function_generators = [ 
+            enumerators.FunctionalGenerator(func, [term_generator_ph]) 
+            for func in unary_funcs
+            ]
+    binary_function_generators = [ 
+            enumerators.FunctionalGenerator(func, [term_generator_ph, term_generator_ph]) 
+            for func in binary_funcs 
+            ]
+
+    term_generator = \
+            generator_factory.make_generator('TermGenerator',
+                    enumerators.AlternativesGenerator, (
+                        ([leaf_generator] +
+                        unary_function_generators +
+                        binary_function_generators),
+                        ))
+
+    pred_generator = \
+    generator_factory.make_generator('PredGenerator', enumerators.AlternativesGenerator, (term_generator,))
+
+    valuations = get_icfp_valuations(benchmark_name)
+
+    # construct the spec
+    arg_exprs = [ exprs.ConstantExpression(exprs.Value(arg, exprtypes.BitVectorType(64)))
+            for (arg, result) in valuations ]
+    result_exprs = [ exprs.ConstantExpression(exprs.Value(result, exprtypes.BitVectorType(64)))
+            for (arg, result) in valuations ]
+
+    constraints = []
+    for (arg_expr, result_expr) in zip(arg_exprs, result_exprs):
+        app = syn_ctx.make_function_expr(synth_fun, arg_expr)
+        c = syn_ctx.make_function_expr('eq', app, result_expr)
+        constraints.append(c)
+
+    constraint = syn_ctx.make_function_expr('and', *constraints)
+
+    syn_ctx.assert_spec(constraint)
+
+    solver = Solver(syn_ctx)
+    expr = solver.solve(term_generator, pred_generator)
+    return (expr, solver.points)
+
+def die():
+    print('Usage: %s max <num args to max function> <log file name>' % sys.argv[0])
+    print('Usage: %s icfp <benchmark file> <log file name>' % sys.argv[0])
+    exit(1)
 
 if __name__ == '__main__':
     import time
     import sys
-    if (len(sys.argv) < 3):
-        print('Usage: %s <num args to max function> <log file name>' % sys.argv[0])
-        exit(1)
-    max_cardinality = int(sys.argv[1])
-    log_file = open(sys.argv[2], 'a')
+    if (len(sys.argv) < 4):
+        die()
+
+    log_file = open(sys.argv[3], 'a')
     start_time = time.clock()
-    (sol, points) = test_solver_max(max_cardinality)
+
+    if sys.argv[1] == "max":
+        max_cardinality = int(sys.argv[2])
+        (sol, points) = test_solver_max(max_cardinality)
+        log_file.write('max of %d arguments:\n%s\n' % (max_cardinality, exprs.expression_to_string(sol)))
+    elif sys.argv[1] == "icfp":
+        benchmark_file = sys.argv[2]
+        (sol, points) = test_solver_icfp(benchmark_file)
+        log_file.write('f in %s:\n%s\n' % (
+            benchmark_file,
+            exprs.expression_to_string(sol)))
+    else:
+        die()
+
     end_time = time.clock()
     total_time = end_time - start_time
-    log_file.write('max of %d arguments:\n%s\ncomputed in %s seconds\n' % (max_cardinality,
-                                                                               exprs.expression_to_string(sol),
-                                                                           str(total_time)))
+
     log_file.write('Added %d counterexample points in total\n' % len(points))
+    log_file.write('computed in %s seconds\n' % (str(total_time)))
+
     # log_file.write('Counterexample points:\n')
     # log_file.write(_point_list_to_str(points))
 
