@@ -39,6 +39,7 @@
 # Code:
 
 import basetypes
+import bitstring
 import exprs
 import exprtypes
 import functools
@@ -126,6 +127,25 @@ class BVNot(InterpretedFunctionBase):
         eval_context_object.pop()
         eval_context_object.push(res)
 
+# (is0 (_ BitVec m) (_ Bool))
+# - is 0
+
+class BVIs0(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('is0', 1, (exprtypes.BitVectorType(bv_size),),
+                         exprtypes.BoolType())
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (child_terms[0] == 0)
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = eval_context_object.peek(0).is_zero()
+        eval_context_object.pop()
+        eval_context_object.push(res)
+
 # (bvand (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - bitwise and
 
@@ -203,11 +223,7 @@ class BVAdd(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        a = eval_context_object.peek(0).uint
-        b = eval_context_object.peek(1).uint
-        res = BitVector(
-                bitstring.BitArray(uint=(a + b) % (2 ** self.bv_size), length=self.bv_size)
-                )
+        res = eval_context_object.peek(0) + eval_context_object.peek(1)
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
@@ -403,6 +419,8 @@ class BVInstantiator(semantics_types.InstantiatorBase):
                 self.instances[function_name] = BVXor(self.bv_size)
             elif function_name == 'bvadd':
                 self.instances[function_name] = BVAdd(self.bv_size)
+            elif function_name == 'is0':
+                self.instances[function_name] = BVIs0(self.bv_size)
             else:
                 self._raise_failure(function_name, [])
         return self.instances[function_name]
@@ -411,7 +429,7 @@ class BVInstantiator(semantics_types.InstantiatorBase):
         return function_name
 
     def is_unary(self, function_name):
-        return function_name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot' ]
+        return function_name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot', 'is0' ]
 
     def is_binary(self, function_name):
         return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd' ]
@@ -441,10 +459,61 @@ class BitVector(object):
         return hash(str(self.value))
 
     def __eq__(self, other):
-        return self.value == other
+        return self.value == other.value
 
     def __str__(self):
         return str(self.value)
+
+    def is_zero(self):
+        return self.value.uint == 0
+
+    def __rshift__(self, other):
+        if isinstance(other, int):
+            return BitVector(self.value >> other)
+        elif isinstance(other, BitVector):
+            return BitVector(self.value >> other.value)
+        else:
+            raise ArgumentError()
+
+    def __lshift__(self, other):
+        if isinstance(other, int):
+            return BitVector(self.value << other)
+        elif isinstance(other, BitVector):
+            return BitVector(self.value << other.value)
+        else:
+            raise ArgumentError()
+
+    def __and__(self, other):
+        if isinstance(other, BitVector):
+            return BitVector(self.value & other.value)
+        else:
+            raise ArgumentError()
+
+    def __or__(self, other):
+        if isinstance(other, BitVector):
+            return BitVector(self.value | other.value)
+        else:
+            raise ArgumentError()
+
+    def __xor__(self, other):
+        if isinstance(other, BitVector):
+            return BitVector(self.value ^ other.value)
+        else:
+            raise ArgumentError()
+
+    def __add__(self, other):
+        if isinstance(other, BitVector):
+            a = self.value.uint
+            b = other.value.uint
+            length = self.value.length
+            if length != other.value.length:
+                raise ArgumentError()
+            return BitVector(bitstring.BitArray(uint=(a+b) % (2**length), length=length))
+        else:
+            raise ArgumentError()
+
+    def __invert__(self):
+        return BitVector(~self.value)
 
 
 #

@@ -310,7 +310,7 @@ class Unifier(object):
             # print('retval = %s' % str(retval))
             if (num_new_points > num_old_points):
                 eval_cache[pred.expr_id] = retval
-            return retval
+            # return retval
 
         except KeyError:
             # need to actually evaluate
@@ -319,7 +319,9 @@ class Unifier(object):
                 if (evaluation.evaluate_expression_raw(pred, eval_ctx)):
                     retval.add(i)
             eval_cache[pred.expr_id] = retval
-            return retval
+            # return retval
+        print(_expr_to_str(pred), " has signature ", retval, " on ", [ str(x[0].value_object) for x in points])
+        return retval
 
 
     def _verify_expr(self, term):
@@ -448,7 +450,7 @@ class Unifier(object):
                 monotonic_pred_id += 1
 
                 sig = self._compute_pred_signature(pred, signature_to_pred)
-                # print('Generated predicate %s with sig %s' % (_expr_to_str(pred), str(sig)))
+                print('Generated predicate %s with sig %s' % (_expr_to_str(pred), str(sig)))
                 # if the predicate evaluates universally to true or false
                 # at all points, then it isn't worth considering it.
                 if (not sig.is_empty() and not sig.is_full() and sig not in signature_to_pred):
@@ -502,6 +504,8 @@ class Solver(object):
         self.point_set = set()
 
     def add_point(self, point):
+        # print('Solver: Added point %s' % str([str(c.value_object) for c in point]))
+        # print([ (str(x[0].value_object), hash(x[0].value_object)) for x in self.point_set ])
         if (point in self.point_set):
             raise DuplicatePointException(point)
         self.point_set.add(point)
@@ -543,7 +547,7 @@ class Solver(object):
                     self.add_point(point)
                     term_solver.add_point(point)
                     unifier.add_point(point)
-                    print('Solver: Added point %s' % str([str(c.value_object) for c in point]))
+                    # print([ str(x[0].value_object) for x in self.points])
                     continue
 
 ########################################################################
@@ -712,8 +716,11 @@ def test_solver_icfp(benchmark_name):
                         binary_function_generators),
                         ))
 
+    is0 = syn_ctx.make_function('is0', exprtypes.BitVectorType(64))
+    is0_generator = enumerators.FunctionalGenerator(is0, [term_generator_ph])
+
     pred_generator = \
-    generator_factory.make_generator('PredGenerator', enumerators.AlternativesGenerator, (term_generator,))
+            generator_factory.make_generator('PredGenerator', enumerators.AlternativesGenerator, ([is0_generator],))
 
     valuations = get_icfp_valuations(benchmark_name)
 
