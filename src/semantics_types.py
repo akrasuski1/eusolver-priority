@@ -241,7 +241,7 @@ class MacroFunction(InterpretedFunctionBase):
         eval_context_object.valuation_map = orig_valuation_map
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms =self._to_smt_children(expr_object, smt_context_object, var_subst_map)
+        child_terms = self._to_smt_children(expr_object, smt_context_object, var_subst_map)
         return expression_to_smt(self.interpretation_expression, smt_context_object, child_terms)
 
 

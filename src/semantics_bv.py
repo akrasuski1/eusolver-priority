@@ -158,7 +158,7 @@ class BVAnd(InterpretedFunctionBase):
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return (child_terms[0] and child_terms[1])
+        return (child_terms[0] & child_terms[1])
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)

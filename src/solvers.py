@@ -252,7 +252,7 @@ class TermSolver(object):
         return None
 
 class Unifier(object):
-    def __init__(self, syn_ctx, pred_generator, max_pred_size = 20):
+    def __init__(self, syn_ctx, smt_ctx, pred_generator, max_pred_size = 20):
         self.pred_generator = pred_generator
         self.syn_ctx = syn_ctx
         self.true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
@@ -260,7 +260,7 @@ class Unifier(object):
         spec_tuple = syn_ctx.get_synthesis_spec()
         act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = spec_tuple
 
-        self.smt_ctx = z3smt.Z3SMTContext()
+        self.smt_ctx = smt_ctx
         self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
 
         self.var_info_list = var_list
@@ -353,11 +353,20 @@ class Unifier(object):
         at_least_one_branch_failed = False
         for (pred, term_list) in guard_term_list:
             smt_solver.push()
-            smt_solver.add(_expr_to_smt(pred, smt_ctx, intro_vars))
+            smt_pred = _expr_to_smt(pred, smt_ctx, intro_vars)
+            print('SMT guard')
+            print(smt_pred)
+            smt_solver.add(smt_pred)
             all_terms_failed = True
             for term in term_list:
+                print('Verifying term')
+                print(_expr_to_str(term))
+                print('with guard')
+                print(_expr_to_str(pred))
                 smt_ctx.set_interpretation_map([term])
                 eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx);
+                print('SMT constraint')
+                print(eq_cnstr)
                 smt_solver.push()
                 smt_solver.add(eq_cnstr)
                 r = smt_solver.check()
@@ -527,7 +536,7 @@ class Solver(object):
 
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
         term_solver = TermSolver(canon_spec, term_generator)
-        unifier = Unifier(self.syn_ctx, pred_generator)
+        unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator)
 
         while (True):
             # iterate until we have terms that are "sufficient"
@@ -658,7 +667,7 @@ def get_icfp_valuations(benchmark_name):
     sexp = parser.sexpFromFile(benchmark_name)
     if sexp is None:
         die()
-    
+
     points = parser.get_icfp_points(sexp)
     if points == None:
         print("Could not parse icfp")
@@ -699,13 +708,13 @@ def test_solver_icfp(benchmark_name):
     term_generator_ph = generator_factory.make_placeholder('TermGenerator')
     pred_bool_generator_ph = generator_factory.make_placeholder('PredGenerator')
 
-    unary_function_generators = [ 
-            enumerators.FunctionalGenerator(func, [term_generator_ph]) 
+    unary_function_generators = [
+            enumerators.FunctionalGenerator(func, [term_generator_ph])
             for func in unary_funcs
             ]
-    binary_function_generators = [ 
-            enumerators.FunctionalGenerator(func, [term_generator_ph, term_generator_ph]) 
-            for func in binary_funcs 
+    binary_function_generators = [
+            enumerators.FunctionalGenerator(func, [term_generator_ph, term_generator_ph])
+            for func in binary_funcs
             ]
 
     term_generator = \

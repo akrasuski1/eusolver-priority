@@ -30,7 +30,7 @@ def parse_bitvec(bv_exp):
     type_, value = bv_exp[0], bv_exp[1]
     if (
             len(type_) != 2 or
-            type_[0] != 'BitVec' or 
+            type_[0] != 'BitVec' or
             len(type_[1]) != 2 or
             type_[1][0] != 'Int'):
         return None
