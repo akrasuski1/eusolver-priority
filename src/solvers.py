@@ -546,12 +546,12 @@ class Solver(object):
             end_time = time.clock()
             self.term_solver_time += end_time - start_time
             # we now have a sufficient set of terms
-            print('Term solve complete!')
+            # print('Term solve complete!')
             start_time = time.clock()
             r = unifier.unify(sig_to_term)
             end_time = time.clock()
             self.unifier_time += end_time - start_time
-            print('Unification Complete!')
+            # print('Unification Complete!')
             if (exprs.is_expression(r)):
                 return r
             else:
