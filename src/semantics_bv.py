@@ -127,22 +127,22 @@ class BVNot(InterpretedFunctionBase):
         eval_context_object.pop()
         eval_context_object.push(res)
 
-# (is0 (_ BitVec m) (_ Bool))
-# - is 0
+# (is1 (_ BitVec m) (_ Bool))
+# - is 1
 
-class BVIs0(InterpretedFunctionBase):
+class BVIs1(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('is0', 1, (exprtypes.BitVectorType(bv_size),),
+        super().__init__('is1', 1, (exprtypes.BitVectorType(bv_size),),
                          exprtypes.BoolType())
         self.bv_size = bv_size
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return (child_terms[0] == 0)
+        return (child_terms[0] == 1)
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = eval_context_object.peek(0).is_zero()
+        res = eval_context_object.peek(0).is_one()
         eval_context_object.pop()
         eval_context_object.push(res)
 
@@ -419,8 +419,8 @@ class BVInstantiator(semantics_types.InstantiatorBase):
                 self.instances[function_name] = BVXor(self.bv_size)
             elif function_name == 'bvadd':
                 self.instances[function_name] = BVAdd(self.bv_size)
-            elif function_name == 'is0':
-                self.instances[function_name] = BVIs0(self.bv_size)
+            elif function_name == 'is1':
+                self.instances[function_name] = BVIs1(self.bv_size)
             else:
                 self._raise_failure(function_name, [])
         return self.instances[function_name]
@@ -429,7 +429,7 @@ class BVInstantiator(semantics_types.InstantiatorBase):
         return function_name
 
     def is_unary(self, function_name):
-        return function_name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot', 'is0' ]
+        return function_name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot', 'is1' ]
 
     def is_binary(self, function_name):
         return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd' ]
@@ -471,8 +471,8 @@ class BitVector(object):
     def __str__(self):
         return str(self.value)
 
-    def is_zero(self):
-        return self.value.uint == 0
+    def is_one(self):
+        return self.value.uint == 1
 
     def __rshift__(self, other):
         if isinstance(other, int):

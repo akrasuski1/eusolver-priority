@@ -721,11 +721,11 @@ def test_solver_icfp(benchmark_name):
                         binary_function_generators),
                         ))
 
-    is0 = syn_ctx.make_function('is0', exprtypes.BitVectorType(64))
-    is0_generator = enumerators.FunctionalGenerator(is0, [term_generator_ph])
+    is1 = syn_ctx.make_function('is1', exprtypes.BitVectorType(64))
+    is1_generator = enumerators.FunctionalGenerator(is1, [term_generator_ph])
 
     pred_generator = \
-            generator_factory.make_generator('PredGenerator', enumerators.AlternativesGenerator, ([is0_generator],))
+            generator_factory.make_generator('PredGenerator', enumerators.AlternativesGenerator, ([is1_generator],))
 
     valuations = get_icfp_valuations(benchmark_name)
 
