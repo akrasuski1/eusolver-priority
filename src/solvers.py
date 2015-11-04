@@ -320,7 +320,7 @@ class Unifier(object):
                     retval.add(i)
             eval_cache[pred.expr_id] = retval
             # return retval
-        print(_expr_to_str(pred), " has signature ", retval, " on ", [ str(x[0].value_object) for x in points])
+        # print(_expr_to_str(pred), " has signature ", retval, " on ", [ str(x[0].value_object) for x in points])
         return retval
 
 
@@ -354,19 +354,19 @@ class Unifier(object):
         for (pred, term_list) in guard_term_list:
             smt_solver.push()
             smt_pred = _expr_to_smt(pred, smt_ctx, intro_vars)
-            print('SMT guard')
-            print(smt_pred)
+            # print('SMT guard')
+            # print(smt_pred)
             smt_solver.add(smt_pred)
             all_terms_failed = True
             for term in term_list:
-                print('Verifying term')
-                print(_expr_to_str(term))
-                print('with guard')
-                print(_expr_to_str(pred))
+                # print('Verifying term')
+                # print(_expr_to_str(term))
+                # print('with guard')
+                # print(_expr_to_str(pred))
                 smt_ctx.set_interpretation_map([term])
                 eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx);
-                print('SMT constraint')
-                print(eq_cnstr)
+                # print('SMT constraint')
+                # print(eq_cnstr)
                 smt_solver.push()
                 smt_solver.add(eq_cnstr)
                 r = smt_solver.check()
@@ -459,7 +459,7 @@ class Unifier(object):
                 monotonic_pred_id += 1
 
                 sig = self._compute_pred_signature(pred, signature_to_pred)
-                print('Generated predicate %s with sig %s' % (_expr_to_str(pred), str(sig)))
+                # print('Generated predicate %s with sig %s' % (_expr_to_str(pred), str(sig)))
                 # if the predicate evaluates universally to true or false
                 # at all points, then it isn't worth considering it.
                 if (not sig.is_empty() and not sig.is_full() and sig not in signature_to_pred):
@@ -540,9 +540,9 @@ class Solver(object):
             if (sig_to_term == None):
                 return None
             # we now have a sufficient set of terms
-            print('Term solve complete!')
+            # print('Term solve complete!')
             r = unifier.unify(sig_to_term)
-            print('Unification Complete!')
+            # print('Unification Complete!')
             if (exprs.is_expression(r)):
                 return r
             else:
@@ -668,10 +668,9 @@ def get_icfp_valuations(benchmark_name):
     points = parser.get_icfp_points(sexp)
     if points == None:
         print("Could not parse icfp")
-        die()
 
-    # return points
-    return test_icfp_valuations
+    return points
+    # return test_icfp_valuations
 
 def test_solver_icfp(benchmark_name):
     import synthesis_context
@@ -764,6 +763,8 @@ if __name__ == '__main__':
     log_file = open(sys.argv[3], 'a')
     start_time = time.clock()
 
+    log_file.write('Started %s\n' % sys.argv[2])
+
     if sys.argv[1] == "max":
         max_cardinality = int(sys.argv[2])
         (sol, points) = test_solver_max(max_cardinality)
@@ -782,6 +783,7 @@ if __name__ == '__main__':
 
     log_file.write('Added %d counterexample points in total\n' % len(points))
     log_file.write('computed in %s seconds\n' % (str(total_time)))
+    log_file.close()
 
     # log_file.write('Counterexample points:\n')
     # log_file.write(_point_list_to_str(points))
