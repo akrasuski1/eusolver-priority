@@ -530,10 +530,6 @@ class Solver(object):
 
     def solve(self, term_generator, pred_generator):
         act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
-        self.var_info_list = var_list
-        var_expr_list = [exprs.VariableExpression(x) for x in var_list]
-        self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
-
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
         term_solver = TermSolver(canon_spec, term_generator)
         unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator)
@@ -558,6 +554,7 @@ class Solver(object):
                     unifier.add_point(point)
                     # print([ str(x[0].value_object) for x in self.points])
                     continue
+        self.var_smt_expr_list = None
 
 ########################################################################
 # TEST CASES

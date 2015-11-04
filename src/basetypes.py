@@ -67,7 +67,6 @@ class ArgumentError(Exception):
     def __repr__(self):
         return self.__str__()
 
-
 class AbstractMethodError(Exception):
     def __init__(self, method_name):
         self.method_name = method_name
