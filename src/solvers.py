@@ -80,6 +80,7 @@ def _guard_term_list_to_str(guard_term_list):
     return retval
 
 def model_to_point(model, var_smt_expr_list, var_info_list):
+    import bitstring
     num_vars = len(var_smt_expr_list)
     point = [None] * num_vars
     for i in range(num_vars):
@@ -94,8 +95,9 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
             point[i] = exprs.Value(BitVector(
                     bitstring.BitArray(
                         uint=int(str(eval_value)),
-                        length=var_info_list.variable_type.size),
-                    var_info_list.variable_type))
+                        length=var_info_list[i].variable_type.size)
+                    ),
+                    var_info_list[i].variable_type)
         else:
             raise basetypes.UnhandledCaseError('solvers.In model_to_point')
     return tuple(point)
@@ -529,9 +531,9 @@ class Solver(object):
             if (sig_to_term == None):
                 return None
             # we now have a sufficient set of terms
-            # print('Term solve complete!')
+            print('Term solve complete!')
             r = unifier.unify(sig_to_term)
-            # print('Unification Complete!')
+            print('Unification Complete!')
             if (exprs.is_expression(r)):
                 return r
             else:
@@ -541,7 +543,7 @@ class Solver(object):
                     self.add_point(point)
                     term_solver.add_point(point)
                     unifier.add_point(point)
-                    # print('Solver: Added point %s' % str([c.value_object for c in point]))
+                    print('Solver: Added point %s' % str([str(c.value_object) for c in point]))
                     continue
 
 ########################################################################
@@ -625,6 +627,7 @@ def test_solver_max(num_vars):
 
 def get_icfp_valuations(benchmark_name):
     import bitstring
+    import parser
     test_icfp_valuations =  [
             (
                 BitVector(bitstring.BitArray(uint=1, length=64)),
@@ -632,7 +635,7 @@ def get_icfp_valuations(benchmark_name):
             ),
             (
                 BitVector(bitstring.BitArray(uint=2, length=64)),
-                BitVector(bitstring.BitArray(uint=2, length=64))
+                BitVector(bitstring.BitArray(uint=0, length=64))
             ),
             (
                 BitVector(bitstring.BitArray(uint=3, length=64)),
@@ -640,10 +643,24 @@ def get_icfp_valuations(benchmark_name):
             ),
             (
                 BitVector(bitstring.BitArray(uint=4, length=64)),
-                BitVector(bitstring.BitArray(uint=4, length=64))
+                BitVector(bitstring.BitArray(uint=0, length=64))
+            ),
+            (
+                BitVector(bitstring.BitArray(uint=5, length=64)),
+                BitVector(bitstring.BitArray(uint=5, length=64))
             )
             ]
-    print("Getting points from benchmark not implemented! Using test points")
+
+    sexp = parser.sexpFromFile(benchmark_name)
+    if sexp is None:
+        die()
+    
+    points = parser.get_icfp_points(sexp)
+    if points == None:
+        print("Could not parse icfp")
+        die()
+
+    # return points
     return test_icfp_valuations
 
 def test_solver_icfp(benchmark_name):
