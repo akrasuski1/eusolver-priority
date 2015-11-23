@@ -795,6 +795,7 @@ if __name__ == '__main__':
 
     log_file.write('Added %d counterexample points in total\n' % len(points))
     log_file.write('computed in %s seconds\n' % (str(total_time)))
+    log_file.write('Solution size: %d\n' % exprs.get_expression_size(sol))
     log_file.close()
 
     # log_file.write('Counterexample points:\n')
