@@ -20,20 +20,28 @@
 \begin{document}
 
 \title{Scaling Enumeration for SyGuS through Divide-and-Conquer}
-\author{}
-\institute{}
+\author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
+\institute{University of Pennsylvania}
 \maketitle
 
-\vspace{-8ex}
 \begin{abstract}
+  \arsays{What is the problem? What is the enumerative approach?}
+
   Given a functional specification and an expression syntax, the
-  Syntax-Guided Synthesis problem is to find an expression in the
-  given syntax that satisfies the functional specification. 
+  Syntax-Guided Synthesis (SyGuS) problem is to find an expression in
+  the given syntax that satisfies the functional specification.
+  The enumerative algorithm (proposed by Udupa et al) has proved to be
+  very effective approach to the SyGuS problem winning the 2014 SyGuS
+  competition and placing second in the 2015 SyGuS competition.
 
-  What is enumeration?
-  Where does enumeration fail?
-  While 
+  \arsays{Where does enumeration fail?}
+  The enumerative algorithm performs rather well on small to
+  medium sized benchmarks, produces succinct expressions, and has the
+  ability to generalize from input-output examples.
+  However, its performance degrades drastically with the size of the
+  smallest solution. 
 
+  \arsays{What do we do about it? Describe techniques in the paper}
   In this paper, we describe a synthesis technique that is based on
   extending the reach of the enumeration technique by separately
   enumerating
@@ -43,14 +51,18 @@
   \end{inparaenum}
   These smaller expressions and predicates are then combined by using
   decision trees to obtain an expression that is correct on all inputs.
+  We use a standard decision tree learning algorithm with a \arsays{blah
+  prior \dots }
 
+  \arsays{Did our techniques work?}
   We implemented this technique in a prototype tool and evaluated it on
   the benchmarks from the SyGuS 2015 competition.
   Our tool is able to match the running times and the compactness of
   solutions of both standard enumerative solver as well as the latest
   white-box solvers in most cases.
-  Further, our solver is able to solve a number of instances from
-  a previously unsolved class of benchmarks.
+  Further, our solver is able to solve a number of instances from the
+  ICFP class of benchmarks, which were previously unsolved by all
+  solvers including other decision tree based ones. 
 \end{abstract}
 
 \section{Introduction}
