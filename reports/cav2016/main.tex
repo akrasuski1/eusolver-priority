@@ -26,18 +26,56 @@
 
 \vspace{-8ex}
 \begin{abstract}
-  Given a functional specification and a set of syntactic constraints,
-  the Syntax-Guided Synthesis problem is to find an expression in the
-  given rules
+  Given a functional specification and an expression syntax, the
+  Syntax-Guided Synthesis problem is to find an expression in the
+  given syntax that satisfies the functional specification. 
 
-  What is SyGuS?
   What is enumeration?
   Where does enumeration fail?
+  While 
 
-  How do we fix it? Techniques:
-  Decision trees, priors,
+  In this paper, we describe a synthesis technique that is based on
+  extending the reach of the enumeration technique by separately
+  enumerating
+  \begin{inparaenum}[(a)]
+  \item smaller expressions that are correct on subsets of inputs, and
+  \item predicates on inputs that distinguish these subsets.
+  \end{inparaenum}
+  These smaller expressions and predicates are then combined by using
+  decision trees to obtain an expression that is correct on all inputs.
 
-  Experimental results
+  We implemented this technique in a prototype tool and evaluated it on
+  the benchmarks from the SyGuS 2015 competition.
+  Our tool is able to match the running times and the compactness of
+  solutions of both standard enumerative solver as well as the latest
+  white-box solvers in most cases.
+  Further, our solver is able to solve a number of instances from
+  a previously unsolved class of benchmarks.
 \end{abstract}
 
+\section{Introduction}
+\label{sec:intro}
+
+\section{Illustrative Examples}
+\label{sec:example}
+
+\section{Problem Statement and Background}
+\label{sec:problem}
+
+\subsection{The Enumeration Sovler }
+\label{sec:enumeration}
+
+\section{What do we call the new algorithm?}
+\label{sec:algo}
+
+\subsection{Learning Decision Trees}
+\label{sec:decision_trees}
+
+\section{Evaluation}
+\label{sec:evaluation}
+
+\section{Related Work}
+\label{sec:related_work}
+
+\
 \end{document}
