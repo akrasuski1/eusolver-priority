@@ -41,7 +41,7 @@
   medium sized benchmarks, produces succinct expressions, and has the
   ability to generalize from input-output examples.
   However, its performance degrades drastically with the size of the
-  smallest solution. 
+  smallest solution.
 
   \arsays{What do we do about it? Describe techniques in the paper}
   In this paper, we describe a synthesis technique that is based on
@@ -54,8 +54,11 @@
   These smaller expressions and predicates are then combined into the
   final solution expression by using decision trees to obtain an
   expression that is correct on all inputs.
-  We use a multi-label decision tree learning algorithm with a \arsays{blah
-  prior \dots }
+  We view the problem of combining expressions and predicates as a multi-label
+  decision tree learning problem. We propose a novel technique of
+  associating a probability distribution over the set of labels that a
+  sample can be labeled with. This enables us to use standard
+  information gain based heuristics to learn a compact decision tree.
 
   \arsays{Did our techniques work?}
   We implemented this technique in a prototype tool and evaluated it on
@@ -81,7 +84,7 @@
 
 An instance of the SyGuS problem is given by a pair $\tuple { \Phi, G }$
 where $\Phi$ is an SMT formula over an unknown function $f$ and $G$ is a
-grammer\dots 
+grammer\dots
 \arsays{Use standard definitions here.}
 Note that we restrict ourselves to a version of the SyGuS problem where
 there is exactly one unknown function to be synthesized, and the grammer
@@ -89,7 +92,7 @@ does not contain {\tt let} expressions.
 
 
 \paragraph{Separability of specifications.}
-The 
+The
 
 \begin{remark}
   There have been many related notions of separability in the existing
