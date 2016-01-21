@@ -17,6 +17,8 @@
 \newcommand\arsays[1]{{\bf AR: #1}}
 \newcommand\ausays[1]{{\bf AU: #1}}
 
+\newcommand\tuple[1]{\langle #1 \rangle}
+
 \begin{document}
 
 \title{Scaling Enumeration for SyGuS through Divide-and-Conquer}
@@ -49,9 +51,10 @@
   \item smaller expressions that are correct on subsets of inputs, and
   \item predicates on inputs that distinguish these subsets.
   \end{inparaenum}
-  These smaller expressions and predicates are then combined by using
-  decision trees to obtain an expression that is correct on all inputs.
-  We use a standard decision tree learning algorithm with a \arsays{blah
+  These smaller expressions and predicates are then combined into the
+  final solution expression by using decision trees to obtain an
+  expression that is correct on all inputs.
+  We use a multi-label decision tree learning algorithm with a \arsays{blah
   prior \dots }
 
   \arsays{Did our techniques work?}
@@ -60,9 +63,11 @@
   Our tool is able to match the running times and the compactness of
   solutions of both standard enumerative solver as well as the latest
   white-box solvers in most cases.
-  Further, our solver is able to solve a number of instances from the
-  ICFP class of benchmarks, which were previously unsolved by all
-  solvers including other decision tree based ones. 
+  Further, our solver is able to solve a large number of instances from
+  the ICFP suite of benchmarks, which were previously unsolved by all
+  solvers including other decision tree based ones.
+  Our evaluation shows that our approach improves the scalability of the
+  enumerative algorithm without compromising on the solution quality.
 \end{abstract}
 
 \section{Introduction}
@@ -74,7 +79,31 @@
 \section{Problem Statement and Background}
 \label{sec:problem}
 
-\subsection{The Enumeration Sovler }
+An instance of the SyGuS problem is given by a pair $\tuple { \Phi, G }$
+where $\Phi$ is an SMT formula over an unknown function $f$ and $G$ is a
+grammer\dots 
+\arsays{Use standard definitions here.}
+Note that we restrict ourselves to a version of the SyGuS problem where
+there is exactly one unknown function to be synthesized, and the grammer
+does not contain {\tt let} expressions.
+
+
+\paragraph{Separability of specifications.}
+The 
+
+\begin{remark}
+  There have been many related notions of separability in the existing
+  literature.
+  The aim of all these notions is to categorize a class of SyGuS
+  problems where the output a solver chooses for input does not affect
+  the set of values the solver can choose for other inputs.
+
+  Syntactic -- separability, single invocation, etc
+
+  Semantic -- single point refuatable, etc
+\end{remark}
+
+\subsection{The Enumeration Sovler}
 \label{sec:enumeration}
 
 \section{What do we call the new algorithm?}
@@ -82,6 +111,9 @@
 
 \subsection{Learning Decision Trees}
 \label{sec:decision_trees}
+
+\subsection{Optimizations}
+\label{sec:optimizations}
 
 \section{Evaluation}
 \label{sec:evaluation}
