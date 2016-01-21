@@ -1,0 +1,1607 @@
+This chapter describes how enumerative strategies can be used to solve
+instances of the \sygusbody problem. The first strategy we describe is a
+straightforward extension of the algorithm used to infer expressions
+in \transit, presented in \secref{expression_inference}. We then
+discuss recent advances made in the area of \sygusbody solvers, and
+present an algorithm for a class of \sygusbody instances variously termed
+\emph{single invocation}~\cite{reynolds-15},
+\emph{separable}~\cite{radhakrishna-15}, or \emph{single-point
+  definable}~\cite{madhusudan-16} in recent literature.  The
+algorithm is enumerative in spirit, but uses a divide-and-conquer
+approach by synthesizing multiple expressions, each of which is correct
+for a subset of inputs, and then attempts to
+\emph{unify}~\cite{radhakrishna-15} these expressions using conditionals.
+
+\section[\tocsc{esolver}: An Enumerative \tocsf{SyGuS} Solver]
+{\secbfsc{esolver}: An Enumerative
+  \secbfsf{SyGuS} Solver}
+\label{section:esolver}
+Having defined the \sygusbody problem, as well as the language to describe
+instances of the \sygusbody problem, we built a solver for such instances
+based on enumerating candidate expressions, which we dub \esolver. The
+core algorithms used in \esolver are similar to the algorithms for
+inferring expressions in \transit, described in
+Algorithms~\ref{algorithm:synth_for_points}
+and~\ref{algorithm:synth_for_all}. We use the notion of a signature to
+prune the space of expressions to be searched. The key differences from
+the algorithms presented in
+Algorithms~\ref{algorithm:synth_for_points}
+and~\ref{algorithm:synth_for_all} are that:
+\begin{itemize}
+\item
+\esolver does not assume
+that all well-typed expressions are a part of the candidate space, and
+instead enumerates expressions using the grammar provided as part of the
+problem instance.
+\item
+The notion of a signature, which we use to prune the search space, now
+needs to take into account the \emph{non-terminal} in the grammar from
+which an expression was derived, to avoid spurious pruning.
+\item
+\esolver handles several extensions to the
+\sygusbody solver --- such as the \textsf{let} construct in constraints
+and grammars~\cite{raghothaman-sygus-spec}, which we have not
+described here.
+\end{itemize}
+
+We do not present the details about the implementation of \esolver, as
+it is a rather straightforward extension of the algorithms presented
+in \secref{expression_inference}. \esolver won the 2014 \sygusbody
+competition with four other solvers participating. The implementation
+of \esolver --- along with two other implementations, one based on
+symbolic search~\cite{gulwani-pldi-11,jha-10} and the other based on a
+stochastic search~\cite{schkufza-13} --- has been made
+available as a baseline for other participants to
+compare against, and possibly build upon, and is continually
+maintained~\cite{sygus-solvers}.
+
+The 2015 \sygusbody competition had several new solvers competing, the
+most notable of general-purpose solver being the CVC4
+solver~\cite{reynolds-15}. The CVC4 solver was the overall winner of
+the 2015 \sygusbody competition, with \esolver coming in second place
+overall. However, despite CVC4 being the overall winner, there were a
+set of benchmarks which could not be solved by the CVC4 solver, but
+which \esolver could solve, as well as the other way around. In
+addition, a solver based on a unification approach was also proposed
+by Radhakrishna et. al.~\cite{radhakrishna-15}, which did not
+participate in the 2015 \sygusbody competition, but has an impressive
+performance nonetheless. The next section provides a brief overview of
+these new algorithms to solve the \sygusbody problem, and discusses the
+capabilities and limitations of \esolver (and enumerative strategies
+in general) with respect to the newer algorithms.
+
+\section[Capabilities and Limitations of \tocsc{esolver}]
+{Capabilities and Limitations of \secbfsc{esolver}}
+These advances in \sygusbody solvers led us to look more closely at the
+capabilities and limitations of enumerative solution
+strategies. We observed that the newer solvers performed
+extremely well with a class of specifications that have been termed
+variously as \emph{single-invocation}
+specifications~\cite{reynolds-15}, or \emph{separable}
+specifications~\cite{radhakrishna-15}. We note that the specifications
+in a large fraction of the \sygusbody benchmark suite fall into this
+class. We also observed that both the newer solvers made
+extensive use of the specification itself in the actual synthesis
+algorithms; whereas \esolver makes very minimal use of the
+specifications in driving the search.
+
+\subsection{Separable Specifications}
+\label{subsection:separable_specs}
+We treat the notion of separability as a semantic notion in this
+dissertation. We shall only consider \sygusbody specifications
+which refer to \emph{only one} unknown function to be synthesized in
+the rest of this chapter. The definitions can be extended to
+specifications which involve multiple functions, but will not be very
+useful in the context of this dissertation. Also, we shall assume that
+the background theory $T$, over which the \sygusbody problem is
+defined, is decidable.
+
+Intuitively, a specification, which
+describes the constraints on an unknown function $f$, is
+\emph{separable}, if and only if it admits a solution where, for any
+concrete input $\mathbf{c}_1$, the value of $f(\mathbf{c}_1)$ is
+\emph{independent} of the value of $f(\mathbf{c}_2)$, where
+$\mathbf{c}_2 \neq \mathbf{c}_1$ is any other concrete input. This
+definition corresponds very closely with the definition of
+a \emph{single-point definable specification}, presented in a
+concurrent work~\cite{madhusudan-16}.
+
+There has been a lot of interest recently in separable
+specifications because the synthesis problem for such specifications
+can be reduced to determining the truth of a first-order sentence.
+This problem is decidable, provided that the background theory $T$ is
+decidable.\footnote{Ignoring any syntactic restrictions on the
+  solution} We will explain this reduction in greater detail later in
+this chapter. Apart this advantage, separable specifications, by
+definition, allow for synthesis strategies that produce solution
+fragments (or sub-expressions) which are correct on some subset of
+inputs. These sub-expressions may then be combined using an
+if-then-else operator, or other techniques. We explore one such
+algorithm in this chapter.
+
+Although we have informally defined the semantic notion of
+separability, checking if a \sygusbody specification is separable
+using this semantic notion is challenging, and is an open problem.
+Most recent approaches~\cite{radhakrishna-15, reynolds-15,
+madhusudan-16} instead check if a specification satisfies some
+syntactic restrictions which are sufficient to prove
+separability~\cite{radhakrishna-15, reynolds-15}, or check that the
+specification satisfies a stronger property, such as
+\emph{single-point refutability}~\cite{madhusudan-16}, which is easier
+to check for. In this dissertation, we adopt a syntactic check for
+separability, which is performed after some amount of rewriting of the
+original specification. We now provide a few examples of \sygusbody
+specifications which are separable and otherwise, to give the reader
+an intuitive feel for the notion of separability.
+
+\begin{example}
+Consider the following specification, which describes a binary
+function $f$ which computes the maximum of its arguments:
+\begin{equation}
+\varphisep{1} \equiv \exists\,f\ \forall\,x, y\ (f(x, y) \ge x \wedge
+  f(x, y) \ge y \ \wedge (f(x, y) = x \vee f(x, y) = y))
+\label{eqn:max_spec}
+\end{equation}
+\varphisep{1} is separable, because all applications of $f$ have the
+same arguments, and therefore never correlates the values that $f$ can
+evaluate to, for different inputs. Further, there exists a solution
+$f(x, y) \equiv \max(x, y)$, whose output, for any given input, never
+depends on its output for some other input.
+\end{example}
+\noindent
+This example seems to indicate that a purely syntactic definition
+suffices: A specification is separable if and only if all occurrences
+of $f, g, \ldots$ in the specification involve applications of the
+corresponding functions to the same set of arguments. However, the
+next two examples show that this is not the case.
+\begin{example}
+The following specifications are separable even though $f$
+is applied to different arguments in each specification:
+\begin{align*}
+\varphisep{2} \equiv\ & \exists\,f\ (f(1) = 1 \wedge f(2) = 2)\\
+\varphisep{3} \equiv\ & \exists\,f\ \forall\,x, y\ ((x = 1 \Rightarrow f(x)
+= 1) \wedge (y = 2 \Rightarrow f(y) = 2))\\
+\varphisep{4} \equiv\ & \exists f\,\forall\,x, y\ (x = y
+\Rightarrow f(x) = f(y))
+\end{align*}
+The specifications $\varphisep{2}$ and $\varphisep{3}$ are separable,
+because each clause in each of these specifications constrains the
+value of $f$ at exactly one point. Any solution $h$, such that $h(1) =
+1$ and $h(2) = 2$ is a valid solution. The specification
+$\varphisep{3}$ is semantically equivalent to $\varphisep{2}$. The
+specification $\varphisep{4}$ is in fact a tautology --- recall that
+$f$ is a \emph{function}, and cannot evaluate to different results
+when applied to the same arguments --- and therefore separable. Any
+function can be used as a solution for $\varphisep{4}$.
+\end{example}
+\noindent
+Thus, if all function applications are over the same arguments, then
+the specification is definitely separable, but this is not a necessary
+condition.
+\begin{example}
+The following specifications, which state that $f$ is a monotonic
+function, are not separable, because they correlate
+the value of $f$ applied to different arguments:
+\begin{align*}
+\varphinonsep{1} \equiv\ & \exists\,f\ \forall\,x, y\ (x \le y \Rightarrow
+f(x) \le f(y))\\
+\varphinonsep{2} \equiv\ & \exists\,f\ \forall\,x\ (f(x) \le f(x + 1))
+\end{align*}
+To be a solution to $\varphinonsep{1}$ and $\varphinonsep{2}$, a
+function $h$ needs to be such that $h(x) \leq h(y)$ for all $x \leq
+y$. Clearly, the output of any candidate solution $h$ on a concrete
+input $\mathbf{c}_1$ cannot be chosen independently of all other
+concrete inputs $\mathbf{c}$, if monotonicity is to be maintained.
+\end{example}
+The following example demonstrates the subtleties of the definition of
+separability, and also that a purely syntactic definition of
+separability is likely to be insufficient.
+\begin{example}
+The following specification for the constant function $f$, which takes
+an integer as input and returns an integer is separable.
+\begin{equation*}
+\varphisep{5} \equiv \exists\,f\ \forall\,x\ (f(0) = 0 \wedge f(x + 1)
+= f(x))
+\end{equation*}
+Although the specification $\varphisep{5}$ correlates the output of
+$f$ applied to distinct arguments, it is equivalent to the
+specification $\exists\,f\ \forall\,x\ f(x) = 0$, which is obviously
+separable.
+\label{example:subtlety_in_separability}
+\end{example}
+\noindent
+As Example~\ref{example:subtlety_in_separability} demonstrates,
+the semantic notion of separability, which could involve arbitrary
+equivalences between formulas, is difficult to check
+for. Consequently, we define the notion of \emph{plain separability},
+which is a syntactic notion that is easier to check for.
+
+\subsubsection{Plainly Separable Specifications}
+Consider a \sygusbody specification $\psi$, over some background
+theory $T$. The specification $\psi$ can refer to functions defined in
+the theory $T$, the unknown function $f$, of arity $n$, as well as to
+variables in the set $\mathbf{x} = \{x_1, x_2, \ldots,
+x_m\}$. Further, $\psi$ has the form $\psi \triangleq \exists\,f\
+\forall\,x_1, x_2, \ldots x_m\ \varphi[f, \mathbf{x}]$. Where
+$\varphi[f, \mathbf{x}]$ is a quantifier-free formula over symbols in
+the background theory $T$, the unknown function $f$ as well as the
+variables in $\mathbf{x}$.
+
+We denote by $\varphicnf$, a formula which is \emph{equivalent} to
+$\varphi$, and in conjunctive normal form (CNF). A formula is said to
+be in CNF if it has the form $c_1 \wedge c_2 \wedge \ldots \wedge
+c_k$, where each $c_i$, for $i \in [1, k]$ --- called a \emph{clause}
+--- has the form $a_{i1} \vee a_{i2} \vee \ldots \vee a_{im_i}$, where
+each $a_{ij}, i \in [1,k], j \in [1,m_i]$ is an atom, and does not
+involve conjunctions or disjunctions, but could possibly appear
+negated. Thus, all negations are restricted to be applied only to
+atoms. Note that we require $\varphicnf$ to be \emph{equivalent} to
+$\varphi$ and not just equi-satisfiable with respect to $\varphi$.
+For simplicity of presentation, we assume that the straightforward,
+exponential transformation to CNF is used to derive $\varphicnf$ from
+$\varphi$. This is not a problem in practice, because $\varphi$ is
+typically not large. If desired, techniques like Tseitin's
+transform~\cite{tseitin-83} can also be used, provided appropriate
+care is exercised while checking validity: checking that the negation
+of a formula which contains auxiliary variables introduced by
+Tseitin's transform is unsatisfiable, may no longer imply that the
+formula is logically valid. Having set up the necessary definitions
+and the form of the specification $\psi$, we can now define plain
+separability.
+
+\begin{definition}
+\label{defn:separability}
+The \emph{\sygusbody} specification $\psi$, of the form described above, with
+$\varphi$ as its quantifier free part, is called \emph{plainly separable} if
+and only if for each clause $c$ in $\varphicnf$, we have that $c$ is
+either a tautology, or \emph{every} occurrence of $f$ in $c$ has $f$
+applied to the \emph{same} arguments.
+\end{definition}
+The notion of a \emph{single-point refutable} specification, which has
+been proposed in concurrent work~\cite{madhusudan-16} is a more
+sophisticated definition for the concept of plain separability. But it
+requires that the domains and ranges of all functions, including the
+ones defined by the background theory $T$ be extended by a
+distinguished undefined value. In principle, there exist
+specifications that are not plainly separable by our definition, but
+are still single-point refutable. Such specifications can indeed be
+solved for by the algorithm which we shall propose later in this
+chapter, but would be rejected based on our definition of plain
+separability. Fortunately however, all of the benchmarks in the
+classes that we have targeted in the \sygusbody benchmark suite have
+plainly separable specifications.
+
+Both the unification based solver, and the CVC4 \sygusbody solver exploit
+the (plain) separability of specifications, when applicable, to apply an
+algorithm specific to such specifications. As mentioned earlier, a
+large fraction of the \sygusbody benchmark suite consists of separable
+specifications, so a better algorithm for such specifications has
+immediate practical value. We shall focus only on separable
+specifications in the rest of this chapter.
+
+\subsection{Black Box and White Box Algorithms}
+\label{subsection:black_and_white}
+All the three baseline \sygusbody solvers can be broadly classified as
+being \emph{black box} algorithms, and can all be viewed as
+instantiations of the counterexample guided inductive synthesis
+(CEGIS) paradigm~\cite{solar-lezama-05}. These solvers use the
+specification $\varphi$ only to verify that a proposed solution is
+correct, and possibly to obtain concrete values of the universally
+quantified variables on which the proposed solution fails.  These
+concrete values could then be possibly used by the black box solvers
+to rule out the current solution from future solution proposals.  The
+specification is not directly used to guide the search in any way. The
+CVC4 and unification based algorithms, on the other hand, can be
+considered \emph{white box} algorithms. These algorithms make
+extensive use of the specification to derive a solution, and perform
+very minimal, if any, enumeration; instead preferring to use
+theory-specific synthesis algorithms. We briefly describe both of
+these strategies, and compare and contrast their strengths and
+limitations with respect to enumerative approaches.  To describe the
+two algorithms, we consider a separable \sygusbody specification $\psi$,
+over some background theory $T$, of the form $\psi \triangleq
+\exists\,f\ \forall\,\mathbf{x}\ \varphi[f, \mathbf{x}]$, which refers
+to the single unknown function $f$\footnote{If $\psi$ refers to
+multiple functions, then by the fact that $\varphi$ is separable, for
+each function symbol $f_i$ that $\varphi$ refers to, we can separate
+from the $\varphicnf$ only those clauses that refer to $f_i$ and use
+these clauses as a specification for each $f_i$ and synthesize for
+each $f_i$ independently.}, symbols of $T$, and the set of universally
+quantified variables $\mathbf{x}$. As usual, $\varphi[f, \mathbf{x}]$
+is a quantifier-free formula over symbols of $T$, $f$ and variables in
+$\mathbf{x}$.
+
+\subsubsection{The CVC4 \subsubsecbfsf{SyGuS} Solver}
+The description of the CVC4 \sygusbody solver presented here is a highly
+condensed version of the presentation from the original paper
+describing the algorithm~\cite{reynolds-15}.  Let us denote by
+$\mathbf{x} \triangleq \{x_1, x_2, \ldots, x_n\}$, the set of
+quantified variables in the separable \sygusbody specification $\psi$. The
+type or sort of each variable $x_i$ is denoted by $d_i$.
+Given that $\psi$ is separable, we can replace every occurrence of
+an application of $f$ in the quantifier-free part, $\varphi$, of
+$\psi$ with a single fresh variable $o$, whose
+type (or sort) is the same as the range of $f$ to
+obtain the following logically equivalent formula:
+\begin{equation*}
+\forall\,\mathbf{x}\ \exists\, o\ \varphi[o, \mathbf{x}]
+\end{equation*}
+Instead of attempting to solve for this formula directly, the CVC4
+\sygusbody solver attempts to establish the falsehood of the
+\emph{negation} of this formula, which is:
+\begin{equation}
+\exists\,\mathbf{x}\ \forall\,o\ \neg\varphi[o, \mathbf{x}]
+\label{eqn:cvc4_unsat}
+\end{equation}
+To prove that this formula is false, consider the following
+game played in rounds between Eloise and Abelard. At the beginning of
+round $i$ Eloise proposes a region $R_i \subseteq d_1 \times d_2
+\times \ldots \times d_n$, and Abelard proposes a \emph{term}
+$t_i[\mathbf{x}]$, such that $\varphi[t_i[\mathbf{x}], \mathbf{x}]$
+is true in some region $S_i$, such that $S_i \cap R_i \neq \emptyset$.
+Further, we have that $R_0 \equiv d_1 \times d_2
+\times \ldots \times d_n$, and that $R_{i+1} \subseteq (R_{i}
+\setminus S_i)$ for all $i$. Abelard wins if in some round $j$, Eloise
+is forced to propose $R_j \equiv \emptyset$. Eloise wins if in some
+round $j$, Abelard is unable to come up with a term $t_j$. It is easy
+to see that (\ref{eqn:cvc4_unsat}) is false if and only if
+Abelard wins, and is satisfiable if and only if Eloise wins.
+
+The game just described is the essence of the quantifier instantiation
+procedure performed within SMT solvers to prove the falsehood
+of formulas such as those shown in (\ref{eqn:cvc4_unsat}). The CVC4
+\sygusbody solver, takes advantage of being closely integrated with the
+CVC4 SMT solver, and having access to its internals. A proof of
+falsehood of (\ref{eqn:cvc4_unsat}) can then easily be used to
+construct an expression which serves as the solution for the unknown
+function $f$. Continuing with the game analogy, such a proof would
+consist of the terms $t_i$ and the regions $R_i$, proposed by Abelard
+and Eloise respectively, for each round. Suppose that the regions
+$R_i$ are represented symbolically as predicates, then it is trivial
+to construct an if-then-else ladder with the predicates corresponding
+the regions as the conditions controlling which branch is chosen, and
+the appropriate terms $t_i$ as the branches.
+
+As an example of how this game may be played out on the specification
+shown in (\ref{eqn:max_spec}), which is for a binary function that
+computes the maximum of its arguments, we first write the formula
+whose falsehood is to be established from (\ref{eqn:max_spec}):
+\begin{equation}
+\exists\,x, y\ \forall\,o\ (o < x \vee o < y \vee (o \neq x \wedge o
+\neq y))
+\label{eqn:cvc_unsat_example}
+\end{equation}
+\begin{enumerate}[start=0]
+\item
+In round 0, $R_0 \equiv \mathtt{true}$, and $t_0 \equiv x$, which
+makes the formula (\ref{eqn:cvc_unsat_example}) true in the region $x \ge
+y$, which is a subset of $R_0$
+\item
+In round 1, $R_1 \equiv x < y$, and $t_1 \equiv y$, which makes the
+formula (\ref{eqn:cvc_unsat_example}) true in the entire region $R_1$.
+\item
+In round 2, Eloise is forced to set $R_2 \equiv \mathtt{false}$, thus
+proving the falsehood of (\ref{eqn:cvc_unsat_example}).
+\end{enumerate}
+
+
+\subsubsection{The Unification based \subsubsecbfsf{SyGuS}
+  Solver}
+As was the case with the description of the CVC4 solver, this
+description of the unification based solver is also a highly condensed
+and simplified version of the presentation in the original paper
+describing this algorithm~\cite{radhakrishna-15}. The algorithm is
+conceptually similar to the algorithm used in the CVC4 \sygusbody
+solver. However, the unification based algorithm uses an SMT solver as
+a black box, and does not depend on having access to the internals of
+an SMT solver. Given a separable \sygusbody specification $\varphi$, whose
+form is as described earlier, the unification based solver maintains a
+region $R$, for which a correct solution has not yet been
+discovered. It then selects a term $t[\mathbf{x}]$ and plugs the term
+$t[\mathbf{x}]$ \emph{back into} $\varphi$ to determine a region $R'$
+where the term $t$ causes $\varphi$ to be true. The algorithm then
+recurses on the region $R \setminus R'$.
+
+The working of the algorithm is perhaps best illustrated with an
+example. Consider the specification shown in (\ref{eqn:max_spec})
+again. At the beginning of the algorithm, $R \equiv \mathtt{true}$.
+\begin{enumerate}
+\item
+Suppose the algorithm picks the term $x$. Plugging this back into
+(\ref{eqn:max_spec}) for the term $f(x, y)$, we obtain the region $x
+\ge y$. The algorithm updates $R$ to $x < y$.
+\item
+The algorithm then picks the term $y$. Plugging this term back into
+(\ref{eqn:max_spec}), we obtain the region $y \ge x$. The algorithm
+updates $R$ to be the empty region and terminates by unifying the
+terms $x$ and $y$ using an if-then-else ladder predicated with the
+regions in which substituting the respective term for $f(x, y)$ in
+$\varphisep{1}$ causes the formula to become true.
+\end{enumerate}
+
+The key difference between the unification based algorithm and the CVC4
+algorithm is in how terms are picked. The CVC4 algorithm piggy-backs on
+the sophisticated quantifier instantiation mechanisms within the SMT
+solver. The unification based algorithm on the other hand implements
+domain-specific solution techniques to derive terms that are likely to
+result in a solution with a smaller number of conditionals. The paper
+by Radhakrishna et. al.~\cite{radhakrishna-15} describes two algorithms to
+solve for terms: one for the domain of linear integer arithmetic, and
+another for the domain of fixed size bit vectors.
+
+\subsection{A Comparison of White Box and Black Box Algorithms}
+\label{subsection:white_black_comparison}
+The white box algorithms described in this section have some
+advantages over black box algorithms. In turn, the black box
+algorithms have their own advantages over the white box algorithms. We
+specifically refer to the black box algorithm implemented in \esolver
+for the purposes of this comparison, although a lot of the points are
+applicable to the stochastic solver~\cite{schkufza-13} and the
+symbolic solver~\cite{jha-10, gulwani-pldi-11} as well.
+
+\subsubsection{Strengths of White Box Algorithms}
+\begin{itemize}
+\item
+\textbf{Enhanced Scalability:} The size of the expression to be
+synthesized does not have a large impact on the execution time of both
+the white box algorithms described in this section. Indeed, both of
+the algorithms can easily synthesize expressions with tens or hundreds
+of if-then-else branches. On the other hand, enumerative algorithms
+struggle to synthesize large expressions. This is primarily because
+the number of expressions in the search space typically grows
+exponentially with the size of allowed expressions. Because the
+enumerative approach enumerates \emph{all} expressions of a given size
+before trying a larger size, it severely limits the scalability of a
+purely enumerative algorithm. The scalability of \esolver, as it is
+implemented, is also restricted by the fact that it caches every
+expression that it enumerates, leading to a large memory footprint.
+\item
+\textbf{Ability to use domain-specific techniques:} The white
+box algorithms leverage the specification itself in synthesizing a
+function that satisfies the specification. As a result, they can
+leverage domain-specific insights and algorithms to efficiently solve
+the subproblems they construct. As already mentioned, the unification
+based solver implements a per-domain algorithm to choose
+terms. Similarly, the CVC4 solver, which is deeply embedded with the
+CVC4 solver, has a large portfolio of quantifier instantiation and
+domain specific solution techniques --- implemented as part of the
+CVC4 SMT solver --- at its disposal.
+\end{itemize}
+
+\subsubsection{Strengths of the Enumerative Black Box Algorithm}
+\begin{itemize}
+\item
+\textbf{Genericity:} \esolver uses the exact same algorithm regardless
+of what the domain being solved for is. Any improvements in the
+algorithm result in improvements across the board, for all domains. On
+the other hand, the white box algorithms' use of domain-specific
+solvers requires reimplementing any new algorithmic advance in each of
+the domain-specific algorithms.
+\item
+\textbf{Ability to Generalize:} Recall that the \sygusbody language fully
+supports inductive specifications, or specifications where the
+behavior of the desired function is expressed as a finite set of
+concrete input-output examples. Such specifications can be useful when
+a formal specification is difficult to write. The ICFP benchmarks
+which were derived from a programming contest held in conjunction with
+ICFP 2013~\cite{swamy-13}. The specifications for these benchmarks are
+in the form of a set of input-output examples which describe the
+output of the unknown function on various inputs. Assuming that the
+enumerative algorithm scales, it would produce
+the most concise expression in the search space that behaves correctly on
+all the input-output examples. Further, the output of the expression
+would be well-defined on unseen inputs. On the other hand, the white
+box solvers cannot do much better than generate a case-split on the
+concrete inputs, rendering the output of the expression being
+undefined or arbitrary on unseen inputs. It is thus not surprising
+that both of these solvers perform poorly on the ICFP
+benchmarks~\cite{radhakrishna-15,reynolds-15}. To be fair, \esolver
+does not perform well on these benchmarks either, but due to
+scalability constraints rather than algorithmic ones.
+In fact, none of the
+solvers that competed in the 2015 \sygusbody competition were effective at
+solving these benchmarks.
+\item
+\textbf{Ease of Searching through a Syntactically Restricted Space:}
+Observe that the description of the white box algorithms does not
+mention the ``Syntax-Guided'' nature of \sygusbody at all. The CVC4
+algorithm either encodes the syntactic restriction using the theory of
+algebraic data types built into CVC4, or applies a enumerative
+post-processing step to find a term which is equivalent to the
+solution synthesized without syntactic restrictions. The former
+results in large slowdowns~\cite{reynolds-15}, and the latter can
+sometimes result in failure. The unification based solver does not
+concern itself with syntactic restrictions at all; however, the
+enumerative post-processing step used in the CVC4 algorithm can be
+used in this setting as well. Another possibility is to use a syntax
+aware unification operator, however this has not been explored.
+Syntactic restrictions are often useful
+when synthesizing programs for a low-power instruction set
+architecture, with a restricted set of operations, and are thus not an
+artificial constraint.
+\end{itemize}
+
+The comparison presented above naturally makes one desire an algorithm
+which can be generic, has the ability to generalize as well as
+the ability to enforce syntactic restrictions, alongside the
+scalability to be able to synthesize functions which require large
+expression sizes to describe. We describe an algorithm that fulfills
+this desire, at least to some extent, in the next section.
+
+\section{Combining Enumeration with Unification}
+\label{section:eusolver}
+To develop a more efficient algorithm to solve instances of the \sygusbody
+problem, we make the following assumptions throughout this section:
+\begin{itemize}
+\item
+The \sygusbody specification $\psi$ is separable, and has the
+form $\psi \triangleq \exists\,f\ \forall\,\mathbf{x}\ \varphi[f,
+\mathbf{x}]$. Here $f$ is the only function to be synthesized, and
+$\mathbf{x}$ is a set of universally quantified variables of
+appropriate types or sorts, while $\varphi[f, \mathbf{x}]$ is a
+quantifier-free formula that only refers to symbols from the
+background theory $T$, the unknown function $f$ and the variables in
+the set $\mathbf{x}$.
+\item
+Given that $\psi$ is separable, we can assume that all occurrences of
+$f$ in \emph{all} clauses of $\varphicnf$ have $f$ applied to the same
+arguments. If this is not the case, then we can
+transform $\varphicnf[f, \mathbf{x}]$ to $\varphican[f, \mathbf{x},
+\mathbf{a}]$, which is also in CNF by introducing a set of additional
+placeholder variables $\mathbf{a} \triangleq \{a_1, a_2, \ldots,
+a_p\}$, where $p = \arity{f}$ and $\mathbf{a} \cap \mathbf{x} \equiv
+\emptyset$ and constraining them appropriately. For example, consider
+the following specification for the binary function $f$, whose output
+is required to be greater than equal to each of its arguments, whose
+quantifier-free part is already in CNF:
+\begin{equation*}
+\exists\,f\ \forall\,x, y\ f(x, y) \geq x \wedge f(y, x) \geq x
+\end{equation*}
+This formula can be transformed into the following semantically
+equivalent formula, by introducing additional variables $a_0$ and
+$a_1$ which represent the arguments to $f$ which are used in all terms
+referring to $f$. Note that quantifier-free portion of the transformed
+formula is also is CNF, once the implications have been converted into
+disjunctions using standard equivalences:
+\begin{align*}
+\exists\,f\ \forall\, x, y, a_0, a_1\ (&((a_0 = x \wedge a_1 = y)
+\Rightarrow f(a_0, a_1) \geq x)\ \wedge\\
+& ((a_0 = y \wedge a_1 = x)
+\Rightarrow f(a_0, a_1) \geq y))
+\end{align*}
+We will refer to the version of the specification $\psi$,
+canonicalized in this manner as $\psican$, and assume that it has the
+form $\psican \triangleq \exists\,f\ \forall\,\mathbf{x},\mathbf{a}\
+\varphican[f, \mathbf{x}, \mathbf{a}]$.
+\item
+Lastly, we assume that the program space is described by \emph{two}
+context-free grammars, rather than just one unified grammar. The first
+grammar, which is a grammar for \emph{terms}, denoted $G_T$ comprises
+of the set of all terms, and does not include any conditional
+expressions. All terms generated by $G_T$ have the same type as the
+range (or return type) of the unknown function $f$. The second grammar
+called $G_P$ consists of the set of all Boolean valued \emph{atomic
+predicates} that can be used as conditions in conditional
+expressions. Note that $G_P$ is assumed not to contain disjunctions,
+conjunctions or negations of atomic predicates.\footnote{The algorithm
+described here would still be correct if $G_P$ contains Boolean
+combinations of atoms as well, but it would not be as efficient.}
+Further, we allow $G_P$ and $G_T$ to be mutually recursive, in that
+$G_P$ can refer to non-terminals in $G_T$ and vice-versa. We note that
+most of the grammars in the \sygusbody benchmark suite can be transformed
+into this form relatively easily, using a conservative and lightweight
+analysis on the context-free grammar describing the syntactic
+restrictions on expressions. We require that the original grammar must allow a solution
+that is either a \emph{single} term drawn from $G_T$, or a conditional
+of the form:
+\begin{quote}
+\centering
+\tabbedcode{\linewidth}{\small} {
+if ($\mathrm{cond}_0$) then $\mathrm{term}_0$\\
+else if ($\mathrm{cond}_1$) then $\mathrm{term}_1$\\
+\vdots\\
+else if ($\mathrm{cond}_{n-1}$) then $\mathrm{term_{n-1}}$\\
+else $\mathrm{term}_{n}$
+}
+\end{quote}
+Where each $\mathrm{cond}_{i}$ is a Boolean combinations of
+atoms, with each atom drawn from $G_P$, and
+each $\mathrm{term}_{i}$ is a term drawn from $G_T$.
+\end{itemize}
+
+\subsection{Decision Trees}
+\label{subsection:decision_trees}
+Consider a set of samples $S \triangleq \{s_1, s_2, \ldots, s_n\}$ ---
+each sample is some \emph{object}, whose nature is not relevant. Each
+sample $s_i$ is associated with a vector of $m$ Boolean valued
+attributes. Let $\mathsf{attrib} : S \rightarrow \mathbb{B}^m$ be
+a function that maps each sample $s \in S$ to its attribute vector
+$\attrib{s}$. Further, we define $L$ as a set of \emph{labels}, with a
+labeling function $\mathsf{label} : S \rightarrow L$ which maps
+each sample $s \in S$ to its label $\lablfun{s}$. Now, consider the
+problem of predicting $\lablfun{s}$ for each $s \in S$, given
+information only about $\attrib{s}$ for each $s \in S$. This is a well
+studied problem in machine learning and is typically solved by using
+an algorithm, such as the ID3 algorithm or the C4.5 algorithm, to
+learn a reasonably compact decision tree which makes decisions based
+solely on the attributes~\cite{quinlan-86, quinlan-87, quinlan-96}.
+Algorithm~\ref{algorithm:decision_tree_learning} shows an algorithm to
+learn such a decision tree, which is now considered folk knowledge.
+
+\begin{algorithm}[!t]
+\caption{\textsc{Learn-DT}: An algorithm to learn a decision tree}
+\label{algorithm:decision_tree_learning}
+\DontPrintSemicolon
+\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+\Input{A set of samples $S$.\\
+  An attribute function $\mathsf{attrib} : S \rightarrow
+  \mathbb{B}^m$.\\
+  A labeling function $\mathsf{label} : S \rightarrow L$.
+}
+\Output{A decision tree that uses the attributes of samples to predict
+  its label.}
+\If{all samples in $S$ have the same label $l$}{
+  return a tree which predicts $l$
+}
+$a_{\mathrm{best}} \leftarrow$ attribute $a_i, i \in [1, m]$ which \emph{best}
+classifies $S$.
+\label{line:dt_pick_attribute}\\
+\If{$a_{\mathrm{best}}$ is undefined}{
+  return $\bot$
+}
+$S^+ \leftarrow $ subset of $S$ where each sample has
+$a_{\mathrm{best}} = \mathtt{true}$\\
+$S^+ \leftarrow $ subset of $S$ where each sample has
+$a_{\mathrm{best}} = \mathtt{false}$\\
+$\mathrm{positive} \leftarrow $ \textsc{Learn-DT}($S^+$,
+$\mathsf{attrib}$, $\mathsf{label}$)\\
+$\mathrm{negative} \leftarrow $ \textsc{Learn-DT}($S^-$,
+$\mathsf{attrib}$, $\mathsf{label}$)\\
+\Return a decision tree labeled with attribute $a_{\mathrm{best}}$
+with $\mathrm{positive}$ and $\mathrm{negative}$ as its positive and
+negative subtrees
+\end{algorithm}
+An interesting aspect of
+Algorithm~\ref{algorithm:decision_tree_learning} is how the
+\emph{best} attribute is chosen in
+line~\ref{line:dt_pick_attribute}. It has been shown that constructing
+the optimal (in terms of the size of the tree) decision tree is
+\bodyscns{np}-complete~\cite{hyafil-76, murthy-98}. Because typical
+sample sets as well as the length of attribute vectors can be large,
+most algorithms use a \emph{greedy} heuristic to pick an attribute in
+line~\ref{line:dt_pick_attribute} of
+Algorithm~\ref{algorithm:decision_tree_learning}.  Greedy heuristics
+which maximize \emph{information gain} at each level have been shown
+to be particularly effective in machine learning~\cite{quinlan-86,
+quinlan-87, quinlan-96}.
+
+\subsubsection{Entropy and Information Gain}
+The entropy of a sample set $S$, denoted $H(S)$ is a measure of
+uncertainty in the set $S$. The mathematical definition of entropy,
+adapted to our setting is as follows:
+\begin{equation}
+H(S) = - \sum_{l \in L}\mathrm{Pr}(l)\log_2(\mathrm{Pr}(l))
+\label{eqn:entropy}
+\end{equation}
+where $\mathrm{Pr}(l)$ denotes the fraction of samples in $S$ which
+are labeled $l$. Note that we refer to the Shannon entropy, whenever
+we use the term ``entropy'' in an unqualified manner throughout this
+dissertation. The concept of information gain is defined in terms of
+entropy. The information gain obtained by splitting a sample set $S$
+on an attribute $a$ is the measure of the difference in entropy of $S$
+and the entropy of the resulting sets $S^+$ and $S^-$, which are
+formed by splitting on the attribute $a$. Mathematically, the
+information gain $G(S, a)$ obtained by splitting a sample set $S$,
+based on an attribute $a$, into two partitions $S^+$ and $S^-$ can be
+computed by using the following equation:
+\begin{equation}
+G(S, a) = H(S) - \left(\frac{|S^+|}{|S|} H\left(S^+\right) +
+  \frac{|S^-|}{|S|} H\left(S^+\right)\right)
+\label{eqn:info_gain}
+\end{equation}
+Having provided the reader with an overview of decision trees and
+algorithms to learn such decision trees, we now present how they can
+be used, in conjunction with enumerative strategies, to solve
+instances of the \sygusbody problem.
+
+\subsection{Program Synthesis using Decision Trees}
+\label{subsection:synthesis_using_decision_trees}
+Recall the Algorithm~\ref{algorithm:synth_for_points}
+\synthforpoints, respectively, shown in
+\chapref{transit}. Algorithm~\ref{algorithm:synth_for_points}
+essentially synthesizes \emph{one} expression such that the expression
+satisfies the given specification for \emph{all} the concrete inputs
+in a given set $P$. In essence, it enumerates \emph{all} conditional
+expressions \emph{implicitly} as a part of its search.
+
+The basic idea behind the algorithm which we now present is that we do
+not need to synthesize an expression which satisfies the specification
+for \emph{all} concrete inputs. We can learn a \emph{set} $E$ of
+expressions, such that each expression satisfies the specifications
+for some subset $P'$ of the concrete inputs $P$, such that for \emph{every}
+concrete input in $p \in P$, there exists \emph{some} expression in $e
+\in E$ such that $e$ satisfies the specification at $p$. Once we have
+gathered such a set $E$, we can then enumerate a sufficient set of
+atomic predicates from $G_P$ and \emph{unify} the terms in $E$ into a
+conditional expression or program, as desired, by learning an
+appropriate decision tree.
+
+Formally, we are given a canonicalized, separable \sygusbody specification
+for \emph{one} function $f$ of the form $\psican \triangleq
+\exists\,f\ \forall\,\mathbf{x}, \mathbf{a}\ \varphican[f, \mathbf{x},
+\mathbf{a}]$ defined earlier in this section. We are also given two
+grammars $G_T$ and $G_P$ which are as described earlier.  Further, we
+have a set of \emph{valuations} $P$ of the variables in $\mathbf{x}
+\cup \mathbf{a}$, where each $\sigma \in P$ maps a variable $v \in
+\mathbf{x} \cup \mathbf{a}$ to its value $\sigma(v)$. We define a
+function $\mathcal{L} : P \rightarrow 2^{G_T}$, such that a term $t
+\in \multilabel{p}$, for any point $p \in P$ if and only if
+$\varphican[t[p], \mathbf{x} \cup \mathbf{a} \mapsto p]$ evaluates to
+$\mathtt{true}$. Note that the notation $\varphican[t[p], \mathbf{x}
+\cup \mathbf{a} \mapsto p]$ denotes that first \emph{every} occurrence
+of all variables from $\mathbf{a}$ in $t$ has been replaced by its
+valuation according to $p$, which is denoted as $t[p]$. Following
+this, every occurrence of $f(.)$ in \varphican is replaced by $t[p]$,
+and lastly, all other occurrences of variables from $\mathbf{x} \cup
+\mathbf{a}$ in $\varphican$ are also replaced by their valuations
+according to $p$, denoted by $\mathbf{x} \cup \mathbf{a} \mapsto p$.
+
+Now, we can view the set of valuations $P$ as a sample set. The
+labeling function is now essentially a \emph{multi-labeling}
+function $\mathcal{L}$, which maps each point $p \in P$ to a
+\emph{set} of labels drawn from the set $G_T$. Further, for each point
+$p$, the results of evaluating each $g \in G_P$ at $p$ forms a vector
+of Boolean attributes for $p$, which may be of infinite length. Given
+these parallels, it is now clear how we can treat this as a decision
+tree learning problem, except for one wrinkle: that each sample may be
+multiply labeled. The possibility that a point may be labeled with
+multiple terms causes problems in the computation of entropy according
+to Equation (\ref{eqn:entropy}), which requires the fraction of
+samples labeled with a particular label. Applying this equation
+na\"ively will result in $\sum_{l \in L}\mathrm{Pr}(l) > 1$ and thus
+will no longer be a probability mass function.
+
+To deal with this wrinkle, given a sample set $P$, we define a
+conditional distribution on the probabilities of labels, \ie, the
+probability of a label \emph{conditioned} on the fact that a
+particular point $p \in P$ has been chosen. In the original single
+label formulation of the problem, this probability is either zero or
+one --- once we pick a point $p \in P$, we know that it can be
+assigned only \emph{one} label: $\lablfun{p}$. This conditional
+probability distribution is defined as follows:
+\begin{equation}
+\mathrm{Pr}(\lablfun{p} = t\ |\  p) =
+\begin{cases}
+\displaystyle\ \quad\qquad 0 & \mathrm{if}\ t \notin \multilabel{p}\\
+\frac{\strut\displaystyle\cover{t}}{\strut\displaystyle\sum_{t' \in \multilabel{p}}\cover{t'}} & \mathrm{if}\
+  t \in \multilabel{p}
+\end{cases}
+\label{eqn:conditional_label_prob}
+\end{equation}
+where, given a sample set $P$, the function $\mathsf{cover} : G_T
+\rightarrow \mathbb{N}$ denotes how many samples in $P$ can possibly
+be labeled with a given term $t \in G_T$, and is a rough measure of
+how \emph{relevant} a particular term is. This function is defined as
+follows:
+\begin{equation}
+\cover{t} \equiv \left|\left\{p \in P : t \in \multilabel{p}\right\}\right|
+\end{equation}
+Now, given the sample set $P$, we can determine the unconditional
+label probabilities by summing the conditional probability shown in
+Equation~\ref{eqn:conditional_label_prob} over \emph{all} the points
+in $P$. Thus, we have, the probability of a randomly chosen point from
+$P$ being labeled with $t \in G_T$ is:
+\begin{equation*}
+\mathrm{Pr}(t) = \sum_{p \in P}\mathrm{Pr}(\lablfun{p} = t\ |\ p) \times \mathrm{Pr}(p)
+\end{equation*}
+Now, assuming that each point $p \in P$ is equally likely to be
+chosen, \ie, we sample from $P$ uniformly at random, we obtain:
+\begin{equation}
+\mathrm{Pr}(t) = \frac{1}{|P|}\sum_{p \in P}\mathrm{Pr}(\lablfun{p} = t\ |\ p)
+\label{eqn:unconditional_label_prob}
+\end{equation}
+We can now directly use Equation~\ref{eqn:unconditional_label_prob} to
+compute the entropy according to Equation~\ref{eqn:entropy}, and thus
+information gain according to Equation~\ref{eqn:info_gain}, which can then
+be used to learn a decision tree based on the greedy information gain
+heuristic. Finally, we note that the conditional distribution
+that we have defined in Equation~\ref{eqn:conditional_label_prob}
+makes intuitive sense, and works well in practice, as we will
+demonstrate shortly. However, better choices might still be possible,
+and this conditional distribution must therefore be viewed as
+\emph{tunable heuristic} for the algorithm.
+
+\subsubsection{An Illustrative Example}
+
+We now illustrate the techniques which we have just described, with an
+example. Consider the following specification which describes a binary
+function $f$, over integers, which is expected to return the maximum
+of its arguments:
+\begin{equation*}
+\exists\,f\ \forall\,x, y\ f(x, y) \geq x \wedge f(x, y) \geq y \wedge
+(f(x, y) = x \vee f(x, y) = y
+\end{equation*}
+Suppose that the set of terms that we're working with is $\{x, y,
+x+y\}$ and the set of predicates is $\{x < y, x = 0, y = 0\}$.
+Further the set $P$, for our example, contains the four valuations
+shown in the second column of \tabref{dt_example}, with the third
+column showing the set of labels (terms) that satisfy the
+specification at each sample (or point), and the fourth column showing
+the attribute vector, which consists of predicates, and their truth
+value for the corresponding point. For instance, the row numbered one
+in the table considers the valuation where $x$ is two and $y$ is
+one. We see that the term $x$ is the only term from among the terms
+$x$, $x+y$ and $y$ that satisfies the specification this
+point. Lastly, for this valuation, the all the predicates that we
+consider, \ie, $x < y$, $y = 0$ and $x = 0$, evaluate to false as
+shown in the last column.
+
+\begin{table}[!t]
+\centering
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}cccc}\hlx{hvhv}
+Row \#& $p \in P$ & $\multilabel{p}$ & $\attrib{p}$\\\hlx{vhvhv}
+1 & $\zug{x : 2, y : 1}$ & $\{x\}$ & $\zug{
+                                     x < y : \mathtt{F},
+                                     x = 0 : \mathtt{F},
+                                     y = 0 : \mathtt{F}}$\\\hlx{vhv}
+2 & $\zug{x : 1, y : 0}$ & $\{x, x+y\}$ & $\zug{
+                                      x < y : \mathtt{F},
+                                      x = 0 : \mathtt{F},
+                                      y = 0 : \mathtt{T}}$\\\hlx{vhv}
+3 & $\zug{x : 0, y : 1}$ & $\{y, x+y\}$ & $\zug{
+                                          x < y : \mathtt{T},
+                                          x = 0 : \mathtt{T},
+                                          y = 0 : \mathtt{F}}$\\\hlx{vhv}
+4 & $\zug{x : 1, y : 2}$ & $\{y\}$ & $\zug{
+                                     x < y : \mathtt{T},
+                                     x = 0 : \mathtt{F},
+                                     y = 0 : \mathtt{F}}$\\\hlx{vhvh}
+\end{tabular*}
+\caption{A multi-labelled sample set over which a decision tree is to
+  be learned}
+\label{table:dt_example}
+\end{table}
+To learn a decision tree over this sample set, we need to evaluate the
+entropy that results from splitting on each of the attributes and pick
+the split which minimizes the entropy. Let us first consider splitting
+this sample set according to the predicate $x < y$. Splitting in this
+manner yields to partitions the sample set $P$ into $P_1$ and $P_2$,
+where $P_1$ contains the rows numbered one and two --- where $x < y$
+evaluates to false --- and $P_2$ contains the rows numbered three and
+four --- where $x < y$ evaluates to true. We need to compute the
+entropy for each of these partitions. The total entropy for the split
+is then the sum of entropies of each of these partitions, weighted by
+the fraction of samples in the respective partition.
+
+\begin{table}[!t]
+\centering
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccrclc}\hlx{hvhv}
+Partition & Points in Partition & \multicolumn{3}{c}{Label Probabilities} & Entropy\\\hlx{vhvhv}
+\multirow{3}{*}{$P_1$} & \multirow{2}{*}{$\zug{x : 2, y : 1}$} & $\mathrm{Pr}(\lablfun{p} = x)$ & $=$ & $\frac{5}{6}$ & \multirow{3}{*}{0.650022}\\\hlx{vv}
+& \multirow{2}{*}{$\zug{x : 1, y : 0}$} & $\mathrm{Pr}(\lablfun{p} = x + y)$ &$=$& $\frac{1}{6}$ &\\\hlx{vv}
+& & $\mathrm{Pr}(\lablfun{p} = y)$ & $=$ & $0$\\\hlx{vhv}
+\multirow{3}{*}{$P_2$} & \multirow{2}{*}{$\zug{x : 0, y : 1}$} & $\mathrm{Pr}(\lablfun{p} = x)$ & $=$ & $0$ & \multirow{3}{*}{0.650022}\\\hlx{vv}
+& \multirow{2}{*}{$\zug{x : 1, y : 2}$} & $\mathrm{Pr}(\lablfun{p} = x + y)$ &$=$& $\frac{1}{6}$ &\\\hlx{vv}
+& & $\mathrm{Pr}(\lablfun{p} = y)$ & $=$ & $\frac{5}{6}$\\\hlx{vhvh}
+
+\end{tabular*}
+\caption[Entropies that result by splitting using the predicate $x <
+y$]{Entropies that result by splitting the sample set shown in
+  \tabref{dt_example} using the predicate $x < y$}
+\label{table:dt_split_1}
+\end{table}
+\tabref{dt_split_1} shows the partitions that result from splitting on
+the predicate $x < y$, as well as the label probabilities computed
+according to Equation~\ref{eqn:unconditional_label_prob}. Finally, the
+entropy corresponding to each partition are computed according to
+Equation~\ref{eqn:entropy}, using the set $\{x, y, x+y\}$ as the set
+of all possible labels. Note that in this table, the partition named
+$P_1$ corresponds to the rows in \tabref{dt_example} where the
+predicate $x < y$ evaluates to false, and the partition $P_2$
+corresponds to the rows where the predicate $x < y$ evaluates to
+true. Also, for the purposes of entropy calculations, we assume that
+$0 \times \log_2(0) = 0$. The overall entropy that results from the
+split using the predicate $x < y$ is the weighted sum $\frac{1}{2}
+\times 0.650022 + \frac{1}{2} \times 0.650022 = 0.650022$.
+
+\begin{table}[!t]
+\centering
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}ccrclc}\hlx{hvhv}
+Partition & Points in Partition & \multicolumn{3}{c}{Label Probabilities} & Entropy\\\hlx{vhvhv}
+\multirow{3}{*}{$P_1$} & \multirow{1}{*}{$\zug{x : 2, y : 1}$} & $\mathrm{Pr}(\lablfun{p} = x)$ & $=$ & $\frac{5}{9}$ & \multirow{3}{*}{1.351644}\\\hlx{vv}
+& \multirow{1}{*}{$\zug{x : 1, y : 0}$} & $\mathrm{Pr}(\lablfun{p} = x + y)$ &$=$& $\frac{1}{9}$ &\\\hlx{vv}
+& \multirow{1}{*}{$\zug{x : 1, y : 2}$} & $\mathrm{Pr}(\lablfun{p} = y)$ & $=$ & $\frac{1}{3}$\\\hlx{vhv}
+
+\multirow{3}{*}{$P_2$} & \multirow{3}{*}{$\zug{x : 0, y : 1}$} & $\mathrm{Pr}(\lablfun{p} = x)$ & $=$ & $0$ & \multirow{3}{*}{0.5}\\\hlx{vv}
+& & $\mathrm{Pr}(\lablfun{p} = x + y)$ &$=$& $\frac{1}{2}$ &\\\hlx{vv}
+& & $\mathrm{Pr}(\lablfun{p} = y)$ & $=$ & $\frac{5}{2}$\\\hlx{vhvh}
+
+\end{tabular*}
+\caption[Entropies that result by splitting using the predicate $x = 0$]
+{Entropies that result by splitting the sample set shown in
+  \tabref{dt_example} using the predicate $x = 0$}
+\label{table:dt_split_2}
+\end{table}
+
+\begin{figure}
+\centering
+\input{figures/dt_example_learned_tree}
+\caption[An example of a learned decision tree]
+{The decision tree learned for the sample set shown in
+  \tabref{dt_example}}
+\label{figure:dt_example_learned_tree}
+\end{figure}
+
+Now, repeating the same procedure to determine the entropy
+obtained by splitting on the predicate $x = 0$ yields the results
+shown in \tabref{dt_split_2}. The overall entropy from the split is
+the weighted sum $\frac{3}{4} \times 1.351644 = \frac{1}{4} \times 0.5
+= 1.138733$. The results of splitting on the predicate $y = 0$ will be
+similar, as the cases $x = 0$ and $y = 0$ are symmetric, and will
+hence result in the exact same entropy and are not shown here. Thus,
+the entropy obtained by splitting on the predicate $x < y$ is the
+minimum among the choices, and will therefore yield the highest
+information gain. So, the decision tree learning algorithm splits
+according to the predicate $x < y$ at the first level. Once this has
+been done, notice that the sample set $P_1$ that results from the
+split, can be labeled consistently by the label $x$, which results in
+the specification being satisfied at all the valuations in the set.
+Similarly, the label $y$ can be chosen for the set $P_2$.
+Thus, the decision tree learned for this example is
+as shown in \figref{dt_example_learned_tree}. From this tree, the
+expression $\mathsf{ite}(x < y, y, x)$ can easily be deduced, which is
+a correct solution for this example.
+
+\subsection{Putting it all Together}
+\label{subsection:dt_putting_together}
+
+\begin{algorithm}[!t]
+\caption[\textsc{TermSolve}: Find partial expressions for a given set of points]
+{\textsc{TermSolve}: Algorithm to find a set of expressions
+  which together satisfy the specification for a given set of
+  points}
+\label{algorithm:term_solver}
+\begin{small}
+\DontPrintSemicolon
+\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}\SetKwInOut{Data}{Data}
+\SetKw{Continue}{continue}
+\Input{A canonicalized  \textsf{SyGuS} specification $\psican \triangleq \exists\,f\
+\forall\,\mathbf{a}, \mathbf{x}\ \varphican[f, \mathbf{x},
+\mathbf{a}]$.\\
+A list of $n$ valuations of variables in $\mathbf{x} \cup
+  \mathbf{a}$, called $P$.\\
+A grammar $G_T$ for terms.
+}
+\Output{
+A map $\mathcal{L}$ from $P$ to non-empty sets of terms from $G_T$.
+}
+\Data{
+  $\mathrm{sigs}$~\,: A set of bit vectors, each of length $n$, where $n
+  = \mathsf{length}(P)$.\\
+  $\mathcal{L}$~~~~~\ : The partially computed output, initially maps
+  everything to $\emptyset$.
+}
+\While{the disjunction of all bit vectors in $\mathrm{sig}$ is not a
+  bit vector which is all $\mathtt{true}$}{
+\label{line:term_solve_while}
+$t \leftarrow $ the next term from $G_T$\\
+$s \leftarrow $ $\zug{\varphican[t[p], \mathbf{x} \cup \mathbf{a}
+  \mapsto p], \mathrm{for}\ p\ \mathrm{in}\ P}$\\
+\label{line:term_solve_sig_compute}
+\If{$s \in \mathrm{sig}$}{
+  \Continue
+}
+\label{line:term_solve_sig_ignore}
+\ForEach{$i \in [1, \mathsf{length}(p)]$ such that $s[i] =
+  \mathtt{true}$} {
+  $\mathcal{L}[P[i]] \leftarrow \mathcal{L}[P[i]] \cup \{t\}$\\
+}
+}
+\Return $\mathcal{L}$
+\end{small}
+\end{algorithm}
+Algorithm~\ref{algorithm:term_solver} describes how the solver that
+combines enumeration and unification, which we dub \eusolver
+computes a set of terms that when taken together could form a complete
+solution. The loop at line~\ref{line:term_solve_while} of
+\algoref{term_solver}, continues enumerating terms from the term
+grammar $G_T$ until it finds a set of terms such that for every
+valuation $p \in P$ there exists some term $t$ in $\mathcal{L}$ such
+that the term $t$ satisfies the specification $\varphican$ when
+evaluated at the point $p$. The lines
+~\ref{line:term_solve_sig_compute}--\ref{line:term_solve_sig_ignore}
+essentially compute the the points $p$ at which the current term
+satisfies $\varphican$. As an optimization, if two terms $t_1$ and
+$t_2$ satisfy the specification on the same subset of points in $P$,
+then we only retain one of them in the map $\mathcal{L}$. The
+algorithm returns the map it has built up once the stopping condition
+described earlier has been reached.
+
+\begin{algorithm}[!t]
+\caption{\textsc{UnifyTerms}: Attempt to combine sub-expressions}
+\label{algorithm:unify_terms}
+\begin{small}
+\DontPrintSemicolon
+\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}\SetKwInOut{Data}{Data}
+\SetKw{Continue}{continue}
+\SetKwRepeat{Do}{do}{while}
+\Input{A canonicalized \textsf{SyGuS} specification $\psican \triangleq \exists\,f\
+\forall\,\mathbf{a}, \mathbf{x}\ \varphican[f, \mathbf{x},
+\mathbf{a}]$.\\
+A list of $n$ valuations of variables in $\mathbf{x} \cup
+  \mathbf{a}$, called $P$.\\
+A map $\mathcal{L}$ from $P$ to non-empty sets of terms from
+  $G_T$.\\
+A grammar $G_P$ for atoms.
+}
+\Output{
+Either a solution $e$ for
+$\psican$, or a valuation $p$ of variables in $\mathbf{x} \cup
+\mathbf{a}$.
+}
+\Data{
+  $\mathrm{sigs}$~\,: A set of bit vectors, each of length $n$, where $n
+  = \mathsf{length}(P)$.\\
+  A map $\mathsf{attrmap}$, from predicates in $G_P$ to a bit
+  vector of length $\mathsf{length}(P)$.
+}
+\Do{$\mathrm{(dtree} = \bot\mathrm{)}$}{
+  $\mathrm{aps} \leftarrow $ the next $K$ atomic predicates from
+  $G_P$\\
+  \ForEach{$\mathrm{ap} \in \mathrm{aps}$}{
+    $\mathrm{sig} \leftarrow \zug{\mathrm{ap}[p]\ \mathrm{for}\ p\
+      \mathrm{in}\ P}$\\
+    \If{$\mathrm{sig} \in \mathrm{sigs}$}{
+      \Continue
+    }
+    $\mathsf{attrmap}[\mathrm{ap}] \leftarrow \mathrm{sig}$
+  }
+  $\mathrm{dtree} \leftarrow $ \textsc{Learn-DT}($P$,
+  $\mathsf{attrmap}$, $\mathcal{L}$)\\
+  \If{$\mathrm{dtree \neq \bot}$}{
+    $e \leftarrow $ expression constructed from $\mathrm{dtree}$\\
+    \If{{\upshape\textsc{verify}}$\mathrm{(}e$, $\psican\mathrm{)}$}{
+      \Return e
+    }\Else{
+      \Return a valuation $\sigma$ of variables in $\mathbf{x} \cup
+      \mathbf{a}$ which form a verification counterexample
+    }
+  }
+}
+\end{small}
+\end{algorithm}
+
+Given such a map $\mathcal{L}$, the algorithm \textsc{UnifyTerms},
+which is shown in \algoref{unify_terms} is then used to unify these
+terms using conditionals, where the predicates for the conditional are
+Boolean combinations of atoms drawn from $G_P$. The algorithm works by
+enumerating sets of the $K$ atoms from $G_T$ in each iteration. Here
+$K$ is a parameter; in our implementation it is not a fixed
+constant. Instead our implementation enumerates \emph{all} atoms of a
+given size, before moving on to atoms of larger sizes in subsequent
+iterations. Once this set of atoms has been enumerated, the algorithm
+computes the points $p \in P$, where \emph{each} atom in this set
+evaluates to true, and stores it in the map
+$\mathsf{attrmap}$. An optimization similar to the one described
+in \textsc{TermSolve} is applied here: if two atoms evaluate
+identically on all the points in $P$, then only one of them is
+retained. Once the map $\mathsf{attrmap}$ has been computed for
+the current batch of atoms, the algorithm then attempts to learn a
+decision tree. If this step fails --- this could happen due to the
+current set of atoms being insufficient to learn a correct classifier
+--- the algorithm keeps enumerating more ``batches'' of atoms and
+retries the decision tree construction until it succeeds. Note that
+$\mathsf{attrmap}$ retains its value across iterations of the
+outermost loop in \algoref{unify_terms}. On the other hand, if it was
+possible to learn a decision tree, the algorithm extracts an
+expression from the learned decision tree. This can be achieved in
+multiple ways; one possible way is to walk down every path from the
+root to the leaves, gathering the atoms that internal nodes are
+labeled with, together with their polarity. When a leaf node is
+reached, the label at the leaf node provides the term, and the
+conjunction of the accumulated atoms forms the condition under which
+the term can be used. Once such an expression $e$ has been built, the
+algorithm attempts to verify that $e$ is a solution to the \sygusbody
+specification $\psican$. If this verification succeeds, it returns
+$e$. Otherwise, it returns the counterexample to verification, as a
+valuation of the variables in $\mathbf{x} \cup \mathbf{a}$.
+
+\begin{algorithm}[!t]
+\caption{\bodyscns{eusolve}: Solve for a \sygusbody specification $\psican$}
+\label{algorithm:eusolve}
+\begin{small}
+\DontPrintSemicolon
+\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}\SetKwInOut{Data}{Data}
+\SetKw{Continue}{continue}
+\SetKwRepeat{Do}{do}{while}
+\Input{A canonicalized {\textsf{SyGuS}} specification $\psican \triangleq \exists\,f\
+\forall\,\mathbf{a}, \mathbf{x}\ \varphican[f, \mathbf{x},
+\mathbf{a}]$.\\
+A grammar for terms $G_T$.\\
+A grammar for atoms $G_P$.
+}
+\Output{A solution $e$ for the  {\textsf{SyGuS}} specification $\psican$}
+\Data{A list of valuations $P$ of variables in $\mathbf{x} \cup
+  \mathbf{a}$, initially empty.}
+\While{$\mathtt{true}$}{
+  \If{$\mathsf{length}(P) = 0$}{
+    $e \leftarrow $ the first term in $G_T$\\
+    \If{{\upshape\textsc{verify}}$\mathrm{(}e$, $\psican\mathrm{)}$}{
+      \Return e
+    }\Else{
+      $\sigma \leftarrow $ a valuation of variables in $\mathbf{x} \cup
+      \mathbf{a}$ which forms a verification counterexample\\
+      append $\sigma$ to $P$\\
+      \Continue
+    }
+  }
+  $\mathcal{L} \leftarrow $ \textsc{TermSolve}($\psican$, $P$, $G_T$)\\
+  $\mathrm{solorcex} \leftarrow $ \textsc{UnifyTerms}($\psican$,
+  $P$, $\mathcal{L}$, $G_P$)\\
+  \If{$\mathrm{solorcex}\ \mathrm{is\ an\ expression}$}{
+    \Return $\mathrm{solorcex}$
+  }\Else{
+    append $\mathrm{solorcex}$ to $P$\\
+    \Continue
+  }
+}
+\end{small}
+\end{algorithm}
+
+Finally, the algorithm \bodysc{eusolve}, shown as \algoref{eusolve},
+shows how the \textsc{TermSolve} and \textsc{UnifyTerms} algorithms
+are composed to form a complete \sygusbody solver. The algorithm maintains
+a list of valuations $P$, which are built up from counterexamples
+returned by the algorithm \textsc{UnifyTerms}. It repeatedly calls the
+algorithm \textsc{TermSolve}, followed by the algorithm
+\textsc{UnifyTerms}, augmenting the list of valuations $P$ in each
+iteration, until \textsc{UnifyTerms} returns a solution that has been
+verified to be a correct solution to the \sygusbody specification
+$\psican$.
+
+\subsubsection{Correctness of the Algorithm \subsubsecbfsc{eusolve}}
+We now argue that \algoref{eusolve} is a semi-decision procedure, \ie,
+if there exists a solution in the form of a conditional expression in
+the grammars defined by $G_T$ and $G_P$, the algorithm terminates with
+a correct solution. If the grammars $G_T$ and $G_P$ do not admit a
+solution in the form of a conditional expression, then
+\algoref{eusolve} can run forever. We now formalize and prove these
+guarantees, that are provided by \algoref{eusolve}, \bodysc{eusolve},
+in the following theorem.
+
+\begin{theorem}
+Given a plainly separable {\upshape\sygusbody} specification $\psi$, a term
+grammar $G_T$ and a predicate grammar $G_P$, if there exists a
+solution of the following form:
+\emph{
+\begin{quote}
+\centering
+\tabbedcode{\linewidth}{\small} {
+if ($c_0$) then $t_0$\\
+else if ($c_1$) then $t_1$\\
+\vdots\\
+else if ($c_{n-1}$) then $t_{n-1}$\\
+else $term_{n}$
+}
+\end{quote}
+}
+\noindent
+where $c_0, c_1, \ldots, c_{n-1}$ are Boolean
+combinations of atomic predicates drawn from $G_P$ and
+$t_0, t_1, \ldots, t_n$ are drawn from $G_P$, then
+\algoref{eusolve}, {\upshape\bodysc{eusolve}} terminates and returns a correct
+solution.
+\end{theorem}
+\begin{proof}
+We first note that it is sufficient to consider conjunctions of
+\emph{literals}, where a literal is either an atomic predicate or its
+negation in the conditionals $\{c_i\}$. Suppose that the grammars
+admit a solution of the form:
+\begin{quote}
+\centering
+\tabbedcode{\linewidth}{\small} {
+if ($l_0 \vee l_1$) then $t_0$\\
+else $t_1$
+}
+\end{quote}
+then, by leveraging that an if-then-else construct is essentially
+disjunctive, it also admits the following equivalent solution:
+\begin{quote}
+\centering
+\tabbedcode{\linewidth}{\small} {
+if ($l_0$) then $t_0$\\
+else if ($l_1$) then $t_0$\\
+else $t_1$
+}
+\end{quote}
+So, without loss of generality, we will assume that a correct solution
+admitted by the grammars $G_T$ and $G_P$ has the following form:
+\begin{quote}
+\centering
+\tabbedcode{\linewidth}{\small} {
+if ($l_{0,0} \wedge l_{0,1} \wedge \cdots \wedge l_{0,k_0}$) then $t_0$\\
+else if ($l_{1,0} \wedge l_{1,1} \wedge \cdots \wedge l_{1,k_1}$) then $t_1$\\
+\vdots\\
+else if ($l_{n-1,0} \wedge l_{n-1, 1} \wedge cdots \wedge l_{n-1,k_{n-1}}$) then $t_{n-1}$\\
+else $t_n$
+}
+\end{quote}
+where each $l_{i,j}$ is either an atomic predicate drawn from $G_P$ or
+its negation, and each $t_i$ is a term drawn from $G_T$. Let us define
+the set $\mathsf{Terms} \equiv \{t_0, t_1, \ldots, t_n\}$, as well as
+the set $\mathsf{Lits} \equiv \{l_{0,0}, \ldots, l_{0, k_0}, \ldots, l_{n-1,
+  0}, \ldots, l_{n-1, k_{n-1}}\}$. Note that both the sets
+$\mathsf{Terms}$ and $\mathsf{Lits}$ are finite. We now make the
+following observations:
+\begin{enumerate}
+\item
+For any given set of terms and literals, there are only finitely many
+syntactically distinct conditional expressions that can be formed
+using the available terms and literals.
+\item
+The set of distinct decision trees over a finite set of terms and
+literals, and given a finite set of samples, is also finite.
+\item
+We can map every decision tree over a finite set of terms and
+literals, which classifies a finite set of samples, to a syntactically
+unique conditional expression. The number of terms in such a
+conditional expression is equal to the number of leaves in the
+decision tree, and the condition on each branch is the conjunction of
+literals along the path to the corresponding leaf (term).
+\item
+\algoref{eusolve} makes \emph{progress}: If the verification of a
+particular expression fails --- either in \algoref{eusolve} or in
+\algoref{unify_terms} --- then that particular expression will never
+be presented to the SMT solver for verification at any subsequent
+point during the execution of the algorithm. To see that this is true,
+observe that \algoref{decision_tree_learning} \emph{always} returns a
+decision tree which correctly classifies the sample set, or reports
+that no decision tree exists. A verification attempt only occurs when
+a decision tree can be learned. Now, suppose that a particular
+verification attempt resulted in the candidate expression being proved
+incorrect. A valuation that demonstrates the incorrectness of the
+candidate must have been added to the list $P$ maintained by
+\algoref{eusolve}. Now, if the same decision tree was ever returned by
+\algoref{decision_tree_learning}, then that decision tree will
+incorrectly classify this newly added point (valuation). This is in
+contradiction with the fact that \algoref{decision_tree_learning}
+always returns a correct classifier for a given sample set.
+\end{enumerate}
+
+Based on these observations, we now only need to prove that a
+sufficient set of terms and atomic predicates will eventually be
+enumerated by the \algoref{term_solver} and \algoref{unify_terms}
+respectively. This follows from the observations of finiteness and
+progress made above, and the fact
+that the sets defined by the grammars $G_T$  and $G_P$ are recursively
+enumerable. Thus, at some point it must be the case that:
+\begin{equation}
+\bigcup_{p \in P}\multilabel{p} \supseteq \mathsf{Terms}
+\label{eqn:term_sufficiency}
+\end{equation}
+where $\mathcal{L}$ is the mapping returned by the
+\algoref{term_solver}, \textsc{TermSolve}. In other words, a
+sufficient set of terms will eventually be enumerated by the
+algorithm. We can use a similar argument to prove that the algorithm
+also eventually enumerates a sufficient set of atomic predicates
+corresponding to the set of literals $\mathsf{Lits}$.
+Formally it must be the case that at some point during the execution
+of \algoref{unify_terms}, it must be the case that:
+\begin{equation}
+\bigcup_{\mathrm{ap} \in \mathrm{aps}}\{\mathrm{ap}, \neg\mathrm{ap}\}
+\supseteq \mathsf{Lits}
+\label{eqn:pred_sufficiency}
+\end{equation}
+where $\mathrm{aps}$ is the set of atomic predicates generated during
+the execution of \algoref{unify_terms}. We now argue that once the
+conditions described by the formulas~\ref{eqn:term_sufficiency}
+and~\ref{eqn:pred_sufficiency} are met, the mapping $\mathcal{L}$ and the
+set $\mathrm{aps}$ in \algoref{term_solver} and \algoref{unify_terms}
+respectively, remain unchanged in all future invocations.
+
+To see why this is true, recall that we made the assumption that there
+exists a solution involving only the terms in the set $\mathsf{Terms}$
+and the literals in the set $\mathsf{Lits}$. This means that for
+\emph{any} set of concrete valuations $P$ (maintained by
+\algoref{eusolve}), there must be some term $t \in \mathsf{Terms}$
+that satisfies the specification for that valuation. So
+based on its termination condition, \algoref{term_solver} will never
+enumerate a larger set of terms.
+Furthermore, for any set of valuations $P$, there must also exist a
+decision tree that correctly classifies the valuations using the
+predicates as splitting attributes and the terms as labels. So,
+\algoref{unify_terms} will never need to enumerate a larger set of
+predicates --- because \algoref{decision_tree_learning} will always
+return some decision tree.
+
+Based on the observations of finiteness and progress that we have made
+earlier, we know that there are only a finite number of expressions
+that can be formed using the set of terms in the (now unchanging) map
+$\mathcal{L}$, and the (again, now unchanging) set of atomic
+predicates $\mathrm{aps}$. The progress property ensures that the
+same expression is never submitted for a verification attempt more
+than once. Thus, we can conclude that eventually, \algoref{eusolve}
+will attempt to verify the correct solution and return it.
+\end{proof}
+
+\subsection[Evaluation of \tocsc{eusolver}]
+{Evaluation of \subsecbfsc{eusolver}}
+\label{subsection:eusolver:evaluation}
+\begin{table}[!t]
+\centering
+\begin{minipage}{0.47\linewidth}
+\centering
+\begin{footnotesize}
+\begin{tabular}{|l||c|c|c|c}\hlx{hv}
+Benchmark & Time (s) & Exp. size & $|P|$\tnl\hlx{vhvhv}
+icfp\_103\_10 & 38.9 & 55 & 9 \tnl\hlx{vhv}
+icfp\_104\_10 & 1.0 & 24 & 3 \tnl\hlx{vhv}
+icfp\_105\_100 & 2.3 & 23 & 4 \tnl\hlx{vhv}
+icfp\_105\_1000 & 24.5 & 22 & 4 \tnl\hlx{vhv}
+icfp\_113\_1000 & 114.9 & 11 & 2 \tnl\hlx{vhv}
+icfp\_114\_100 & 665 & 26 & 3 \tnl\hlx{vhv}
+icfp\_118\_10 & 10.1 & 54 & 6 \tnl\hlx{vhv}
+icfp\_118\_100 & 51.4 & 49 & 4 \tnl\hlx{vhv}
+icfp\_125\_10 & 19.7 & 28 & 7 \tnl\hlx{vhv}
+icfp\_134\_1000 & TO & -- & -- \tnl\hlx{vhv}
+icfp\_135\_100 & 158 & 13 & 2 \tnl\hlx{vhv}
+icfp\_139\_10 & 3.3 & 10 & 2 \tnl\hlx{vhv}
+icfp\_143\_1000 & TO & -- & -- \tnl\hlx{vhv}
+icfp\_144\_100 & 1525 & 39 & 11 \tnl\hlx{vhv}
+icfp\_144\_1000 & TO & -- & -- \tnl\hlx{vhv}
+icfp\_147\_1000 & TO & -- & -- \tnl\hlx{vhv}
+icfp\_14\_1000 & TO & -- & -- \tnl\hlx{vhv}
+icfp\_150\_10 & 4.7 & 52 & 7 \tnl\hlx{vhv}
+icfp\_21\_1000 & 1069 & 28 & 5 \tnl\hlx{vhv}
+icfp\_25\_1000 & 125 & 29 & 5 \tnl\hlx{vhv}
+icfp\_28\_10 & 0.17 & 2 & 1 \tnl\hlx{vhv}
+icfp\_30\_10 & 40.4 & 14 & 4 \tnl\hlx{vhv}
+icfp\_32\_10 & 25.9 & 14 & 2 \tnl\hlx{vhv}
+icfp\_38\_10 & 13.1 & 27 & 5 \tnl\hlx{vhv}
+icfp\_39\_100 & 40.7 & 12 & 2 \tnl\hlx{vh}
+\end{tabular}
+\end{footnotesize}
+\end{minipage}\quad
+\begin{minipage}{0.47\linewidth}
+\centering
+\begin{footnotesize}
+\begin{tabular}{|l||c|c|c|c}\hlx{hv}
+Benchmark & Time (s) & Exp. size & $|P|$\tnl\hlx{vhvhv}
+icfp\_45\_10 & 0.48 & 9 & 2 \tnl\hlx{vhv}
+icfp\_45\_1000 & 32.2 & 9 & 2 \tnl\hlx{vhv}
+icfp\_51\_10 & 4.62 & 11 & 2 \tnl\hlx{vhv}
+icfp\_54\_1000 & 69.8 & 11 & 2 \tnl\hlx{vhv}
+icfp\_56\_1000 & TO & -- & -- \tnl\hlx{vhv}
+icfp\_5\_1000 & 60.5 & 32 & 4 \tnl\hlx{vhv}
+icfp\_64\_10 & 46.1 & 33 & 4 \tnl\hlx{vhv}
+icfp\_68\_1000 & 37.6 & 46 & 7 \tnl\hlx{vhv}
+icfp\_69\_10 & 1.82 & 11 & 4 \tnl\hlx{vhv}
+icfp\_72\_10 & 47.9 & 13 & 2 \tnl\hlx{vhv}
+icfp\_73\_10 & 1.15 & 24 & 3 \tnl\hlx{vhv}
+icfp\_7\_10 & 1.61 & 24 & 5 \tnl\hlx{vhv}
+icfp\_7\_1000 & 66.2 & 30 & 9 \tnl\hlx{vhv}
+icfp\_81\_1000 & 1318 & 37 & 7 \tnl\hlx{vhv}
+icfp\_82\_10 & 17.1 & 32 & 7 \tnl\hlx{vhv}
+icfp\_82\_100 & 31.7 & 30 & 10 \tnl\hlx{vhv}
+icfp\_87\_10 & 13.1 & 31 & 5 \tnl\hlx{vhv}
+icfp\_93\_1000 & 174 & 29 & 5 \tnl\hlx{vhv}
+icfp\_94\_100 & 2.58 & 24 & 4 \tnl\hlx{vhv}
+icfp\_94\_1000 & 30.1 & 24 & 4 \tnl\hlx{vhv}
+icfp\_95\_100 & 829 & 47 & 35 \tnl\hlx{vhv}
+icfp\_96\_10 & 35.1 & 48 & 8 \tnl\hlx{vhv}
+icfp\_96\_1000 & TO & -- & -- \tnl\hlx{vhv}
+icfp\_99\_100 & 876 & 25 & 4 \tnl\hlx{vhv}
+icfp\_9\_1000 & TO & -- & -- \tnl\hlx{vh}
+\end{tabular}
+\end{footnotesize}
+\end{minipage}
+\caption[Experimental Results for \eusolver on the ICFP
+benchmarks]{Experimental Results for \eusolver on the ICFP
+  benchmarks. The column labeled ``Time'' indicates the time taken to
+  arrive at a solution. The column labeled ``Exp. size'' indicates
+  the size of the computed expression, and the column labeled $|P|$
+  indicates the number of counterexamples that were considered by the
+  algorithm before arriving at a correct solution. TO indicates a
+  timeout.}
+\label{table:eusolver_icfp_results}
+\end{table}
+
+\begin{figure}[!t]
+\centering
+\begin{Verbatim}[fontsize=\small,numberblanklines=false,numbers=left,xleftmargin=5ex]
+(set-logic BV)
+
+(define-fun shr1 ((x (BitVec 64))) (BitVec 64) (bvlshr x #x0000000000000001))
+(define-fun shr4 ((x (BitVec 64))) (BitVec 64) (bvlshr x #x0000000000000004))
+(define-fun shr16 ((x (BitVec 64))) (BitVec 64) (bvlshr x #x0000000000000010))
+(define-fun shl1 ((x (BitVec 64))) (BitVec 64) (bvshl x #x0000000000000001))
+(define-fun if0 ((x (BitVec 64)) (y (BitVec 64)) (z (BitVec 64))) (BitVec 64)
+                 (ite (= x #x0000000000000001) y z))
+
+(synth-fun f ((x (BitVec 64))) (BitVec 64)
+             ((Start (BitVec 64)
+               (#x0000000000000000 #x0000000000000001 x
+                (bvnot Start) (shl1 Start) (shr1 Start)
+                (shr4 Start) (shr16 Start) (bvand Start Start)
+                (bvor Start Start) (bvxor Start Start)
+                (bvadd Start Start) (if0 Start Start Start)))))
+
+(constraint (= (f #x85c12c65236e72be) #x85c1ade52f6f73fe))
+(constraint (= (f #xe1207ed6c7320aa4) #x70903f6b63990553))
+.
+.
+.
+.
+
+(check-synth)
+\end{Verbatim}
+\caption{Anatomy of an ICFP Benchmark}
+\label{figure:icfp_benchmark}
+\end{figure}
+
+We built a prototype version of \eusolver using the Z3 SMT
+solver~\cite{demoura-08} for verification. The prototype implemented
+the expression enumeration parts and the high level algorithm in
+Python, whereas the decision tree learning algorithms as well as some
+performance critical bit vector manipulation routines were implemented
+in C+\!+. Our experiments single threaded and were conducted on
+an Intel Core i7 processor running at 2GHz. All experiments were run
+with a time out 1800 seconds per benchmark, which is half the time
+limit allotted for the solvers per benchmark in the 2015 \sygusbody
+competition.  We evaluated \eusolver on the following subset of the
+\sygusbody main track benchmarks:
+\begin{itemize}
+\item
+\textbf{Integer Arithmetic:} We evaluated \eusolver on a set of
+benchmarks which compute the maximum of a some number of arguments.
+The actual number of arguments can be parameterized. We were able to
+scale reasonably well on this set of benchmarks, as the value for the
+parameter was increased.
+\item
+\textbf{ICFP Benchmarks:} As mentioned earlier, the specifications for
+these 50 benchmarks were in the form of a number of input-output
+examples which describe the output of the function to be synthesized
+for various inputs. No other solver has been able to solve more than a
+handful of these benchmarks, to the best of our knowledge. \eusolver
+was able to solve more than 80\% of the benchmarks (42 out of 50) with
+a 30 minute time limit for each benchmark.
+\end{itemize}
+
+We did not evaluate \eusolver on the other tracks, because the
+solutions to these tracks did not consist of large if-then-else
+expressions. Also, the original \esolver could solve most of these
+benchmarks. For a more universal solver, one could imagine running a
+portfolio solver with the original \esolver algorithm running on one
+thread, with the \eusolver algorithm running on another thread. Such a
+solver would be able to solve a sizeable fraction of the \sygusbody
+benchmark suite as it stands today. \tabref{eusolver_icfp_results}
+summarizes the results of running \eusolver on the ICFP benchmarks. In
+contrast, CVC4, the winner of 2015 \sygusbody contest could only solve one
+ICFP benchmarks when syntactic restrictions were applied, and 43, when
+syntactic restrictions were not applied. We note that all our
+solutions are within the syntax specified by the benchmarks. Lastly,
+we did not observe the solver memory usage using exceeding 100 MB for
+any benchmark. As a final comparison \eusolver was able to produce
+syntactically valid solutions for 42 out of 50 ICFP benchmarks in a
+total of 7630 seconds, whereas, the CVC4 solver could solve 43 out of
+the 50 benchmarks in 3400 seconds~\cite{reynolds-15}, but the
+solutions were not syntactically valid and used arbitrary function
+symbols form the SMTLIB theory of fixed-size bit-vectors.
+
+To provide some context to the reader, \figref{icfp_benchmark} shows a
+typical ICFP benchmark. Note that the benchmark has been reproduced
+almost verbatim from the actual benchmark used in the \sygusbody
+competition. The only changes we have made are to elide a large set of
+input-output constraints from line 17 -- 20, and some whitespace and
+adjustments, for better readability. Further, we emphasize that the
+syntactic restrictions that we have discussed earlier are an integral
+part of the benchmark. The first line declares that the
+logic of fixed-size bit-vectors is to be used. Lines 2 -- 5 declare
+the macros named \texttt{shr1}, \texttt{shr4}, \texttt{shr16},
+\texttt{shl1}, each of which takes a 64-bit bitvector as an argument
+and returns another 64-bit bitvector, shifted by right or left by the
+appropriate constant. Lastly, lines 6 and 7 declare a macro named
+\texttt{if0}, which is a restricted form of conditional which takes
+three 64-bit bitvectors as arguments and returns the second argument
+if the first argument is equal to the bitvector constant ``1'',
+otherwise returns the third argument. Line 8 declares a function $f$
+which is to be synthesized, which takes in one 64-bit bitvector as an
+argument, which is referred to as \texttt{x} --- this is the formal
+parameter name --- and returns a 64-bit bitvector. Lines 9 -- 14
+describe the grammar for the interpretation of $f$. Line 9 declares a
+non-terminal named \texttt{Start} which expands to a 64-bit bitvector
+value. Line 10 lists three expansions: The constants ``0'', ``1'', or
+the formal parameter \texttt{x}. Lines 11 -- 14 describe other,
+recursive expansions, involving standard functions like
+\texttt{bvnot}, \texttt{bvadd}, etc., from the SMTLIB theory of
+fixed-size bitvectors, as well as macros defined in lines 2 -- 7. The
+constraints on the behavior of $f$ are described from line 16
+onwards. Each constraint is an input-output example, which constrains
+the result of $f$ applied to a constant value, to another constant
+value.
+
+\begin{table}[!t]
+\centering
+\begin{footnotesize}
+\begin{tabular}{|l||c|c|c|c|c|c}\hlx{hv}
+Benchmark & \eusolver & \eusolver & \eusolver & CVC4 & STUN\\
+& Time (s) & Exp. Size & $|P|$ & Time (s) & Time (s)\tnl\hlx{vhvhv}
+max2 & 0.05 & 6 & 2 & 0.01 & 0.094\tnl\hlx{vhv}
+max3 & 0.16 & 30 & 15 & 0.02 & 0.087\tnl\hlx{vhv}
+max4 & 0.56 & 94 & 43 & 0.03 & 0.097\tnl\hlx{vhv}
+max5 & 3.18 & 254 & 160 & 0.05 & 0.179\tnl\hlx{vhv}
+max6 & 17.3 & 634 & 544 & 0.1 & 0.167 \tnl\hlx{vhv}
+max7 & 131.7 & 1510 & 2080 & 0.3 & 0.230 \tnl\hlx{vhv}
+max8 & 1296 & 3490 & 7734 & 1.6 & 0.267\tnl\hlx{vhv}
+max9 & TO & -- & -- & 8.9 & 0.277\tnl\hlx{vhv}
+max10 & TO & -- & -- & 81.5 & 0.333\tnl\hlx{vhv}
+max11 & TO & -- & -- & ND & 0.371\tnl\hlx{vhv}
+max12 & TO & -- & -- & ND & 0.441\tnl\hlx{vhv}
+max13 & TO & -- & -- & ND & 0.554\tnl\hlx{vhv}
+max14 & TO & -- & -- & ND & 0.597\tnl\hlx{vhv}
+max15 & TO & -- & -- & ND & 0.675\tnl\hlx{vh}
+\end{tabular}
+\end{footnotesize}
+\caption[Experimental Results for \eusolver on the \bodysc{max}
+  benchmarks]{Experimental Results for \eusolver on the \bodysc{max}
+  benchmarks. The first four columns have the same meaning as in
+  \tabref{eusolver_icfp_results}. The next two columns show the times
+  taken by the CVC4 solver~\cite{reynolds-15} and the STUN
+  solver~\cite{radhakrishna-15} on the same benchmarks. TO indicates a
+  time-out and ND indicates that the data was not available.}
+\label{table:eusolver_max_results}
+\end{table}
+
+All the 50 ICFP benchmarks are similar in structure to the one shown
+in \figref{icfp_benchmark}, \ie, they all use the same set of macros
+and the same grammar. However, the constraints themselves differ to
+describe different functions $f$. These constraints are obviously
+underspecified; they do not completely describe the behavior of $f$ on
+all inputs. To successfully solve such constraints, a \sygusbody
+solver would need to perform a non-trivial amount of
+generalization. As we demonstrate, \eusolver is able to generalize
+well from these constraints and successfully solve a large fraction of
+the ICFP benchmarks within a reasonable amount of time.
+
+\tabref{eusolver_max_results} demonstrates the performance of
+\eusolver on the parametric \bodysc{max} benchmark from the \sygusbody
+suite. On this set of benchmarks, \eusolver performs better than the
+original \esolver, which times out on all benchmarks beyond
+max3. However, it is not as performant as the CVC4 and the STUN
+solvers on these benchmarks. Our investigations reveal that a majority
+of the time is spent in decision tree learning on the larger
+\bodysc{max} benchmarks. Indeed, the number of counterexamples points
+added shown in the column labeled $|P|$ in
+\tabref{eusolver_max_results} seems to grow very rapidly with larger
+instantiations of the \bodysc{max} benchmarks. The reasons for why
+such a large number of counterexamples are considered by the algorithm
+are unclear and warrant a closer investigation.  In contrast, the CVC4
+and STUN solvers show a much smaller slowdown on larger instances of
+the \bodysc{max} benchmark.
+
+\subsubsection{A Note on Expression Sizes}
+The expression sizes reported in
+Tables~\ref{table:eusolver_icfp_results}
+and~\ref{table:eusolver_max_results} were for the expressions obtained
+by the simplistic strategy to convert a decision tree into an
+expression, which we have described earlier in
+\subsecref{dt_putting_together}. Such a strategy returns an expression
+with a \emph{flat} conditional structure, \ie, with only a top level
+case split and no nested conditionals. In some cases, it is possible
+that by allowing nested conditionals and applying slightly more
+sophisticated simplification steps as post-processing, a smaller sized
+expression can be obtained. We did not explore such simplifications
+and post-processing steps.
+
+To conclude this chapter, we have presented a generic enumeration
+based algorithm to solve separable \sygusbody instances, where the grammar
+can be easily separated into a grammar for atomic predicates and a
+grammar for terms. We have demonstrated the efficacy of the new
+algorithm in solving a large fraction of the ICFP benchmarks in the
+\sygusbody benchmark suite, while respecting all the syntactic
+restrictions. To the best of our knowledge, this is algorithm is the
+first to be able to successfully solve such a large fraction of the
+ICFP benchmarks. This chapter concludes the digression towards the
+\sygusbody problem. We now turn our attention back to the problem of
+distributed protocol synthesis in the subsequent chapters of this
+dissertation.
