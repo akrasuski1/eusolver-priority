@@ -52,6 +52,7 @@ import z3
 import z3smt
 import semantics_types
 from enum import IntEnum
+import enumerators
 
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
@@ -149,6 +150,12 @@ def guard_term_list_to_expr(guard_term_list, syn_ctx):
                                             guard_term_list[i][1], retval)
     return retval
 
+def check_term_sufficiency(sig_to_term, num_points):
+    accumulator = BitSet(num_points)
+    for (sig, term) in sig_to_term.items():
+        accumulator |= sig
+    return (accumulator.is_full())
+
 
 class DuplicatePointException(Exception):
     def __init__(self, point):
@@ -216,6 +223,30 @@ class TermSolver(object):
             eval_cache[term.expr_id] = retval
             return retval
 
+    def extend_sig_to_term_map(self, sig_to_term):
+        points = self.points
+        num_points = len(points)
+
+        assert (num_points > 0)
+
+        bunch_generator_state = self.bunch_generator_state
+        try:
+            bunch = next(bunch_generator_state)
+        except StopIteration:
+            return None
+
+        for term in bunch:
+            # print('Generated Term: %s' % _expr_to_str(term))
+            term = _get_expr_with_id(term, self.monotonic_expr_id)
+            self.monotonic_expr_id += 1
+            sig = self._compute_term_signature(term, sig_to_term)
+
+            if (sig in sig_to_term or sig.is_empty()):
+                continue
+
+            sig_to_term[sig] = term
+        return sig_to_term
+
     def solve(self):
         points = self.points;
         num_points = len(points)
@@ -223,37 +254,24 @@ class TermSolver(object):
             return self._trivial_solve()
 
         sig_to_term = {}
+
+        self.bunch_generator = enumerators.BunchedGenerator(self.term_generator,
+                                                            self.max_term_size)
+        self.bunch_generator_state = self.bunch_generator.generate()
+
+        self.monotonic_expr_id = 0
         self.signature_factory = BitSet.make_factory(num_points)
-        spec_satisfied_at_points = self.signature_factory()
 
-        current_term_size = 1
-        max_term_size = self.max_term_size
-        generator = self.term_generator
-        monotonic_expr_id = 0
-        while (current_term_size <= max_term_size):
-            generator.set_size(current_term_size)
-            for term in generator.generate():
-                term = _get_expr_with_id(term, monotonic_expr_id)
-                monotonic_expr_id += 1
-                sig = self._compute_term_signature(term, sig_to_term)
-
-                if (sig in sig_to_term or sig.is_empty()):
-                    continue
-
-                sig_to_term[sig] = term
-
-                spec_satisfied_at_points |= sig
-                if (spec_satisfied_at_points.is_full()):
-                    # print('Term solver: enumerated %d terms!' % monotonic_expr_id)
-                    return sig_to_term
-
-            current_term_size += 1
-
-        return None
+        while (not check_term_sufficiency(sig_to_term, num_points)):
+            extended_sig_to_term = self.extend_sig_to_term_map(sig_to_term)
+            if (extended_sig_to_term == None):
+                return None
+        return sig_to_term
 
 class Unifier(object):
-    def __init__(self, syn_ctx, smt_ctx, pred_generator, max_pred_size = 20):
+    def __init__(self, syn_ctx, smt_ctx, pred_generator, term_solver, max_pred_size = 20):
         self.pred_generator = pred_generator
+        self.term_solver = term_solver
         self.syn_ctx = syn_ctx
         self.true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
         self.false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
@@ -443,17 +461,15 @@ class Unifier(object):
         # cannot be trivially unified
         num_points = len(self.points)
         self.signature_factory = BitSet.make_factory(num_points)
-        pred_size = 0
         signature_to_pred = {}
-        current_pred_size = 1
         max_pred_size = self.max_pred_size
         generator = self.pred_generator
         monotonic_pred_id = 0
+        bunch_generator = enumerators.BunchedGenerator(generator, max_pred_size)
 
-        while (current_pred_size <= max_pred_size):
-            generator.set_size(current_pred_size)
+        for bunch in bunch_generator.generate():
             new_preds_generated = False
-            for pred in generator.generate():
+            for pred in bunch:
                 # print('Generated pred: %s' % _expr_to_str(pred), flush=True)
                 pred = _get_expr_with_id(pred, monotonic_pred_id)
                 monotonic_pred_id += 1
@@ -474,7 +490,6 @@ class Unifier(object):
             if (not new_preds_generated):
                 # print(('Unifier.unify(): no new predicates generated at size %d, ' +
                 #       'continuing...') % pred_size)
-                current_pred_size += 1
                 continue
 
             # we've generated a bunch of (new) predicates
@@ -484,7 +499,10 @@ class Unifier(object):
                                                         signature_to_pred)
             if (dt_tuple == None):
                 # print('Unifier.unify(): Could not learn decision tree!')
-                current_pred_size += 1
+                extended_signature_to_term = self.term_solver.extend_sig_to_term_map(signature_to_term)
+                if (extended_signature_to_term == None):
+                    return None
+                signature_to_term = extended_signature_to_term
                 continue
 
             # print('Unifier.unify(): Learned a decision tree!')
@@ -535,7 +553,7 @@ class Solver(object):
         act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
         term_solver = TermSolver(canon_spec, term_generator)
-        unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator)
+        unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator, term_solver)
 
         while (True):
             # iterate until we have terms that are "sufficient"

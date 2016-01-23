@@ -262,6 +262,54 @@ class FilteredGenerator(GeneratorBase):
         return FilteredGenerator(filter_object, generator_object.clone(), self.name)
 
 
+class BunchedGenerator(GeneratorBase):
+    """A wrapper for a generator that generates objects in bunches"""
+    def __init__(self, generator_object, max_size, bunch_size = 8, name = None):
+        super().__init__(name)
+        self.generator_object = generator_object
+        self.bunch_size = bunch_size
+        self.max_size = max_size
+        self.generator_state = None
+
+    def generate(self):
+        current_size = 1
+        max_size = self.max_size
+        sub_generator_object = self.generator_object
+        bunch_size = self.bunch_size
+        sub_generator_object.set_size(current_size)
+        sub_generator_state = sub_generator_object.generate()
+        finished = False
+
+        while(True):
+            retval = [None] * bunch_size
+            current_index = 0
+            while (current_index < bunch_size):
+                try:
+                    retval[current_index] = next(sub_generator_state)
+                except StopIteration:
+                    # can be bump up the subgenerator size?
+                    if (current_size < max_size):
+                        current_size += 1
+                        sub_generator_object.set_size(current_size)
+                        sub_generator_state = sub_generator_object.generate()
+                        continue
+                    elif (not finished):
+                        finished = True
+                        yield retval[:current_index]
+                    else:
+                        return
+                current_index += 1
+            yield retval
+
+
+    def set_size(self, new_bunch_size):
+        """selects a new bunch size"""
+        self.bunch_size = new_bunch_size
+
+    def clone(self):
+        return BunchedGenerator(self.generator_object.clone(), self.bunch_size, self.name)
+
+
 ############################################################
 # TEST CASES and utils for other test cases.
 ############################################################
@@ -345,9 +393,17 @@ def _generate_test_generators():
 
 def test_generators():
     start_generator = _generate_test_generators()
-    start_generator.set_size(8)
-    for exp in start_generator.generate():
-        print(exprs.expression_to_string(exp))
+    # start_generator.set_size(5)
+    # for exp in start_generator.generate():
+    #     print(exprs.expression_to_string(exp))
+
+    # tests for bunched generators
+    print('Testing bunched generators....')
+    bunch_generator = BunchedGenerator(start_generator, 10, 5)
+    for bunch in bunch_generator.generate():
+        print('Bunch:')
+        for exp in bunch:
+            print('    %s' % exprs.expression_to_string(exp))
 
 if __name__ == '__main__':
     test_generators()
