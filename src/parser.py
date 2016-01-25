@@ -1,7 +1,8 @@
 # Author: Garvit Juniwal (garvitjuniwal@eecs.berkeley.edu)
 
 import sexp
-from semantics_bv import BitVector
+# from semantics_bv import BitVector
+from bitvectors import BitVector
 
 def stripComments(bmFile):
     noComments = '('
@@ -37,7 +38,7 @@ def parse_bitvec(bv_exp):
     length = int(type_[1][1])
     if length != 64:
         return None
-    return BitVector(bitstring.BitArray(uint=value, length=length))
+    return BitVector(value, length)
 
 def parse_icfp_constraint(exp):
     if exp[0] != '=':

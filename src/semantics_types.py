@@ -89,7 +89,7 @@ def _to_smt_constant_expression(expr_object, smt_context_object):
     elif (constant_type.type_code == exprtypes.TypeCodes.integer_type):
         return z3.IntVal(val_obj.value_object, smt_context_object.ctx())
     elif (constant_type.type_code == exprtypes.TypeCodes.bit_vector_type):
-        int_value = val_obj.value_object.value.uint
+        int_value = val_obj.value_object.value
         return z3.BitVecVal(int_value, constant_type.size,
                             smt_context_object.ctx())
     else:

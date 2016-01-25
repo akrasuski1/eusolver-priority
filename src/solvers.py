@@ -41,7 +41,8 @@
 import basetypes
 import eusolver
 from eusolver import BitSet
-from semantics_bv import BitVector
+# from semantics_bv import BitVector
+from bitvectors import BitVector
 import evaluation
 import functools
 import hashcache
@@ -93,12 +94,9 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
         elif (var_info_list[i].variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
             # point[i] = exprs.Value(int(str(eval_value)), var_info_list.variable_type)
             # Z3 always prints unsigned integers?
-            point[i] = exprs.Value(BitVector(
-                    bitstring.BitArray(
-                        uint=int(str(eval_value)),
-                        length=var_info_list[i].variable_type.size)
-                    ),
-                    var_info_list[i].variable_type)
+            point[i] = exprs.Value(BitVector(int(str(eval_value)),
+                                             var_info_list[i].variable_type.size),
+                                   var_info_list[i].variable_type)
         else:
             raise basetypes.UnhandledCaseError('solvers.In model_to_point')
     return tuple(point)
@@ -667,24 +665,24 @@ def get_icfp_valuations(benchmark_name):
     import parser
     test_icfp_valuations =  [
             (
-                BitVector(bitstring.BitArray(uint=1, length=64)),
-                BitVector(bitstring.BitArray(uint=1, length=64))
+                BitVector(1, 64),
+                BitVector(1, 64)
             ),
             (
-                BitVector(bitstring.BitArray(uint=2, length=64)),
-                BitVector(bitstring.BitArray(uint=0, length=64))
+                BitVector(2, 64),
+                BitVector(0, 64)
             ),
             (
-                BitVector(bitstring.BitArray(uint=3, length=64)),
-                BitVector(bitstring.BitArray(uint=3, length=64))
+                BitVector(3, 64),
+                BitVector(3, 64)
             ),
             (
-                BitVector(bitstring.BitArray(uint=4, length=64)),
-                BitVector(bitstring.BitArray(uint=0, length=64))
+                BitVector(4, 64),
+                BitVector(0, 64)
             ),
             (
-                BitVector(bitstring.BitArray(uint=5, length=64)),
-                BitVector(bitstring.BitArray(uint=5, length=64))
+                BitVector(5, 64),
+                BitVector(5, 64)
             )
             ]
 
@@ -720,8 +718,8 @@ def test_solver_icfp(benchmark_name):
 
     param_exprs = [exprs.FormalParameterExpression(synth_fun, exprtypes.BitVectorType(64), 0)]
     param_generator = enumerators.LeafGenerator(param_exprs, 'Argument Generator')
-    zero_value = exprs.Value(BitVector(bitstring.BitArray(uint=0, length=64)), exprtypes.BitVectorType(64))
-    one_value = exprs.Value(BitVector(bitstring.BitArray(uint=1, length=64)), exprtypes.BitVectorType(64))
+    zero_value = exprs.Value(BitVector(0, 64), exprtypes.BitVectorType(64))
+    one_value = exprs.Value(BitVector(1, 64), exprtypes.BitVectorType(64))
     const_generator = enumerators.LeafGenerator([exprs.ConstantExpression(zero_value),
                                                  exprs.ConstantExpression(one_value)])
     leaf_generator = enumerators.AlternativesGenerator([param_generator, const_generator],

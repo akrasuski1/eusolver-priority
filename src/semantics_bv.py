@@ -450,77 +450,77 @@ class BVInstantiator(semantics_types.InstantiatorBase):
         else:
             return None
 
-class BitVector(object):
-    __slots__ = ['value']
-    def __init__(self, value):
-        self.value = value
+# class BitVector(object):
+#     __slots__ = ['value']
+#     def __init__(self, value):
+#         self.value = value
 
-    def __hash__(self):
-        return hash(str(self.value))
+#     def __hash__(self):
+#         return hash(str(self.value))
 
-    def __lt__(self, other):
-        if isinstance(other, BitVector):
-            return self.value.uint < other.value.uint
-        elif isinstance(other, int):
-            return self.value.uint < other
-        raise ArgumentError()
+#     def __lt__(self, other):
+#         if isinstance(other, BitVector):
+#             return self.value.uint < other.value.uint
+#         elif isinstance(other, int):
+#             return self.value.uint < other
+#         raise ArgumentError()
 
-    def __eq__(self, other):
-        return self.value == other.value
+#     def __eq__(self, other):
+#         return self.value == other.value
 
-    def __str__(self):
-        return str(self.value)
+#     def __str__(self):
+#         return str(self.value)
 
-    def is_one(self):
-        return self.value.uint == 1
+#     def is_one(self):
+#         return self.value.uint == 1
 
-    def __rshift__(self, other):
-        if isinstance(other, int):
-            return BitVector(self.value >> other)
-        elif isinstance(other, BitVector):
-            return BitVector(self.value >> other.value)
-        else:
-            raise ArgumentError()
+#     def __rshift__(self, other):
+#         if isinstance(other, int):
+#             return BitVector(self.value >> other)
+#         elif isinstance(other, BitVector):
+#             return BitVector(self.value >> other.value)
+#         else:
+#             raise ArgumentError()
 
-    def __lshift__(self, other):
-        if isinstance(other, int):
-            return BitVector(self.value << other)
-        elif isinstance(other, BitVector):
-            return BitVector(self.value << other.value)
-        else:
-            raise ArgumentError()
+#     def __lshift__(self, other):
+#         if isinstance(other, int):
+#             return BitVector(self.value << other)
+#         elif isinstance(other, BitVector):
+#             return BitVector(self.value << other.value)
+#         else:
+#             raise ArgumentError()
 
-    def __and__(self, other):
-        if isinstance(other, BitVector):
-            return BitVector(self.value & other.value)
-        else:
-            raise ArgumentError()
+#     def __and__(self, other):
+#         if isinstance(other, BitVector):
+#             return BitVector(self.value & other.value)
+#         else:
+#             raise ArgumentError()
 
-    def __or__(self, other):
-        if isinstance(other, BitVector):
-            return BitVector(self.value | other.value)
-        else:
-            raise ArgumentError()
+#     def __or__(self, other):
+#         if isinstance(other, BitVector):
+#             return BitVector(self.value | other.value)
+#         else:
+#             raise ArgumentError()
 
-    def __xor__(self, other):
-        if isinstance(other, BitVector):
-            return BitVector(self.value ^ other.value)
-        else:
-            raise ArgumentError()
+#     def __xor__(self, other):
+#         if isinstance(other, BitVector):
+#             return BitVector(self.value ^ other.value)
+#         else:
+#             raise ArgumentError()
 
-    def __add__(self, other):
-        if isinstance(other, BitVector):
-            a = self.value.uint
-            b = other.value.uint
-            length = self.value.length
-            if length != other.value.length:
-                raise ArgumentError()
-            return BitVector(bitstring.BitArray(uint=(a+b) % (2**length), length=length))
-        else:
-            raise ArgumentError()
+#     def __add__(self, other):
+#         if isinstance(other, BitVector):
+#             a = self.value.uint
+#             b = other.value.uint
+#             length = self.value.length
+#             if length != other.value.length:
+#                 raise ArgumentError()
+#             return BitVector(bitstring.BitArray(uint=(a+b) % (2**length), length=length))
+#         else:
+#             raise ArgumentError()
 
-    def __invert__(self):
-        return BitVector(~self.value)
+#     def __invert__(self):
+#         return BitVector(~self.value)
 
 
 #
