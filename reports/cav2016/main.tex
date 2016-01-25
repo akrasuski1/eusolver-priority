@@ -10,6 +10,7 @@
 \usepackage{subcaption}
 \captionsetup{compatibility=false}
 
+\usepackage{wrapfig}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 
@@ -18,60 +19,90 @@
 \newcommand\ausays[1]{{\bf AU: #1}}
 
 \newcommand\tuple[1]{\langle #1 \rangle}
+\newcommand\True{\mathit{True}}
+\newcommand\None{\mathit{None}}
+\newcommand\Points{\mathit{Pts}}
+\newcommand\Point{\mathit{Pt}}
+\newcommand\Verify{\mathit{Verify}}
+\newcommand\CexInput{\mathit{CexPt}}
+\newcommand\Expr{e}
+\newcommand\Terms{\mathit{Terms}}
+\newcommand\Powerset[1]{\mathbf{2}^{#1}}
+\newcommand\Spec{\Phi}
+\newcommand\Size{K}
+\newcommand\Grammar{G}
+\newcommand\sem[1]{[\![ #1 ]\!]}
+\newcommand\SynthFun{f}
+\newcommand\FormalParameters{\mathit{Params}}
+\newcommand\Productions{\mathit{Prodn}}
+\newcommand\NonTerminals{\mathcal{N}}
+\newcommand\NonTerminal{N}
+\newcommand\StartSymbol{S}
+\newcommand\Symbols{\mathit{Symbols}}
+\newcommand\Rules{\mathcal{R}}
+\newcommand\Rule{R}
+\newcommand\Theory{\mathcal{T}}
+\newcommand\RewritesTo{\rightarrow}
+
+% Make floats and equations behave sensibly
+\setlength{\intextsep}{1pt}
+\setlength{\textfloatsep}{1pt}
+\setlength{\floatsep}{1pt}
+\abovedisplayskip=6pt plus 3pt minus 9pt
+\abovedisplayshortskip=0pt plus 3pt
+\belowdisplayskip=6pt plus 3pt minus 9pt
+\belowdisplayshortskip=7pt plus 3pt minus 4pt
+\setlength\abovecaptionskip{1pt}
+\setlength\belowcaptionskip{1pt}
 
 \begin{document}
 
 \title{Scaling Enumeration for SyGuS through Divide-and-Conquer}
-\author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
-\institute{University of Pennsylvania}
+% \author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
+\author{}
+% \institute{University of Pennsylvania}
+\institute{}
 \maketitle
+\vspace*{-6ex}
 
 \begin{abstract}
-  \arsays{What is the problem? What is the enumerative approach?}
+  Given a semantic constraint specified by a logical formula and
+  syntactic constraint specified by a context-free grammar, the
+  Syntax-Guided Synthesis (SyGuS) problem is to find an expression
+  that satisfies both the syntactic and semantic constraints.
+  An enumerative approach to solve this problem is to systematically
+  generates all expressions from the syntactic space with some pruning,
+  and has proved to be surprisingly competitive in the newly started
+  competition of SyGuS solvers.  It performs well on small to medium sized
+  benchmarks, produces succinct expressions, and has the ability to
+  generalize from input-output examples.  However, its performance
+  degrades drastically with the size of the smallest solution. To overcome
+  this limitation, in this paper we propose an alternative approach to
+  solve SyGuS instances.
 
-  Given a functional specification and an expression syntax, the
-  Syntax-Guided Synthesis (SyGuS) problem is to find an expression in
-  the given syntax that satisfies the functional specification.
-  The enumerative algorithm (proposed by Udupa et al) has proved to be
-  very effective approach to the SyGuS problem winning the 2014 SyGuS
-  competition and placing second in the 2015 SyGuS competition.
+  The key idea  is to employ a divide-and-conquer approach by
+  separately enumerating (a) smaller expressions that are correct on
+  subsets of inputs, and (b) predicates on inputs that distinguish these
+  subsets.  These smaller expressions and predicates are then combined
+  using decision trees to obtain an expression that is correct on all
+  inputs.  We view the problem of combining expressions and predicates as
+  a multi-label decision tree learning problem. We propose a novel
+  technique of associating a probability distribution over the set of
+  labels that a sample can be labeled with. This enables us to use
+  standard information-gain based heuristics to learn a compact decision
+  tree.
 
-  \arsays{Where does enumeration fail?}
-  The enumerative algorithm performs rather well on small to
-  medium sized benchmarks, produces succinct expressions, and has the
-  ability to generalize from input-output examples.
-  However, its performance degrades drastically with the size of the
-  smallest solution.
-
-  \arsays{What do we do about it? Describe techniques in the paper}
-  In this paper, we describe a synthesis technique that is based on
-  extending the reach of the enumeration technique by separately
-  enumerating
-  \begin{inparaenum}[(a)]
-  \item smaller expressions that are correct on subsets of inputs, and
-  \item predicates on inputs that distinguish these subsets.
-  \end{inparaenum}
-  These smaller expressions and predicates are then combined into the
-  final solution expression by using decision trees to obtain an
-  expression that is correct on all inputs.
-  We view the problem of combining expressions and predicates as a multi-label
-  decision tree learning problem. We propose a novel technique of
-  associating a probability distribution over the set of labels that a
-  sample can be labeled with. This enables us to use standard
-  information gain based heuristics to learn a compact decision tree.
-
-  \arsays{Did our techniques work?}
-  We implemented this technique in a prototype tool and evaluated it on
-  the benchmarks from the SyGuS 2015 competition.
-  Our tool is able to match the running times and the compactness of
-  solutions of both standard enumerative solver as well as the latest
-  white-box solvers in most cases.
-  Further, our solver is able to solve a large number of instances from
-  the ICFP suite of benchmarks, which were previously unsolved by all
-  solvers including other decision tree based ones.
-  Our evaluation shows that our approach improves the scalability of the
-  enumerative algorithm without compromising on the solution quality.
+  We report a prototype implementation and evaluate it on the benchmarks
+  from the SyGuS 2015 competition. Our tool is able to match the running
+  times and the succinctness of solutions of both standard enumerative
+  solver as well as the latest white-box solvers in most cases.  Further,
+  our solver is able to solve a large number of instances from the ICFP
+  class of benchmarks, which were previously unsolved by all existing
+  solvers.
 \end{abstract}
+
+\arsays{Madhu's work assumes that the predicate domain can distinguish
+any two points?}
 
 \section{Introduction}
 \label{sec:intro}
@@ -79,9 +110,11 @@
 \section{Illustrative Examples}
 \label{sec:example}
 
-\section{Problem Statement and Background}
+\newpage
+\section{Problem Statement and Background}\marginpar{2 pages}
 \label{sec:problem}
 
+<<<<<<< 12d75fdac2a7aa6458be2378201cd95c42ac8939
 An instance of the SyGuS problem is given by a pair $\tuple { \Phi, G }$
 where $\Phi$ is an SMT formula over an unknown function $f$ and $G$ is a
 grammer\dots
@@ -89,28 +122,243 @@ grammer\dots
 Note that we restrict ourselves to a version of the SyGuS problem where
 there is exactly one unknown function to be synthesized, and the grammer
 does not contain {\tt let} expressions.
+=======
+Let us fix the function to be synthesized $\SynthFun$ and its formal
+parameters $\FormalParameters$.
+The term {\em point} denotes a valuation of $\FormalParameters$, i.e., a
+point is an input to $\SynthFun$.
 
+\paragraph{Specifications}
+Satisfiability modulo theory formulae have become the standard formalism
+for specifying semantic constraints for synthesis.
+In the rest of this paper, we fix an arbitrary theory $\Theory$. 
+We denote by $\Terms_\Theory[\Symbols]$, the set of $\Theory$ terms over
+the symbols $\Symbols$.
+A {\em specification} $\Spec$ is a logical formula in a theory $\Theory$
+over standard theory symbols and the function to be synthesized
+$\SynthFun$.
 
+>>>>>>> Section 3: Prelims and Background
+
+We say that an expression $\Expr$ satisfies a specification $\Spec$ if
+substituting the function to by synthesized by $\Expr$ makes $\Spec$
+true.
+Formally, $\Expr \models \Spec$ if $\Spec[\Expr/\SynthFun]$ is a valid
+sentence.
+
+<<<<<<< 12d75fdac2a7aa6458be2378201cd95c42ac8939
 \paragraph{Separability of specifications.}
 The
+=======
+\paragraph{Grammars}
+An {\em expression grammar} $\Grammar$ is a tuple $\tuple {
+\NonTerminals, \StartSymbol, \Rules }$ where:
+\begin{inparaenum}[(a)]
+\item the set $\NonTerminals$ is a set of non-terminal symbols,
+\item the non-terminal $\StartSymbol \in \NonTerminals$ is the initial non-terminal,
+\item $\Rules \subseteq \NonTerminals \times
+  \Terms_\Theory[\NonTerminals \cup \FormalParameters]$ is a finite set
+  of rewrite rules that map $\NonTerminals$ to $\Theory$-expressions
+  over non-terminals and formal parameters.
+\end{inparaenum}
+We say that an expression $\Expr$ {\em rewrites to} an incomplete
+expression $\Expr'$ (written as $\Expr \RewritesTo_\Grammar \Expr'$) if
+there exists a rule $\Rule = (\NonTerminal, \Expr'') \in \Rules$ and
+$\Expr'$ is obtained by replacing one occurrence of $\NonTerminal$ in
+$\Expr$ by $\Expr''$.
+Let $\RewritesTo_\Grammar^*$ be the transitive closure of $\RewritesTo$.
+We say that an expression $\Expr \in \Terms_\Theory[\FormalParameters]$
+is {\em generated} by the grammar $\Grammar$ (written as $\Expr \in
+\sem{\Grammar}$) if $\StartSymbol \RewritesTo_\Grammar^* \Expr$.
+>>>>>>> Section 3: Prelims and Background
 
-\begin{remark}
-  There have been many related notions of separability in the existing
-  literature.
-  The aim of all these notions is to categorize a class of SyGuS
-  problems where the output a solver chooses for input does not affect
-  the set of values the solver can choose for other inputs.
 
-  Syntactic -- separability, single invocation, etc
+\paragraph{The Syntax-Guided Synthesis Problem}
+An instance of the SyGuS problem is given by a pair $\tuple { \Spec,
+\Grammar }$.
+An expression $\Expr$ is a solution to the instance if $\Expr \models
+\Spec$ and $\Expr \in \sem{\Grammar}$.
 
-  Semantic -- single point refuatable, etc
-\end{remark}
+From our definitions, it is clear that we restrict ourselves to a
+version of the SyGuS problem where there is exactly one unknown function
+to be synthesized, and the grammar does not contain {\tt let} rules.
+Further, we assume that our specifications are {\em
+  point-wise}\footnote{For brief discussion on different syntactic and
+semantic notions of point-wise specifications, see the appendix}.
+Intuitively, if a specification is point-wise, if it just relates the
+input point to its output, and not the outputs of different inputs.
 
-\subsection{The Enumeration Sovler}
+Here, we use a simple syntactic notion of point-wise specifications for
+convenience.
+However, our techniques can be generalized to any notion of point-wise
+specifications.
+\arsays{Write about our definition\dots}
+
+Point-wise specifications allow us to define the notion of an expression
+$\Expr$ satisfying a specification $\Spec$ on a point $\Point$.
+\arsays{Formally, we say that $\Expr \models \Spec \downharpoonleft
+\Point$ if \dots}
+We extend this definition to sets of points as follows: $\Expr \models
+\Spec \downharpoonleft \Points \Leftrightarrow \bigwedge_{\Point \in
+\Points} \Expr \models \Spec\downharpoonleft\Point$.
+
+The above restrictions make the SyGuS problem significantly easier.
+However, a large number of problems do fall into this class (\arsays{x
+out of y benchmarks in the SyGuS 2015 competition}).
+Several previous works address this class of problem (see, for
+example, \cite{ACR15,Madhu,xxx}).
+The following example shows that a number of commonly occurring
+specification mores are point-wise specifications.
+
+\begin{example}
+  \label{ex:specifications}
+  Show some separable and non-separable specifications
+
+  Write about input-output specifications
+\end{example}
+
+\subsection{The Enumerative Solver}
 \label{sec:enumeration}
 
-\section{What do we call the new algorithm?}
+\begin{wrapfigure}{l}{0.5\textwidth}
+  \begin{minipage}{0.5\textwidth}
+    \begin{algorithm}[H]
+      \begin{algorithmic}[1]
+        \Require Grammar $\Grammar = \tuple { \NonTerminals, \StartSymbol, \Rules }$
+        \Require Specification $\Spec$
+        \Ensure $\Expr$ s.t.  $\Expr \in \sem{\Grammar} \wedge \Expr \models \Spec$
+        \State $\Point \gets \emptyset$ \label{line:basic:init}
+        \While { $\True$ } 
+        \For {$\Expr \in \Call{Enumerate}{\Grammar,\Points}$ }\label{line:basic:enumerate}
+        \If { $\Expr \models \Spec \downharpoonleft  \Points$ } \textbf{continue} \EndIf\label{line:basic:concrete_check}
+        \State $\CexInput \gets \Verify(\Expr, \Spec)$ \label{line:basic:verify}
+        \If { $\CexInput = \bot$ } \Return $\Expr$ \EndIf \label{line:basic:return}
+        \State $\Points \gets \Points \cup \CexInput$ \label{line:basic:continue}
+        \EndFor
+        \EndWhile
+      \end{algorithmic}
+      \caption{Enumerative Solver}
+      \label{algo:basic}
+    \end{algorithm}
+  \end{minipage}
+\end{wrapfigure}
+The principal idea behind the enumerative solver is to enumerate all
+expressions from the given syntax with some pruning.
+Only expressions that are distinct with respect to a set of concrete
+input points are enumerated.
+
+The full pseudo-code is given in Algorithm~\ref{algo:basic}.
+Initially, the set of points is empty (line~\ref{line:basic:init}).
+In each iteration, the algorithm calls the {\tt Enumerate} procedure
+which returns a (possibly infinite) list of expressions that are all
+distinct with respect to $\Points$ (line~\ref{line:basic:enumerate}).
+This $\Expr$ is then verified, first on the set of points
+(line~\ref{line:basic:concrete_check}) and then fully
+(line~\ref{line:basic:verify}).
+If the expression $\Expr$ is correct, it is returned
+(line~\ref{line:basic:return}).
+Otherwise, we pick a counter-example input point (i.e., an input on
+which $\Expr$ is incorrect) and add it to the set of points and repeat
+(line~\ref{line:basic:continue}).
+
+For completeness, we recall the {\tt Enumerate} procedure here
+(Algorithm~\ref{algo:enumerate}).
+It maintains a map $\Productions : \NonTerminals \to
+\Powerset{\Terms_\Theory[\FormalParameters]}$ from non-terminals to
+expressions they can produce.
+The invariant maintained by the procedure is that every pair of
+expressions in $\Productions[\NonTerminal]$ is distinct on $\Points$.
+
+The algorithm starts by first accumulating into
+$\Productions[\NonTerminal]$ the expressions that can be produced from
+$\NonTerminal$ in one step
+(lines~\ref{line:enumerate:level_one_iter}-\ref{line:enumerate:level_one}).
+Then, for each possible expression size $\Size$, it attempts to
+instantiate each production rule in the grammar with expressions already
+generated and stored in $\Productions$, to generate new expressions of
+size at most $\Size$.
+These newly generated expression are checked for distinctness from
+already generated ones, and if so, added to
+$\Productions[\NonTerminal]$.
+The algorithm returns all the expressions produced from the starting
+non-terminal $\StartSymbol$. 
+
+\begin{algorithm}
+  \begin{algorithmic}[1]
+    \Require Grammar $\Grammar = \tuple { \NonTerminals, \StartSymbol, \Rules }$ and a set of points $\Points$
+    \Ensure Expressions $\tuple { \Expr_1, \Expr_2, \ldots }$ s.t. $\forall i < j : \vert \Expr_i \vert \leq \vert \Expr_j
+    \vert \wedge \exists \Point \in \Points : \Expr_i[\Point] \neq \Expr_j[\Point]$
+    \ForAll {$\NonTerminal \in \NonTerminals$} $\Productions[\NonTerminals] \gets \emptyset$ \EndFor
+    \ForAll {$(\NonTerminal, \Expr) \in \Rules$}\label{line:enumerate:level_one_iter}
+    \If { $\Expr \in \Terms_\Theory[\FormalParameters]$ }
+    $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \{ \Expr \}$  \label{line:enumerate:level_one}
+    \EndIf
+    \EndFor
+    \State $ \Size \gets 1 $
+    \While { $\True$ }
+    \ForAll {$(\NonTerminal, \Expr) \in \Rules$}
+    \State $(\NonTerminal_1, \ldots, \NonTerminal_n) \gets \mbox{List of non-terminals occurring in $\Expr$ }$
+    \ForAll { $(\Expr_1, \ldots, \Expr_n) \in \Productions[\NonTerminal_1] \times \cdots \times \Productions[\NonTerminal_n]$ }
+    \State $\Expr^* \gets \Expr[\Expr_1/\NonTerminal_1,\ldots,\NonTerminal_n/\Expr_n]$
+    \If { $\vert \Expr^* \vert \leq \Size \wedge \forall \Expr' \in
+      \Productions[\NonTerminal] . \exists \Point \in \Points :
+    \Expr'[\Point] \neq \Expr^*[\Point] $ } 
+    \State $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \Expr^*$
+    \If { $\NonTerminal = \StartSymbol$ } \textbf{yield} $\Expr^*$ \EndIf
+    \EndIf
+    \EndFor
+    \EndFor
+    \State $\Size \gets \Size + 1$
+    \EndWhile
+  \end{algorithmic}
+  \label{algo:enumerate}
+  \caption{Enumerating distinct expressions from a grammar}
+\end{algorithm}
+
+\begin{theorem}[\cite{Transit}]
+  \label{thm:basic_enumeration}
+  Given a SyGuS instance $(\Spec, \Grammar)$ with at least one solution
+  expression, Algorithm~\ref{algo:basic} terminates and returns the
+  smallest solution expression.
+\end{theorem}
+
+\paragraph{Features and Limitations}
+The enumerative algorithm performs surprisingly well considering its
+simplicity on small to medium sized benchmarks
+(see~\cite{transit,sygus_reports,etc}).
+Further, due to the guarantee of Theorem~\ref{thm:basic_enumeration}
+that the enumerative approach produces small solutions, the algorithm is
+capable of generalizing from specifications that are input-output
+examples.
+
+However, enumeration quickly fails to scale with growing size of
+solutions.
+Figure~\ref{fig:scalability_graph} shows the time taken (in seconds) to
+generate all distinct expressions (for $4$ points) up to a given size
+for the grammar shown in Figure~\ref{fig:bitvec_grammar}.
+As can be seen from the graph, the time taken grows exponentially with
+the size.
+\arsays{Need a random exponential scalability graph. Pick one from the
+experiments}
+
+\arsays{Make an example where all pieces are generated at a small size,
+but the full expression takes much longer}
+
+
+\section{The Divide-and-Conquer Enumeration Algorithm}
 \label{sec:algo}
+
+Decomposed grammars
+
+\begin{algorithm}
+  \caption{The piecewise-enumeration algorithm}
+  \label{algo:main}
+\end{algorithm}
+
+\begin{theorem}
+  Algorithm~\ref{algo:main} is a sound and complete algorithm for the
+  Syntax Guided Synthesis problem.
+\end{theorem}
 
 \subsection{Learning Decision Trees}
 \label{sec:decision_trees}
