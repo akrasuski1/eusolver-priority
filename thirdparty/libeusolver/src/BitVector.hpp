@@ -40,7 +40,6 @@
 
 #include <string>
 #include <exception>
-#include <gmp.h>
 
 #include "EUSolverTypes.h"
 
@@ -66,16 +65,60 @@ public:
 class BitVector
 {
 private:
-    mpz_t m_representation;
+    typedef u32 UWordType;
+    typedef i32 SWordType;
+    typedef u64 ULongType;
+    typedef i64 ILongType;
+
+    static constexpr u64 sc_max_internal_bits = 64;
+    static constexpr u64 bits_per_uword() { return 32; }
+    static constexpr u64 uwords_for_size(u64 size)
+    {
+        return (size + (bits_per_uword() - 1)) / bits_per_uword();
+    }
+
     u32 m_bitvector_size;
+    u32 m_final_word_mask;
+    union {
+        UWordType m_internal_bits[2];
+        UWordType* m_external_bits;
+    } m_bitvec_object;
+
+    inline UWordType* get_bitvec_ptr();
+    inline const UWordType* get_bitvec_ptr() const;
+    inline void allocate_cleared_storage();
+    inline void allocate_storage();
+    inline void deallocate_storage();
+    inline void clear_storage();
+    inline void compute_mask();
+    inline void mask_final_word();
+    inline u32 autodetect_base(const char* value, u32& value_offset, bool& is_negative);
+    inline void set_value_from_string(const char* value, u32 base, bool is_negative);
+    // quotient is returned in the canonical digits itself
+    // remainder is the return value
+    // if the canonical digit string after division is = 1, then done is set to true
+    inline u32 divide_canon_digit_string_by_two(u08* canonical_digits, u32 length, u32 base, bool& done);
+    inline void get_canonical_digit_string(u08* canonical_digits, const char* value_string, u32 base);
+    inline void set_value(u64 value);
+    inline void set_value(const BitVector& other);
+    inline void set_value(BitVector&& other);
+    // base = 0 ==> autodetect base
+    inline void set_value(const std::string& value, u32 base = 0);
+    inline void set_value(const char* value, u32 base = 0);
+
+    inline void set_bit(u32 bit_num);
+    inline void clear_bit(u32 bit_num);
+    inline bool test_bit(u32 bit_num) const;
+
+    inline void make_twos_complement();
 
 public:
     BitVector();
-    explicit BitVector(u32 size);
-    BitVector(u64 value, u32 size);
-    BitVector(i64 value, u32 size);
-    BitVector(const std::string& value, u32 base, u32 size);
-    BitVector(const char* value, u32 base, u32 size);
+    explicit BitVector(u64 size);
+    BitVector(u64 value, u64 size);
+    BitVector(i64 value, u64 size);
+    BitVector(const std::string& value, u64 base, u64 size);
+    BitVector(const char* value, u64 base, u64 size);
 
     BitVector(const BitVector& other);
     BitVector(BitVector&& other);
@@ -86,6 +129,7 @@ public:
     BitVector& operator = (BitVector&& other);
 
     BitVector& operator = (u64 value);
+    BitVector& operator = (i64 value);
 
     bool operator == (const BitVector& other) const;
     bool operator != (const BitVector& other) const;
@@ -134,6 +178,10 @@ public:
     BitVector operator ~ () const;
     BitVector logical_negate() const;
     void logical_negate_inplace();
+
+    BitVector operator - () const;
+    BitVector arithmetic_negate() const;
+    void arithmetic_negate_inplace();
 
     BitVector operator & (const BitVector& other) const;
     BitVector& operator &= (const BitVector& other);

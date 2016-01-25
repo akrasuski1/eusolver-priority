@@ -35,6 +35,7 @@ set(CMAKE_C_FLAGS_DEBUG
 
 set(LIBEUSOLVER_CXX_SOURCE_FILES
   src/BitSet.cpp
+  src/BitVector.cpp
   src/BitSetCAPI.cpp
   src/DecisionTree.cpp
   src/DecisionTreeCAPI.cpp
