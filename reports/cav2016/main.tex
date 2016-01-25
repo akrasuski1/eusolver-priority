@@ -114,15 +114,6 @@ any two points?}
 \section{Problem Statement and Background}\marginpar{2 pages}
 \label{sec:problem}
 
-<<<<<<< 12d75fdac2a7aa6458be2378201cd95c42ac8939
-An instance of the SyGuS problem is given by a pair $\tuple { \Phi, G }$
-where $\Phi$ is an SMT formula over an unknown function $f$ and $G$ is a
-grammer\dots
-\arsays{Use standard definitions here.}
-Note that we restrict ourselves to a version of the SyGuS problem where
-there is exactly one unknown function to be synthesized, and the grammer
-does not contain {\tt let} expressions.
-=======
 Let us fix the function to be synthesized $\SynthFun$ and its formal
 parameters $\FormalParameters$.
 The term {\em point} denotes a valuation of $\FormalParameters$, i.e., a
@@ -138,18 +129,12 @@ A {\em specification} $\Spec$ is a logical formula in a theory $\Theory$
 over standard theory symbols and the function to be synthesized
 $\SynthFun$.
 
->>>>>>> Section 3: Prelims and Background
-
 We say that an expression $\Expr$ satisfies a specification $\Spec$ if
 substituting the function to by synthesized by $\Expr$ makes $\Spec$
 true.
 Formally, $\Expr \models \Spec$ if $\Spec[\Expr/\SynthFun]$ is a valid
 sentence.
 
-<<<<<<< 12d75fdac2a7aa6458be2378201cd95c42ac8939
-\paragraph{Separability of specifications.}
-The
-=======
 \paragraph{Grammars}
 An {\em expression grammar} $\Grammar$ is a tuple $\tuple {
 \NonTerminals, \StartSymbol, \Rules }$ where:
@@ -170,8 +155,6 @@ Let $\RewritesTo_\Grammar^*$ be the transitive closure of $\RewritesTo$.
 We say that an expression $\Expr \in \Terms_\Theory[\FormalParameters]$
 is {\em generated} by the grammar $\Grammar$ (written as $\Expr \in
 \sem{\Grammar}$) if $\StartSymbol \RewritesTo_\Grammar^* \Expr$.
->>>>>>> Section 3: Prelims and Background
-
 
 \paragraph{The Syntax-Guided Synthesis Problem}
 An instance of the SyGuS problem is given by a pair $\tuple { \Spec,
