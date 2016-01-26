@@ -476,7 +476,7 @@ class Unifier(object):
             # print('Unifier: returning %s' % str(triv))
             if (_is_expr(triv)):
                 yield (triv, 0, len(signature_to_term), 0,
-                       self.term_solver.get_largest_term_size_enumerated, 0)
+                       self.term_solver.get_largest_term_size_enumerated(), 0)
             else:
                 yield triv
             return
