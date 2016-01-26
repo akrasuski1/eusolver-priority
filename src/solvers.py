@@ -58,7 +58,7 @@ import enumerators
 import signal
 import resource
 
-EUSOLVER_MEMORY_LIMIT = (1 << 26)
+EUSOLVER_MEMORY_LIMIT = (1 << 31)
 
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
@@ -631,6 +631,30 @@ class Solver(object):
 ########################################################################
 # TEST CASES
 ########################################################################
+def _do_solve(solver, term_generator, pred_generator, run_anytime_version):
+    reported_expr_string_set = set()
+    for sol_tuple in solver.solve(term_generator, pred_generator):
+        (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
+        sol_str = _expr_to_str(sol)
+        if (sol_str in reported_expr_string_set):
+            continue
+
+        reported_expr_string_set.add(sol_str)
+
+        print('----------------------------------------------')
+        print('Solution Size                : %d' % exprs.get_expression_size(sol))
+        print('Solution Time from start (s) : %f' % sol_time)
+        print('DT Size                      : %d' % dt_size)
+        print('Num Dist. Terms Enumerated   : %d' % num_t)
+        print('Num Dist. Preds Enumerated   : %d' % num_p)
+        print('Max Term Size Enumerated     : %d' % max_t)
+        print('Max Pred Size Enumerated     : %d' % max_p)
+        print('Num Points                   : %d' % card_p)
+        print('Solution                     : %s' % _expr_to_str(sol), flush=True)
+        print('----------------------------------------------')
+        if (not run_anytime_version):
+            return
+
 
 def test_solver_max(num_vars, run_anytime_version):
     import synthesis_context
@@ -704,21 +728,7 @@ def test_solver_max(num_vars, run_anytime_version):
     syn_ctx.assert_spec(constraint)
 
     solver = Solver(syn_ctx)
-    for sol_tuple in solver.solve(term_generator, pred_generator):
-        (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
-        print('----------------------------------------------')
-        print('Solution Size                : %d' % exprs.get_expression_size(sol))
-        print('Solution Time from start (s) : %f' % sol_time)
-        print('DT Size                      : %d' % dt_size)
-        print('Num Dist. Terms Enumerated   : %d' % num_t)
-        print('Num Dist. Preds Enumerated   : %d' % num_p)
-        print('Max Term Size Enumerated     : %d' % max_t)
-        print('Max Pred Size Enumerated     : %d' % max_p)
-        print('Num Points                   : %d' % card_p)
-        print('Solution                     : %s' % _expr_to_str(sol), flush=True)
-        print('----------------------------------------------')
-        if (not run_anytime_version):
-            return
+    _do_solve(solver, term_generator, pred_generator, run_anytime_version)
 
 def get_icfp_valuations(benchmark_name):
     import parser
@@ -829,21 +839,7 @@ def test_solver_icfp(benchmark_name, run_anytime_version):
     syn_ctx.assert_spec(constraint)
 
     solver = Solver(syn_ctx)
-    for sol_tuple in solver.solve(term_generator, pred_generator):
-        (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
-        print('----------------------------------------------')
-        print('Solution Size                : %d' % exprs.get_expression_size(sol))
-        print('Solution Time from start (s) : %f' % sol_time)
-        print('DT Size                      : %d' % dt_size)
-        print('Num Dist. Terms Enumerated   : %d' % num_t)
-        print('Num Dist. Preds Enumerated   : %d' % num_p)
-        print('Max Term Size Enumerated     : %d' % max_t)
-        print('Max Pred Size Enumerated     : %d' % max_p)
-        print('Num Points                   : %d' % card_p)
-        print('Solution                     : %s' % _expr_to_str(sol), flush=True)
-        print('----------------------------------------------')
-        if (not run_anytime_version):
-            return
+    _do_solve(solver, term_generator, pred_generator, run_anytime_version)
 
 def die():
     print('Usage: %s [--anytime] <timeout in seconds> max <num args to max function>' % sys.argv[0])
