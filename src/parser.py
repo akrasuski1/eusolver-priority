@@ -25,7 +25,6 @@ def sexpFromFile(benchmarkFileName):
     return bmExpr
 
 def parse_bitvec(bv_exp):
-    import bitstring
     if len(bv_exp) != 2:
         return None
     type_, value = bv_exp[0], bv_exp[1]

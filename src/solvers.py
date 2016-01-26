@@ -55,13 +55,15 @@ import semantics_types
 from enum import IntEnum
 import enumerators
 
+import signal
+import resource
+
+EUSOLVER_MEMORY_LIMIT = (1 << 26)
+
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
 _is_expr = exprs.is_expression
 _get_expr_with_id = exprs.get_expr_with_id
-
-_term_id_point_id_to_sat = {}
-_pred_id_point_id_to_sat = {}
 
 def _point_list_to_str(points):
     retval = ''
@@ -82,7 +84,6 @@ def _guard_term_list_to_str(guard_term_list):
     return retval
 
 def model_to_point(model, var_smt_expr_list, var_info_list):
-    import bitstring
     num_vars = len(var_smt_expr_list)
     point = [None] * num_vars
     for i in range(num_vars):
@@ -154,6 +155,13 @@ def check_term_sufficiency(sig_to_term, num_points):
         accumulator |= sig
     return (accumulator.is_full())
 
+def get_decision_tree_size(dt):
+    if (dt.is_leaf()):
+        return 1
+    else:
+        return (1 + get_decision_tree_size(dt.get_positive_child()) +
+                get_decision_tree_size(dt.get_negative_child()))
+
 
 class DuplicatePointException(Exception):
     def __init__(self, point):
@@ -165,13 +173,14 @@ class DuplicatePointException(Exception):
 
 
 class TermSolver(object):
-    def __init__(self, spec, term_generator, max_term_size = 20):
+    def __init__(self, spec, term_generator, max_term_size = 1024):
         self.spec = spec
         self.term_generator = term_generator
         self.points = []
         self.max_term_size = max_term_size
         self.eval_ctx = evaluation.EvaluationContext()
         self.eval_cache = {}
+        self.current_largest_term_size = 0
 
     def _trivial_solve(self):
         term_size = 1
@@ -245,6 +254,9 @@ class TermSolver(object):
             sig_to_term[sig] = term
         return sig_to_term
 
+    def get_largest_term_size_enumerated(self):
+        return self.bunch_generator.current_object_size
+
     def solve(self):
         points = self.points;
         num_points = len(points)
@@ -267,7 +279,7 @@ class TermSolver(object):
         return sig_to_term
 
 class Unifier(object):
-    def __init__(self, syn_ctx, smt_ctx, pred_generator, term_solver, max_pred_size = 20):
+    def __init__(self, syn_ctx, smt_ctx, pred_generator, term_solver, max_pred_size = 1024):
         self.pred_generator = pred_generator
         self.term_solver = term_solver
         self.syn_ctx = syn_ctx
@@ -359,7 +371,7 @@ class Unifier(object):
         else:
             return term
 
-    def _verify_guard_term_list(self, guard_term_list):
+    def _verify_guard_term_list(self, guard_term_list, dt_tuple):
         smt_ctx = self.smt_ctx
         smt_solver = self.smt_solver
         intro_vars = self.smt_intro_vars
@@ -405,7 +417,10 @@ class Unifier(object):
             retval.sort()
             return retval
         else:
-            return guard_term_list_to_expr(working_terms_list, self.syn_ctx)
+            (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
+            e = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
+            return e
+
 
     def _try_trivial_unification(self, signature_to_term):
         # we can trivially unify if there exists a term
@@ -450,11 +465,21 @@ class Unifier(object):
         else:
             return (term_list, term_sig_list, pred_list, pred_sig_list, dt)
 
+    """returns/yields one of:
+    1. (expression, DT size, num terms, num preds, max term size, max pred size)
+    2. [list of counterexample points]
+    3. None, in case of exhaustion of terms/preds
+    """
     def unify(self, signature_to_term):
         triv = self._try_trivial_unification(signature_to_term)
         if (triv != None):
             # print('Unifier: returning %s' % str(triv))
-            return triv
+            if (_is_expr(triv)):
+                yield (triv, 0, len(signature_to_term), 0,
+                       self.term_solver.get_largest_term_size_enumerated, 0)
+            else:
+                yield triv
+            return
 
         # cannot be trivially unified
         num_points = len(self.points)
@@ -499,7 +524,9 @@ class Unifier(object):
                 # print('Unifier.unify(): Could not learn decision tree!')
                 extended_signature_to_term = self.term_solver.extend_sig_to_term_map(signature_to_term)
                 if (extended_signature_to_term == None):
-                    return None
+                    yield None
+                    return
+
                 signature_to_term = extended_signature_to_term
                 continue
 
@@ -513,7 +540,23 @@ class Unifier(object):
             # print('Obtained expr: %s' % _expr_to_str(expr))
             # print('Unifier: enumerated %d predicates!' % monotonic_pred_id)
             # return self._verify_expr(expr)
-            return self._verify_guard_term_list(guard_term_list)
+            sol_or_cex = self._verify_guard_term_list(guard_term_list, dt_tuple)
+            if (_is_expr(sol_or_cex)):
+                yield (sol_or_cex, get_decision_tree_size(dt),
+                       len(signature_to_term), len(signature_to_pred),
+                       self.term_solver.get_largest_term_size_enumerated(),
+                       bunch_generator.current_object_size)
+
+                extended_signature_to_term = self.term_solver.extend_sig_to_term_map(signature_to_term)
+                if (extended_signature_to_term == None):
+                    return
+                signature_to_term = extended_signature_to_term
+                continue
+            else:
+                # this a counterexample. stop yielding after this
+                yield sol_or_cex
+                return
+        return
 
 class Solver(object):
     def __init__(self, syn_ctx):
@@ -552,40 +595,44 @@ class Solver(object):
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
         term_solver = TermSolver(canon_spec, term_generator)
         unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator, term_solver)
+        time_origin = time.clock()
 
         while (True):
             # iterate until we have terms that are "sufficient"
-            start_time = time.clock()
             sig_to_term = term_solver.solve()
             if (sig_to_term == None):
                 return None
-            end_time = time.clock()
-            self.term_solver_time += end_time - start_time
             # we now have a sufficient set of terms
             # print('Term solve complete!')
-            start_time = time.clock()
-            r = unifier.unify(sig_to_term)
-            end_time = time.clock()
-            self.unifier_time += end_time - start_time
-            # print('Unification Complete!')
-            if (exprs.is_expression(r)):
-                return r
-            else:
-                # this is a set of counterexamples
-                # print('Solver: Adding %d points' % len(r))
-                for point in r:
-                    self.add_point(point)
-                    term_solver.add_point(point)
-                    unifier.add_point(point)
-                    # print([ str(x[0].value_object) for x in self.points])
-                    continue
-        self.var_smt_expr_list = None
+            unifier_state = unifier.unify(sig_to_term)
+
+            while (True):
+                r = next(unifier_state)
+                # print('Unification Complete!')
+                if (isinstance(r, tuple)):
+                    (sol, dt_size, num_t, num_p, max_t, max_p) = r
+                    solution_found_at = time.clock() - time_origin
+                    yield (sol, dt_size, num_t, num_p, max_t, max_p,
+                           len(self.points), solution_found_at)
+
+                elif (isinstance(r, list)):
+                    # this is a set of counterexamples
+                    # print('Solver: Adding %d points' % len(r))
+                    for point in r:
+                        self.add_point(point)
+                        term_solver.add_point(point)
+                        unifier.add_point(point)
+                        # print([ str(x[0].value_object) for x in self.points])
+                    break
+                else:
+                    return None
+
 
 ########################################################################
 # TEST CASES
 ########################################################################
 
-def test_solver_max(num_vars):
+def test_solver_max(num_vars, run_anytime_version):
     import synthesis_context
     import semantics_core
     import semantics_lia
@@ -657,11 +704,23 @@ def test_solver_max(num_vars):
     syn_ctx.assert_spec(constraint)
 
     solver = Solver(syn_ctx)
-    expr = solver.solve(term_generator, pred_generator)
-    return (expr, solver.points)
+    for sol_tuple in solver.solve(term_generator, pred_generator):
+        (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
+        print('----------------------------------------------')
+        print('Solution Size                : %d' % exprs.get_expression_size(sol))
+        print('Solution Time from start (s) : %f' % sol_time)
+        print('DT Size                      : %d' % dt_size)
+        print('Num Dist. Terms Enumerated   : %d' % num_t)
+        print('Num Dist. Preds Enumerated   : %d' % num_p)
+        print('Max Term Size Enumerated     : %d' % max_t)
+        print('Max Pred Size Enumerated     : %d' % max_p)
+        print('Num Points                   : %d' % card_p)
+        print('Solution                     : %s' % _expr_to_str(sol), flush=True)
+        print('----------------------------------------------')
+        if (not run_anytime_version):
+            return
 
 def get_icfp_valuations(benchmark_name):
-    import bitstring
     import parser
     test_icfp_valuations =  [
             (
@@ -697,12 +756,11 @@ def get_icfp_valuations(benchmark_name):
     return points
     # return test_icfp_valuations
 
-def test_solver_icfp(benchmark_name):
+def test_solver_icfp(benchmark_name, run_anytime_version):
     import synthesis_context
     import semantics_core
     import semantics_bv
     import enumerators
-    import bitstring
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_bv.BVInstantiator(64))
@@ -771,51 +829,82 @@ def test_solver_icfp(benchmark_name):
     syn_ctx.assert_spec(constraint)
 
     solver = Solver(syn_ctx)
-    expr = solver.solve(term_generator, pred_generator)
-
-    # print("Term solver time: ", solver.term_solver_time)
-    # print("Unifier time: ", solver.unifier_time)
-    return (expr, solver.points)
+    for sol_tuple in solver.solve(term_generator, pred_generator):
+        (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
+        print('----------------------------------------------')
+        print('Solution Size                : %d' % exprs.get_expression_size(sol))
+        print('Solution Time from start (s) : %f' % sol_time)
+        print('DT Size                      : %d' % dt_size)
+        print('Num Dist. Terms Enumerated   : %d' % num_t)
+        print('Num Dist. Preds Enumerated   : %d' % num_p)
+        print('Max Term Size Enumerated     : %d' % max_t)
+        print('Max Pred Size Enumerated     : %d' % max_p)
+        print('Num Points                   : %d' % card_p)
+        print('Solution                     : %s' % _expr_to_str(sol), flush=True)
+        print('----------------------------------------------')
+        if (not run_anytime_version):
+            return
 
 def die():
-    print('Usage: %s max <num args to max function> <log file name>' % sys.argv[0])
-    print('Usage: %s icfp <benchmark file> <log file name>' % sys.argv[0])
+    print('Usage: %s [--anytime] <timeout in seconds> max <num args to max function>' % sys.argv[0])
+    print('Usage: %s [--anytime] <timeout in seconds> icfp <benchmark file>' % sys.argv[0])
     exit(1)
+
+def _timeout_handler(signum, frame):
+    if (signum != -1):
+        print('[solvers.main]: Timed out!')
+        print('[solvers.main]: Trying to exit gracefully...')
+        sys.exit(1)
+    else:
+        print('[solvers.main]: Exiting gracefully...')
+        sys.exit(1)
+
+def _memout_checker(signum, frame):
+    rusage = resource.getrusage(resource.RUSAGE_SELF)
+    if ((rusage[2] * 1024) > EUSOLVER_MEMORY_LIMIT):
+        print('[solvers.main: Memory out!')
+        print('[solvers.main: Trying to exit gracefully...')
+        sys.exit(1)
 
 if __name__ == '__main__':
     import time
     import sys
     if (len(sys.argv) < 4):
         die()
+    run_anytime_version = False
+    try:
+        if (sys.argv[1] == '--anytime'):
+            time_limit = int(sys.argv[2])
+            benchmark_type = sys.argv[3]
+            benchmark_subtype = sys.argv[4]
+            run_anytime_version = True
+        else:
+            time_limit = int(sys.argv[1])
+            benchmark_type = sys.argv[2]
+            benchmark_subtype = sys.argv[3]
+    except Exception:
+        die()
 
-    log_file = open(sys.argv[3], 'a')
     start_time = time.clock()
+    print('[solvers.main]: Started %s %s %s' % (benchmark_type, benchmark_subtype,
+                                                ', running anytime version.' if run_anytime_version else ', running one solution version.'))
+    print('[solvers.main]: Setting time limit to %d seconds' % time_limit)
+    signal.signal(signal.SIGVTALRM, _timeout_handler)
+    signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
+    print('[solvers.main]: Memory limit is %d bytes.' % EUSOLVER_MEMORY_LIMIT)
+    signal.signal(signal.SIGPROF, _memout_checker)
+    signal.setitimer(signal.ITIMER_PROF, 15, 15)
 
-    log_file.write('Started %s\n' % sys.argv[2])
-
-    if sys.argv[1] == "max":
-        max_cardinality = int(sys.argv[2])
-        (sol, points) = test_solver_max(max_cardinality)
-        log_file.write('max of %d arguments:\n%s\n' % (max_cardinality, exprs.expression_to_string(sol)))
-    elif sys.argv[1] == "icfp":
-        benchmark_file = sys.argv[2]
-        (sol, points) = test_solver_icfp(benchmark_file)
-        log_file.write('f in %s:\n%s\n' % (
-            benchmark_file,
-            exprs.expression_to_string(sol)))
+    if (benchmark_type == 'max'):
+        max_cardinality = int(benchmark_subtype)
+        test_solver_max(max_cardinality, run_anytime_version)
+    elif (benchmark_type == 'icfp'):
+        benchmark_file = benchmark_subtype
+        test_solver_icfp(benchmark_file, run_anytime_version)
     else:
         die()
 
-    end_time = time.clock()
-    total_time = end_time - start_time
-
-    log_file.write('Added %d counterexample points in total\n' % len(points))
-    log_file.write('computed in %s seconds\n' % (str(total_time)))
-    log_file.write('Solution size: %d\n' % exprs.get_expression_size(sol))
-    log_file.close()
-
-    # log_file.write('Counterexample points:\n')
-    # log_file.write(_point_list_to_str(points))
+    _timeout_handler(-1, None)
 
 #
 # solvers.py ends here

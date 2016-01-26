@@ -39,7 +39,6 @@
 # Code:
 
 import basetypes
-import bitstring
 import exprs
 import exprtypes
 import functools

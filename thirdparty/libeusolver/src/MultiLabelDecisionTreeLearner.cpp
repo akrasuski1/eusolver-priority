@@ -152,14 +152,14 @@ get_entropy_for_set(const InputVector& labelling_to_point_vector,
 {
     // audupa: TESTING
     // return an entropy value of zero if there exists a common label
-    // BitSet intersection_of_labels(point_to_labelling_vector[0]->get_size_of_universe(), true);
-    // for (auto point_id : point_set) {
-    //     intersection_of_labels &= (*(point_to_labelling_vector[point_id]));
-    // }
+    BitSet intersection_of_labels(point_to_labelling_vector[0]->get_size_of_universe(), true);
+    for (auto point_id : point_set) {
+        intersection_of_labels &= (*(point_to_labelling_vector[point_id]));
+    }
 
-    // if (!intersection_of_labels.is_empty()) {
-    //     return 0.0;
-    // }
+    if (!intersection_of_labels.is_empty()) {
+        return 0.0;
+    }
     // audupa: this seems to increase the number of points needed. REJECT!
     // audupa: end testing
 
@@ -467,7 +467,6 @@ const DecisionTreeNodeBase*
 learn_decision_tree_for_multi_labelled_data(const std::vector<const BitSet*>& attribute_to_point_vector,
                                             const std::vector<const BitSet*>& labelling_to_point_vector)
 {
-    detail_::entropy_cache.clear();
     detail_::check_dt_learning_inputs(attribute_to_point_vector,
                                       labelling_to_point_vector);
     // std::cout << "MultiLabelDecisionTreeLearner: Transposing bitsets..." << std::endl;
@@ -483,6 +482,7 @@ learn_decision_tree_for_multi_labelled_data(const std::vector<const BitSet*>& at
                                                 sample_point_filter);
     detail_::free_ptr_vector(point_to_attribute_vector);
     detail_::free_ptr_vector(point_to_labelling_vector);
+    detail_::entropy_cache.clear();
     // std::cout << "MultiLabelDecisionTreeLearner: returning decision tree:" << std::endl
     //           << retval->to_string() << std::endl;
     return retval;

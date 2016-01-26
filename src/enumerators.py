@@ -44,6 +44,7 @@ import copy
 import itertools
 import exprs
 import exprtypes
+import time
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -264,12 +265,13 @@ class FilteredGenerator(GeneratorBase):
 
 class BunchedGenerator(GeneratorBase):
     """A wrapper for a generator that generates objects in bunches"""
-    def __init__(self, generator_object, max_size, bunch_size = 8, name = None):
+    def __init__(self, generator_object, max_size, bunch_size = 16, name = None):
         super().__init__(name)
         self.generator_object = generator_object
         self.bunch_size = bunch_size
         self.max_size = max_size
         self.generator_state = None
+        self.current_object_size = 0
 
     def generate(self):
         current_size = 1
@@ -295,10 +297,12 @@ class BunchedGenerator(GeneratorBase):
                         continue
                     elif (not finished):
                         finished = True
+                        self.current_object_size = current_size
                         yield retval[:current_index]
                     else:
                         return
                 current_index += 1
+            self.current_object_size = current_size
             yield retval
 
 
@@ -308,6 +312,64 @@ class BunchedGenerator(GeneratorBase):
 
     def clone(self):
         return BunchedGenerator(self.generator_object.clone(), self.bunch_size, self.name)
+
+class StreamGenerator(GeneratorBase):
+    """A wrapper for a generator that seamlessly generates objects of size [1, max_size]"""
+    def __init__(self, generator_object, enable_logging = False, max_size = (1 << 20), name = None):
+        super().__init__(name)
+        self.generator_object = generator_object
+        self.max_size = max_size
+        self.generator_state = None
+        self.enable_logging = enable_logging
+
+    def generate(self):
+        current_size = 1
+        total_exps = 0
+        logging_enabled = self.enable_logging
+        if (logging_enabled):
+            generation_start_time = time.clock()
+
+        max_size = self.max_size
+        sub_generator_object = self.generator_object
+        finished = False
+
+        while (current_size <= max_size):
+            total_of_current_size = 0
+            sub_generator_object.set_size(current_size)
+            if (logging_enabled):
+                current_size_start_time = time.clock()
+
+            sub_generator_state = sub_generator_object.generate()
+            while (True):
+                try:
+                    retval = next(sub_generator_state)
+                    total_of_current_size += 1
+                    yield retval
+                except StopIteration:
+                    if (logging_enabled):
+                        current_size_end_time = time.clock()
+                        current_size_time = current_size_end_time - current_size_start_time
+                        cumulative_size_time = current_size_end_time - generation_start_time
+                        print(('StreamGenerator: Enumerated objects of size %d in %f ' +
+                               'seconds.') % (current_size, current_size_time))
+                        print(('StreamGenerator: Total time to enumerate objects upto and ' +
+                               'including size %d is %f seconds') % (current_size,
+                                                                     cumulative_size_time))
+                        total_exps += total_of_current_size
+                        print(('StreamGenerator: Total expressions of ' +
+                               'size %d = %d') % (current_size, total_of_current_size))
+                        print(('StreamGenerator: Total expressions of ' +
+                               'size upto and including %d = %d') % (current_size, total_exps))
+
+                    current_size += 1
+                    break
+        return
+
+    def set_size(self, new_max_size):
+        self.max_size = new_max_size
+
+    def clone(self):
+        return StreamGenerator(self.generator_object.clone(), self.bunch_size, self.name)
 
 
 ############################################################
