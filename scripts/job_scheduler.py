@@ -9,6 +9,7 @@ from multiprocessing import Queue, Process, Manager, JoinableQueue
 # 3. Another string denoting a header to print at the top of the log file
 
 job_list = []
+environment_variables = {'PYTHONPATH' : '../thirdparty/libeusolver/build/:../thirdparty/z3/build/'}
 
 def print_usage():
     print('Usage: %s <job_list_filename> <log_directory_name> <num_concurrent_processes>' % sys.argv[0])
@@ -20,7 +21,7 @@ def process_entry_point(global_job_queue):
         except:
             break
 
-        with open(job[1], 'w') as job_out_file, open (job[1] + '.err', 'w') as job_err_file:
+        with open(job[1] + '.stdout', 'w') as job_out_file, open (job[1] + '.stderr', 'w') as job_err_file:
             job_out_file.write('@@@@@@@%s@@@@@@@\n\n' % job[2]);
             job_err_file.write('@@@@@@@%s@@@@@@@\n\n' % job[2]);
             job_out_file.write('$*$*$*$*/%s$*$*$*$' % ' '.join(job[0]))
@@ -30,7 +31,7 @@ def process_entry_point(global_job_queue):
             (outdata, errdata) = job_process.communicate()
 
 # I expect the following arguments:
-# 1. A file name, which I can open and eval to get my job list
+# 1. A file name, which I can open and eval to get my job list, with a variable called environment_variables for the environment variables
 # 2. A log directory name where I write all logs
 # 3. Number of concurrent processes to run
 
