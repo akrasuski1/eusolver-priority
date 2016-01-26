@@ -345,7 +345,7 @@ generate all distinct expressions (for $4$ points) up to a given size
 for the grammar shown in Figure~\ref{fig:bitvec_grammar}.
 As can be seen from the graph, the time taken grows exponentially with
 the size.
-\arsays{Need a random exponential scalability graph. Pick one from the
+\arsays{Need a exponential scalability graph. Pick one from the
 experiments}
 
 
@@ -385,6 +385,9 @@ satisfy the following:
   \wedge \Pred \in \sem{\Grammar_P} \implies
   \ITE{\Pred}{\Expr_1}{\Expr_2} \in \sem{\tuple{ \Grammar_T, \Grammar_P }}$
 \end{inparaenum}
+
+\arsays{Note on going from standard SyGuS grammars to conditional
+expression grammars}
 
 \begin{example}
   \arsays{Give the ICFP and LIA benchmark grammars}
@@ -429,22 +432,35 @@ decision tree $\DecisionTree$ is defined as follows:
 
 Algorithm~\ref{algo:main} presents the full divide-and-conquer
 enumeration algorithm for synthesis.
-There are several key similarities and differences between this
-algorithm and Algorithm~\ref{algo:basic}.
-\begin{compactitem}
-\item As in Algorithm~\ref{algo:basic}, the divide-and-conquer algorithm
-  maintains a set of points $\Points$ to guide the enumeration.
-  When a potential solution is verified and found to be incorrect, the
-  corresponding counter-example point is added to $\Points$
-  (lines~\ref{line:main:xxx}-\ref{line:main:yyy}).
-\item In Algorithm~\ref{algo:basic}, the enumeration continues until we
-  find one expression that is correct for all the points in $\Points$. 
-  However, here, the enumeration continues only until for each point
-  in $\Points$, there is at least one expression that is correct on it.
-  \arsays{We only put them exprs if they are distinct with respect to
-  points on spec}
-\item 
-\end{compactitem}
+As in Algorithm~\ref{algo:basic}, the algorithm is based on maintaining
+a set of points $\Points$.
+As before, in each iteration, the algorithm 
+\begin{inparaenum}[(a)]
+\item computes the candidate solution expression $\Expr$ based on
+  $\Points$
+  (lines~\ref{line:main:start_iter}-\ref{line:main:compute_expr});
+\item verifies $\Expr$ against the specification $\Spec$, and returns it
+  if $\Expr \models \Spec$ (lines~\ref{line:main:verify}
+  and~\ref{line:main:return}); and
+\item otherwise, adds the counter-example point into the set $\Points$
+  (line~\ref{line:main:add_point}).
+\end{inparaenum}
+
+However, the key differences between Algorithm~\ref{algo:main} and
+Algorithm~\ref{algo:basic} are in the way the candidate solution
+expression $\Expr$ is generated.
+The generation of candidate expressions is separated into two separate
+steps.
+\paragraph{Term solving.}
+Instead of searching for a single candidate expression that is correct
+on all points in $\Points$, Algorithm~\ref{algo:main} maintains a set of
+candidate terms $\Expressions$ each of which may be correct on a
+subset of $\Points$.
+When the set of expressions $\Expressions$ covers $\Points$, i.e., for
+each $\Point \in \Points$, there is at least one expression that is
+correct of $\Point$, the enumeration of terms.
+\paragraph{Unification.}
+In the next step, 
 
 \begin{algorithm}
   \begin{algorithmic}[1]
@@ -454,7 +470,7 @@ algorithm and Algorithm~\ref{algo:basic}.
     \State $\Point \gets \emptyset$ \label{line:basic:init}
 
     \While { $\True$ }
-    \State $\Expressions \gets \emptyset; \Predicates \gets \emptyset$
+    \State $\Expressions \gets \emptyset; \Predicates \gets \emptyset$ \label{line:main:start_iter}
 
     \While { $\exists \Point \in \Points : \forall  \Expr : \Expr \not\models \Spec \downharpoonleft \Point$ } \Comment { Term solver }
     \State $\Expressions \gets \Expressions \cup \Call{Enumerate}{\Grammar_T,\Points}$
@@ -466,12 +482,12 @@ algorithm and Algorithm~\ref{algo:basic}.
     \State $\Expressions \gets \Expressions \cup \Call{Enumerate}{\Grammar_T,\Points}$
     \State $\Predicates \gets \Predicates \cup \Call{Enumerate}{\Grammar_P,\Points}$
     \EndIf
-    \State $\Expr \gets \DTtoExpr{\DecisionTree}$
+    \State $\Expr \gets \DTtoExpr{\DecisionTree}$ \label{line:main:compute_expr}
     \EndWhile
 
-    \State $\CexInput \gets \Verify(\Expr, \Spec)$ \Comment { Verifier }
-    \If { $\CexInput = \bot$ } \Return $\Expr$ \EndIf 
-    \State $\Points \gets \Points \cup \CexInput$ 
+    \State $\CexInput \gets \Verify(\Expr, \Spec)$ \Comment { Verifier } \label{line:main:verify}
+    \If { $\CexInput = \bot$ } \Return $\Expr$ \EndIf \label{line:main:return}
+    \State $\Points \gets \Points \cup \CexInput$ \label{line:main:add_point}
     \EndWhile
   \end{algorithmic}
   \caption{The divide-and-conquer enumeration algorithm}
