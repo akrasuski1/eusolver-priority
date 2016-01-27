@@ -1,0 +1,17 @@
+@@@@@@@icfp_95_100-one-shot@@@@@@@
+
+$*$*$*$*/python3 solvers.py 3600 icfp ../benchmarks/icfp/icfp_95_100.sl$*$*$*$[solvers.main]: Started icfp ../benchmarks/icfp/icfp_95_100.sl , running one solution version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+----------------------------------------------
+Solution Size                : 220
+Solution Time from start (s) : 182.572114
+DT Size                      : 55
+Num Dist. Terms Enumerated   : 5
+Num Dist. Preds Enumerated   : 24
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 7
+Num Points                   : 55
+Solution                     : (ite (is1 (bvand #x0000000000000001 _arg_0)) (bvnot _arg_0) (ite (is1 (shr16 (shr16 (shr16 (shl1 (shr16 _arg_0)))))) (ite (is1 (bvand (shr4 (shr16 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr1 _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr1 (shr1 (shr16 _arg_0))) #x0000000000000001)) _arg_0 (ite (is1 (bvand (shr16 (shl1 _arg_0)) #x0000000000000001)) #x0000000000000000 _arg_0)) (ite (is1 (bvand (shr1 (shr1 (shr4 _arg_0))) #x0000000000000001)) (ite (is1 (bvand (shr16 (shl1 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr1 (shr4 (shr4 _arg_0))) #x0000000000000001)) _arg_0 #x0000000000000000) _arg_0) #x0000000000000000)) (ite (is1 (bvand (shr1 (shr1 (bvnot _arg_0))) #x0000000000000001)) (ite (is1 (bvand (shr16 (bvnot _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr1 _arg_0) #x0000000000000001)) #x0000000000000000 (ite (is1 (bvand (shr1 (shr4 (shr4 _arg_0))) #x0000000000000001)) _arg_0 (ite (is1 (bvand (shr4 (shl1 _arg_0)) #x0000000000000001)) #x0000000000000000 _arg_0))) #x0000000000000000) (ite (is1 (bvand (shr16 (shl1 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr1 (shr1 (shr16 _arg_0))) #x0000000000000001)) (ite (is1 (bvand (shr16 (bvnot _arg_0)) #x0000000000000001)) _arg_0 #x0000000000000000) _arg_0) (ite (is1 (bvand (shr4 (shr4 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr4 _arg_0) #x0000000000000001)) _arg_0 #x0000000000000000) #x0000000000000000)))) (ite (is1 (bvand (shr1 (shr4 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr1 (shr16 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr16 (bvnot _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr16 (shl1 _arg_0)) #x0000000000000001)) #x0000000000000000 (ite (is1 (bvand (shr1 _arg_0) #x0000000000000001)) _arg_0 #x0000000000000000)) (ite (is1 (bvand (shr4 (shr16 _arg_0)) #x0000000000000001)) _arg_0 #x0000000000000000)) (ite (is1 (bvand (shr4 (shr4 _arg_0)) #x0000000000000001)) #x0000000000000000 _arg_0)) (ite (is1 (bvand (shr1 (shr1 (bvnot _arg_0))) #x0000000000000001)) #x0000000000000000 _arg_0))))
+----------------------------------------------
+[solvers.main]: Exiting gracefully...

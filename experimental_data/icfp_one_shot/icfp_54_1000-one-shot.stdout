@@ -1,0 +1,17 @@
+@@@@@@@icfp_54_1000-one-shot@@@@@@@
+
+$*$*$*$*/python3 solvers.py 3600 icfp ../benchmarks/icfp/icfp_54_1000.sl$*$*$*$[solvers.main]: Started icfp ../benchmarks/icfp/icfp_54_1000.sl , running one solution version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+----------------------------------------------
+Solution Size                : 11
+Solution Time from start (s) : 25.004399
+DT Size                      : 3
+Num Dist. Terms Enumerated   : 2
+Num Dist. Preds Enumerated   : 1
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 4
+Num Points                   : 2
+Solution                     : (ite (is1 (bvand #x0000000000000001 _arg_0)) (shr1 (shr4 (shr16 _arg_0))) (bvnot _arg_0))
+----------------------------------------------
+[solvers.main]: Exiting gracefully...
