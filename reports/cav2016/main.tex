@@ -9,6 +9,12 @@
 \usepackage{paralist}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{xspace}
+\usepackage{mdwtab}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage[square,numbers,sort&compress,comma,sectionbib]{natbib}
+\renewcommand{\bibname}{References}
 \captionsetup{compatibility=false}
 
 \usepackage{wrapfig}
@@ -62,6 +68,7 @@
 \newcommand\Edges{E}
 \newcommand\Attribute{\mathcal{A}}
 \newcommand\Label{\mathcal{L}}
+\newcommand{\sygus}{{\sffamily\fontsize{8}{10}\selectfont SyGuS}\xspace}
 
 % Make floats and equations behave sensibly
 \setlength{\intextsep}{1pt}
@@ -145,7 +152,7 @@ point is an input to $\SynthFun$.
 \paragraph{Specifications}
 Satisfiability modulo theory formulae have become the standard formalism
 for specifying semantic constraints for synthesis.
-In the rest of this paper, we fix an arbitrary theory $\Theory$. 
+In the rest of this paper, we fix an arbitrary theory $\Theory$.
 We denote by $\Theory[\Symbols]$, the set of $\Theory$ terms over
 the symbols $\Symbols$.
 A {\em specification} $\Spec$ is a logical formula in a theory $\Theory$
@@ -236,7 +243,7 @@ specification mores are point-wise specifications.
         \Require Specification $\Spec$
         \Ensure $\Expr$ s.t.  $\Expr \in \sem{\Grammar} \wedge \Expr \models \Spec$
         \State $\Point \gets \emptyset$ \label{line:basic:init}
-        \While { $\True$ } 
+        \While { $\True$ }
         \For {$\Expr \in \Call{Enumerate}{\Grammar,\Points}$ }\label{line:basic:enumerate}
         \If { $\Expr \models \Spec \downharpoonleft  \Points$ } \textbf{continue} \EndIf\label{line:basic:concrete_check}
         \State $\CexInput \gets \Verify(\Expr, \Spec)$ \label{line:basic:verify}
@@ -289,7 +296,7 @@ These newly generated expression are checked for distinctness from
 already generated ones, and if so, added to
 $\Productions[\NonTerminal]$.
 The algorithm returns all the expressions produced from the starting
-non-terminal $\StartSymbol$. 
+non-terminal $\StartSymbol$.
 
 \begin{algorithm}
   \begin{algorithmic}[1]
@@ -310,7 +317,7 @@ non-terminal $\StartSymbol$.
     \State $\Expr^* \gets \Expr[\Expr_1/\NonTerminal_1,\ldots,\NonTerminal_n/\Expr_n]$
     \If { $\vert \Expr^* \vert \leq \Size \wedge \forall \Expr' \in
       \Productions[\NonTerminal] . \exists \Point \in \Points :
-    \Expr'[\Point] \neq \Expr^*[\Point] $ } 
+    \Expr'[\Point] \neq \Expr^*[\Point] $ }
     \State $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \Expr^*$
     \If { $\NonTerminal = \StartSymbol$ } \textbf{yield} $\Expr^*$ \EndIf
     \EndIf
@@ -333,7 +340,7 @@ non-terminal $\StartSymbol$.
 \paragraph{Features and Limitations}
 The enumerative algorithm performs surprisingly well considering its
 simplicity on small to medium sized benchmarks
-(see~\cite{transit,sygus_reports,etc}).
+(see~\cite{Transit,sygus_reports,etc}).
 Further, due to the guarantee of Theorem~\ref{thm:basic_enumeration}
 that the enumerative approach produces small solutions, the algorithm is
 capable of generalizing from specifications that are input-output
@@ -367,10 +374,10 @@ Note that our techniques can be easily extended to use other conditional
 operators such as switch statements.
 
 A {\em conditional expression grammar} is a pair of grammars $\tuple{
-\Grammar_T, \Grammar_P }$ where: 
+\Grammar_T, \Grammar_P }$ where:
 \begin{inparaenum}[(a)]
 \item the {\em term grammar} $\Grammar_T$ is an expression grammar
-  generating terms of type $\range(\SynthFun)$; and 
+  generating terms of type $\range(\SynthFun)$; and
 \item the {\em predicate grammar} $\Grammar_P$ is an expression
   grammar generating boolean terms.
 \end{inparaenum}
@@ -407,7 +414,7 @@ Formally, a {\em decision tree} $\DecisionTree$  is a tuple $\tuple{
 \item The nodes $\Nodes$ are partitioned into a set of internal nodes
     $\NodesInternal$ and leaf nodes $\NodesLeaf$;
 \item The attribute function $\Attribute : \NodesInternal \to
-    \sem{\Grammar_P}$ maps internal nodes to predicates; 
+    \sem{\Grammar_P}$ maps internal nodes to predicates;
 \item The label function $\Label : \NodesLeaf \to \sem{\Grammar_T}$ maps
     leaf nodes to terms;
 \item The edges $\Edges$ are partitioned into positive edges $\EdgesYes$
@@ -437,10 +444,10 @@ enumeration algorithm for synthesis.
 Like Algorithm~\ref{algo:basic}, the divide-and-conquer algorithm
 maintains a set of points $\Points$, and in each iteration:
 \begin{inparaenum}[(a)]
-\item computes a candidate solution expression $\Expr$ 
+\item computes a candidate solution expression $\Expr$
   (lines~\ref{line:main:start_iter}-\ref{line:main:compute_expr});
 \item verifies and returns $\Expr$ if it is correct (lines~\ref{line:main:verify}
-  and~\ref{line:main:return}); and 
+  and~\ref{line:main:return}); and
 \item otherwise, adds the counter-example point into the set $\Points$
   (line~\ref{line:main:add_point}).
 \end{inparaenum}
@@ -487,13 +494,13 @@ In each iteration, we attempt to learn a decision tree \dots
     \While { $\bigcup_{\Term \in \Terms} \Cover[\Term] \neq \Points$ } \Comment { Term solver }
     \State $\Term \gets \Call{Enumerate}{\Grammar_T,\Points};
     \Cover[\Term] \gets \{ \Point \mid \Point \in \Points \wedge \Term \models \Spec \downharpoonleft \Point \} $\label{line:main:compute_cover}
-    \If { $\forall \Term' \in \Terms : \Cover[\Term] \neq \Cover[\Term']$ } 
+    \If { $\forall \Term' \in \Terms : \Cover[\Term] \neq \Cover[\Term']$ }
     $\Terms \gets \Terms \cup \{ \Term \}$ \label{line:main:duplicate_cover}
     \EndIf
     \EndWhile
 
     \While { $\True$ } \Comment { Unifier }
-    \State $\DecisionTree \gets \Call{LearnDT}{\Terms, \Predicates}$ 
+    \State $\DecisionTree \gets \Call{LearnDT}{\Terms, \Predicates}$
     \If  { $\DecisionTree = \bot$ }
     \State $\Terms \gets \Terms \cup \Call{Enumerate}{\Grammar_T,\Points}$ \label{line:main:more_terms}
     \State $\Predicates \gets \Predicates \cup \Call{Enumerate}{\Grammar_P,\Points}$\label{line:main:more_preds}
@@ -581,9 +588,37 @@ best predicate to split on in the decision tree learning algorithm
 
 \section{Evaluation}
 \label{sec:evaluation}
+We built a prototype \sygus solver based on the ideas presented in
+this paper. The algorithms for enumeration were mainly implemented in
+about 3000 lines of Python code, while the algorithms for decision
+tree learning were implemented in about 3000 lines of
+C$\raisebox{1pt}{+\!+}$ code.
+
+Our experimental
+evaluation focuses on the following aspects:
+\begin{inparaenum}[(a)]
+\item
+time to find a solution,
+\item
+compactness of the discovered solutions,
+\item
+The most compact solution that the algorithm can discover within a
+fixed time budget.
+\end{inparaenum}
+All experiments were executed on a 32-core machine with four Intel
+Xeon E7-4820 processors running at 2.0 GHz, with a one hour time
+limit.
+
+\input{results_one_shot_table}
 
 \section{Related Work}
 \label{sec:related_work}
 
-\
+
+
+\bibliographystyle{plainnat}
+\setlength{\bibsep}{1pt}
+\begin{small}
+\bibliography{main}
+\end{small}
 \end{document}
