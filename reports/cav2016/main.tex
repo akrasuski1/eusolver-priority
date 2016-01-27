@@ -388,15 +388,18 @@ experiments}
 \section{The Divide-and-Conquer Enumeration Algorithm}
 \label{sec:algo}
 
-\subsection{Conditional Expressions}
+We first present some necessary definitions and concepts for the divide
+and conquer enumeration algorithm.
 
 \paragraph{Conditional Expression Grammars}
-We introduce conditional expressions grammars separate the grammar that
-generate the return value of the function to be synthesized $\SynthFun$,
-and the grammar the generates conditionals to decide which return value
-will be returned by $\SynthFun$.
-The predicates and terms generated are combined using if-then-else
-conditional operator.
+We introduce conditional expressions grammars that separate and
+expression grammar into two grammars to generate:
+\begin{inparaenum}[(a)]
+\item the return value expression, and 
+\item the conditionals that decide which return value is chosen
+\end{inparaenum}
+These generated return values (terms) and conditionals (predicates) are
+then combined using if-then-else conditional operator.
 Note that our techniques can be easily extended to use other conditional
 operators such as switch statements.
 
@@ -421,11 +424,12 @@ satisfy the following:
 \end{inparaenum}
 
 Most commonly occurring SyGuS grammars in practice can be rewritten
-as conditional expression grammars in a straightforward manner.
+as conditional expression grammars in a straightforward and automated
+manner.
+\arsays{In the \sygus 2015 competition, the grammars for x out of y
+benchmarks were decomposable into conditional expression grammars}
 However, it is easy to artificially construct a grammar that cannot be
 decomposed into a conditional expression grammar.
-The problem of deciding if a given expression grammar can be rewritten
-into a conditional expression grammar is open.
 
 \begin{example}
   For the running example, the LIA grammar from Example~\ref{ex:xxx} is
@@ -436,8 +440,20 @@ into a conditional expression grammar is open.
 \paragraph{Decision Trees and Decision Tree Learning}
 We use the concept of decision trees from machine learning literature to
 model conditional expressions.
-Given a conditional expressions, the predicates and terms act as
-attributes and labels in the corresponding decision tree.
+Informally, a decision tree $\DecisionTree$ computes a function
+$\sem{\DecisionTree}$ that maps samples to {\em labels}.
+Each internal node in a decision tree contains an {\em attribute} which
+may either hold or not for each sample, and each leaf node contains a
+label.
+In our setting, labels are terms, attributes are predicates, and samples
+are points.
+
+To compute the $\sem{\DecisionTree}$ label for a given point, we follow
+a path from the root of the decision tree to a leaf, taking the left
+(resp. right) child at each internal node if the attribute holds (resp.
+does not hold) for the sample.
+The required label is the label at the leaf.
+
 Formally, a {\em decision tree} $\DecisionTree$  is a tuple $\tuple{
 \Nodes, (\NodesInternal, \NodesLeaf), \node_0, \Edges, (\EdgesYes,
 \EdgesNo), \Attribute, \Label }$ where:
@@ -470,17 +486,23 @@ decision tree $\DecisionTree$ is defined as follows:
   where $(\node_0, \node_y) \in \EdgesYes$ and $(\node_0, \node_n) \in \EdgesNo$.
 \end{inparaenum}
 
-Learning decision trees from sample points is a commonly used technique
-in machine learning.
-Formally, a decision tree learning procedure is given a set of samples,
-labels, and attributes and returns a decision tree and \dots
-In our setting, samples are points, attributes are predicates, and
-labels are terms.
-We use the procedure {\tt LearnDT} to denote a generic decision tree
-learning procedure.
+Decision tree learning is a technique that learns a decision tree from a
+given set of samples.
+A decision tree learning procedure is given:
+\begin{inparaenum}[(a)]
+\item a set of samples (points),
+\item a set of labels (terms), along with a function that maps a label to the
+  subset of samples which it covers; and
+\item a set of attributes (predicates).
+\end{inparaenum}
+A sound decision tree learning algorithm returns a decision tree
+$\DecisionTree$ that classifies the points correctly, i.e., for every
+sample $\Point$, the label $\sem{\DecisionTree}(\Point)$ covers the
+point.
+We use the notation {\tt LearnDT} to denote a generic sound
+decision tree learning procedure.
 The exact procedure we use for decision tree learning in
 Section~\ref{sec:decision_trees}.
-\arsays{This paragraph is terrible}
 
 \subsection{Algorithm}
 \label{sec:algo}
@@ -524,12 +546,14 @@ In the next step (lines~\ref{line:main:xxx}-\ref{line:main:yyy}), we
 generate a set of predicates $\Predicates$ that will be used as
 conditionals to combine the terms from $\Terms$ into if-then-else
 expressions.
-In each iteration, we attempt to learn a decision tree \dots
-\arsays{complete this}
-\arsays{algorithm is incomplete without adding terms}
-Note that by the properties of the decision tree learning algorithm, and
-we have that $\DTtoExpr{\DecisionTree}$ is correct on every $\Point \in
-\Points$.
+In each iteration, we attempt to learn a decision tree that correctly
+label each point $\Point \in \Points$ with a term $\Term$ such that
+$\Point \in \Cover(\Term)$.
+If such a decision tree $\DecisionTree$ exists, the conditional
+expression $\DTtoExpr{\DecisionTree}$ is correct on all points, i.e.,
+$\DTtoExpr{\DecisionTree} \models \Spec \downharpoonleft \Points$.
+If a decision tree does not exist, we generate additional terms and
+predicates and retry.
 
 \begin{algorithm}
   \begin{algorithmic}[1]
@@ -604,17 +628,19 @@ attribute $\Pred$), and positive and negative edges to the roots of the
 left and right sub-trees, respectively.
 
 \begin{algorithm}
-  \begin{algorithmic}
-    \Require $\Points$, $\Cover$, $\Predicates$
+  \begin{algorithmic}[1]
+    \Require $\Points$, ($\Terms$, $\Cover$), $\Predicates$
     \Ensure Decision tree $\DecisionTree$
     \If { $\exists \Term : \Cover[\Terms] \supseteq \Points$ }\label{line:dt:single}
     \Return $\mathit{LeafNode}[\Label \gets \Term]$ \label{line:dt:leaf}
     \EndIf
-    \State $\Pred \gets \mbox{Pick best predicate from $\Predicates$}$\label{line:dt:pick_pred}
-    \State $L \gets \Call{LearnDT}{\{ \Point \mid \Predicates[\Point], \Cover, \Predicates \}}$\label{line:dt:left})
-    \State $R \gets \Call{LearnDT}{\{ \Point \mid \neg \Predicates[\Point], \Cover, \Predicates \}}$\label{line:dt:right})
+    \State $\Pred \gets \mbox{Pick predicate from $\Predicates$}$\label{line:dt:pick_pred}
+    \State $L \gets \Call{LearnDT}{\{ \Point \mid \Predicates[\Point] \}, \Cover, \Predicates }$\label{line:dt:left})
+    \State $R \gets \Call{LearnDT}{\{ \Point \mid \neg \Predicates[\Point] \}, \Cover, \Predicates }$\label{line:dt:right})
     \State \Return $\mathit{InternalNode}[\Attribute \gets \Pred,  left \gets L , right \gets R ]$
   \end{algorithmic}
+  \label{algo:dt_learning}
+  \caption{Learning Decision Trees}
 \end{algorithm}
 
 \begin{example}
@@ -622,11 +648,28 @@ left and right sub-trees, respectively.
 \end{example}
 
 \paragraph{Frequency based priors}
-We now present the information gain heuristic we use for picking the
-best predicate to split on in the decision tree learning algorithm.
+The choice of the predicate at line~\ref{line:dt:pick_pred} influences
+the size of the decision tree learned by
+Algorithm~\ref{algo:dt_learning}, and hence, in our setting, the size of
+the solution expression generated.
+We now present the classical information gain heuristic we use for
+picking the predicates to split.
+Informally, the information gain heuristic attempts to maximize the
+knowledge about the information \arsays{What the hell does it do
+informally?}
+We do not describe all aspects of computing information gain fully, but
+refer the reader to any standard textbook on machine learning (see, for
+example,~\cite{xxx}).
+
+The information gain heuristic is based on defining prior
+probabilities that approximate the likelihood of a given point $\Point$
+being labelled by a given term $\Term$.
 
 \subsection{Features and Optimizations}
 \label{sec:optimizations}
+
+We will now discuss several features and optimizations for
+Algorithm~\ref{algo:main}.
 
 \paragraph{Anytime Synthesis}
 
