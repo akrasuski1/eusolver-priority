@@ -1,0 +1,17 @@
+@@@@@@@max4@@@@@@@
+
+$*$*$*$*/python3 solvers.py 3600 max 4$*$*$*$[solvers.main]: Started max 4 , running one solution version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+----------------------------------------------
+Solution Size                : 36
+Solution Time from start (s) : 0.769462
+DT Size                      : 15
+Num Dist. Terms Enumerated   : 14
+Num Dist. Preds Enumerated   : 13
+Max Term Size Enumerated     : 3
+Max Pred Size Enumerated     : 3
+Num Points                   : 55
+Solution                     : (ite (<= _arg_3 _arg_2) (ite (<= _arg_1 _arg_2) (ite (<= _arg_2 _arg_0) _arg_0 _arg_2) (ite (<= _arg_0 _arg_1) _arg_1 _arg_0)) (ite (<= _arg_3 _arg_0) (ite (<= _arg_0 _arg_1) _arg_1 _arg_0) (ite (<= _arg_3 _arg_1) _arg_1 _arg_3)))
+----------------------------------------------
+[solvers.main]: Exiting gracefully...

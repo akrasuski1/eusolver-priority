@@ -1,0 +1,26 @@
+@@@@@@@max15@@@@@@@
+
+Traceback (most recent call last):
+  File "solvers.py", line 896, in <module>
+    test_solver_max(max_cardinality, run_anytime_version)
+  File "solvers.py", line 731, in test_solver_max
+    _do_solve(solver, term_generator, pred_generator, run_anytime_version)
+  File "solvers.py", line 636, in _do_solve
+    for sol_tuple in solver.solve(term_generator, pred_generator):
+  File "solvers.py", line 610, in solve
+    r = next(unifier_state)
+  File "solvers.py", line 538, in unify
+    self.syn_ctx)
+  File "solvers.py", line 127, in decision_tree_to_guard_term_list
+    term_list, syn_ctx, retval, [])
+  File "solvers.py", line 108, in _decision_tree_to_guard_term_list_internal
+    retval.append((syn_ctx.make_ac_function_expr('and', *guard_stack),
+  File "/scratch/users/audupa/eusolver/src/synthesis_context.py", line 151, in make_ac_function_expr
+    return self.make_function_expr(function_name_or_info, *child_exps)
+  File "/scratch/users/audupa/eusolver/src/synthesis_context.py", line 132, in make_function_expr
+    function_info = self.make_function(function_name_or_info, *child_exps)
+  File "/scratch/users/audupa/eusolver/src/synthesis_context.py", line 103, in make_function
+    function_info = instantiator.instantiate(function_name, arg_types)
+  File "/scratch/users/audupa/eusolver/src/semantics_types.py", line 261, in instantiate
+    if (not isinstance(child_exps[0], exprtypes.TypeBase)):
+IndexError: tuple index out of range

@@ -1,0 +1,7 @@
+@@@@@@@max14@@@@@@@
+
+$*$*$*$*/python3 solvers.py 3600 max 14$*$*$*$[solvers.main]: Started max 14 , running one solution version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+[solvers.main]: Timed out!
+[solvers.main]: Trying to exit gracefully...
