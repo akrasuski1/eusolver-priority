@@ -68,7 +68,7 @@
 \newcommand\Edges{E}
 \newcommand\Attribute{\mathcal{A}}
 \newcommand\Label{\mathcal{L}}
-\newcommand{\sygus}{{\sffamily\fontsize{8}{10}\selectfont SyGuS}\xspace}
+\newcommand{\sygus}{{\sffamily\fontsize{8.5}{10}\selectfont SyGuS}\xspace}
 
 % Make floats and equations behave sensibly
 \setlength{\intextsep}{1pt}
@@ -588,28 +588,36 @@ best predicate to split on in the decision tree learning algorithm
 
 \section{Evaluation}
 \label{sec:evaluation}
+% \input{results_one_shot_table}
+\input{results_anytime_table}
+
 We built a prototype \sygus solver based on the ideas presented in
-this paper. The algorithms for enumeration were mainly implemented in
+this paper. The algorithms for enumeration were implemented in
 about 3000 lines of Python code, while the algorithms for decision
 tree learning were implemented in about 3000 lines of
-C$\raisebox{1pt}{+\!+}$ code.
+C$\raisebox{1pt}{+\!+}$ code. All experiments were executed on a
+32-core machine with four Intel Xeon E7-4820 processors running at 2.0
+GHz, and 128 GB of memory, with a one hour time limit.
 
-Our experimental
-evaluation focuses on the following aspects:
+We seek to empirically evaluate how our synthesis algorithm compares
+to other state-of-the-art synthesis techniques along the following
+dimensions:
 \begin{inparaenum}[(a)]
 \item
-time to find a solution,
+\emph{Performance}: How quickly can the algorithms arrive at a correct
+solution?
 \item
-compactness of the discovered solutions,
+\emph{Quality}: How \emph{good} are the solutions produced by the
+algorithms? We use compactness of solutions, in terms of syntactic
+size, as a metric for the quality of solutions.
 \item
-The most compact solution that the algorithm can discover within a
-fixed time budget.
+\emph{Impact of allowing additional time}: How significant is the
+improvement in the quality of the solutions generated, provided the
+algorithm is given an additional (but fixed) time budget.
 \end{inparaenum}
-All experiments were executed on a 32-core machine with four Intel
-Xeon E7-4820 processors running at 2.0 GHz, with a one hour time
-limit.
+We now discuss how our algorithm matches up against the existing
+techniques along each of these dimensions, using to data from Tables
 
-\input{results_one_shot_table}
 
 \section{Related Work}
 \label{sec:related_work}
