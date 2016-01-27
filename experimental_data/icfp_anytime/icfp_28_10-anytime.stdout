@@ -1,0 +1,17 @@
+@@@@@@@icfp_28_10-anytime@@@@@@@
+
+$*$*$*$*/python3 solvers.py --anytime 3600 icfp ../benchmarks/icfp/icfp_28_10.sl$*$*$*$[solvers.main]: Started icfp ../benchmarks/icfp/icfp_28_10.sl , running anytime version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+----------------------------------------------
+Solution Size                : 2
+Solution Time from start (s) : 0.039123
+DT Size                      : 0
+Num Dist. Terms Enumerated   : 1
+Num Dist. Preds Enumerated   : 0
+Max Term Size Enumerated     : 2
+Max Pred Size Enumerated     : 0
+Num Points                   : 1
+Solution                     : (shr16 _arg_0)
+----------------------------------------------
+[solvers.main]: Exiting gracefully...

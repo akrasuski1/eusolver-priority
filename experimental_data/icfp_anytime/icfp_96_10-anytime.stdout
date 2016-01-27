@@ -1,0 +1,128 @@
+@@@@@@@icfp_96_10-anytime@@@@@@@
+
+$*$*$*$*/python3 solvers.py --anytime 3600 icfp ../benchmarks/icfp/icfp_96_10.sl$*$*$*$[solvers.main]: Started icfp ../benchmarks/icfp/icfp_96_10.sl , running anytime version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+----------------------------------------------
+Solution Size                : 57
+Solution Time from start (s) : 12.471726
+DT Size                      : 13
+Num Dist. Terms Enumerated   : 8
+Num Dist. Preds Enumerated   : 9
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 6
+Num Points                   : 9
+Solution                     : (ite (is1 (bvand #x0000000000000001 _arg_0)) (ite (is1 (bvand (shr1 (shr16 _arg_0)) #x0000000000000001)) (shr4 _arg_0) (bvadd #x0000000000000001 _arg_0)) (ite (is1 (bvand (shr16 _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr1 _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr1 (shr4 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr1 (shr1 _arg_0)) #x0000000000000001)) (bvor (shr4 _arg_0) #x0000000000000001) (bvor (shl1 #x0000000000000001) _arg_0)) (shr1 (shl1 _arg_0))) (shr4 _arg_0)) _arg_0))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 29
+Solution Time from start (s) : 12.618907
+DT Size                      : 7
+Num Dist. Terms Enumerated   : 8
+Num Dist. Preds Enumerated   : 13
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 6
+Num Points                   : 9
+Solution                     : (ite (is1 (bvand (shr4 (shr16 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr1 (bvnot _arg_0)) #x0000000000000001)) (shr4 _arg_0) (bvor (shr4 _arg_0) #x0000000000000001)) (ite (is1 (bvand #x0000000000000001 _arg_0)) (bvadd #x0000000000000001 _arg_0) _arg_0))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 30
+Solution Time from start (s) : 45.598451
+DT Size                      : 7
+Num Dist. Terms Enumerated   : 9
+Num Dist. Preds Enumerated   : 22
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 7
+Num Points                   : 9
+Solution                     : (ite (is1 (bvand (shr4 (shr16 _arg_0)) #x0000000000000001)) (ite (is1 (shr1 (bvxor (bvadd #x0000000000000001 _arg_0) _arg_0))) (shr4 _arg_0) (bvor (shr4 _arg_0) #x0000000000000001)) (ite (is1 (bvand #x0000000000000001 _arg_0)) (bvadd #x0000000000000001 _arg_0) _arg_0))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 34
+Solution Time from start (s) : 63.127605
+DT Size                      : 7
+Num Dist. Terms Enumerated   : 10
+Num Dist. Preds Enumerated   : 46
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 7
+Num Points                   : 10
+Solution                     : (ite (is1 (bvand (shr4 (shr16 (bvnot _arg_0))) #x0000000000000001)) (ite (is1 (bvand (bvand (shr16 _arg_0) #x0000000000000001) _arg_0)) (bvadd #x0000000000000001 _arg_0) _arg_0) (ite (is1 (bvand (bvand (shr16 _arg_0) #x0000000000000001) _arg_0)) (shr4 _arg_0) (bvor (shr4 _arg_0) #x0000000000000001)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 34
+Solution Time from start (s) : 63.643586
+DT Size                      : 7
+Num Dist. Terms Enumerated   : 10
+Num Dist. Preds Enumerated   : 48
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 7
+Num Points                   : 10
+Solution                     : (ite (is1 (bvand (shr4 (shr16 (bvnot _arg_0))) #x0000000000000001)) (ite (is1 (bvand (bvand (shr16 _arg_0) #x0000000000000001) _arg_0)) (bvadd #x0000000000000001 _arg_0) _arg_0) (ite (is1 (bvand (bvxor (shr16 _arg_0) _arg_0) #x0000000000000001)) (bvor (shr4 _arg_0) #x0000000000000001) (shr4 _arg_0)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 35
+Solution Time from start (s) : 426.869119
+DT Size                      : 7
+Num Dist. Terms Enumerated   : 10
+Num Dist. Preds Enumerated   : 62
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 8
+Num Points                   : 10
+Solution                     : (ite (is1 (bvand (bvand (shr1 (shr16 _arg_0)) #x0000000000000001) _arg_0)) (shr4 _arg_0) (ite (is1 (bvand (shr4 (shr16 (bvnot _arg_0))) #x0000000000000001)) (ite (is1 (bvand (bvand (shr16 _arg_0) #x0000000000000001) _arg_0)) (bvadd #x0000000000000001 _arg_0) _arg_0) (bvor (shr4 _arg_0) #x0000000000000001)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 35
+Solution Time from start (s) : 439.548619
+DT Size                      : 7
+Num Dist. Terms Enumerated   : 10
+Num Dist. Preds Enumerated   : 88
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 8
+Num Points                   : 10
+Solution                     : (ite (is1 (bvand (bvand (shr1 (shr16 _arg_0)) #x0000000000000001) _arg_0)) (shr4 _arg_0) (ite (is1 (bvand (shr4 (shr16 _arg_0)) #x0000000000000001)) (bvor (shr4 _arg_0) #x0000000000000001) (ite (is1 (bvand (shr1 (shr1 (shr4 (shr4 _arg_0)))) #x0000000000000001)) _arg_0 (bvadd #x0000000000000001 _arg_0))))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 49
+Solution Time from start (s) : 440.204400
+DT Size                      : 9
+Num Dist. Terms Enumerated   : 10
+Num Dist. Preds Enumerated   : 94
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 8
+Num Points                   : 10
+Solution                     : (ite (is1 (bvand (bvand (shr1 (shr16 _arg_0)) #x0000000000000001) _arg_0)) (shr4 _arg_0) (ite (is1 (bvand (shr4 (shr16 (shr16 (shl1 _arg_0)))) #x0000000000000001)) (ite (is1 (bvand (shr1 (bvadd (shr4 _arg_0) #x0000000000000001)) #x0000000000000001)) (bvor (shr4 _arg_0) #x0000000000000001) (ite (is1 (bvand (shr4 (shr4 (shr4 _arg_0))) #x0000000000000001)) (bvadd #x0000000000000001 _arg_0) _arg_0)) (bvor (shl1 #x0000000000000001) _arg_0)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 50
+Solution Time from start (s) : 446.763854
+DT Size                      : 9
+Num Dist. Terms Enumerated   : 10
+Num Dist. Preds Enumerated   : 124
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 8
+Num Points                   : 10
+Solution                     : (ite (is1 (bvand (bvand (shr1 (shr16 _arg_0)) #x0000000000000001) _arg_0)) (shr4 _arg_0) (ite (is1 (bvand (shr4 (shr16 (shr16 (shl1 _arg_0)))) #x0000000000000001)) (ite (is1 (bvand (shr1 (bvadd (shr4 _arg_0) #x0000000000000001)) #x0000000000000001)) (bvor (shr4 _arg_0) #x0000000000000001) (ite (is1 (bvand (bvnot (bvxor (shr4 _arg_0) _arg_0)) #x0000000000000001)) _arg_0 (bvadd #x0000000000000001 _arg_0))) (bvor (shl1 #x0000000000000001) _arg_0)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 37
+Solution Time from start (s) : 448.237393
+DT Size                      : 7
+Num Dist. Terms Enumerated   : 10
+Num Dist. Preds Enumerated   : 130
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 8
+Num Points                   : 10
+Solution                     : (ite (is1 (bvand (bvor (shr4 (shr16 _arg_0)) _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr1 (shr1 (shr16 (bvnot _arg_0)))) #x0000000000000001)) (shr4 _arg_0) (ite (is1 (bvand (bvnot (bvxor (shr4 _arg_0) _arg_0)) #x0000000000000001)) (bvxor (shr4 _arg_0) #x0000000000000001) (bvadd #x0000000000000001 _arg_0))) _arg_0)
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 37
+Solution Time from start (s) : 450.819510
+DT Size                      : 7
+Num Dist. Terms Enumerated   : 10
+Num Dist. Preds Enumerated   : 142
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 8
+Num Points                   : 10
+Solution                     : (ite (is1 (bvand (bvor (shr4 (shr16 _arg_0)) _arg_0) #x0000000000000001)) (ite (is1 (bvand (bvxor (shr16 _arg_0) (shr1 _arg_0)) #x0000000000000001)) (shr4 _arg_0) (ite (is1 (bvand (bvnot (bvxor (shr4 _arg_0) _arg_0)) #x0000000000000001)) (bvxor (shr4 _arg_0) #x0000000000000001) (bvadd #x0000000000000001 _arg_0))) _arg_0)
+----------------------------------------------
+[solvers.main: Memory out!
+[solvers.main: Trying to exit gracefully...

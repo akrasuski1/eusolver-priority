@@ -1,0 +1,9 @@
+@@@@@@@icfp_39_100-anytime@@@@@@@
+
+Exception ignored in: <bound method Context.__del__ of <z3.Context object at 0x7fecffffbb38>>
+Traceback (most recent call last):
+  File "/scratch/users/audupa/eusolver/thirdparty/z3/build/z3.py", line 171, in __del__
+    self.lib.Z3_del_context(self.ctx)
+  File "solvers.py", line 863, in _memout_checker
+    sys.exit(1)
+SystemExit: 1

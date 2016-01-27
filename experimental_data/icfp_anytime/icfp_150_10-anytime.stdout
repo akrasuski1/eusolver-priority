@@ -1,0 +1,95 @@
+@@@@@@@icfp_150_10-anytime@@@@@@@
+
+$*$*$*$*/python3 solvers.py --anytime 3600 icfp ../benchmarks/icfp/icfp_150_10.sl$*$*$*$[solvers.main]: Started icfp ../benchmarks/icfp/icfp_150_10.sl , running anytime version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+----------------------------------------------
+Solution Size                : 51
+Solution Time from start (s) : 1.660414
+DT Size                      : 11
+Num Dist. Terms Enumerated   : 3
+Num Dist. Preds Enumerated   : 5
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 5
+Num Points                   : 6
+Solution                     : (ite (is1 (bvand (shr1 _arg_0) #x0000000000000001)) (ite (is1 (bvand (bvnot _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr16 _arg_0) #x0000000000000001)) (shr16 (shl1 _arg_0)) (shr1 (shr4 (bvnot _arg_0)))) (shr16 (shl1 _arg_0))) (ite (is1 (bvand (bvnot _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr16 _arg_0) #x0000000000000001)) (shr16 (shl1 _arg_0)) (shr1 (shr4 (bvnot _arg_0)))) (shr1 (shr4 (bvnot _arg_0)))))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 52
+Solution Time from start (s) : 5.735887
+DT Size                      : 11
+Num Dist. Terms Enumerated   : 3
+Num Dist. Preds Enumerated   : 9
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 6
+Num Points                   : 7
+Solution                     : (ite (is1 (bvand (shr1 (bvnot _arg_0)) #x0000000000000001)) (ite (is1 (bvand (bvnot _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr16 _arg_0) #x0000000000000001)) (shr16 (shl1 _arg_0)) (shr1 (shr4 (bvnot _arg_0)))) (shr1 (shr4 (bvnot _arg_0)))) (ite (is1 (bvand (bvnot _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr16 _arg_0) #x0000000000000001)) (shr16 (shl1 _arg_0)) (shr1 (shr4 (bvnot _arg_0)))) (shr16 (shl1 _arg_0))))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 52
+Solution Time from start (s) : 5.936813
+DT Size                      : 11
+Num Dist. Terms Enumerated   : 3
+Num Dist. Preds Enumerated   : 13
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 6
+Num Points                   : 7
+Solution                     : (ite (is1 (bvand (shr1 _arg_0) #x0000000000000001)) (ite (is1 (bvand (bvnot _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr16 _arg_0) #x0000000000000001)) (shr16 (shl1 _arg_0)) (shr1 (shr4 (bvnot _arg_0)))) (shr16 (shl1 _arg_0))) (ite (is1 (bvand (bvnot _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr4 (bvnot _arg_0)) #x0000000000000001)) (shr1 (shr4 (bvnot _arg_0))) (shr16 (shl1 _arg_0))) (shr1 (shr4 (bvnot _arg_0)))))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 42
+Solution Time from start (s) : 7.652031
+DT Size                      : 9
+Num Dist. Terms Enumerated   : 3
+Num Dist. Preds Enumerated   : 9
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 6
+Num Points                   : 8
+Solution                     : (ite (is1 (bvand (shr1 (shr16 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (bvnot _arg_0) #x0000000000000001)) (ite (is1 (bvand (shr16 _arg_0) #x0000000000000001)) (shr16 (shl1 _arg_0)) (shr1 (shr4 (bvnot _arg_0)))) (ite (is1 (bvand (shr16 _arg_0) #x0000000000000001)) (shr1 (shr4 (bvnot _arg_0))) (shr16 (shl1 _arg_0)))) (shr16 (shl1 _arg_0)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 24
+Solution Time from start (s) : 9.364754
+DT Size                      : 5
+Num Dist. Terms Enumerated   : 3
+Num Dist. Preds Enumerated   : 16
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 6
+Num Points                   : 9
+Solution                     : (ite (is1 (bvand (shr16 (shr16 _arg_0)) #x0000000000000001)) (ite (is1 (bvand (shr1 (shr16 _arg_0)) #x0000000000000001)) (shr1 (shr4 (bvnot _arg_0))) (shr16 (shl1 _arg_0))) (shr16 (shl1 _arg_0)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 25
+Solution Time from start (s) : 42.813072
+DT Size                      : 5
+Num Dist. Terms Enumerated   : 3
+Num Dist. Preds Enumerated   : 39
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 7
+Num Points                   : 9
+Solution                     : (ite (is1 (bvand (shr16 (shr16 (shr16 _arg_0))) #x0000000000000001)) (ite (is1 (bvand (shr16 (shr16 _arg_0)) #x0000000000000001)) (shr1 (shr4 (bvnot _arg_0))) (shr16 (shl1 _arg_0))) (shr16 (shl1 _arg_0)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 26
+Solution Time from start (s) : 42.966882
+DT Size                      : 5
+Num Dist. Terms Enumerated   : 3
+Num Dist. Preds Enumerated   : 40
+Max Term Size Enumerated     : 4
+Max Pred Size Enumerated     : 7
+Num Points                   : 9
+Solution                     : (ite (is1 (bvand (shr16 (shr16 (shr16 _arg_0))) #x0000000000000001)) (ite (is1 (bvand (shr16 (shr16 (bvnot _arg_0))) #x0000000000000001)) (shr16 (shl1 _arg_0)) (shr1 (shr4 (bvnot _arg_0)))) (shr16 (shl1 _arg_0)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 27
+Solution Time from start (s) : 370.353313
+DT Size                      : 5
+Num Dist. Terms Enumerated   : 3
+Num Dist. Preds Enumerated   : 113
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 8
+Num Points                   : 9
+Solution                     : (ite (is1 (bvand (shr16 (shr16 (shr16 (bvnot _arg_0)))) #x0000000000000001)) (shr16 (shl1 _arg_0)) (ite (is1 (bvand (shr16 (shr16 (bvnot _arg_0))) #x0000000000000001)) (shr16 (shl1 _arg_0)) (shr1 (shr4 (bvnot _arg_0)))))
+----------------------------------------------
+[solvers.main: Memory out!
+[solvers.main: Trying to exit gracefully...

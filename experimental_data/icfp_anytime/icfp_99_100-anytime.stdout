@@ -1,0 +1,40 @@
+@@@@@@@icfp_99_100-anytime@@@@@@@
+
+$*$*$*$*/python3 solvers.py --anytime 3600 icfp ../benchmarks/icfp/icfp_99_100.sl$*$*$*$[solvers.main]: Started icfp ../benchmarks/icfp/icfp_99_100.sl , running anytime version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+----------------------------------------------
+Solution Size                : 18
+Solution Time from start (s) : 321.974792
+DT Size                      : 5
+Num Dist. Terms Enumerated   : 5
+Num Dist. Preds Enumerated   : 2
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 5
+Num Points                   : 4
+Solution                     : (ite (is1 (bvand (shr4 _arg_0) #x0000000000000001)) #x0000000000000000 (ite (is1 (bvand #x0000000000000001 _arg_0)) _arg_0 (bvadd (shr4 (shr16 _arg_0)) _arg_0)))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 19
+Solution Time from start (s) : 508.816099
+DT Size                      : 5
+Num Dist. Terms Enumerated   : 6
+Num Dist. Preds Enumerated   : 12
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 6
+Num Points                   : 6
+Solution                     : (ite (is1 (bvand (shr4 _arg_0) #x0000000000000001)) #x0000000000000000 (ite (is1 (bvand (bvnot _arg_0) #x0000000000000001)) (bvadd (shr4 (shr16 _arg_0)) _arg_0) _arg_0))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 22
+Solution Time from start (s) : 796.818105
+DT Size                      : 5
+Num Dist. Terms Enumerated   : 6
+Num Dist. Preds Enumerated   : 44
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 8
+Num Points                   : 6
+Solution                     : (ite (is1 (bvand (shr4 (bvnot _arg_0)) #x0000000000000001)) (ite (is1 (bvand (bvxor (shr4 _arg_0) _arg_0) #x0000000000000001)) _arg_0 (bvadd (shr4 (shr16 _arg_0)) _arg_0)) #x0000000000000000)
+----------------------------------------------
+[solvers.main: Memory out!
+[solvers.main: Trying to exit gracefully...

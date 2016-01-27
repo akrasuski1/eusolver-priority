@@ -1,0 +1,7 @@
+@@@@@@@icfp_9_1000-anytime@@@@@@@
+
+$*$*$*$*/python3 solvers.py --anytime 3600 icfp ../benchmarks/icfp/icfp_9_1000.sl$*$*$*$[solvers.main]: Started icfp ../benchmarks/icfp/icfp_9_1000.sl , running anytime version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+[solvers.main]: Timed out!
+[solvers.main]: Trying to exit gracefully...

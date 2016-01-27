@@ -1,0 +1,9 @@
+@@@@@@@icfp_118_10-anytime@@@@@@@
+
+Exception ignored in: <bound method BitSet.__del__ of <eusolver.BitSet object at 0x7ff505eeb0b8>>
+Traceback (most recent call last):
+  File "/scratch/users/audupa/eusolver/thirdparty/libeusolver/build/eusolver.py", line 543, in __del__
+    def __del__(self):
+  File "solvers.py", line 863, in _memout_checker
+    sys.exit(1)
+SystemExit: 1

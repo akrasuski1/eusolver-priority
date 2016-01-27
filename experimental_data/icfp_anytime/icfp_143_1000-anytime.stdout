@@ -1,0 +1,29 @@
+@@@@@@@icfp_143_1000-anytime@@@@@@@
+
+$*$*$*$*/python3 solvers.py --anytime 3600 icfp ../benchmarks/icfp/icfp_143_1000.sl$*$*$*$[solvers.main]: Started icfp ../benchmarks/icfp/icfp_143_1000.sl , running anytime version.
+[solvers.main]: Setting time limit to 3600 seconds
+[solvers.main]: Memory limit is 2147483648 bytes.
+----------------------------------------------
+Solution Size                : 16
+Solution Time from start (s) : 1412.498479
+DT Size                      : 3
+Num Dist. Terms Enumerated   : 4
+Num Dist. Preds Enumerated   : 1
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 5
+Num Points                   : 3
+Solution                     : (ite (is1 (bvand (shr1 _arg_0) #x0000000000000001)) (shr1 (shr1 (shr1 (bvnot _arg_0)))) (bvnot (shr16 (shr16 (bvnot _arg_0)))))
+----------------------------------------------
+----------------------------------------------
+Solution Size                : 17
+Solution Time from start (s) : 1443.465675
+DT Size                      : 3
+Num Dist. Terms Enumerated   : 4
+Num Dist. Preds Enumerated   : 4
+Max Term Size Enumerated     : 5
+Max Pred Size Enumerated     : 6
+Num Points                   : 3
+Solution                     : (ite (is1 (bvand (shr1 (bvnot _arg_0)) #x0000000000000001)) (bvnot (shr16 (shr16 (bvnot _arg_0)))) (shr1 (shr1 (shr1 (bvnot _arg_0)))))
+----------------------------------------------
+[solvers.main: Memory out!
+[solvers.main: Trying to exit gracefully...
