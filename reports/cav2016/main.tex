@@ -2,6 +2,7 @@
 
 \sloppy
 
+\usepackage{marginnote}
 \usepackage{lmodern}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -25,6 +26,8 @@
 \newcommand\comment[1]{}
 \newcommand\arsays[1]{{\bf AR: #1}}
 \newcommand\ausays[1]{{\bf AU: #1}}
+
+\renewcommand\subparagraph[1]{\smallskip\noindent{\em #1.}}
 
 \newcommand{\ie}{\emph{i.e.}}
 \renewcommand{\bibname}{References}
@@ -97,6 +100,15 @@
 \setlength\belowcaptionskip{1pt}
 
 \begin{document}
+\arsays{TODO:}
+\begin{compactitem}
+\item Change main algo to check for distinctness on points in a
+  straightforward manner
+\item
+\end{compactitem}
+
+\newpage
+
 \pagestyle{plain}
 \title{Scaling Enumerative Program Synthesis via Divide and Conquer}
 % \author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
@@ -142,10 +154,141 @@
   solvers.
 \end{abstract}
 
-\arsays{Change main algo to check for distinctness on points}
-
 \section{Introduction}
 \label{sec:intro}
+
+\marginnote{Para 1 {Synthesis background and SyGuS as an enabling
+technology}}
+Program synthesis is an increasingly popular technique \dots
+The aim is to allow
+Recent research into inductive program synthesis
+
+Syntax-guided synthesis (\sygus) is a recent paradigm in program
+synthesis proposed as an enabling technology \dots
+In the \sygus approach, there are restrictions on both the form (syntax)
+and function (semantics) of the program to be synthesized:
+\begin{inparaenum}[(a)]
+\item The syntactic restrictions are given in terms of a context-free
+  grammar
+\item
+\end{inparaenum}
+
+\marginnote{Para 2 {\sygus approaches and enumerative solver +
+limitations}}
+\sygus solvers can be broadly categorized into two kinds:
+\begin{inparaenum}[(a)]
+\item black-box solvers, which do not deal with the specification
+  directly, but learn constraints on how a potential solution should
+  behave on sample input points~\cite{enumerative,stochastic,alchemist,etc};
+  and
+\item white-box solvers, which attempt to either rewrite or solve the
+  specification directly using constraint solving
+  techniques~\cite{cvc4,alur-2015}.
+\end{inparaenum}
+Of the black-box solvers, the most successful, despite its simplicity,
+has been the enumerative solver which won the \sygus competition 2014
+and placed second in \sygus competition 2014~\cite{xxx}.
+The enumerative solver maintains a set of concrete input points, and
+in each iteration attempts to produce an expression that is correct on
+these concrete inputs.
+It does so by enumerating expressions from the grammar and checking if
+they are correct on the input points, while pruning away expressions
+that behave equivalently to already generated expressions.
+If an expression that is correct on the input points is found, it is
+verified against the full specification.
+If it is incorrect, a counter-example point is found and added to the
+set of input points.
+
+\marginnote{Para 3 {Problem and our solution to this}}
+While the enumerative approach is very successful, it does not scale
+well with the solution size.
+In Figure~\ref{figure:random_exponential_graph}, the x-axis represents
+expression size and the y-axis represents the time taken to enumerate
+all expressions of size up to the expression size.
+As can be seen from the graph, the time taken to explore potential
+solutions grows exponentially with size.
+
+\marginnote{Para 4 {Details of techniques, decision trees}}
+For combining the different part of the solution, we use the technique
+of learning decision trees~\cite{ID3,etc,probably_mitchell_book}.
+
+
+\marginnote{Para 5 {Other extensions. \arsays{I don't like this
+paragraph. It sounds like a ``this too is in the paper'' paragraph}}}
+\paragraph{Extensions}
+We present three separate extensions and optimizations to resolve
+various issues that arise in a practical implementation of the
+divide-and-conquer implementation.
+
+\subparagraph{Anytime extension}
+The anytime extension to the algorithm does not stop when the first
+solution is found, and instead continues enumerating terms and
+predicates in an attempt to produce more compact solutions.
+For example, suppose the synthesizer is attempting to produce a
+conditional equivalent to $x \geq 0 \wedge y \geq 0 \wedge x + y \leq
+2$.
+Using predicates of size $3$, the most compact solution the synthesizer
+can produce is $y \geq 0 \wedge ((x = 0 \wedge y \leq 2) \vee (x = 1
+\wedge y \leq 1) \vee (x = 2 \wedge y \leq 0))$.
+However, allowing the synthesizer to continue and further enumerate
+predicates of size $4$ lets it to produce the more compact original
+conditional.
+
+\subparagraph{Decision tree repair}
+During the enumeration process, a term (say $\Term$) which is correct on
+the same set of points as an already generated term (say $\Term'$) is
+discarded.
+However, it may be the case that $\Term$ is correct on a larger set of
+inputs than $\Term'$.
+Hence, if a counter-example is generated when verifying an expression
+$\Expr$ that uses $\Term'$, it might be possible to repair $\Expr$ to
+make it behave correctly on the counter-example by replacing $\Term'$
+with $\Term$.
+
+\subparagraph{Branch level verification}
+Another more technique we use to generate additional counter-examples
+from a given decision tree is to verify each branch (path from root to
+leaf) separately.
+Each such verification call may return additional counter-examples,
+leading to \dots
+
+\marginnote{Para 7 {Evaluation}}
+\paragraph{Evaluation}
+We implemented the above mention techniques in a prototype tool and
+evaluated it on benchmarks from the \sygus competition 2015, both in the
+linear integer arithmetic and the bit-vector domain.
+The tool was able to perform on par or better than existing solvers in
+both domains, and produced compact solutions.
+In the bit-vector domain, the tool was able to solve $47$ out of the
+$50$ problems in the ICFP suite of benchmarks in less than $1$ hour.
+To the best of our knowledge, no other solver has been able to solve the
+ICFP benchmarks given the syntactic restrictions.
+Further, we also evaluated if the anytime extension of the algorithm was
+able to produce more compact solutions given more time.
+In $22$ of the $47$ solved ICFP benchmarks, the anytime extension
+produced smaller solutions than the earliest generated one, with the
+smallest solution being $11\%$ of the earliest generated in the best
+case.
+In the linear integer arithmetic domain, the tool performed much better
+than existing black-box solvers scaling to larger instances.
+However, in the larger benchmarks, the size of the solution produced was
+larger than those produced by white-box solvers due to the decision tree
+learning algorithm producing larger than necessary decision trees.
+
+\marginnote{Para 8 {Summary}}
+\paragraph{Summary}
+Overall, this paper presents a divide-and-conquer approach to
+enumerative synthesis.
+The main contributions are as follows:
+\begin{compactitem}
+\item The main divide-and-conquer algorithm that enumerates only the
+  terms and predicates involved in the final solution and combines them
+  using a decision tree learning technique;
+\item Several novel extensions and optimizations leading to improved
+  quality of solutions and performance; and
+\item A prototype tool and experimental evaluation demonstrating the
+  scalability of the approach and quality of solutions produced.
+\end{compactitem}
 
 \section{Illustrative Examples}
 \label{sec:example}
@@ -292,8 +435,14 @@ be rewritten into a conjunctive normal form where each clause is either
 Point-wise (and in turn, simply separable) specifications allow us to
 define the notion of an expression $\Expr$ satisfying a specification
 $\Spec$ on a point $\Point$.
-\arsays{Formally, we say that $\Expr \models \Spec \downharpoonleft
-\Point$ if \dots}
+Formally, we say that $\Expr \models \Spec \downharpoonleft
+\Point$ if $\Expr$ satisfies the specification $\Spec \downharpoonleft
+\Point$ given by replacing each clause $C$ in the plainly separable
+specification by the formula $\mathit{Pre}_C(\Point) \implies C$.
+Here, the premise $\mathit{Pre}_C(\Point)$ is given by $\bigwedge_{p \in
+\FormalParameters} \mathit{Arg}_C(p) = \Point[p]$ where $\mathit{Arg}_C$ is the
+actual argument corresponding to the formal parameter $p$ in the
+unique invocation of $\SynthFun$ that occurs in $C$.
 We extend this definition to sets of points as follows: $\Expr \models
 \Spec \downharpoonleft \Points \Leftrightarrow \bigwedge_{\Point \in
 \Points} \Expr \models \Spec\downharpoonleft\Point$.
@@ -732,7 +881,7 @@ left and right sub-trees, respectively.
   \label{algo:dt_learning}
 \end{algorithm}
 
-\paragraph{Frequency based priors}
+\paragraph{Information-gain heuristic}
 The choice of the predicate at line~\ref{line:dt:pick_pred} influences
 the size of the decision tree learned by
 Algorithm~\ref{algo:dt_learning}, and hence, in our setting, the size of
