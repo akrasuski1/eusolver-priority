@@ -14,21 +14,20 @@
 \usepackage{mdwtab}
 \usepackage{multirow}
 \usepackage[square,numbers,sort&compress,comma,sectionbib]{natbib}
-\usepackage{hyperref}
-
-\renewcommand{\bibname}{References}
-\captionsetup{compatibility=false}
-
 \usepackage{wrapfig}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
-
 \usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{hyperref}
 
 \newcommand\comment[1]{}
 \newcommand\arsays[1]{{\bf AR: #1}}
 \newcommand\ausays[1]{{\bf AU: #1}}
 
+\newcommand{\ie}{\emph{i.e.}}
+\renewcommand{\bibname}{References}
 \newcommand\Integers{\mathbb{Z}}
 \newcommand\tuple[1]{\langle #1 \rangle}
 \newcommand\True{\mathit{True}}
@@ -95,7 +94,7 @@
 \setlength\belowcaptionskip{1pt}
 
 \begin{document}
-
+\pagestyle{plain}
 \title{Scaling Enumerative Program Synthesis via Divide and Conquer}
 % \author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
 \author{}
@@ -417,6 +416,25 @@ non-terminal $\StartSymbol$.
   smallest solution expression.
 \end{theorem}
 
+\begin{wrapfigure}{l}{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+width=5cm,
+height=5cm,
+xlabel=Expression Size,
+ylabel=Time to enumerate,
+tick align=outside,
+grid=both,
+xtick = {2, 4, 6, 8, 10},
+ytick = {0.0001, 0.01, 1, 100, 10000, 1000000, 10000000}
+]
+\addplot[mark=*,color=black] table {enumeration.dat};
+\end{semilogyaxis}
+\end{tikzpicture}
+\caption{Scalability of Enumeration}
+\label{figure:random_exponential_graph}
+\end{wrapfigure}
 \paragraph{Features and Limitations}
 The enumerative algorithm performs surprisingly well considering its
 simplicity on small to medium sized benchmarks
@@ -428,7 +446,7 @@ examples.
 
 However, enumeration quickly fails to scale with growing size of
 solutions.
-Figure~\ref{fig:scalability_graph} shows the time taken (in seconds) to
+Figure~\ref{figure:random_exponential_graph} shows the time taken (in seconds) to
 generate all distinct expressions up to a given size for the grammar
 shown in Figure~\ref{fig:bitvec_grammar}.
 As can be seen from the graph, the time taken grows exponentially with
@@ -735,11 +753,13 @@ te are comp \arsays{What's happening here?}
 
 Formally, we define:
 \[
-    \Prob{label(\Point) = t \mid \Point} = \left\{
-    \begin{array}{l l}
-      \frac{\Cover(\Term)}{\sum_{\Term' | \Point \in \Cover(\Term')} \Cover(\Term') } & \Point \in \Cover(\Term) \\
-        0  & \mbox{otherwise}
-    \end{array} \right.
+    \Prob{label(\Point) = t \mid \Point} =
+    \begin{cases}
+        \qquad\qquad\quad 0  & \mathrm{if}\ \Point \notin \Cover(\Term)\\
+      \displaystyle
+      \frac{\strut\displaystyle\Cover(\Term)}{\strut\displaystyle\sum_{\Term'
+          | \Point \in \Cover(\Term')} \Cover(\Term') } & \mathrm{if}\ \Point \in \Cover(\Term) \\
+    \end{cases}
 \]
 Now, the unconditional probability of an arbitrary point being labelled
 with $\Term$ is given by $\Prob{label(\Point) = \Term} = \sum_{\Point}
@@ -936,6 +956,15 @@ C$\raisebox{1pt}{+\!+}$ code. All experiments were executed on a
 32-core machine with four Intel Xeon E7-4820 processors running at 2.0
 GHz, and 128 GB of memory, with a one hour time limit.
 
+This section first sets up the questions that we would like for our
+experimental evaluation to answer, We then briefly describe
+the benchmarks used and comment on the state-of-the-art in solving
+these benchmarks, to provide some context to the reader.
+We then conclude this section with a discussion about our
+experimental observations.
+
+\subsection{Goals, Benchmarks and the State-of-the-art}
+\paragraph{Goals}
 We seek to empirically evaluate how our synthesis algorithm compares
 to other state-of-the-art synthesis techniques along the following
 dimensions:
@@ -949,7 +978,7 @@ algorithms? We use compactness of solutions, in terms of syntactic
 size, as a metric for the quality of solutions.
 \item
 \emph{Effect of continued execution}: How significant is the
-improvement in the quality of the solutions generated, provided the
+improvement in the quality of the solutions generated if the
 algorithm is given an additional (but fixed) time budget.
 \end{inparaenum}
 
@@ -992,8 +1021,7 @@ $n$, indicated in the first column.
 
 \paragraph{The State-of-the-art}
 One can broadly categorize the existing \sygus solvers into two
-categories:
-\begin{inparaenum}[(a)]
+categories:\begin{inparaenum}[(a)]
 \item
 \emph{Black-box solvers}, which do not leverage the correctness
 specification to guide the search for solutions. Some examples are
@@ -1013,6 +1041,7 @@ version of the na\"ive enumerative algorithm discussed earlier won the
 2014 \sygus competition and came in second in the 2015 \sygus
 competition, losing to the CVC4 solver, which came in first.
 
+\subsection{Discussion}
 Having set the context with respect to the benchmarks and contemporary
 solvers, we now proceed to a discussion on how the
 \dcsolve algorithm compares to contemporary solvers along the three
@@ -1022,17 +1051,14 @@ dimensions described earlier.
 As Table~\ref{table:anytime_results} demonstrates, our algorithm was
 able to produce a solution for 47 out of the 50 ICFP benchmarks,
 within an hour. We emphasize that we know of no other solver that has
-been able to provide satisfactory solutions to these benchmarks. The
-CVC4 solver did produce solutions when syntactic restrictions were
-lifted. However, upon closer inspection, we discovered that the
-solutions were just a huge case-split corresponding to the
-input-output examples that form the constraints for the
-problem. Although correct, the solutions performed no generalization
-and are unlikely to yield desired results on inputs that are not a
-part of the input-output examples provided as constraints.
-The solutions produced by our divide and conquer algorithm are quite
-compact, and most of them are computed in less than ten minutes, with
-only five benchmarks taking longer.
+been able to provide satisfactory solutions to these
+benchmarks. Further, as Figure~\ref{figure:random_exponential_graph}
+indicates, it would be impossible to explore expressions of the size
+indicated in Table~\ref{table:anytime_results} --- which are often
+larger than 20 --- using a na\"ive enumeration strategy, such as the
+one used by \esolver.  The solutions produced by our divide and
+conquer algorithm are quite compact, and most of them are computed in
+less than ten minutes, with only five benchmarks taking longer.
 
 Table~\ref{table:max_results} indicates that our algorithm is competitive
 with the state-of-the-art CVC4 solver on the parameterized ``max of
@@ -1043,24 +1069,42 @@ number of concrete counterexample points that the algorithm maintains,
 which in turn leads to the decision tree learning algorithms taking
 longer.
 
+To summarize, the \dcsolve algorithm demonstrates vastly better
+performance than other black-box solvers. Its performance is
+competitive with white-box solvers, while also being able to
+generalize well from input-output examples as we will now discuss.
+
 \paragraph{Quality of Solutions}
 In the case of the ICFP benchmarks, Table~\ref{table:anytime_results}
 indicates that most of the solutions that our algorithm generates are
 rather compact, and are of a size that are comprehensible to a
-human. We do not know if solutions smaller than these
-exist. Nonetheless, we wish to emphasize that no solution generated by
-our algorithm is a large conditional expression that matches inputs to
-outputs, unlike those generated by the CVC4 solver when syntactic
-restrictions are lifted. The solutions that we report are all compact
-expressions that perform some computation on the input, to return an
-output.
+human. We do not know if solutions smaller than these exist. The CVC4
+solver has been able to synthesize solutions for some of the ICFP
+benchmarks, but only when syntactic restrictions are lifted. However,
+upon closer inspection, we discovered that the solutions were just a
+large case-split corresponding to the input-output examples that form
+the constraints for the problem. Although technically correct, the
+solutions are extremely large, perform no generalization and are
+unlikely to be the intended or desired solutions. We emphasize
+that no solution generated by our algorithm is a similar large
+conditional expression that matches inputs to outputs. The solutions
+that we report are all compact expressions that perform some
+computation on the input, to return an output.
 
 In the case of the ``max'' benchmarks, we again see from
 Table~\ref{table:max_results} that our algorithm performs well for
 small parameter values, often beating the solutions obtained from the
 CVC4 solver in terms of size and number of comparisons. At larger
 parameter values, the solutions are still reasonably compact and not
-excessively large.
+excessively large. The reason for the somewhat larger solutions for
+larger parameter values is that the decision tree learning algorithm
+is not optimal, \ie, it does not guarantee the most compact decision
+tree. Instead a greedy heuristic is used, which rapidly yields
+suboptimal solutions as the number of samples (counterexample points)
+increases, as with the ``max'' benchmarks for larger
+parameter values. We intend to explore how we can adapt other
+heuristics~\cite{Madhu}, into the setting of our problem, in future
+work.
 
 \paragraph{Effect of Continued Execution}
 We observe from the last column in Table~\ref{table:anytime_results}
@@ -1079,7 +1123,8 @@ meant that larger terms and predicates were enumerated, thus leading
 to the overall expression sizes of the solutions to sometimes increase
 with time.
 
-Our experimental evaluation thus enables us to conclude that:
+Our experimental evaluation thus allows us to draw the following
+conclusions:
 \begin{inparaenum}[(a)]
 \item
 The \dcsolve algorithm is able to quickly learn compact solutions for
