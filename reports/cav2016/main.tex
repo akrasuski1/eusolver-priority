@@ -730,7 +730,6 @@ left and right sub-trees, respectively.
 \end{algorithm}
 
 \paragraph{Frequency based priors}
-\arsays{This is very badly written. In the middle of rewriting it...}
 The choice of the predicate at line~\ref{line:dt:pick_pred} influences
 the size of the decision tree learned by
 Algorithm~\ref{algo:dt_learning}, and hence, in our setting, the size of
@@ -744,20 +743,19 @@ information gained about the variable.
 We do not describe all aspects of computing information gain fully, but
 refer the reader to any standard textbook on machine learning (see, for
 example,~\cite{xxx}).
-Formally, given a set of samples, the information gain 
+Given a set of points and a predicate $\Pred$, the  
+Formally, the information gain is defined to be 
 \arsays{Copy formulae from Abhishek's thesis}
 
-The information gain heuristic is based on defining prior
-probabilities $\Prob{label(\Point) = \Term \mid \Point}$ that denotes
-the likelihood of a given point $\Point$ being labelled by a given term
-$\Term$.
-We define a prior that is based on the principle that the likelihood
-that a point is labelled with a term $\Term$ grows with the number of
-points covered by the $\Term$.
-Informally, this is justified as the decision tree learning algorithm is
-more likely to encounter a set of points can be labelled with a single
-te are comp \arsays{What's happening here?}
+Hence, at line~\ref{line:dt:pick_pred}, we compute the value $G(\Pred)$
+for each predicate in $\Predicates$, and pick the one which maximizes
+$G(\Pred)$.
 
+We use conditional probabilities $\Prob{label(\Point) = \Term \mid
+\Point}$ to compute $\Prob{label(\Point) = t}$.
+The assumption we make about the prior distribution is that the
+likelihood of a given point $\Point$ being labelled by a given term
+$\Term$ is proportional to the number of points in $\Cover(\Term)$.
 Formally, we define:
 \[
     \Prob{label(\Point) = t \mid \Point} =
