@@ -100,14 +100,14 @@
 \setlength\belowcaptionskip{1pt}
 
 \begin{document}
-\arsays{TODO:}
-\begin{compactitem}
-\item Change main algo to check for distinctness on points in a
-  straightforward manner
-\item
-\end{compactitem}
+% \arsays{TODO:}
+% \begin{compactitem}
+% \item Change main algo to check for distinctness on points in a
+%   straightforward manner
+% \item
+% \end{compactitem}
 
-\newpage
+% \newpage
 
 \pagestyle{plain}
 \title{Scaling Enumerative Program Synthesis via Divide and Conquer}
@@ -159,7 +159,11 @@
 
 \marginnote{Para 1 {Synthesis background and SyGuS as an enabling
 technology}}
-Program synthesis is an increasingly popular technique \dots
+The field of program synthesis relates to automated techniques that
+attempt to automatically generate programs from requirements that a
+programmer writes.
+Program synthesis is an increasingly popular area of research and growing area of
+research. \dots
 The aim is to allow
 Recent research into inductive program synthesis
 
@@ -207,11 +211,41 @@ expression size and the y-axis represents the time taken to enumerate
 all expressions of size up to the expression size.
 As can be seen from the graph, the time taken to explore potential
 solutions grows exponentially with size.
+To overcome this scalability issue, we introduce a divide-and-conquer
+enumerative algorithm.
 
-\marginnote{Para 4 {Details of techniques, decision trees}}
-For combining the different part of the solution, we use the technique
-of learning decision trees~\cite{ID3,etc,probably_mitchell_book}.
+The divide-and-conquer enumerative approach is based on this insight:
+while the full solution expression to the synthesis problem may be
+large, the important individual parts are small.
+The individual parts we refer to here are:
+\begin{inparaenum}[(a)]
+\item {\em terms} which serve as the return value for the solution,
+  and
+\item {\em predicates} which serve as the conditionals that choose which
+  term is the actual return value for a given input.
+\end{inparaenum}
+For example, in the expression $\ITE{x \leq y}{y}{x}$, the terms are $x$
+and $y$, and the predicate is $x \leq y$.
+As can be seen in this example, though the full expression has size $6$,
+the individual terms have size $1$ each, and the predicate size $3$.
+Hence, the divide-and-conquer enumerative approach only enumerates terms
+and predicates separately and attempts to combine them into a
+conditional expression.
+\arsays{Do we need to mention the point-wise/separable restriction here,
+and also the restriction on grammars?}
 
+For combining the different part of the solution in a full conditional
+expression, we use the technique of learning decision
+trees~\cite{ID3,probably_mitchell_book}.
+The input points maintained by the enumerative algorithm serve as the
+samples, the predicates enumerated serve as the attributes, and the
+terms serve as the labels.
+A term $\Term$ is a valid label for a point $\Point$ if $\Term$ is
+correct for $\Point$.
+We use a simple multi-label decision tree learning algorithm returns a
+sound decision tree that classifies the samples soundly, i.e., for each
+point, following the edges corresponding to the attribute values (i.e.,
+predicates) lead to a branch.
 
 \marginnote{Para 5 {Other extensions. \arsays{I don't like this
 paragraph. It sounds like a ``this too is in the paper'' paragraph}}}
