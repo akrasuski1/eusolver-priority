@@ -839,14 +839,36 @@ In Algorithm~\ref{algo:xxx}, we discard the terms and predicates that
 are equivalent to already generated terms and predicates on the selected
 points $\Points$ in lines~\ref{line:main:xxx},~\ref{line:main:yyy},
 and~\ref{line:main:zzz}.
-However, these discarded terms and predicates, may be the ones required,
- may be \arsays{write something here}
+However, these discarded terms and predicates, may lead to better
+solutions than the already generated ones.
 
 \begin{example}
   Consider a run of the algorithm on the specification for the running
-  example, where the points $\{ x \mapsto 1, y \mapsto 0 \}$
-  \arsays{Write DT substitution thing here}
+  example, where the set $\Points$ contains the points $\{ x \mapsto 1,
+  y \mapsto 0 \}$ and $\{ x \mapsto -1, y \mapsto 0 \}$.
+  Suppose the algorithm first generates the terms $0$ and $1$.
+  These terms are each correct on one of the points and are added to
+  $\Terms$.
+  Next, the algorithm generates the terms $x$ and $y$.
+  However, these are not added to $\Terms$ as $x$ (resp. $y$) is correct
+  on exactly the same set of points as $1$ (resp. $0$).
+
+  Suppose the algorithm also generates the predicate $x \leq y$ and
+  learns the decision tree corresponding to the expression
+  $\mathtt{if}~x \leq y~\mathtt{then}~0~\mathtt{else}~1$.
+  Now, verifying this expression produces a counter-example point, say
+  $\{ x \gets 1, y \gets 2 \}$.
+  While the term $0$ is incorrect on this point, the term $y$ which was
+  discarded as an equivalent term to $0$, is correct.
 \end{example}
+
+Hence, for a practical implementation of the algorithm we do not discard
+these terms and predicates, but store them separately as a equivalence
+relation.
+Formally, at lines~\ref{line:main:xxx},~\ref{line:main:yyy},
+and~\line{line:main:zzz}, if the check for distinctness fails, we
+instead add the term $\Term$ to a $\Equiv$ map\dots.
+Now, when the decision tree learning algorithm returns a f
 
 \paragraph{Branch level verification}
 
