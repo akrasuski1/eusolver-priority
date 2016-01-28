@@ -886,20 +886,35 @@ counter-example.
   counter-example point $\{ x \mapsto 1, y \mapsto 2 \}$, we do \dots
 \end{example}
 
-\paragraph{Branch level verification}
+\paragraph{Branch-wise verification}
 In Algorithm~\ref{algo:main}, and in most synthesis techniques, an
 incorrect candidate solution is used to generate $1$ counter-example
 point.
-However, in the case of conditional expressions, we can do \dots
+However, in the case of conditional expressions and point-wise
+specifications, each branch can be verified separately.
+This gives us two separate advantages:
+\begin{compactitem}
+\item We are able to generate multiple counter-examples from a single
+  incorrect expression.
+  This reduces the total number of iterations required, as well as the
+  number of calls to the expensive decision tree learning algorithm.
+\item It reduces the complexity of each call to the verifier in terms of
+  the size of the SMT formula to be checked.
+  As verification procedures generally scale exponentially with respect
+  to the size of the SMT formula, multiple simpler verification calls
+  are often faster than one more complex call.
+\end{compactitem}
+This optimization works very well along with the decision tree repair
+described above as we can verify and repair each branch of the decision
+tree separately.
 
 \begin{example}
-  Continue with the same example \dots
+  Continue with the same example, ver
 \end{example}
 
-\paragraph{Other optimizations}
-In line~\ref{line:} of verifying the full
-
-branch level verification gives many more counter-examples
+% \paragraph{Other optimizations}
+% Bunching\dots
+% Anything else?
 
 \section{Concluding Remarks}
 \label{sec:conclusion}
