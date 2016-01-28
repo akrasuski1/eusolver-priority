@@ -254,7 +254,7 @@ predicates) lead to a branch.
 
 \marginnote{Para 5 {Other extensions. \arsays{I don't like this
 paragraph. It sounds like a ``this too is in the paper'' paragraph}}}
-\paragraph{Extensions}
+\paragraph{Extensions and Optimizations}
 We present three separate extensions and optimizations to resolve
 various issues that arise in a practical implementation of the
 divide-and-conquer implementation.
@@ -289,7 +289,18 @@ Another more technique we use to generate additional counter-examples
 from a given decision tree is to verify each branch (path from root to
 leaf) separately.
 Each such verification call may return additional counter-examples,
-leading to \dots
+allowing the procedure to gain more information from a single incorrect
+solution.
+For example, to verify the proposed solution expression $\SynthFun(x, y)
+\equiv \ITE{x \leq y}{1}{0}$: instead of checking if there exists an
+input $(x_0, y_0)$ on which the expression behaves incorrectly, branch
+level verification checks separately if
+\begin{inparaenum}[(a)]
+\item there exists an input satisfying $x \leq y$ on which the
+  expression $1$ behaves incorrectly, and
+\item the exists an input satisfying $\neg x \leq y$ on which the
+  expression $0$ behaves incorrectly.
+\end{inparaenum}
 
 \marginnote{Para 7 {Evaluation}}
 \paragraph{Evaluation}
@@ -319,7 +330,7 @@ learning algorithm producing larger than necessary decision trees.
 Overall, this paper presents a divide-and-conquer approach to
 enumerative synthesis.
 The main contributions are as follows:
-\begin{compactitem}
+\begin{inparaenum}[(a)]
 \item The main divide-and-conquer algorithm that enumerates only the
   terms and predicates involved in the final solution and combines them
   using a decision tree learning technique;
@@ -327,7 +338,7 @@ The main contributions are as follows:
   quality of solutions and performance; and
 \item A prototype tool and experimental evaluation demonstrating the
   scalability of the approach and quality of solutions produced.
-\end{compactitem}
+\end{inparaenum}
 
 \section{Illustrative Examples}
 \label{sec:example}
