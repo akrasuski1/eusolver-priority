@@ -14,6 +14,8 @@
 \usepackage{mdwtab}
 \usepackage{multirow}
 \usepackage[square,numbers,sort&compress,comma,sectionbib]{natbib}
+\usepackage{hyperref}
+
 \renewcommand{\bibname}{References}
 \captionsetup{compatibility=false}
 
@@ -75,7 +77,11 @@
 \newcommand\Label{\mathcal{L}}
 \newcommand{\sygus}{{\sffamily\fontsize{8.5}{10}\selectfont
     SyGuS}\xspace}
-\newcommand{\dcsolve}{{\sffamily\fontsize{8.5}{10}\selectfont DCSolve}\xspace}
+\newcommand{\dcsolve}{{\sffamily\fontsize{8.5}{10}\selectfont
+    DCSolve}\xspace}
+\renewcommand{\paragraph}[1]{\par\noindent\textbf{#1}.}
+\newcommand{\itparagraph}[1]{\par\noindent\textit{#1}.}
+\newcommand{\esolver}{\textsc{esolver}\xspace}
 
 % Make floats and equations behave sensibly
 \setlength{\intextsep}{1pt}
@@ -916,13 +922,6 @@ tree separately.
 % Bunching\dots
 % Anything else?
 
-\section{Concluding Remarks}
-\label{sec:conclusion}
-
-\subsection{Related Work}
-
-\subsection{Conclusion}
-
 \section{Evaluation}
 \label{sec:evaluation}
 % \input{results_one_shot_table}
@@ -954,17 +953,17 @@ improvement in the quality of the solutions generated, provided the
 algorithm is given an additional (but fixed) time budget.
 \end{inparaenum}
 
-We now discuss our empirical observations along each of these
-dimensions for two classes of \sygus benchmarks. We did not consider
-the other classes in the general-track \sygus benchmarks because:
+\paragraph{Benchmarks}
+To compare and contrast the \dcsolve algorithm with contemporary
+techniques along each of these dimensions, we considered two classes
+of \sygus benchmarks. We did not consider the other classes in the
+general-track \sygus benchmarks because:
 \begin{inparaenum}[(a)]
-\item
-the solutions were not conditional expressions, as is the case
+\item the solutions were not conditional expressions, as is the case
 with the bit-vector benchmarks, or
-\item
-the benchmarks were not plainly separable, or
-\item
-the benchmarks were very similar to the ones that we have considered.
+\item the benchmarks were not plainly separable, or
+\item the benchmarks were very similar to the ones that we have
+considered.
 \end{inparaenum}
 The first class that we considered consists of the ICFP
 benchmarks. These are bit-twiddling problems, with very specific
@@ -990,6 +989,34 @@ columns indicate the sizes of solutions generated, the time to arrive
 at the solution, as well as the number of comparisons in the solution
 obtained by each of the solvers, for different values of the parameter
 $n$, indicated in the first column.
+
+\paragraph{The State-of-the-art}
+One can broadly categorize the existing \sygus solvers into two
+categories:
+\begin{inparaenum}[(a)]
+\item
+\emph{Black-box solvers}, which do not leverage the correctness
+specification to guide the search for solutions. Some examples are
+\esolver and the stochastic solver~\cite{udupa-sygus}, as well as the
+\dcsolve algorithm.
+\emph{White-box solvers}, which actively leverage the correctness
+specification to generate terms and predicates for solutions. Examples
+for white-box solvers include the solvers based on the \textsc{stun}
+algorithms~\cite{ACR15}, and the CVC4 solver~\cite{reynolds-15}.
+\end{inparaenum}
+Empirically, black-box algorithms are able to generalize well from
+underconstrained correctness specification, whereas it is not clear
+how white-box solvers can generalize from such specifications, given
+their heavy reliance on the specifications being complete.
+We note that \esolver, which employs an optimized
+version of the na\"ive enumerative algorithm discussed earlier won the
+2014 \sygus competition and came in second in the 2015 \sygus
+competition, losing to the CVC4 solver, which came in first.
+
+Having set the context with respect to the benchmarks and contemporary
+solvers, we now proceed to a discussion on how the
+\dcsolve algorithm compares to contemporary solvers along the three
+dimensions described earlier.
 
 \paragraph{Performance}
 As Table~\ref{table:anytime_results} demonstrates, our algorithm was
@@ -1029,7 +1056,7 @@ expressions that perform some computation on the input, to return an
 output.
 
 In the case of the ``max'' benchmarks, we again see from
-Table~\ref{table_max_results} that our algorithm performs well for
+Table~\ref{table:max_results} that our algorithm performs well for
 small parameter values, often beating the solutions obtained from the
 CVC4 solver in terms of size and number of comparisons. At larger
 parameter values, the solutions are still reasonably compact and not
@@ -1067,8 +1094,13 @@ The \dcsolve algorithm works competently on problems from other
 classes of benchmarks that admit conditional expressions as solutions,
 such as the parameterized ``max'' benchmarks.
 \end{inparaenum}
-\section{Related Work}
-\label{sec:related_work}
+
+\section{Concluding Remarks}
+\label{sec:conclusion}
+
+\subsection{Related Work}
+
+\subsection{Conclusion}
 
 \bibliographystyle{plainnat}
 \setlength{\bibsep}{1pt}
