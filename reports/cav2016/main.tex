@@ -81,6 +81,9 @@
 \renewcommand{\paragraph}[1]{\par\noindent\textbf{#1}.}
 \newcommand{\itparagraph}[1]{\par\noindent\textit{#1}.}
 \newcommand{\esolver}{\textsc{esolver}\xspace}
+\newcommand{\sketch}{\textsc{sketch}\xspace}
+\newcommand{\pwsolve}{{\sffamily\fontsize{8.5}{10}\selectfont
+    PWSolve}\xspace}
 
 % Make floats and equations behave sensibly
 \setlength{\intextsep}{1pt}
@@ -307,7 +310,7 @@ The above restrictions make the SyGuS problem significantly easier.
 However, a large number of problems do fall into this class (\arsays{x
 out of y benchmarks in the SyGuS 2015 competition}).
 Several previous works address this class of problem (see, for
-example, \cite{ACR15,Madhu,xxx}).
+example, \cite{alur-15,madhusudan-16-pw,reynolds-15}).
 The following example shows that a number of commonly occurring
 specification mores are point-wise specifications.
 
@@ -409,8 +412,8 @@ non-terminal $\StartSymbol$.
     \State $\Size \gets \Size + 1$
     \EndWhile
   \end{algorithmic}
-  \label{algo:enumerate}
   \caption{Enumerating distinct expressions from a grammar}
+  \label{algo:enumerate}
 \end{algorithm}
 
 \begin{theorem}
@@ -442,7 +445,7 @@ ytick = {0.0001, 0.01, 1, 100, 10000, 1000000, 10000000}
 \paragraph{Features and Limitations}
 The enumerative algorithm performs surprisingly well considering its
 simplicity on small to medium sized benchmarks
-(see~\cite{Transit,sygus_reports,etc}).
+(see~\cite{udupa-transit,udupa-sygus}).
 Further, due to the guarantee of Theorem~\ref{thm:basic_enumeration}
 that the enumerative approach produces small solutions, the algorithm is
 capable of generalizing from specifications that are input-output
@@ -699,7 +702,7 @@ algorithm for completeness? This is a bit unclear}
 \label{sec:decision_trees}
 
 The standard multi-label decision tree learning algorithm (based on
-ID3~\cite{ID3}) is presented in Algorithm~\ref{algo:dt_learning}.
+ID3~\cite{quinlan-86}) is presented in Algorithm~\ref{algo:dt_learning}.
 The algorithm first checks if there exists a single label (i.e., term)
 $\Term$ that applies to all the points (line~\ref{line:dt:single}).
 If so, it returns a decision tree with only one leaf whose label is
@@ -725,8 +728,8 @@ left and right sub-trees, respectively.
     \State $R \gets \Call{LearnDT}{\{ \Point \mid \neg \Predicates[\Point] \}, \Cover, \Predicates }$\label{line:dt:right})
     \State \Return $\mathit{InternalNode}[\Attribute \gets \Pred,  left \gets L , right \gets R ]$
   \end{algorithmic}
-  \label{algo:dt_learning}
   \caption{Learning Decision Trees}
+  \label{algo:dt_learning}
 \end{algorithm}
 
 \paragraph{Frequency based priors}
@@ -742,9 +745,9 @@ variable, and picks the attribute knowing whose value will maximize the
 information gained about the variable.
 We do not describe all aspects of computing information gain fully, but
 refer the reader to any standard textbook on machine learning (see, for
-example,~\cite{xxx}).
-Given a set of points and a predicate $\Pred$, the  
-Formally, the information gain is defined to be 
+example,~\cite{bishop-book}).
+Given a set of points and a predicate $\Pred$, the
+Formally, the information gain is defined to be
 \arsays{Copy formulae from Abhishek's thesis}
 
 Hence, at line~\ref{line:dt:pick_pred}, we compute the value $G(\Pred)$
@@ -794,7 +797,7 @@ terms and predicates after the first solution is found.
 This could lead to different, potentially smaller decision trees and
 solutions.
 Note that this is in contrast to divide-and-conquer techniques that use
-constraint solving to generate predicates~\cite{Madhu,ACR15}.
+constraint solving to generate predicates~\cite{alur-15,madhusudan-16-pw}.
 In general, constraint solvers cannot be tuned to give alternate
 solutions.
 
@@ -1055,7 +1058,7 @@ specification to guide the search for solutions. Some examples are
 \emph{White-box solvers}, which actively leverage the correctness
 specification to generate terms and predicates for solutions. Examples
 for white-box solvers include the solvers based on the \textsc{stun}
-algorithms~\cite{ACR15}, and the CVC4 solver~\cite{reynolds-15}.
+algorithms~\cite{alur-15}, and the CVC4 solver~\cite{reynolds-15}.
 \end{inparaenum}
 Empirically, black-box algorithms are able to generalize well from
 underconstrained correctness specification, whereas it is not clear
@@ -1128,7 +1131,7 @@ tree. Instead a greedy heuristic is used, which rapidly yields
 suboptimal solutions as the number of samples (counterexample points)
 increases, as with the ``max'' benchmarks for larger
 parameter values. We intend to explore how we can adapt other
-heuristics~\cite{Madhu}, into the setting of our problem, in future
+heuristics~\cite{madhusudan-16-pw}, into the setting of our problem, in future
 work.
 
 \paragraph{Effect of Continued Execution}
@@ -1169,6 +1172,50 @@ such as the parameterized ``max'' benchmarks.
 \label{sec:conclusion}
 
 \subsection{Related Work}
+Program synthesis has seen a revived interest in the last decade,
+starting from the \sketch
+framework~\cite{solar-lezama-05,solar-lezama-06}. \sketch uses an
+unoptimized C program as a correctness specification, and a partial
+program with \emph{generator} expressions to specify syntactic
+restrictions, and proposed counterexample guided inductive synthesis
+(CEGIS) strategy for synthesis. More recently, constraint based
+synthesis approaches have been applied to synthesize loop-free
+programs~\cite{jha-10, gulwani-pldi-11}. Research in synthesis of
+string manipulating programs using input-output examples has found
+applications in Microsoft's FlashFill~\cite{gulwani-popl-11}, and the
+ideas have been generalized for other domains in a meta-synthesis
+framework called FlashMeta~\cite{polozov-15}.
+
+The enumerative synthesis algorithm used by
+\esolver~\cite{udupa-transit, udupa-sygus} and the work on using decision
+trees for piece-wise functions~\cite{madhusudan-16-pw} are perhaps the
+most closely related to the work described in this paper. We have
+already discussed at length the shortcomings of \esolver that our
+algorithm overcomes. The approach for learning piece-wise
+functions~\cite{madhusudan-16-pw}, which we refer to as \pwsolve, also
+uses decision trees, but differs from our approach in several ways:
+\begin{inparaenum}[(a)]
+\item
+\pwsolve uses a different set of heuristics based on hitting sets,
+rather than the cover-based prior distribution that we use,
+\item
+\pwsolve uses decision trees to learn thresholds for linear
+inequalities; it is not clear how generic the approach is for other
+domains. \dcsolve on the other hand uses decision trees to strictly
+learn a classifier, given some Boolean-valued attributes. Neither the
+decision tree learning algorithm, nor the enumeration is
+domain-specific, making \dcsolve a generic algorithm that can be
+applied on any domain.
+\item
+Conversely, \pwsolve can easily learn constants in the linear
+integer domain. This is something that enumerative approaches,
+including \dcsolve struggle to do, often representing a constant like
+``42'' as a sum of smaller constants that appear in the grammar.
+\end{inparaenum}
+
+Other recent work in the area of program synthesis in general have
+used type-theoretic approaches~\cite{osera-15,frankle-16,gvero-13}
+
 \begin{itemize}
 \item
 Connection to ``classical synthesis'' techniques like sketch, cegis in general
