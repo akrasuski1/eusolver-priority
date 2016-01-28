@@ -162,23 +162,28 @@ technology}}
 The field of program synthesis relates to automated techniques that
 attempt to automatically generate programs from requirements that a
 programmer writes.
-Program synthesis is an increasingly popular area of research and growing area of
-research. \dots
-The aim is to allow
-Recent research into inductive program synthesis
+Program synthesis is an increasingly popular area of research with the
+introduction of counter-example guided inductive synthesis (CEGIS)
+approach by Solar-Lezama et al, and has been applied to a wide array of
+domains including invariant generation, automated repair of
+programs, binary rewriting, etc~\cite{xxx,yyy,zzz}.
+Recently, Syntax-Guided Synthesis (\sygus) has been proposed as a
+back-end exchange format and enabling technology for program synthesis.
+The aim is to allow experts from different domains to model their
+synthesis problems as \sygus instances, and leverage general purpose
+\sygus solvers.
 
-Syntax-guided synthesis (\sygus) is a recent paradigm in program
-synthesis proposed as an enabling technology \dots
-In the \sygus approach, there are restrictions on both the form (syntax)
-and function (semantics) of the program to be synthesized:
+\marginnote{Para 2 {\sygus and \sygus approaches; enumerative solver +
+limitations}}
+In the \sygus approach, a synthesis task is specified using
+restrictions on both the form (syntax) and function (semantics) of the
+program to be synthesized:
 \begin{inparaenum}[(a)]
 \item The syntactic restrictions are given in terms of a context-free
-  grammar
-\item
+  grammar from which a solution program may be drawn.
+\item The semantic restrictions are encoded into a specification as an
+  SMT formula.
 \end{inparaenum}
-
-\marginnote{Para 2 {\sygus approaches and enumerative solver +
-limitations}}
 \sygus solvers can be broadly categorized into two kinds:
 \begin{inparaenum}[(a)]
 \item black-box solvers, which do not deal with the specification
@@ -641,8 +646,6 @@ generate all distinct expressions up to a given size for the grammar
 shown in Figure~\ref{fig:bitvec_grammar}.
 As can be seen from the graph, the time taken grows exponentially with
 the size.
-\arsays{Need a exponential scalability graph. Pick one from the
-experiments}
 
 
 
