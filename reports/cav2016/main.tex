@@ -31,6 +31,7 @@
 \newcommand\tuple[1]{\langle #1 \rangle}
 \newcommand\True{\mathit{True}}
 \newcommand\None{\mathit{None}}
+\newcommand\Equiv{\mathit{Eq}}
 \newcommand\Points{\mathit{Pts}}
 \newcommand\Point{\mathit{Pt}}
 \newcommand\Verify{\mathit{Verify}}
@@ -854,25 +855,48 @@ solutions than the already generated ones.
   on exactly the same set of points as $1$ (resp. $0$).
 
   Suppose the algorithm also generates the predicate $x \leq y$ and
-  learns the decision tree corresponding to the expression
-  $\mathtt{if}~x \leq y~\mathtt{then}~0~\mathtt{else}~1$.
+  learns the decision tree corresponding to the expression $\Expr \equiv
+  \mathtt{if}~x \leq y~\mathtt{then}~0~\mathtt{else}~1$.
   Now, verifying this expression produces a counter-example point, say
-  $\{ x \gets 1, y \gets 2 \}$.
-  While the term $0$ is incorrect on this point, the term $y$ which was
-  discarded as an equivalent term to $0$, is correct.
+  $\{ x \mapsto 1, y \mapsto 2 \}$.
+  While the term $0$, and correspondingly, the expression $\Expr$ is
+  incorrect on this point, the term $y$ which was discarded as an
+  equivalent term to $0$, is correct.
 \end{example}
 
 Hence, for a practical implementation of the algorithm we do not discard
-these terms and predicates, but store them separately as a equivalence
-relation.
-Formally, at lines~\ref{line:main:xxx},~\ref{line:main:yyy},
-and~\line{line:main:zzz}, if the check for distinctness fails, we
-instead add the term $\Term$ to a $\Equiv$ map\dots.
-Now, when the decision tree learning algorithm returns a f
+these terms and predicates, but store them separately in a map $\Equiv :
+\Terms \to \Powerset{x}$ that maps the terms in $\Terms$ to the set of
+equivalent terms.
+At lines~\ref{line:main:xxx},~\ref{line:main:yyy},
+and~\ref{line:main:zzz}, if the check for distinctness fails, we
+instead add the term $\Term$ to the $\Equiv$ map.
+\arsays{Write the core here}
+Now, when the decision tree learning algorithm returns an expression
+that fails to verify and returns a counter-example, we attempt to
+replace terms and predicates in the decision tree with equivalent ones
+from the $\Equiv$ map to make the decision tree behave correctly on the
+counter-example.
+
+\begin{example}
+  Revisiting Example~\ref{ex:dt_repair}, instead of discarding the terms
+  $x$ and $y$, we store them into the $\Equiv$ array, i.e., we set
+  $\Equiv(0) = \{ y \}$ and $\Equiv(1) = \{ x \}$.
+  Now, when the verification of the expression fails, with the
+  counter-example point $\{ x \mapsto 1, y \mapsto 2 \}$, we do \dots
+\end{example}
 
 \paragraph{Branch level verification}
+In Algorithm~\ref{algo:main}, and in most synthesis techniques, an
+incorrect candidate solution is used to generate $1$ counter-example
+point.
+However, in the case of conditional expressions, we can do \dots
 
-\paragraph{Bunching}
+\begin{example}
+  Continue with the same example \dots
+\end{example}
+
+\paragraph{Other optimizations}
 In line~\ref{line:} of verifying the full
 
 branch level verification gives many more counter-examples
