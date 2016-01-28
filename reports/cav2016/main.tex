@@ -1214,27 +1214,30 @@ including \dcsolve struggle to do, often representing a constant like
 \end{inparaenum}
 
 Other recent work in the area of program synthesis in general have
-used type-theoretic approaches~\cite{osera-15,frankle-16,gvero-13}
+used type-theoretic approaches~\cite{gvero-13,osera-15,frankle-16} for
+program completion and for generating code snippets. Synthesis of
+recursive programs and data structure manipulating code is yet another
+application of program synthesis that has been studied in recent
+years~\cite{kuncak-10,kneuss-13,albarghouthi-13,feser-15}. Lastly,
+decision trees have also been applied to learn program
+invariants~\cite{garg-16}.
 
-\begin{itemize}
-\item
-Connection to ``classical synthesis'' techniques like sketch, cegis in general
-\item
-Connection and contrast with Madhu's decision tree work, ICE-DT
-\item
-Jha's loop free synthesis (ICSE '10, PLDI '11)
-\item
-Gulwani's flash* stuff
-\item
-Peter Michael Osera's dissertation (synthesis using type theory stuff)
-\item
-Superoptimization (Denali, Massalin), Stochastic superoptimization.
-\item
-Ruzika, Viktor's work
-\item
-Sumit's recursive program crap
-\end{itemize}
 \subsection{Conclusion}
+This paper has presented a new enumerative algorithm to solve
+instances of the Syntax-Guided Synthesis (\sygus) problem. The
+algorithm overcomes the shortcomings of a na\"ive enumerative
+algorithm by using enumeration to only learn small expressions which
+are correct on subsets of the inputs. These expressions are then used
+to form a conditional expression using Boolean combinations of
+enumerated predicates using decision trees. We have demonstrated the
+ability of the algorithm to generalize from input-output examples by
+solving most of the previously unsolved ICFP benchmarks, which are
+part of the \sygus benchmark suite. The algorithm is generic and
+competitive with the state-of-the-art techniques in other domains as
+well. The algorithm produces compact solutions, and is \emph{anytime}
+--- in that continued execution can potentially produce more compact
+solutions than the initially discovered solution.
+
 
 \bibliographystyle{plainnat}
 \setlength{\bibsep}{1pt}
