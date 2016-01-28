@@ -13,7 +13,6 @@
 \usepackage{xspace}
 \usepackage{mdwtab}
 \usepackage{multirow}
-\usepackage{multicol}
 \usepackage[square,numbers,sort&compress,comma,sectionbib]{natbib}
 \renewcommand{\bibname}{References}
 \captionsetup{compatibility=false}
@@ -140,7 +139,7 @@
 \section{Illustrative Examples}
 \label{sec:example}
 
-Consider a 
+Consider a
 
 \arsays{Make an example where all pieces are generated at a small size,
 but the full expression takes much longer}
@@ -159,14 +158,14 @@ point is an input to $\SynthFun$.
   For the running example in this section, we consider a function to be
   synthesized $\SynthFun$ of type $\Integers \times \Integers \to
   \Integers$ with the formal parameters $\FormalParameters = \{ x, y \}$.
-  Points are valuations of $x$ and $y$. 
+  Points are valuations of $x$ and $y$.
   For example, $\{ x \mapsto 1, y \mapsto 2 \}$ is a point.
 \end{example}
 
 \paragraph{Specifications}
 Satisfiability modulo theory formulae have become the standard formalism
 for specifying semantic constraints for synthesis.
-In the rest of this paper, we fix an arbitrary theory $\Theory$ and 
+In the rest of this paper, we fix an arbitrary theory $\Theory$ and
 denote by $\Theory[\Symbols]$, the set of $\Theory$ terms over the
 symbols $\Symbols$.
 A {\em specification} $\Spec$ is a logical formula in a theory $\Theory$
@@ -440,7 +439,7 @@ and conquer enumeration algorithm.
 We introduce conditional expressions grammars that separate and
 expression grammar into two grammars to generate:
 \begin{inparaenum}[(a)]
-\item the return value expression, and 
+\item the return value expression, and
 \item the conditionals that decide which return value is chosen
 \end{inparaenum}
 These generated return values (terms) and conditionals (predicates) are
@@ -715,7 +714,7 @@ refer the reader to any standard textbook on machine learning (see, for
 example,~\cite{xxx}).
 
 The information gain heuristic is based on defining prior
-probabilities $\Prob{label(\Point) = \Term \mid \Point}$ that denotes 
+probabilities $\Prob{label(\Point) = \Term \mid \Point}$ that denotes
 the likelihood of a given point $\Point$ being labelled by a given term
 $\Term$.
 We define a prior that is based on the principle that the likelihood
@@ -793,11 +792,11 @@ solutions.
 \begin{figure}
   \begin{subfigure}{0.5\textwidth}
     \begin{tikzpicture}
-      [every tree node/.style={draw}, level distance=18pt, 
+      [every tree node/.style={draw}, level distance=18pt,
       level 1/.style={sibling distance=80pt},
       level 2/.style={sibling distance=50pt},
       level 3/.style={sibling distance=25pt}]
-      \node[draw] {$x = 0$} 
+      \node[draw] {$x = 0$}
         child {node[draw] {$y \leq 2$}
           child {node[fill=gray,draw] {$1$}}
           child {node[fill=gray,draw] {$0$}}
@@ -838,8 +837,8 @@ In Algorithm~\ref{algo:xxx}, we discard the terms and predicates that
 are equivalent to already generated terms and predicates on the selected
 points $\Points$ in lines~\ref{line:main:xxx},~\ref{line:main:yyy},
 and~\ref{line:main:zzz}.
-However, these discarded terms and predicates, may be the ones required, 
- may be \arsays{write something here} 
+However, these discarded terms and predicates, may be the ones required,
+ may be \arsays{write something here}
 
 \begin{example}
   Consider a run of the algorithm on the specification for the running
@@ -865,6 +864,7 @@ branch level verification gives many more counter-examples
 \label{sec:evaluation}
 % \input{results_one_shot_table}
 \input{results_anytime_table}
+\input{results_one_shot_max_table}
 
 We built a prototype \sygus solver based on the ideas presented in
 this paper. The algorithms for enumeration were implemented in
@@ -886,13 +886,65 @@ solution?
 algorithms? We use compactness of solutions, in terms of syntactic
 size, as a metric for the quality of solutions.
 \item
-\emph{Impact of allowing additional time}: How significant is the
+\emph{Effect of anytime aspect}: How significant is the
 improvement in the quality of the solutions generated, provided the
 algorithm is given an additional (but fixed) time budget.
 \end{inparaenum}
-We now discuss how our algorithm matches up against the existing
-techniques along each of these dimensions, using to data from Tables
 
+We now discuss our empirical observations along each of these
+dimensions for two classes of \sygus benchmarks. The first class
+consists of the ICFP benchmarks. These are bit-twiddling problems,
+with very specific restrictions on the bitwise operations that are
+allowed. The behavior of the function to be synthesized is specified
+only using concrete input-output examples. To the best of our
+knowledge, no existing \sygus solver has been able to solve these
+benchmarks. The results of running our solver on these benchmarks is
+summarized in Table~\ref{table:anytime_results}. The first column of
+Table~\ref{table:anytime_results} gives the name of the benchmark, the
+second and third columns give the size of the earliest solution
+discovered by the algorithm, the time taken to discover the solution,
+and the size of the decision tree associated with the solution,
+respectively. The next three columns provide the same details, but for
+the \emph{minimal} sized solution discovered by the
+algorithm. Finally, the last column indicates whether the solution
+that was discovered earliest was also the solution with the minimal
+size. The second class of benchmarks that we considered compute the
+maximum of $n$ integers, where $n$ is a
+parameter. Table~\ref{table:max_results} demonstrates how our
+algorithm stacks up against the state-of-the-art CVC4 solver. The
+columns indicate the sizes of solutions generated, the time to arrive
+at the solution, as well as the number of comparisons in the solution
+obtained by each of the solvers, for different values of the parameter
+$n$, indicated in the first column.
+
+\paragraph{Performance}
+As Table~\ref{table:anytime_results} demonstrates, our algorithm was
+able to produce a solution for 47 out of the 50 ICFP benchmarks,
+within an hour. We emphasize that we know of no other solver that has
+been able to provide satisfactory solutions to these benchmarks. The
+CVC4 solver did produce solutions when syntactic restrictions were
+lifted. However, upon closer inspection, we discovered that the
+solutions were just a huge case-split corresponding to the
+input-output examples that form the constraints for the
+problem. Although correct, the solutions performed no generalization
+and are unlikely to yield desired results on inputs that are not a
+part of the input-output examples provided as constraints.
+The solutions produced by our divide and conquer algorithm are quite
+compact, and most of them are computed in less than ten minutes, with
+only five benchmarks taking longer.
+
+Table~\ref{table:max_results} indicates that our algorithm is competitive
+with the state-of-the-art CVC4 solver on the parameterized ``max of
+$n$ numbers'' benchmarks, for smaller values of $n$. For larger
+values of $n$, our algorithm is not as performant. Our investigations
+indicated that in the performance drops are largely due to the large
+number of concrete counterexample points that the algorithm maintains,
+which in turn leads to the decision tree learning algorithms taking
+longer.
+\paragraph{Quality of Solutions}
+
+
+\paragraph{Effect of Anytime Aspect}
 
 \section{Related Work}
 \label{sec:related_work}
