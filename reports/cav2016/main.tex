@@ -1374,14 +1374,28 @@ starting from the \sketch
 framework~\cite{solar-lezama-05,solar-lezama-06}. \sketch uses an
 unoptimized C program as a correctness specification, and a partial
 program with \emph{generator} expressions to specify syntactic
-restrictions, and proposed counterexample guided inductive synthesis
-(CEGIS) strategy for synthesis. More recently, constraint based
-synthesis approaches have been applied to synthesize loop-free
-programs~\cite{jha-10, gulwani-pldi-11}. Research in synthesis of
-string manipulating programs using input-output examples has found
-applications in Microsoft's FlashFill~\cite{gulwani-popl-11}, and the
-ideas have been generalized for other domains in a meta-synthesis
-framework called FlashMeta~\cite{polozov-15}.
+restrictions, and proposed the counterexample guided inductive
+synthesis (CEGIS) strategy for synthesis. Almost all synthesis
+algorithms proposed in recent literature --- including the one
+described in this paper --- can be viewed as an instantiation of the
+CEGIS strategy.  More recently, constraint based synthesis approaches
+have been applied to synthesize loop-free programs~\cite{jha-10,
+gulwani-pldi-11}. Research in synthesis of string manipulating
+programs using input-output examples has found applications in
+Microsoft's FlashFill~\cite{gulwani-popl-11}, and the ideas have been
+generalized for other domains in a meta-synthesis framework called
+FlashMeta~\cite{polozov-15}.
+
+In the area of \sygus solvers, solvers based on enumerative
+search~\cite{udupa-transit}, stochastic
+search~\cite{schkufza-13,udupa-sygus} and symbolic
+search~\cite{gulwani-pldi-11} were among the first solvers
+developed. The \sketch approach has also been used to develop \sygus
+solvers~\cite{jeon-15}. Alchemist~\cite{saha-15} is another solver
+that is quite competitive on benchmarks in the linear arithmetic
+domains. More recently, white box solvers like the CVC4
+solver~\cite{reynolds-15} and the unification based
+solver~\cite{alur-15} have also been developed.
 
 The enumerative synthesis algorithm used by
 \esolver~\cite{udupa-transit, udupa-sygus} and the work on using decision
@@ -1396,8 +1410,11 @@ uses decision trees, but differs from our approach in several ways:
 \pwsolve uses a different set of heuristics based on hitting sets,
 rather than the cover-based prior distribution that we use,
 \item
-\pwsolve uses decision trees to learn thresholds for linear
-inequalities; it is not clear how generic the approach is for other
+\pwsolve presents a generic algorithm which uses decision trees to
+learn a classifier, as well as thresholds for linear
+inequalities. Although presented in a generic manner, the algorithm
+has been instantiated only for the domain of linear arithmetic. It is
+unclear how the approach can be instantiated for other
 domains. \dcsolve on the other hand uses decision trees to strictly
 learn a classifier, given some Boolean-valued attributes. Neither the
 decision tree learning algorithm, nor the enumeration is
@@ -1408,6 +1425,11 @@ Conversely, \pwsolve can easily learn constants in the linear
 integer domain. This is something that enumerative approaches,
 including \dcsolve struggle to do, often representing a constant like
 ``42'' as a sum of smaller constants that appear in the grammar.
+\item
+Finally, it is unclear how \pwsolve can handle syntactic restrictions
+in a general manner, whereas \dcsolve can handle syntactic
+restrictions of any form, being based on enumerative
+approaches.
 \end{inparaenum}
 
 Other recent work in the area of program synthesis in general have
