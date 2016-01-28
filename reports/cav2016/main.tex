@@ -933,6 +933,9 @@ incorrect candidate solution is used to generate $1$ counter-example
 point.
 However, in the case of conditional expressions and point-wise
 specifications, each branch can be verified separately.
+Verifying each branch involves rewriting the specification as in the
+point-wise verification defined in Section~\ref{sec:defs} -- but with the
+added formula enfor
 This gives us two separate advantages:
 \begin{compactitem}
 \item We are able to generate multiple counter-examples from a single
@@ -953,7 +956,13 @@ tree separately.
   Consider the verification of the expression $mathtt{if}~x \leq
   y~\mathtt{then}~0~\mathtt{else}~1$ for the running example.
   Instead of running the full expression through the verifier and
-  obtaining one counter-example point, we instead 
+  obtaining one counter-example point, we instead verify the two
+  branches separately.
+  This involves checking the satisfiability of the formulae $x \leq y
+  \wedge f(x, y) = 0 \wedge \neg \Spec$ and $\neg (x \leq y) \wedge f(x,
+  y) = 1 \wedge \neg \Spec$.
+  This gives us two separate counter-example points as both branches are
+  incorrect.
 \end{example}
 
 % \paragraph{Other optimizations}
