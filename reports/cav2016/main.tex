@@ -1018,6 +1018,8 @@ If so, it returns a decision tree with only one leaf whose label is
 $\Term$ (line~\ref{line:dt:leaf}).
 Otherwise, it picks the best predicate $\Pred$ to split on based on some
 heuristic (line~\ref{line:dt:pick_pred}).
+If no predicates are left, there exists no decision tree, and the
+algorithm returns $\bot$ (line~\ref{line:dt:bot}).
 It the recursively computes the left and right sub-trees for the set of
 points on which $\Pred$ holds and does not hold, respectively
 (lines~\ref{line:dt:left} and~\ref{line:dt:right}).
@@ -1033,11 +1035,12 @@ left and right sub-trees, respectively.
     \If { $\exists \Term : \Points \subseteq \Cover[\Term]$ }\label{line:dt:single}
     \Return $\mathit{LeafNode}[\Label \gets \Term]$ \label{line:dt:leaf}
     \EndIf
+    \If {$\Predicates = \emptyset$} \Return $\bot$ \EndIf \label{line:dt:bot}
     \State $\Pred \gets \mbox{Pick predicate from $\Predicates$}$\label{line:dt:pick_pred}
     \State $L \gets \Call{LearnDT}{\{ \Point \mid \Pred[\Point] \},
-      \Terms, \Cover, \Predicates }$\label{line:dt:left}
+    \Terms, \Cover, \Predicates \setminus \{ \Pred \} }$\label{line:dt:left}
     \State $R \gets \Call{LearnDT}{\{ \Point \mid \neg \Pred[\Point]
-      \}, \Terms, \Cover, \Predicates }$\label{line:dt:right}
+    \}, \Terms, \Cover, \Predicates \setminus \{ \Pred \} }$\label{line:dt:right}
     \State \Return $\mathit{InternalNode}[\Attribute \gets \Pred,  \mathit{left} \gets L , \mathit{right} \gets R ]$
   \end{algorithmic}
   \caption{Learning Decision Trees}
