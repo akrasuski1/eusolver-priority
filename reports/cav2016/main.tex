@@ -4,6 +4,7 @@
 
 \usepackage{marginnote}
 \usepackage{lmodern}
+\usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
@@ -37,30 +38,30 @@
 \newcommand\True{\mathit{True}}
 \newcommand\None{\mathit{None}}
 \newcommand\Equiv{\mathit{Eq}}
-\newcommand\Points{\mathit{Pts}}
-\newcommand\Point{\mathit{Pt}}
-\newcommand\Verify{\mathit{Verify}}
-\newcommand\CexInput{\mathit{CexPt}}
-\newcommand\Predicates{\mathit{Preds}}
+\newcommand\Points{\mathsf{pts}}
+\newcommand\Point{\mathsf{pt}}
+\newcommand\Verify{\mathsf{verify}}
+\newcommand\CexInput{\mathsf{cexpt}}
+\newcommand\Predicates{\mathsf{preds}}
 \newcommand\Expr{e}
 \newcommand\Pred{p}
-\newcommand\Terms{\mathit{Terms}}
+\newcommand\Terms{\mathsf{terms}}
 \newcommand\Term{t}
-\newcommand\Cover{\mathit{Cover}}
+\newcommand\Cover{\mathsf{cover}}
 \newcommand\Powerset[1]{\mathbf{2}^{#1}}
 \newcommand\Spec{\Phi}
 \newcommand\Size{K}
 \newcommand\Grammar{G}
 \newcommand\sem[1]{[\![ #1 ]\!]}
 \newcommand\SynthFun{f}
-\newcommand\range{\mathit{range}}
-\newcommand\FormalParameters{\mathit{Params}}
-\newcommand\Productions{\mathit{Prodn}}
+\newcommand\range{\mathsf{range}}
+\newcommand\FormalParameters{\mathsf{params}}
+\newcommand\Productions{\mathsf{prodn}}
 \newcommand\Prob[2]{\mathbb{P}_{#1}(#2)}
 \newcommand\NonTerminals{\mathcal{N}}
 \newcommand\NonTerminal{N}
 \newcommand\StartSymbol{S}
-\newcommand\Symbols{\mathit{Symbols}}
+\newcommand\Symbols{\mathsf{symbols}}
 \newcommand\Rules{\mathcal{R}}
 \newcommand\Rule{R}
 \newcommand\Theory{\mathcal{T}}
@@ -68,7 +69,7 @@
 \newcommand\ITE[3]{\mathtt{if}~#1~\mathtt{then}~#2~\mathtt{else}~#3}
 
 \newcommand\DecisionTree{\mathit{DT}}
-\newcommand\DTtoExpr[1]{\mathit{Expr}(#1)}
+\newcommand\DTtoExpr[1]{\mathsf{expr}(#1)}
 \newcommand\NodesInternal{V_I}
 \newcommand\Nodes{V}
 \newcommand\node{v}
@@ -122,17 +123,17 @@
 \begin{abstract}
   Given a semantic constraint specified by a logical formula and
   syntactic constraint specified by a context-free grammar, the
-  Syntax-Guided Synthesis (SyGuS) problem is to find an expression
+  Syntax-Guided Synthesis (\sygus) problem is to find an expression
   that satisfies both the syntactic and semantic constraints.
   An enumerative approach to solve this problem is to systematically
   generates all expressions from the syntactic space with some pruning,
   and has proved to be surprisingly competitive in the newly started
-  competition of SyGuS solvers.  It performs well on small to medium sized
+  competition of \sygus solvers.  It performs well on small to medium sized
   benchmarks, produces succinct expressions, and has the ability to
   generalize from input-output examples.  However, its performance
   degrades drastically with the size of the smallest solution. To overcome
   this limitation, in this paper we propose an alternative approach to
-  solve SyGuS instances.
+  solve \sygus instances.
 
   The key idea  is to employ a divide-and-conquer approach by
   separately enumerating (a) smaller expressions that are correct on
@@ -147,7 +148,7 @@
   tree.
 
   We report a prototype implementation and evaluate it on the benchmarks
-  from the SyGuS 2015 competition. Our tool is able to match the running
+  from the \sygus 2015 competition. Our tool is able to match the running
   times and the succinctness of solutions of both standard enumerative
   solver as well as the latest white-box solvers in most cases.  Further,
   our solver is able to solve a large number of instances from the ICFP
@@ -158,7 +159,7 @@
 \section{Introduction}
 \label{sec:intro}
 
-\marginnote{Para 1 {Synthesis background and SyGuS as an enabling
+\marginnote{Para 1 {Synthesis background and \sygus as an enabling
 technology}}
 The field of program synthesis relates to automated techniques that
 attempt to automatically generate programs from requirements that a
@@ -345,15 +346,15 @@ The main contributions are as follows:
 \label{sec:example}
 
 \begin{figure}[t]
-  \vspace{-1ex}
+  \vspace*{-1ex}
   \begin{alltt}
-    S ::= T | if (C) then T else T
-    T ::= 0 | 1 | x | y | -T | T + T
-    C ::= T \(\leq\) T | T < T | T = T | C \(\wedge\) C | \(\neg\) C
+                      S ::= T | if (C) then T else T
+                      T ::= 0 | 1 | x | y | T + T
+                      C ::= T \(\leq\) T | C \(\wedge\) C | \(\neg\) C
   \end{alltt}
-  \vspace{-4ex}
+  \vspace*{-4ex}
   \caption{Grammar for linear integer expressions}
-  \label{fig:grammar}
+  \label{fig:lia_grammar}
 \end{figure}
 We explain the salient points of our approach on an example.
 Consider an instance of the \sygus problem where the aim is to generate
@@ -410,18 +411,16 @@ large solution expressions.
 
 
 \begin{table}[!t]
+  \setlength{\doublerulesep}{0.4pt}
   \centering
   \fontsize{8}{10}\selectfont
-  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lllllllc}\\\hlx{hv}
-
-      Round no. & Enumerated expressions & Candidate Expression & Point added \\
-      1 & 0 & 0 & $\{ x \mapsto 1, y \mapsto 0 \}$ \\
-      2 & 0, 1 & 1 & $\{ x \mapsto 0, y \mapsto 2 \}$ \\
-      3 & 0, 1, x, y, \st{0 + x}, \ldots , x + y,  & 1 & $\{ x \mapsto 1, y \mapsto 2 \}$ \\
-      \vdots \\
-      n & 0, 1, \ldots, $\ITE{x \leq y}{y}{x}$  & $\ITE{x \leq y}{y}{x}$ &  \\
-
-      \hlx{hv}
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}clcc}\\\hlx{hv}
+      Round no. & \multicolumn{1}{c}{Enumerated expressions} & Candidate Expression & Point added\\\hlx{hvhv}
+      1 & $0$ & $0$ & $\{ x \mapsto 1, y \mapsto 0 \}$ \\\hlx{h}
+      2 & $0$, $1$ & $1$ & $\{ x \mapsto 0, y \mapsto 2 \}$ \\\hlx{h}
+      3 & $0$, $1$, $x$, $y$, \st{$0 + x$}, \ldots, $x + y$,  & $x+y$ & $\{ x \mapsto 1, y \mapsto 2 \}$ \\\hlx{h}
+      \vdots & \vdots & \vdots & \vdots\\\hlx{h}
+      $n$ & $0$, \ldots, $\ITE{x \leq y}{y}{x}$  & $\ITE{x \leq y}{y}{x}$ &  \\\hlx{hv}
   \end{tabular*}
   \caption{Example run of the na\"ive enumerative algorithm}
   \label{table:enumerative_example}
@@ -469,16 +468,18 @@ contrast to the na\"ive approach which generates hundreds of
 expressions.
 
 \begin{table}[!t]
+  \setlength{\doublerulesep}{0.4pt}
   \centering
   \fontsize{8}{10}\selectfont
-  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lllllllc}\\\hlx{hv}
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}cllcc}\\\hlx{hv}
 
-      Round no. & Enumerated Terms & Enumerated Predicates & Candidate Expression & Point added \\
-      1 & 0 & 0 & $\emptyset$ & $\{ x \mapsto 1, y \mapsto 0 \}$ \\
-      2 & 0, 1 & 1 & $\emptyset$ &  $\{ x \mapsto 0, y \mapsto 2 \}$ \\
-      3 & 0, 1, x, y & $0 \leq 0$, \ldots $0 \leq y$, $1 \leq 0$, \ldots $1 \leq y$ & $\ITE{1 \leq y}{y}{1}$ & $\{ x \mapsto 2, y \mapsto 0 \}$ \\
-      4 & 0, 1, x, y & $0 \leq 0$, \ldots $x \leq y$ & $\ITE{x \leq y}{y}{x}$ & \\
-      \hlx{hv}
+      \multirow{2}{*}{Round no.} & \multicolumn{1}{c}{Enumerated} & \multicolumn{1}{c}{Enumerated} & Candidate & \multirow{2}{*}{Point added} \\
+      & \multicolumn{1}{c}{Terms} & \multicolumn{1}{c}{Predicates} & Expression & \\\hlx{hvhv}
+      1 & $0$ & $0$ & $\emptyset$ & $\{ x \mapsto 1, y \mapsto 0 \}$ \\\hlx{hv}
+      2 & $0$, $1$ & $1$ & $\emptyset$ &  $\{ x \mapsto 0, y \mapsto 2 \}$ \\\hlx{hv}
+      \multirow{2}{*}{3} & \multirow{2}{*}{$0$, $1$, $x$, $y$} & $0 \leq 0$, \ldots $0 \leq y$, & \multirow{2}{*}{$\ITE{1 \leq y}{y}{1}$} & \multirow{2}{*}{$\{ x \mapsto 2, y \mapsto 0 \}$} \\
+      & & $1 \leq 0$, \ldots $1 \leq y$ & & \\\hlx{hv}
+      4 & $0$, $1$, $x$, $y$ & $0 \leq 0$, \ldots $x \leq y$ & $\ITE{x \leq y}{y}{x}$ & \\\hlx{hv}
   \end{tabular*}
   \caption{Example run of the divide-and-conquer enumerative algorithm}
   \label{table:dq_example}
@@ -553,20 +554,20 @@ have the right type, i.e., are of the type $\range(\SynthFun)$.
 \begin{example}
   \label{ex:running:grammar}
   For the running example, we choose the following grammar.
-  The non-terminals are given by $\NonTerminals = \{ \StartSymbol, T, C \}$ with
-  the initial non-terminal bein $\StartSymbol$.
-  The rules are $\{ (\StartSymbol, T), (\StartSymbol,
+  The set of non-terminals is given by $\NonTerminals = \{ \StartSymbol, T, C \}$ with
+  the initial non-terminal being $\StartSymbol$.
+  The rules of this grammar are $\{ (\StartSymbol, T), (\StartSymbol,
       \ITE{C}{\StartSymbol}{\StartSymbol})
-    \} \cup \{ (T, x), (T, y), (T, 1), (T, 0), (T, - T), (T, T + T) \} \cup
+    \} \cup \{ (T, x), (T, y), (T, 1), (T, 0), (T, T + T) \} \cup
         \{ (C, T \leq T), (C, C \wedge C), (C, \neg C) \}$.
   This is the standard linear integer arithmetic grammar used for many
-  SyGuS problems.
+  \sygus problems.
   This grammar is equivalent to the one from
   Figure~\ref{fig:lia_grammar}.
 \end{example}
 
 \paragraph{The Syntax-Guided Synthesis Problem}
-An instance of the SyGuS problem is given by a pair $\tuple { \Spec,
+An instance of the \sygus problem is given by a pair $\tuple { \Spec,
 \Grammar }$ of specification and grammar.
 An expression $\Expr$ is a solution to the instance if $\Expr \models
 \Spec$ and $\Expr \in \sem{\Grammar}$.
@@ -578,8 +579,9 @@ An expression $\Expr$ is a solution to the instance if $\Expr \models
   given by $\SynthFun(x, y) \equiv \ITE{x \leq y}{y}{x}$.
 \end{example}
 
+\vspace*{-3mm}
 From our definitions, it is clear that we restrict ourselves to a
-version of the SyGuS problem where there is exactly one unknown function
+version of the \sygus problem where there is exactly one unknown function
 to be synthesized, and the grammar does not contain {\tt let} rules.
 Further, we assume that our specifications are {\em
   point-wise}\footnote{For brief discussion on different syntactic and
@@ -599,6 +601,7 @@ be rewritten into a conjunctive normal form where each clause is either
   $\SynthFun$ have the same arguments.
 \end{inparaenum}
 
+\vspace*{-3mm}
 \begin{example}
   The specification for our running example $\Spec \equiv \SynthFun(x,
   y) \geq x \wedge \SynthFun(x, y) \geq y \wedge \SynthFun(x, y) = x
@@ -612,6 +615,7 @@ be rewritten into a conjunctive normal form where each clause is either
   value of $\SynthFun(0, 2)$.
 \end{example}
 
+\vspace*{-3mm}
 Point-wise (and in turn, simply separable) specifications allow us to
 define the notion of an expression $\Expr$ satisfying a specification
 $\Spec$ on a point $\Point$.
@@ -627,6 +631,7 @@ We extend this definition to sets of points as follows: $\Expr \models
 \Spec \downharpoonleft \Points \Leftrightarrow \bigwedge_{\Point \in
 \Points} \Expr \models \Spec\downharpoonleft\Point$.
 
+\vspace*{-3mm}
 \begin{example}
   \label{ex:running:correctness_on_point}
   For the specification $\Spec$ of the running example, the function
@@ -635,9 +640,10 @@ We extend this definition to sets of points as follows: $\Expr \models
   \mapsto 1, y \mapsto 2 \}$
 \end{example}
 
-The above restrictions make the SyGuS problem significantly easier.
+\vspace*{-3mm}
+The above restrictions make the \sygus problem significantly easier.
 However, a large number of problems do fall into this class (\arsays{x
-out of y benchmarks in the SyGuS 2015 competition}).
+out of y benchmarks in the \sygus 2015 competition}).
 Several previous works address this class of problem (see, for
 example, \cite{alur-15,madhusudan-16-pw,reynolds-15}).
 The following example shows that a number of commonly occurring
@@ -646,16 +652,22 @@ specification mores are point-wise specifications.
 \subsection{The Enumerative Solver}
 \label{sec:enumeration}
 
-\begin{wrapfigure}{l}{0.5\textwidth}
-  \begin{minipage}{0.5\textwidth}
+The principal idea behind the enumerative solver is to enumerate all
+expressions from the given syntax with some pruning.
+Only expressions that are distinct with respect to a set of concrete
+input points are enumerated.
+
+\begin{wrapfigure}{l}{0.46\textwidth}
+  \begin{minipage}{0.46\textwidth}
     \begin{algorithm}[H]
       \begin{algorithmic}[1]
+        \fontsize{8}{10}\selectfont
         \Require Grammar $\Grammar = \tuple { \NonTerminals, \StartSymbol, \Rules }$
         \Require Specification $\Spec$
         \Ensure $\Expr$ s.t.  $\Expr \in \sem{\Grammar} \wedge \Expr \models \Spec$
-        \State $\Point \gets \emptyset$ \label{line:basic:init}
-        \While { $\True$ }
-        \For {$\Expr \in \Call{Enumerate}{\Grammar,\Points}$ }\label{line:basic:enumerate}
+        \State $\Points \gets \emptyset$ \label{line:basic:init}
+        \While{$\mathtt{true}$}
+        \For {$\Expr \in \Call{enumerate}{\Grammar,\Points}$ }\label{line:basic:enumerate}
         \If { $\Expr \models \Spec \downharpoonleft  \Points$ } \textbf{continue} \EndIf\label{line:basic:concrete_check}
         \State $\CexInput \gets \Verify(\Expr, \Spec)$ \label{line:basic:verify}
         \If { $\CexInput = \bot$ } \Return $\Expr$ \EndIf \label{line:basic:return}
@@ -668,23 +680,20 @@ specification mores are point-wise specifications.
     \end{algorithm}
   \end{minipage}
 \end{wrapfigure}
-The principal idea behind the enumerative solver is to enumerate all
-expressions from the given syntax with some pruning.
-Only expressions that are distinct with respect to a set of concrete
-input points are enumerated.
-
+\noindent
 The full pseudo-code is given in Algorithm~\ref{algo:basic}.
-Initially, the set of points is empty (line~\ref{line:basic:init}).
-In each iteration, the algorithm calls the {\tt Enumerate} procedure
-which returns a (possibly infinite) list of expressions that are all
-distinct with respect to $\Points$ (line~\ref{line:basic:enumerate}).
-This $\Expr$ is then verified, first on the set of points
+Initially, the set of points is set to be empty at
+line~\ref{line:basic:init}.  In each iteration, the algorithm calls
+the \textsc{enumerate} procedure which returns a (possibly infinite)
+list of expressions such that no two expressions in this list evaluate
+to the same values at every point $\Point \in \Points$
+(line~\ref{line:basic:enumerate}).  Every expression $\Expr$ in this
+list is then verified, first on the set of points
 (line~\ref{line:basic:concrete_check}) and then fully
-(line~\ref{line:basic:verify}).
-If the expression $\Expr$ is correct, it is returned
-(line~\ref{line:basic:return}).
-Otherwise, we pick a counter-example input point (i.e., an input on
-which $\Expr$ is incorrect) and add it to the set of points and repeat
+(line~\ref{line:basic:verify}).  If the expression $\Expr$ is correct,
+it is returned (line~\ref{line:basic:return}).  Otherwise, we pick a
+counter-example input point (\ie, an input on which $\Expr$ is
+incorrect) and add it to the set of points and repeat
 (line~\ref{line:basic:continue}).
 
 For completeness, we recall the {\tt Enumerate} procedure here
@@ -747,7 +756,7 @@ non-terminal $\StartSymbol$.
 
 \begin{theorem}
   \label{thm:basic_enumeration}
-  Given a SyGuS instance $(\Spec, \Grammar)$ with at least one solution
+  Given a \sygus instance $(\Spec, \Grammar)$ with at least one solution
   expression, Algorithm~\ref{algo:basic} terminates and returns the
   smallest solution expression.
 \end{theorem}
@@ -825,7 +834,7 @@ $\Theory[\FormalParameters]$ such that:
   \ITE{\Pred}{\Expr_1}{\Expr_2} \in \sem{\tuple{ \Grammar_T, \Grammar_P }}$
 \end{inparaenum}
 
-Most commonly occurring SyGuS grammars in practice can be rewritten
+Most commonly occurring \sygus grammars in practice can be rewritten
 as conditional expression grammars in a straightforward and automated
 manner.
 However, it is easy to construct a grammar that cannot be decomposed
