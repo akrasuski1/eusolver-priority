@@ -173,7 +173,8 @@ approach by Solar-Lezama et al, and has been applied to a wide array of
 domains including invariant generation, automated repair of
 programs, binary rewriting, etc~\cite{solar-lezama-05,garg-16}.
 Recently, Syntax-Guided Synthesis (\sygus) has been proposed as a
-back-end exchange format and enabling technology for program synthesis.
+back-end exchange format and enabling technology for program
+synthesis~\cite{udupa-sygus}.
 The aim is to allow experts from different domains to model their
 synthesis problems as \sygus instances, and leverage general purpose
 \sygus solvers.
@@ -193,12 +194,13 @@ program to be synthesized:
 \begin{inparaenum}[(a)]
 \item black-box solvers, which do not deal with the specification
   directly, but learn constraints on how a potential solution should
-  behave on sample input points~\cite{udupa-transit,udupa-sygus,saha-15};
+  behave on sample inputs points~\cite{udupa-transit,udupa-sygus,saha-15};
   and
-\item white-box solvers, which attempt to either rewrite or solve the
-  specification directly using constraint solving
+\item white-box solvers, which attempt to solve the specification
+  directly using constraint solving
   techniques~\cite{reynolds-15,alur-15}.
 \end{inparaenum}
+
 Of the black-box solvers, the most successful, despite its simplicity,
 has been the enumerative solver which won the \sygus competition 2014
 and placed second in \sygus competition 2014.
@@ -1101,7 +1103,7 @@ We will now discuss several extensions and optimizations for
 Algorithm~\ref{algo:main}.
 
 
-\paragraph{Improving Synthesis Results}
+\paragraph{The Anytime Extension.}
 In the presentation from Section~\ref{sec:algo:main}, the algorithm
 stops enumeration of terms and predicates as soon as it finds a single
 solution to the synthesis problem.
