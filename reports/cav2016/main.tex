@@ -15,6 +15,7 @@
 \usepackage{subcaption}
 \usepackage{xspace}
 \usepackage{mdwtab}
+\usepackage[titletoc,title]{appendix}
 \usepackage{multirow}
 \usepackage[square,numbers,sort&compress,comma,sectionbib]{natbib}
 \usepackage{wrapfig}
@@ -668,7 +669,7 @@ input points are enumerated.
         \State $\Points \gets \emptyset$ \label{line:basic:init}
         \While{$\mathtt{true}$}
         \For {$\Expr \in \Call{enumerate}{\Grammar,\Points}$ }\label{line:basic:enumerate}
-        \If { $\Expr \models \Spec \downharpoonleft  \Points$ } \textbf{continue} \EndIf\label{line:basic:concrete_check}
+        \If { $\Expr \not\models \Spec \downharpoonleft  \Points$ } \textbf{continue} \EndIf\label{line:basic:concrete_check}
         \State $\CexInput \gets \Verify(\Expr, \Spec)$ \label{line:basic:verify}
         \If { $\CexInput = \bot$ } \Return $\Expr$ \EndIf \label{line:basic:return}
         \State $\Points \gets \Points \cup \CexInput$ \label{line:basic:continue}
@@ -684,75 +685,21 @@ input points are enumerated.
 The full pseudo-code is given in Algorithm~\ref{algo:basic}.
 Initially, the set of points is set to be empty at
 line~\ref{line:basic:init}.  In each iteration, the algorithm calls
-the \textsc{enumerate} procedure which returns a (possibly infinite)
-list of expressions such that no two expressions in this list evaluate
-to the same values at every point $\Point \in \Points$
-(line~\ref{line:basic:enumerate}).  Every expression $\Expr$ in this
-list is then verified, first on the set of points
-(line~\ref{line:basic:concrete_check}) and then fully
+the \textsc{enumerate} procedure\footnote{Note that {\tt Enumerate} is
+a coprocedure.  Unfamiliar readers may assume that each call to {\tt
+Enumerate} returns the next expression from an infinite list of
+expressions} which returns a (possibly infinite) list of expressions
+such that no two expressions in this list evaluate to the same values
+at every point $\Point \in \Points$ (line~\ref{line:basic:enumerate}).
+Every expression $\Expr$ in this list is then verified, first on the
+set of points (line~\ref{line:basic:concrete_check}) and then fully
 (line~\ref{line:basic:verify}).  If the expression $\Expr$ is correct,
 it is returned (line~\ref{line:basic:return}).  Otherwise, we pick a
 counter-example input point (\ie, an input on which $\Expr$ is
 incorrect) and add it to the set of points and repeat
-(line~\ref{line:basic:continue}).
-
-For completeness, we recall the {\tt Enumerate} procedure here
-(Algorithm~\ref{algo:enumerate}).
-\footnote{Note that {\tt Enumerate} is a coprocedure.
-  Unfamiliar readers may assume that each call to {\tt
-  Enumerate} returns the next expression from an infinite list of
-expressions}
-It maintains a map $\Productions : \NonTerminals \to
-\Powerset{\Theory[\FormalParameters]}$ from non-terminals to
-expressions they can produce.
-The invariant maintained by the procedure is that every pair of
-expressions in $\Productions[\NonTerminal]$ is distinct on $\Points$.
-
-The algorithm starts by first accumulating into
-$\Productions[\NonTerminal]$ the expressions that can be produced from
-$\NonTerminal$ in one step
-(lines~\ref{line:enumerate:level_one_iter}-\ref{line:enumerate:level_one}).
-Then, for each possible expression size $\Size$, it attempts to
-instantiate each production rule in the grammar with expressions already
-generated and stored in $\Productions$, to generate new expressions of
-size at most $\Size$.
-These newly generated expression are checked for distinctness from
-already generated ones, and if so, added to
-$\Productions[\NonTerminal]$.
-The algorithm returns all the expressions produced from the starting
-non-terminal $\StartSymbol$.
-
-\begin{algorithm}
-  \begin{algorithmic}[1]
-    \Require Grammar $\Grammar = \tuple { \NonTerminals, \StartSymbol, \Rules }$ and a set of points $\Points$
-    \Ensure Expressions $\tuple { \Expr_1, \Expr_2, \ldots }$ s.t. $\forall i < j : \vert \Expr_i \vert \leq \vert \Expr_j
-    \vert \wedge \exists \Point \in \Points : \Expr_i[\Point] \neq \Expr_j[\Point]$
-    \ForAll {$\NonTerminal \in \NonTerminals$} $\Productions[\NonTerminals] \gets \emptyset$ \EndFor
-    \ForAll {$(\NonTerminal, \Expr) \in \Rules$}\label{line:enumerate:level_one_iter}
-    \If { $\Expr \in \Theory[\FormalParameters]$ }
-    $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \{ \Expr \}$  \label{line:enumerate:level_one}
-    \EndIf
-    \EndFor
-    \State $ \Size \gets 1 $
-    \While { $\True$ }
-    \ForAll {$(\NonTerminal, \Expr) \in \Rules$}
-    \State $(\NonTerminal_1, \ldots, \NonTerminal_n) \gets \mbox{List of non-terminals occurring in $\Expr$ }$
-    \ForAll { $(\Expr_1, \ldots, \Expr_n) \in \Productions[\NonTerminal_1] \times \cdots \times \Productions[\NonTerminal_n]$ }
-    \State $\Expr^* \gets \Expr[\Expr_1/\NonTerminal_1,\ldots,\NonTerminal_n/\Expr_n]$
-    \If { $\vert \Expr^* \vert \leq \Size \wedge \forall \Expr' \in
-      \Productions[\NonTerminal] . \exists \Point \in \Points :
-    \Expr'[\Point] \neq \Expr^*[\Point] $ }
-    \State $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \Expr^*$
-    \If { $\NonTerminal = \StartSymbol$ } \textbf{yield} $\Expr^*$ \EndIf
-    \EndIf
-    \EndFor
-    \EndFor
-    \State $\Size \gets \Size + 1$
-    \EndWhile
-  \end{algorithmic}
-  \caption{Enumerating distinct expressions from a grammar}
-  \label{algo:enumerate}
-\end{algorithm}
+(line~\ref{line:basic:continue}). A full description of the
+\textsc{enumerate} procedure can be found in
+Appendix~\ref{section:appendix_esolver}.
 
 \begin{theorem}
   \label{thm:basic_enumeration}
@@ -1623,6 +1570,8 @@ solutions than the initially discovered solution.
 \begin{small}
 \bibliography{main}
 \end{small}
+
+\input{appendix}
 
 \arsays{Madhu's work assumes that the predicate domain can distinguish
 any two points?}
