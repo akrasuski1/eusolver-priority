@@ -171,7 +171,7 @@ Program synthesis is an increasingly popular area of research with the
 introduction of counter-example guided inductive synthesis (CEGIS)
 approach by Solar-Lezama et al, and has been applied to a wide array of
 domains including invariant generation, automated repair of
-programs, binary rewriting, etc~\cite{xxx,yyy,zzz}.
+programs, binary rewriting, etc~\cite{solar-lezama-05,garg-16}.
 Recently, Syntax-Guided Synthesis (\sygus) has been proposed as a
 back-end exchange format and enabling technology for program synthesis.
 The aim is to allow experts from different domains to model their
@@ -193,15 +193,15 @@ program to be synthesized:
 \begin{inparaenum}[(a)]
 \item black-box solvers, which do not deal with the specification
   directly, but learn constraints on how a potential solution should
-  behave on sample input points~\cite{enumerative,stochastic,alchemist,etc};
+  behave on sample input points~\cite{udupa-transit,udupa-sygus,saha-15};
   and
 \item white-box solvers, which attempt to either rewrite or solve the
   specification directly using constraint solving
-  techniques~\cite{cvc4,alur-2015}.
+  techniques~\cite{reynolds-15,alur-15}.
 \end{inparaenum}
 Of the black-box solvers, the most successful, despite its simplicity,
 has been the enumerative solver which won the \sygus competition 2014
-and placed second in \sygus competition 2014~\cite{xxx}.
+and placed second in \sygus competition 2014.
 The enumerative solver maintains a set of concrete input points, and
 in each iteration attempts to produce an expression that is correct on
 these concrete inputs.
@@ -214,15 +214,14 @@ If it is incorrect, a counter-example point is found and added to the
 set of input points.
 
 \marginnote{Para 3 {Problem and our solution to this}}
-While the enumerative approach is very successful, it does not scale
-well with the solution size.
-In Figure~\ref{figure:random_exponential_graph}, the x-axis represents
-expression size and the y-axis represents the time taken to enumerate
-all expressions of size up to the expression size.
-As can be seen from the graph, the time taken to explore potential
-solutions grows exponentially with size.
-To overcome this scalability issue, we introduce a divide-and-conquer
-enumerative algorithm.
+While the enumerative strategy works well when the desired solutions
+have small to medium sizes, it does not scale well with the solution
+size.  In Figure~\ref{figure:random_exponential_graph}, the x-axis
+represents expression size and the y-axis represents the time taken to
+enumerate all expressions of size up to the expression size.  As can
+be seen from the graph, the time taken to explore potential solutions
+grows exponentially with size.  To overcome this scalability issue, we
+introduce a divide-and-conquer enumerative algorithm.
 
 The divide-and-conquer enumerative approach is based on this insight:
 while the full solution expression to the synthesis problem may be
@@ -236,17 +235,17 @@ The individual parts we refer to here are:
 \end{inparaenum}
 For example, in the expression $\ITE{x \leq y}{y}{x}$, the terms are $x$
 and $y$, and the predicate is $x \leq y$.
-As can be seen in this example, though the full expression has size $6$,
+In this example, although the full expression has size $6$,
 the individual terms have size $1$ each, and the predicate size $3$.
 Hence, the divide-and-conquer enumerative approach only enumerates terms
 and predicates separately and attempts to combine them into a
 conditional expression.
-\arsays{Do we need to mention the point-wise/separable restriction here,
-and also the restriction on grammars?}
+% \arsays{Do we need to mention the point-wise/separable restriction here,
+% and also the restriction on grammars?}
 
 For combining the different part of the solution in a full conditional
 expression, we use the technique of learning decision
-trees~\cite{ID3,probably_mitchell_book}.
+trees~\cite{quinlan-86,bishop-book}.
 The input points maintained by the enumerative algorithm serve as the
 samples, the predicates enumerated serve as the attributes, and the
 terms serve as the labels.
@@ -260,34 +259,35 @@ predicates) lead to a branch.
 \marginnote{Para 5 {Other extensions. \arsays{I don't like this
 paragraph. It sounds like a ``this too is in the paper'' paragraph}}}
 \paragraph{Extensions and Optimizations}
-We present three separate extensions and optimizations to resolve
+We present two extensions and optimizations to resolve
 various issues that arise in a practical implementation of the
-divide-and-conquer implementation.
+divide-and-conquer algorithm, as well as to enhance to the quality of
+solutions produced.
 
 \subparagraph{Anytime extension}
 The anytime extension to the algorithm does not stop when the first
 solution is found, and instead continues enumerating terms and
 predicates in an attempt to produce more compact solutions.
-For example, suppose the synthesizer is attempting to produce a
-conditional equivalent to $x \geq 0 \wedge y \geq 0 \wedge x + y \leq
-2$.
-Using predicates of size $3$, the most compact solution the synthesizer
-can produce is $y \geq 0 \wedge ((x = 0 \wedge y \leq 2) \vee (x = 1
-\wedge y \leq 1) \vee (x = 2 \wedge y \leq 0))$.
-However, allowing the synthesizer to continue and further enumerate
-predicates of size $4$ lets it to produce the more compact original
-conditional.
+% For example, suppose the synthesizer is attempting to produce a
+% conditional equivalent to $x \geq 0 \wedge y \geq 0 \wedge x + y \leq
+% 2$.
+% Using predicates of size $3$, the most compact solution the synthesizer
+% can produce is $y \geq 0 \wedge ((x = 0 \wedge y \leq 2) \vee (x = 1
+% \wedge y \leq 1) \vee (x = 2 \wedge y \leq 0))$.
+% However, allowing the synthesizer to continue and further enumerate
+% predicates of size $4$ lets it to produce the more compact original
+% conditional.
 
-\subparagraph{Decision tree repair}
-During the enumeration process, a term (say $\Term$) which is correct on
-the same set of points as an already generated term (say $\Term'$) is
-discarded.
-However, it may be the case that $\Term$ is correct on a larger set of
-inputs than $\Term'$.
-Hence, if a counter-example is generated when verifying an expression
-$\Expr$ that uses $\Term'$, it might be possible to repair $\Expr$ to
-make it behave correctly on the counter-example by replacing $\Term'$
-with $\Term$.
+% \subparagraph{Decision tree repair}
+% During the enumeration process, a term (say $\Term$) which is correct on
+% the same set of points as an already generated term (say $\Term'$) is
+% discarded.
+% However, it may be the case that $\Term$ is correct on a larger set of
+% inputs than $\Term'$.
+% Hence, if a counter-example is generated when verifying an expression
+% $\Expr$ that uses $\Term'$, it might be possible to repair $\Expr$ to
+% make it behave correctly on the counter-example by replacing $\Term'$
+% with $\Term$.
 
 \subparagraph{Branch level verification}
 Another more technique we use to generate additional counter-examples
@@ -296,39 +296,36 @@ leaf) separately.
 Each such verification call may return additional counter-examples,
 allowing the procedure to gain more information from a single incorrect
 solution.
-For example, to verify the proposed solution expression $\SynthFun(x, y)
-\equiv \ITE{x \leq y}{1}{0}$: instead of checking if there exists an
-input $(x_0, y_0)$ on which the expression behaves incorrectly, branch
-level verification checks separately if
-\begin{inparaenum}[(a)]
-\item there exists an input satisfying $x \leq y$ on which the
-  expression $1$ behaves incorrectly, and
-\item the exists an input satisfying $\neg x \leq y$ on which the
-  expression $0$ behaves incorrectly.
-\end{inparaenum}
+% For example, to verify the proposed solution expression $\SynthFun(x, y)
+% \equiv \ITE{x \leq y}{1}{0}$: instead of checking if there exists an
+% input $(x_0, y_0)$ on which the expression behaves incorrectly, branch
+% level verification checks separately if
+% \begin{inparaenum}[(a)]
+% \item there exists an input satisfying $x \leq y$ on which the
+%   expression $1$ behaves incorrectly, and
+% \item the exists an input satisfying $\neg x \leq y$ on which the
+%   expression $0$ behaves incorrectly.
+% \end{inparaenum}
 
 \marginnote{Para 7 {Evaluation}}
 \paragraph{Evaluation}
-We implemented the above mention techniques in a prototype tool and
-evaluated it on benchmarks from the \sygus competition 2015, both in the
-linear integer arithmetic and the bit-vector domain.
-The tool was able to perform on par or better than existing solvers in
-both domains, and produced compact solutions.
-In the bit-vector domain, the tool was able to solve $47$ out of the
-$50$ problems in the ICFP suite of benchmarks in less than $1$ hour.
-To the best of our knowledge, no other solver has been able to solve the
-ICFP benchmarks given the syntactic restrictions.
-Further, we also evaluated if the anytime extension of the algorithm was
-able to produce more compact solutions given more time.
-In $22$ of the $47$ solved ICFP benchmarks, the anytime extension
-produced smaller solutions than the earliest generated one, with the
-smallest solution being $11\%$ of the earliest generated in the best
-case.
-In the linear integer arithmetic domain, the tool performed much better
-than existing black-box solvers scaling to larger instances.
-However, in the larger benchmarks, the size of the solution produced was
-larger than those produced by white-box solvers due to the decision tree
-learning algorithm producing larger than necessary decision trees.
+We implemented the proposed algorithm in a prototype tool and
+evaluated it on benchmarks from the \sygus competition 2015, both in
+the linear integer arithmetic and the bit-vector domain.  The tool was
+able to perform on par or better than existing solvers in both
+domains, and produced compact solutions.  In the bit-vector domain,
+the tool was able to solve $47$ out of the $50$ problems in the ICFP
+suite of benchmarks in less than $1$ hour.  To the best of our
+knowledge, no other solver has been able to solve the ICFP benchmarks
+satisfactorily.  Further, we also observed that the anytime extension
+of the algorithm was able to produce more compact solutions in $22$ of
+the $47$ solved ICFP benchmarks.  We were able to obtain upto a $90\%$
+reduction in solution size in some cases.  In the linear integer
+arithmetic domain, the tool performed much better than existing
+black-box solvers scaling to larger instances.  However, in the larger
+benchmarks, the size of the solution produced was larger than those
+produced by white-box solvers due to the decision tree learning
+algorithm producing larger than necessary decision trees.
 
 \marginnote{Para 8 {Summary}}
 \paragraph{Summary}
