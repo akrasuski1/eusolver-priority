@@ -86,8 +86,7 @@ $\Productions[\NonTerminal]$.
 The algorithm returns all the expressions produced from the starting
 non-terminal $\StartSymbol$.
 
-\section{Incompleteness of Algorithm~\ref{algo:main}
-without line~\ref{line:main:more_terms}}
+\section{Algorithm~\ref{algo:main} without line~\ref{line:main:more_terms}}
 \label{sec:app:ex}
 
 Consider the conditional expression grammar given in
@@ -114,14 +113,15 @@ continue to generate more terms while also generating predicates.
 This will lead to the generation of the term $x$, and the algorithm will
 succeed.
 
-\begin{figure}
+\begin{figure}[!t]
+\vspace*{3ex}
   \begin{alltt}
   \fontsize{9}{10}\selectfont
-                   S ::= T | if (C) then T else T
-                   T ::= 0 | 1 | 2 | x 
-                   C ::= T < 0
+                      S ::= T | if (C) then T else T
+                      T ::= 0 | 1 | 2 | x 
+                      C ::= T < 0
 \end{alltt}
-\caption{Grammar for Section~\ref{sec:app:ex}}
+\caption{Grammar for~\ref{sec:app:ex}}
   \label{fig:bad_grammar}
 \end{figure}
 
