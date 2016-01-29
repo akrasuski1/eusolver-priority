@@ -1531,28 +1531,42 @@ classes of benchmarks;
 \section{Concluding Remarks}
 \label{sec:conclusion}
 
-\subsection{Related Work}
+\paragraph{Related Work}
 Program synthesis has seen a revived interest in the last decade,
 starting from the \sketch
-framework~\cite{solar-lezama-05,solar-lezama-06}. \sketch uses an
-unoptimized C program as a correctness specification, and a partial
-program with \emph{generator} expressions to specify syntactic
-restrictions, and proposed the counterexample guided inductive
-synthesis (CEGIS) strategy for synthesis. Almost all synthesis
-algorithms proposed in recent literature --- including the one
-described in this paper --- can be viewed as an instantiation of the
-CEGIS strategy.  More recently, constraint based synthesis approaches
-have been applied to synthesize loop-free programs~\cite{jha-10,
-gulwani-pldi-11}. Research in synthesis of string manipulating
-programs using input-output examples has found applications in
-Microsoft's FlashFill~\cite{gulwani-popl-11}, and the ideas have been
-generalized for other domains in a meta-synthesis framework called
+framework~\cite{solar-lezama-05,solar-lezama-06} which
+% \sketch uses an
+% unoptimized C program as a correctness specification, and a partial
+% program with \emph{generator} expressions to specify syntactic
+% restrictions, and
+proposed the counterexample guided inductive
+synthesis (CEGIS). Almost all synthesis
+algorithms proposed in recent literature 
+% --- including the one described in this paper ---
+can be viewed as an instantiation of CEGIS.  
+% More recently, constraint based synthesis approaches
+% have been applied to synthesize loop-free programs~\cite{jha-10,
+% gulwani-pldi-11}. 
+Synthesis of string manipulating programs using input-output
+examples has found applications in Microsoft's
+FlashFill~\cite{gulwani-popl-11}, and the ideas have been generalized
+for other domains in a meta-synthesis framework called
 FlashMeta~\cite{polozov-15}.
+Other recent work in the area of program synthesis have
+used type-theoretic approaches~\cite{gvero-13,osera-15,frankle-16} for
+program completion and for generating code snippets.
+Synthesis of recursive programs and data structure manipulating code
+% using constraint solving techniques 
+% is yet another application of program synthesis that 
+has also been studied extensively in recent
+years~\cite{kuncak-10,kneuss-13,albarghouthi-13,feser-15}.
+Lastly, synthesis techniques based on decision trees have been used to
+learn program invariants~\cite{garg-16}.
 
-In the area of \sygus solvers, solvers based on enumerative
+In the area of \sygus, solvers based on enumerative
 search~\cite{udupa-transit}, stochastic
 search~\cite{schkufza-13,udupa-sygus} and symbolic
-search~\cite{gulwani-pldi-11} were among the first solvers
+search~\cite{gulwani-pldi-11,jha-10} were among the first solvers
 developed. The \sketch approach has also been used to develop \sygus
 solvers~\cite{jeon-15}. Alchemist~\cite{saha-15} is another solver
 that is quite competitive on benchmarks in the linear arithmetic
@@ -1563,48 +1577,46 @@ solver~\cite{alur-15} have also been developed.
 The enumerative synthesis algorithm used by
 \esolver~\cite{udupa-transit, udupa-sygus} and the work on using decision
 trees for piece-wise functions~\cite{madhusudan-16-pw} are perhaps the
-most closely related to the work described in this paper. We have
-already discussed at length the shortcomings of \esolver that our
-algorithm overcomes. The approach for learning piece-wise
-functions~\cite{madhusudan-16-pw}, which we refer to as \pwsolve, also
-uses decision trees, but differs from our approach in several ways:
+most closely related to the work described in this paper.
+We have already discussed at length the shortcomings of \esolver that our
+algorithm overcomes.
+The approach for learning piece-wise functions~\cite{madhusudan-16-pw}
+also uses decision trees, but differs from our approach in several ways:
 \begin{inparaenum}[(a)]
 \item
-\pwsolve uses a different set of heuristics based on hitting sets,
-rather than the cover-based prior distribution that we use,
+  While the presented framework is generic, the authors instantiate it
+  only for the linear arithmetic domain.
+% \pwsolve presents a generic algorithm which uses decision trees to
+% learn a classifier, as well as thresholds for linear
+% inequalities. 
+% Although presented in a generic manner,
+% The algorithm has been instantiated only for the domain of linear arithmetic.
+  It is unclear how the approach can be instantiated for other
+  domains. 
+  In \dcsolve, neither the decision tree learning algorithm, nor the
+  enumeration is domain-specific, making \dcsolve a domain-agnostic
+  generic algorithm.
+\item The heuristics used for decision tree learning are 
+% \pwsolve uses a different set of heuristics 
+based on hitting sets, rather than the cover-based prior distribution
+that we use.
 \item
-\pwsolve presents a generic algorithm which uses decision trees to
-learn a classifier, as well as thresholds for linear
-inequalities. Although presented in a generic manner, the algorithm
-has been instantiated only for the domain of linear arithmetic. It is
-unclear how the approach can be instantiated for other
-domains. \dcsolve on the other hand uses decision trees to strictly
-learn a classifier, given some Boolean-valued attributes. Neither the
-decision tree learning algorithm, nor the enumeration is
-domain-specific, making \dcsolve a generic algorithm that can be
-applied on any domain.
+  Conversely, the algorithm presented in~\cite{madhusudan-16-pw} can
+  easily learn large constants in the linear integer domain.
+  This is something that enumerative approaches, including \dcsolve
+  struggle to do.
+  % often representing a constant like ``42'' as a sum of
+  % smaller constants that appear in the grammar.
 \item
-Conversely, \pwsolve can easily learn constants in the linear
-integer domain. This is something that enumerative approaches,
-including \dcsolve struggle to do, often representing a constant like
-``42'' as a sum of smaller constants that appear in the grammar.
-\item
-Finally, it is unclear how \pwsolve can handle syntactic restrictions
-in a general manner, whereas \dcsolve can handle syntactic
-restrictions of any form, being based on enumerative
-approaches.
+  Finally, it is unclear how the techniques of~\cite{madhusudan-16-pw}
+  can handle syntactic restrictions in a general manner.
+  % whereas
+  % \dcsolve can handle syntactic restrictions of any form, being based on
+  % enumerative approaches.
 \end{inparaenum}
 
-Other recent work in the area of program synthesis in general have
-used type-theoretic approaches~\cite{gvero-13,osera-15,frankle-16} for
-program completion and for generating code snippets. Synthesis of
-recursive programs and data structure manipulating code is yet another
-application of program synthesis that has been studied in recent
-years~\cite{kuncak-10,kneuss-13,albarghouthi-13,feser-15}. Lastly,
-decision trees have also been applied to learn program
-invariants~\cite{garg-16}.
 
-\subsection{Conclusion}
+\paragraph{Conclusion}
 This paper has presented a new enumerative algorithm to solve
 instances of the Syntax-Guided Synthesis (\sygus) problem. The
 algorithm overcomes the shortcomings of a na\"ive enumerative
@@ -1614,11 +1626,13 @@ to form a conditional expression using Boolean combinations of
 enumerated predicates using decision trees. We have demonstrated the
 ability of the algorithm to generalize from input-output examples by
 solving most of the previously unsolved ICFP benchmarks, which are
-part of the \sygus benchmark suite. The algorithm is generic and
-competitive with the state-of-the-art techniques in other domains as
-well. The algorithm produces compact solutions, and is \emph{anytime}
---- in that continued execution can potentially produce more compact
-solutions than the initially discovered solution.
+part of the \sygus benchmark suite. The algorithm is generic, produces
+compact solutions, competitive with the state-of-the-art techniques,
+% in other domains as well.
+% The algorithm produces compact solutions,
+and is \emph{anytime} --- in that continued execution can potentially
+produce more compact solutions.
+% than the initially discovered solution.
 
 
 \bibliographystyle{plainnat}
