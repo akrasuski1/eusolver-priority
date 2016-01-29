@@ -1,0 +1,58 @@
+\newpage
+\renewcommand{\thesection}{\appendixname~\Alph{section}}
+\begin{appendices}
+\section{Description of the {\scshape{enumerate}} Procedure}
+\label{section:appendix_esolver}
+The \textsc{enumerate} procedure maintains a map $\Productions : \NonTerminals \to
+\Powerset{\Theory[\FormalParameters]}$ from non-terminals to
+expressions they can produce.
+The invariant maintained by the procedure is that every pair of
+expressions in $\Productions[\NonTerminal]$ is distinct on $\Points$.
+
+The algorithm starts by first accumulating into
+$\Productions[\NonTerminal]$ the expressions that can be produced from
+$\NonTerminal$ in one step
+(lines~\ref{line:enumerate:level_one_iter}-\ref{line:enumerate:level_one}).
+Then, for each possible expression size $\Size$, it attempts to
+instantiate each production rule in the grammar with expressions already
+generated and stored in $\Productions$, to generate new expressions of
+size at most $\Size$.
+These newly generated expression are checked for distinctness from
+already generated ones, and if so, added to
+$\Productions[\NonTerminal]$.
+The algorithm returns all the expressions produced from the starting
+non-terminal $\StartSymbol$.
+
+\begin{algorithm}
+  \begin{algorithmic}[1]
+    \Require Grammar $\Grammar = \tuple { \NonTerminals, \StartSymbol, \Rules }$ and a set of points $\Points$
+    \Ensure Expressions $\tuple { \Expr_1, \Expr_2, \ldots }$ s.t. $\forall i < j : \vert \Expr_i \vert \leq \vert \Expr_j
+    \vert \wedge \exists \Point \in \Points : \Expr_i[\Point] \neq \Expr_j[\Point]$
+    \ForAll {$\NonTerminal \in \NonTerminals$} $\Productions[\NonTerminals] \gets \emptyset$ \EndFor
+    \ForAll {$(\NonTerminal, \Expr) \in \Rules$}\label{line:enumerate:level_one_iter}
+    \If { $\Expr \in \Theory[\FormalParameters]$ }
+    $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \{ \Expr \}$  \label{line:enumerate:level_one}
+    \EndIf
+    \EndFor
+    \State $ \Size \gets 1 $
+    \While { $\True$ }
+    \ForAll {$(\NonTerminal, \Expr) \in \Rules$}
+    \State $(\NonTerminal_1, \ldots, \NonTerminal_n) \gets \mbox{List of non-terminals occurring in $\Expr$ }$
+    \ForAll { $(\Expr_1, \ldots, \Expr_n) \in \Productions[\NonTerminal_1] \times \cdots \times \Productions[\NonTerminal_n]$ }
+    \State $\Expr^* \gets \Expr[\Expr_1/\NonTerminal_1,\ldots,\NonTerminal_n/\Expr_n]$
+    \If { $\vert \Expr^* \vert \leq \Size \wedge \forall \Expr' \in
+      \Productions[\NonTerminal] . \exists \Point \in \Points :
+    \Expr'[\Point] \neq \Expr^*[\Point] $ }
+    \State $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \Expr^*$
+    \If { $\NonTerminal = \StartSymbol$ } \textbf{yield} $\Expr^*$ \EndIf
+    \EndIf
+    \EndFor
+    \EndFor
+    \State $\Size \gets \Size + 1$
+    \EndWhile
+  \end{algorithmic}
+  \caption{Enumerating distinct expressions from a grammar}
+  \label{algo:enumerate}
+\end{algorithm}
+
+\end{appendices}
