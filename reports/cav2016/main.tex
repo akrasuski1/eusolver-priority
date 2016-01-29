@@ -947,6 +947,7 @@ predicates and retry.
 
 \begin{algorithm}
   \begin{algorithmic}[1]
+    \fontsize{8}{10}\selectfont
     \Require Conditional expression grammar $\Grammar = \tuple{ \Grammar_T, \Grammar_P }$
     \Require Specification $\Spec$
     \Ensure Expression $\Expr$ s.t.  $\Expr \in \sem{\Grammar} \wedge \Expr \models \Spec$
@@ -978,7 +979,7 @@ predicates and retry.
     \EndWhile
     \EndFunction
   \end{algorithmic}
-  \caption{The divide-and-conquer enumeration algorithm}
+  \caption{\dcsolve: The divide-and-conquer enumeration algorithm}
   \label{algo:main}
 \end{algorithm}
 
@@ -1023,6 +1024,7 @@ left and right sub-trees, respectively.
 
 \begin{algorithm}
   \begin{algorithmic}[1]
+    \fontsize{8}{10}\selectfont
     \Require $\Points$, $\Terms$, $\Cover$, $\Predicates$
     \Ensure Decision tree $\DecisionTree$
     \If { $\exists \Term : \Points \subseteq \Cover[\Term]$ }\label{line:dt:single}
@@ -1292,6 +1294,59 @@ tree separately.
 \input{results_anytime_table}
 \input{results_one_shot_max_table}
 
+\begin{figure}[!t]
+\centering
+\begin{subfigure}{0.45\textwidth}
+  \begin{tikzpicture}
+    \fontsize{8}{10}\selectfont
+    \begin{axis}[
+      width=5cm,
+      height=5cm,
+      ylabel=\# Benchmarks,
+      xlabel=Time (minutes),
+      tick align=outside,
+      grid=both,
+      ytick={0,10,20,30,40,50},
+      xtick={0,600,1200,1800,2400,3000,3600},
+      xticklabels={0,10,20,30,40,50,60},
+      line width=0.7pt
+      ]
+      \addplot[mark=.,color=black] table {cumulative_completion.dat};
+      \addplot[mark=.,color=red] table {cumulative_min_finding.dat};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Total number of benchmarks solved as a function of elapsed time}
+  \label{subfigure:solved_vs_time}
+\end{subfigure}
+\quad
+\begin{subfigure}{0.45\textwidth}
+  \begin{tikzpicture}
+    \fontsize{8}{10}\selectfont
+    \begin{loglogaxis}[
+      width=5cm,
+      height=5cm,
+      xlabel=First Solution Size,
+      ylabel=Min. Solution Size,
+      tick align=outside,
+      grid=major,
+      line width=0.7pt,
+      ytick={10, 100},
+      xtick={10, 100},
+      xmin=5,
+      ymin=5,
+      xmax=230,
+      ymax=230
+      ]
+      \addplot[mark=.,color=gray] table {xequalsy.dat};
+      \addplot[only marks,mark=x,color=blue] table {cumulative_improvement.dat};
+    \end{loglogaxis}
+  \end{tikzpicture}
+  \caption{Scatter plot of first vs. minimum size solutions}
+  \label{subfigure:first_vs_best}
+\end{subfigure}
+\caption{Summary graphs of experimental results on the ICFP benchmarks}
+\end{figure}
+
 We built a prototype \sygus solver that uses the divide-and-conquer
 enumerative algorithm.
 % based on the ideas presented in this paper.
@@ -1427,7 +1482,10 @@ solutions are beyond the reach of a na\"ive enumerative strategy.
 % The solutions produced by our divide and
 % conquer algorithm are quite compact, and
 Of the $47$ solved instances, only $5$ benchmarks take longer than $10$
-minutes.
+minutes, as seen in Figure~\ref{subfigure:solved_vs_time} indicates
+this, with the black line denoting the time to find the first
+solution, and the red line denoting the time to find the best
+solution.
 % of them are computed in less than ten minutes, with only five
 % benchmarks taking longer.
 
@@ -1487,7 +1545,7 @@ future work.
 For about half the ICFP benchmarks, we were able to obtain a more
 compact solution by letting the algorithm continue execution after the
 first solution was discovered (last column in
-Table~\ref{table:anytime_results}).
+Table~\ref{table:anytime_results}, and Figure~\ref{subfigure:first_vs_best}).
 Also, the difference in the first and
 smallest solutions is sometimes very significant, for example, in the
 case of the ``icfp\_95\_100'' benchmark, we see the size of the
@@ -1541,12 +1599,12 @@ framework~\cite{solar-lezama-05,solar-lezama-06} which
 % restrictions, and
 proposed the counterexample guided inductive
 synthesis (CEGIS). Almost all synthesis
-algorithms proposed in recent literature 
+algorithms proposed in recent literature
 % --- including the one described in this paper ---
-can be viewed as an instantiation of CEGIS.  
+can be viewed as an instantiation of CEGIS.
 % More recently, constraint based synthesis approaches
 % have been applied to synthesize loop-free programs~\cite{jha-10,
-% gulwani-pldi-11}. 
+% gulwani-pldi-11}.
 Synthesis of string manipulating programs using input-output
 examples has found applications in Microsoft's
 FlashFill~\cite{gulwani-popl-11}, and the ideas have been generalized
@@ -1556,8 +1614,8 @@ Other recent work in the area of program synthesis have
 used type-theoretic approaches~\cite{gvero-13,osera-15,frankle-16} for
 program completion and for generating code snippets.
 Synthesis of recursive programs and data structure manipulating code
-% using constraint solving techniques 
-% is yet another application of program synthesis that 
+% using constraint solving techniques
+% is yet another application of program synthesis that
 has also been studied extensively in recent
 years~\cite{kuncak-10,kneuss-13,albarghouthi-13,feser-15}.
 Lastly, synthesis techniques based on decision trees have been used to
@@ -1588,16 +1646,16 @@ also uses decision trees, but differs from our approach in several ways:
   only for the linear arithmetic domain.
 % \pwsolve presents a generic algorithm which uses decision trees to
 % learn a classifier, as well as thresholds for linear
-% inequalities. 
+% inequalities.
 % Although presented in a generic manner,
 % The algorithm has been instantiated only for the domain of linear arithmetic.
   It is unclear how the approach can be instantiated for other
-  domains. 
+  domains.
   In \dcsolve, neither the decision tree learning algorithm, nor the
   enumeration is domain-specific, making \dcsolve a domain-agnostic
   generic algorithm.
-\item The heuristics used for decision tree learning are 
-% \pwsolve uses a different set of heuristics 
+\item The heuristics used for decision tree learning are
+% \pwsolve uses a different set of heuristics
 based on hitting sets, rather than the cover-based prior distribution
 that we use.
 \item
