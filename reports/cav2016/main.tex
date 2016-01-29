@@ -24,8 +24,11 @@
 \usepackage[noend]{algpseudocode}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{hyphenat}
 \pgfplotsset{compat=1.12}
 \usepackage{hyperref}
+
+\hyphenation{enum-er-at-ive}
 
 % \DeclareCaptionFormat{myformat}{#1#2#3\hrulefill}
 % \captionsetup[figure]{format=myformat}
@@ -94,8 +97,8 @@
     SyGuS}\xspace}
 \newcommand{\dcsolve}{{\sffamily\fontsize{8.5}{10}\selectfont
     DCSolve}\xspace}
-\renewcommand{\paragraph}[1]{\par\noindent\textbf{#1}.}
-\newcommand{\itparagraph}[1]{\par\noindent\textit{#1}.}
+\renewcommand{\paragraph}[1]{\par\noindent\textbf{#1.}}
+\newcommand{\itparagraph}[1]{\par\noindent\textit{#1.}}
 \newcommand{\esolver}{\textsc{esolver}\xspace}
 \newcommand{\sketch}{\textsc{sketch}\xspace}
 \newcommand{\pwsolve}{{\sffamily\fontsize{8.5}{10}\selectfont
@@ -124,7 +127,8 @@
 % \newpage
 
 \pagestyle{plain}
-\title{Scaling Enumerative Program Synthesis\\via Divide and Conquer}
+\title{\texorpdfstring{Scaling Enumerative Program Synthesis\\via
+    Divide and Conquer}{Scaling Enumerative Program Synthesis via Divide and Conquer}}
 % \author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
 \author{}
 % \institute{University of Pennsylvania}
@@ -138,7 +142,7 @@
   Syntax-Guided Synthesis (\sygus) problem is to find an expression
   that satisfies both the syntactic and semantic constraints.
   An enumerative approach to solve this problem is to systematically
-  generates all expressions from the syntactic space with some pruning,
+  generate all expressions from the syntactic space with some pruning,
   and has proved to be surprisingly competitive in the newly started
   competition of \sygus solvers.  It performs well on small to medium sized
   benchmarks, produces succinct expressions, and has the ability to
@@ -174,7 +178,7 @@
 The field of program synthesis relates to automated techniques that
 attempt to automatically generate programs from requirements that a
 programmer writes.
-% Program synthesis is an increasingly popular area of research 
+% Program synthesis is an increasingly popular area of research
 % with the introduction of counter-example guided inductive synthesis (CEGIS)
 % approach by Solar-Lezama et al, and has been applied to a wide array of
 % domains including invariant generation, automated repair of
@@ -182,7 +186,7 @@ programmer writes.
 It has been applied to various domains such as program
 completion~\cite{solar-lezama-05}, program optimization, and automatic
 generation of string manipulation programs from input-output
-examples~\cite{gulwani-popl-11}, among other applications.
+examples~\cite{gulwani-popl-11}, among others.
 Recently, Syntax-Guided Synthesis (\sygus) has been proposed as a
 back-end exchange format and enabling technology for program
 synthesis~\cite{udupa-sygus}.
@@ -230,12 +234,12 @@ verified against the full specification.
 If it is incorrect, a counter-example point is found and added to the
 set of input points.
 
-While the enumerative strategy works well when the desired solutions
+Although the enumerative strategy works well when the desired solutions
 have small to medium sizes, it does not scale well with the solution
 size.  Figure~\ref{figure:random_exponential_graph}
 % the x-axis
 % represents expression size and the y-axis represents the time taken to
-% enumerate all expressions of size up to the expression size.  
+% enumerate all expressions of size up to the expression size.
 shows that the time taken to explore all potential solutions
 grows exponentially with solution size.  To overcome this scalability issue, we
 introduce a divide-and-conquer enumerative algorithm.
@@ -253,25 +257,24 @@ The individual parts we refer to here are:
 For example, in the expression $\ITE{x \leq y}{y}{x}$, the terms are $x$
 and $y$, and the predicate is $x \leq y$.
 In this example, although the full expression has size $6$,
-the individual terms have size $1$ each, and the predicate size $3$.
+the individual terms have size $1$ each, and the predicate has size $3$.
 Hence, the divide-and-conquer enumerative approach only enumerates terms
 and predicates separately and attempts to combine them into a
 conditional expression.
 % \arsays{Do we need to mention the point-wise/separable restriction here,
 % and also the restriction on grammars?}
 
-For combining the different part of the solution in a full conditional
+To combine the different parts of a solution into a conditional
 expression, we use the technique of learning decision
-trees~\cite{quinlan-86,bishop-book}.
-The input points maintained by the enumerative algorithm serve as the
-samples, the predicates enumerated serve as the attributes, and the
-terms serve as the labels.
+trees~\cite{quinlan-86,bishop-book}.  The input points maintained by
+the enumerative algorithm serve as the samples, the predicates
+enumerated serve as the attributes, and the terms serve as the labels.
 A term $\Term$ is a valid label for a point $\Point$ if $\Term$ is
-correct for $\Point$.
-We use a simple multi-label decision tree learning algorithm returns a
-sound decision tree that classifies the samples soundly, i.e., for each
-point, following the edges corresponding to the attribute values (i.e.,
-predicates) lead to a branch.
+correct for $\Point$.  We use a simple multi-label decision tree
+learning algorithm returns a sound decision tree that classifies the
+samples soundly, \ie, for each point, following the edges
+corresponding to the attribute values (\ie, predicates) leads to a
+label (\ie, term) which is correct for the point.
 
 To enhance the quality of the solutions obtained, we extend the basic
 divide-and-conquer algorithm to be an \emph{anytime}
@@ -334,21 +337,22 @@ solutions. Decomposing the verification queries into
 We implemented the proposed algorithm in a prototype tool and
 evaluated it on benchmarks from the \sygus competition 2015, both in
 the linear integer arithmetic and the bit-vector domain.  The tool was
-able to perform on par or better than existing solvers in the bit-vector
-domain, and produced compact solutions. The tool was able to
-solve $47$ out of the $50$ problems in the ICFP suite of benchmarks.
-% in less than $1$ hour.
-To the best of our knowledge, no other solver has been able to solve the
-ICFP benchmarks satisfactorily.
-Further, we also observed that the anytime extension
+able to perform on par or better than existing solvers in the
+bit-vector domain, and produced compact solutions. The tool was able
+to solve $47$ out of the $50$ problems in the ICFP suite of
+benchmarks.  % in less than $1$ hour.  To the best of our knowledge,
+no other solver has been able to solve the ICFP benchmarks
+satisfactorily.  Further, we also observed that the anytime extension
 of the algorithm was able to produce more compact solutions in $22$ of
 the $47$ solved benchmarks.  We were able to obtain upto $90\%$
 reduction in solution size in some cases.  In the linear integer
 arithmetic domain, the tool performed much better than existing
-black-box solvers, scaling to larger instances.  However, for larger
-benchmarks, the performance was worse, and the solution size was
-slightly larger than those produced by white-box solvers due to the
-shortcomings of the decision tree learning algorithm.
+black-box solvers, scaling to larger instances. The algorithm was also
+competitive with the white-box solvers for small to medium sized
+benchmarks. However, for larger benchmarks, the performance was worse,
+and the solution size was slightly larger than those produced by
+white-box solvers due to the shortcomings of the decision tree
+learning algorithm.
 
 \comment{
 \paragraph{Summary}
@@ -383,7 +387,7 @@ C ::= T \(\leq\) T | C \(\wedge\) C | \(\neg\) C
   \label{fig:lia_grammar}
   \vspace*{-1ex}
 \end{wrapfigure}
-We explain the salient points of our approach on an example.
+We explain the salient points of our approach with an example.
 Consider a synthesis task to generate an expression $\Expr$ such that:
 \begin{inparaenum}[(a)]
 \item $\Expr$ is generated by the grammar from Figure~\ref{fig:lia_grammar}.
@@ -516,10 +520,10 @@ expressions.
   \vspace{-2ex}
 \end{table}
 
-
+\vspace*{-1mm}
 \section{Problem Statement and Background}
 \label{sec:problem}
-
+\vspace*{-1mm}
 Let us fix the function to be synthesized $\SynthFun$ and its formal
 parameters $\FormalParameters$.
 We write $\range(\SynthFun)$ to denote the range of $\SynthFun$.
@@ -539,7 +543,7 @@ SMT formulae have become the standard formalism
 for specifying semantic constraints for synthesis.
 In this paper, we fix an arbitrary theory $\Theory$ and
 denote by $\Theory[\Symbols]$, the set of $\Theory$ terms over the
-symbols $\Symbols$.
+set of symbols $\Symbols$.
 A {\em specification} $\Spec$ is a logical formula in a theory $\Theory$
 over standard theory symbols and the function to be synthesized
 $\SynthFun$.
@@ -614,11 +618,11 @@ From our definitions, it is clear that we restrict ourselves to a
 version of the \sygus problem where there is exactly one unknown function
 to be synthesized, and the grammar does not contain {\tt let} rules.
 Further, we assume that our specifications are \emph{point-wise}.
-Intuitively, if a specification is point-wise, if it just relates the
+Intuitively, a specification is point-wise, if it only relates an
 input point to its output, and not the outputs of different inputs.
 
-Here, we use a simple syntactic notion of point-wise specifications for
-convenience.
+Here, we use a simple syntactic notion of point-wise specifications,
+which we call \emph{plain separability}, for convenience.
 However, our techniques can be generalized to any notion of point-wise
 specifications.
 Formally, we say that a specification is {\em plainly separable} if can
@@ -636,7 +640,7 @@ be rewritten into a conjunctive normal form where each clause is either
   For example, this implies that the value of $\SynthFun(1, 2)$ can be
   chosen irrespective of the value of $\SynthFun$ on any other point.
   On the other hand, a specification such as $\SynthFun(x, y) = 1
-  \implies \SynthFun(x + 1, y) = 1$ is neither plainly separable nor
+  \Rightarrow \SynthFun(x + 1, y) = 1$ is neither plainly separable nor
   point-wise.
   The value of $\SynthFun(1, 2)$ cannot be chosen independently of the
   value of $\SynthFun(0, 2)$.
@@ -655,9 +659,9 @@ Simply separable specifications allow us to
 define the notion of an expression $\Expr$ satisfying a specification
 $\Spec$ on a point $\Point$.
 Formally, we say that $\Expr \models \Spec \downharpoonleft
-\Point$ if $\Expr$ satisfies the specification obtained by 
+\Point$ if $\Expr$ satisfies the specification obtained by
 replacing each clause $C$ in $\Spec$
-by $\mathit{Pre}_C(\Point) \implies C$.
+by $\mathit{Pre}_C(\Point) \Rightarrow C$.
 Here, the premise $\mathit{Pre}_C(\Point)$ is given by $\bigwedge_{p \in
 \FormalParameters} \mathit{Arg}_C(p) = \Point[p]$ where $\mathit{Arg}_C$ is the
 actual argument corresponding to the formal parameter $p$ in the
@@ -728,7 +732,7 @@ incorrect) and add it to the set of points and repeat
 
 \begin{theorem}
   \label{thm:basic_enumeration}
-  Given a \sygus instance $(\Spec, \Grammar)$ with at least one solution
+  Given a {\upshape\sygus} instance $(\Spec, \Grammar)$ with at least one solution
   expression, Algorithm~\ref{algo:basic} terminates and returns the
   smallest solution expression.
 \end{theorem}
@@ -753,8 +757,8 @@ ytick = {0.0001, 0.01, 1, 100, 10000, 1000000, 10000000}
 \label{figure:random_exponential_graph}
 \end{wrapfigure}
 \paragraph{Features and Limitations}
-The enumerative algorithm performs surprisingly well considering its
-simplicity on small to medium sized benchmarks
+The algorithm based on enumeration performs surprisingly well, considering its
+simplicity, on small to medium sized benchmarks
 (see~\cite{udupa-transit,udupa-sygus}).
 Further, due to the guarantee of Theorem~\ref{thm:basic_enumeration}
 that the enumerative approach produces small solutions, the algorithm is
@@ -880,7 +884,7 @@ to a standard text-book (see, for example,~\cite{bishop-book}).
 % with the
 % conditionals given by the attributes, and the terms given by the labels.
 The expression $\DTtoExpr{\DecisionTree}$ corresponding to a
-decision tree $\DecisionTree$ is:
+decision tree $\DecisionTree$ is defined as:
 \begin{inparaenum}[(a)]
 \item the label of the root node if the tree is a single leaf node; and
 \item
@@ -901,9 +905,9 @@ A decision tree learning procedure is given:
 \end{inparaenum}
 A sound decision tree learning algorithm returns a decision tree
 $\DecisionTree$ that classifies the points correctly, i.e., for every
-sample $\Point$, the label associated to it by the decision tree covers
+sample $\Point$, the label associated with it by the decision tree covers
 the point.
-We use the notation {\tt LearnDT} to denote a generic sound
+We use the notation {\sc LearnDT} to denote a generic, sound
 decision tree learning procedure.
 The exact procedure we use for decision tree learning in
 Section~\ref{sec:decision_trees}.
@@ -928,7 +932,7 @@ maintains a set of points $\Points$, and in each iteration:
 However, the key differences between Algorithm~\ref{algo:main} and
 Algorithm~\ref{algo:basic} are in the way the candidate solution
 expression $\Expr$ is generated.
-The generation of candidate expressions is separated into two separate
+The generation of candidate expressions is accomplished in two
 steps.
 
 \paragraph{Term solving}
@@ -947,14 +951,14 @@ each $\Point \in \Points$, there is at least one term that is correct on
 $\Point$, the term enumeration is stopped (while-loop condition in
 line~\ref{line:term_solver:while}).
 
-\paragraph{Unification and Decision Tree Learning.}
+\paragraph{Unification and Decision Tree Learning}
 In the next step
 (lines~\ref{line:main:unify:start}-\ref{line:main:unify:end}), we
 generate a set of predicates $\Predicates$ that will be used as
 conditionals to combine the terms from $\Terms$ into if-then-else
 expressions.
 In each iteration, we attempt to learn a decision tree that correctly
-label each point $\Point \in \Points$ with a term $\Term$ such that
+labels each point $\Point \in \Points$ with a term $\Term$ such that
 $\Point \in \Cover[\Term]$.
 If such a decision tree $\DecisionTree$ exists, the conditional
 expression $\DTtoExpr{\DecisionTree}$ is correct on all points, i.e.,
@@ -1005,20 +1009,20 @@ predicates and retry.
   though $\Terms$ is guaranteed to contain terms that cover all points.
   This is required to achieve semi-completeness, i.e., without this, the
   algorithm might not find a solution even if one exists.
-  See the appendix for an example.
+  See \ref{sec:app:ex} for an example.
 \end{remark}
 
 \begin{theorem}
 \vspace*{-1mm}
-  Algorithm~\ref{algo:main} is a sound for the \sygus problem.
-  Further, assuming a sound and complete {\tt LearnDT} procedure, if
+  Algorithm~\ref{algo:main} is sound for the {\upshape\sygus} problem.
+  Further, assuming a sound and complete {\sc LearnDT} procedure, if
   there exists a solution expression, Algorithm~\ref{algo:main} is
   guaranteed to find it.
 \vspace*{-1mm}
 \end{theorem}
 The proof of the above theorem is similar to the proof of soundness and
 partial-completeness for the original enumerative solver.
-The only additional assumption is that the {\tt LearnDT} decision tree
+The only additional assumption is that the {\sc LearnDT} decision tree
 learning procedure will return a decision tree if one exists.
 We present such a procedure in the next section.
 
@@ -1032,13 +1036,13 @@ The standard multi-label decision tree learning algorithm (based on
 ID3~\cite{quinlan-86}) is presented in Algorithm~\ref{algo:dt_learning}.
 The algorithm first checks if there exists a single label (i.e., term)
 $\Term$ that applies to all the points (line~\ref{line:dt:single}).
-If so, it returns a decision tree with only one leaf whose label is
+If so, it returns a decision tree with only a leaf node whose label is
 $\Term$ (line~\ref{line:dt:leaf}).
 Otherwise, it picks the best predicate $\Pred$ to split on based on some
 heuristic (line~\ref{line:dt:pick_pred}).
 If no predicates are left, there exists no decision tree, and the
 algorithm returns $\bot$ (line~\ref{line:dt:bot}).
-It the recursively computes the left and right sub-trees for the set of
+Otherwise, it recursively computes the left and right sub-trees for the set of
 points on which $\Pred$ holds and does not hold, respectively
 (lines~\ref{line:dt:left} and~\ref{line:dt:right}).
 The final decision tree is returned as a tree with a root (with
@@ -1072,8 +1076,8 @@ Algorithm~\ref{algo:dt_learning}, and hence, in our setting, the size of
 the solution expression generated by Algorithm~\ref{algo:main}.
 We use the classical information gain heuristic to pick the predicates.
 Informally, the information gain heuristic treats the label as a random
-variable, and picks to split on the attribute whose value will reveal
-the most information about the label.
+variable, and chooses to split on the attribute knowing whose value
+will reveal the most information about the label.
 We do not describe all aspects of computing information gain, but
 refer the reader to any standard textbook on machine
 learning~\cite{bishop-book}.
@@ -1087,12 +1091,12 @@ H(\Points') = -\sum_{\Term} \Prob{\Points'}{\labl{\Point} = \Term} \cdot \log_2{
 Further, given a predicate $\Pred \in \Predicates$, the information
 gain of $\Pred$ is defined as
 \[
-G(\Pred) = \frac{|\Points_{Y}|}{|\Points|} \cdot
-H(\Points_{Y}) + \frac{|\Points_{N}|}{|\Points|} \cdot
-H(\Points_{N})
+G(\Pred) = \frac{|\Points_{\mathrm{y}}|}{|\Points|} \cdot
+H(\Points_{\mathrm{y}}) + \frac{|\Points_{\mathrm{n}}|}{|\Points|} \cdot
+H(\Points_{\mathrm{n}})
 \]
-where $\Points_{Y} = \{\Point \in \Points \mid \Pred[\Point]\}$ and
-$\Points_{N} = \{\Point \in \Points \mid \neg\Pred[\Point]\}$.
+where $\Points_{\mathrm{y}} = \{\Point \in \Points \mid \Pred[\Point]\}$ and
+$\Points_{\mathrm{n}} = \{\Point \in \Points \mid \neg\Pred[\Point]\}$.
 Hence, at line~\ref{line:dt:pick_pred}, we compute the value $G(\Pred)$
 for each predicate in $\Predicates$, and pick the one which maximizes
 $G(\Pred)$.
@@ -1100,7 +1104,7 @@ $G(\Pred)$.
 We use conditional probabilities $\Prob{\Points'}{\labl{\Point} = \Term \mid
 \Point}$ to compute the probability $\Prob{\Points'}{\labl{\Point} = t}$.
 The assumption we make about the prior distribution is that the
-likelihood of a given point $\Point$ being labelled by a given term
+likelihood of a given point $\Point$ being labeled by a given term
 $\Term$ is proportional to the number of points in $\Cover[\Term]$.
 Formally, we define:
 \[
@@ -1113,7 +1117,7 @@ Formally, we define:
       \Point \in \Cover[\Term] \\
     \end{cases}
 \]
-Now, the unconditional probability of an arbitrary point being labelled
+Now, the unconditional probability of an arbitrary point being labeled
 with $\Term$ is given by $\Prob{\Points'}{\labl{\Point} = \Term} = \sum_{\Point}
 \Prob{\Points'}{\labl{\Point} = \Term \mid \Point}\cdot\Prob{\Points'}{\Point}$.
 Assuming a uniform distribution for picking points, we have that
@@ -1127,14 +1131,14 @@ Assuming a uniform distribution for picking points, we have that
 
 % We will now discuss several extensions and optimizations for
 % Algorithm~\ref{algo:main}.
-\paragraph{The Anytime Extension.}
+\paragraph{The Anytime Extension}
 Algorithm~\ref{algo:main} stops enumeration of terms and predicates as
 soon as it finds a single solution to the synthesis problem.
 However, there are cases where due to the lack of sufficiently good
 predicates, the decision tree and the resulting solution can be large
 (see Example~\ref{ex:continuing}).
 Instead, we can let the algorithm continue by generating more
-terms and predicates. 
+terms and predicates.
 This could lead to different, potentially smaller decision trees and
 solutions.
 % Note that this is in contrast to divide-and-conquer techniques that use
@@ -1144,26 +1148,22 @@ solutions.
 
 \begin{example}
   \label{ex:continuing}
-  Consider the specification $(x \geq 0 \wedge y \geq 0) \implies (\SynthFun(x, y) = 1
-  \Leftrightarrow x + y \leq 2)$ and a run of Algorithm~\ref{algo:main}
-  where the terms $0$ and $1$ are generated.
-  These terms fully cover any set of points for this specification.
-
-  Over a sequence of iterations the predicates are generated in order of
-  size.
-  Now, for predicate size $3$, the predicates generated include $x = 0$,
-  $x = 1$, $x = 2$, $y \leq 2$, $y \leq 1$, and $y \leq 0$.
-  With these predicates, the decision tree depicted in
-  Figure~\ref{fig:dt:large} is learned, and the corresponding
-  conditional expression is correct for the specification.
-  However, if the procedure continues to run after the first solution is
-  generated, predicates of size $4$ are generated.
-  Among these predicates, the predicate $x + y \leq 2$ is also
-  generated.
-  With this additional predicate, the decision tree in
-  Figure~\ref{fig:dt:small} is generated, leading to the compact
-  solution $\SynthFun(x, y) \equiv \mathtt{if}~x + y \leq
-  2~\mathtt{then}~1~\mathtt{else}~0$.
+  Given the specification $(x \geq 0 \wedge y \geq 0) \Rightarrow
+(\SynthFun(x, y) = 1 \Leftrightarrow x + y \leq 2)$ and a run of
+Algorithm~\ref{algo:main} where the terms $0$ and $1$ are generated;
+the terms fully cover any set of points for this specification.
+Over a sequence of iterations the predicates are generated in order
+of size.  Now, the predicates generated of size $3$
+include $x = 0$, $x = 1$, $x = 2$, $y \leq 2$, $y \leq 1$, and $y \leq
+0$.  With these predicates, the decision tree depicted in
+Figure~\ref{fig:dt:large} is learned, and the corresponding
+conditional expression is correct for the specification.  However, if
+the procedure continues to run after the first solution is generated,
+predicates of size $4$ are generated.  Among these predicates, the
+predicate $x + y \leq 2$ is also generated.  With this additional
+predicate, the decision tree in Figure~\ref{fig:dt:small} is
+generated, leading to the compact solution $\SynthFun(x, y) \equiv
+\mathtt{if}~x + y \leq 2~\mathtt{then}~1~\mathtt{else}~0$.
 \end{example}
 
 \begin{wrapfigure}{l}{0.45\textwidth}
@@ -1277,7 +1277,7 @@ counter-example.
 
 \paragraph{Branch-wise verification}
 In Algorithm~\ref{algo:main}, and in most synthesis techniques, an
-incorrect candidate solution is used to generate $1$ counter-example
+incorrect candidate solution is used to generate one counter-example
 point.
 However, in the case of conditional expressions and point-wise
 specifications, each branch (i.e., leaf of the decision tree) can be
@@ -1303,11 +1303,12 @@ This optimization works very well along with the decision tree repair
 described above as we can verify and repair each branch of the decision
 tree separately.
 
+\vspace*{-2mm}
 \begin{example}
   Consider the verification of the expression $\ITE{x \leq y}{0}{1}$
   for the running example.
   Instead of running the full expression through the verifier to
-  obtaini one counter-example point, we can verify the branches
+  obtain one counter-example point, we can verify the branches
   separately by checking the satisfiability of the formulae $x \leq y
   \wedge f(x, y) = 0 \wedge \neg \Spec$ and $\neg (x \leq y) \wedge f(x,
   y) = 1 \wedge \neg \Spec$.
@@ -1324,8 +1325,8 @@ We built a prototype \sygus solver that uses the divide-and-conquer
 enumerative algorithm.
 % based on the ideas presented in this paper.
 The tool consists of 3000 lines of Python code implementing the
-enumeration, and 3000 lines of C$\raisebox{1pt}{+\!+}$ code implementing
-the decision tree learning.
+enumeration, and high-level algorithms and 3000 lines of
+C$\raisebox{1pt}{+\!+}$ code implementing the decision tree learning.
 % The algorithms for enumeration were implemented in
 % about 3000 lines of Python code, while the algorithms for decision
 % tree learning were implemented in about 3000 lines of
@@ -1439,7 +1440,7 @@ benchmarks. These are bit-twiddling problems with
 \begin{inparaenum}[(a)]
 \item very specific syntactic restrictions on the operations allowed,
   and
-\item behaviour specified using only concrete input-output examples
+\item behavior specified using only concrete input-output examples
 \end{inparaenum}
 To the best of our knowledge, no existing \sygus solver has been able to
 solve these benchmarks. Detailed experimental results on the ICFP
@@ -1449,7 +1450,7 @@ in \ref{section:appendix_experimental_results}.
 % The first column of
 % Table~\ref{table:anytime_results} gives the name of the benchmark, the
 % second, third, and fourth columns give the size of the first solution
-% discovered, the time at which it was discoverd by the algorithm, the time taken to discover the solution,
+% discovered, the time at which it was discovered by the algorithm, the time taken to discover the solution,
 % and the size of the decision tree associated with the solution,
 % respectively. The next three columns provide the same details, but for
 % the \emph{minimal} sized solution discovered by the
@@ -1479,15 +1480,15 @@ algorithms~\cite{alur-15}, and the CVC4 solver~\cite{reynolds-15}.
 }
 
 \paragraph{The State-of-the-art}
-Empirically, black-box algorithms are able to generalize well from
-underconstrained correctness specification, whereas it is not clear
-how white-box solvers can generalize from such specifications, given
-their heavy reliance on the specifications being complete.
-We note that \esolver, which employs an optimized
-version of the basic enumerative algorithm discussed earlier won the
-2014 \sygus competition and came in second in the 2015 \sygus
-competition, losing to the CVC4 solver, which came in first.
-
+From empirical observations, black-box algorithms are able to
+generalize well from under-constrained correctness specification,
+whereas it is not clear how white-box solvers can generalize from such
+specifications, given their heavy reliance on the specifications being
+complete.  We note that \esolver, which employs an optimized version
+of the basic enumerative algorithm discussed earlier won the 2014
+\sygus competition and came in second in the 2015 \sygus competition,
+losing to the CVC4 solver, which came in first.
+\vspace*{-1mm}
 \subsection{Discussion}
 % We compare the \dcsolve algorithm compares to contemporary
 % solvers along the three dimensions described earlier.
@@ -1534,7 +1535,7 @@ longer.
 % generalize well from input-output examples as we will now discuss.
 
 \paragraph{Quality of Solutions}
-For ICFP benchmarks, 
+For ICFP benchmarks,
 Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}
 indicate that most of the solutions that our algorithm generates are
 rather compact, and are of a size that are comprehensible to a
@@ -1617,10 +1618,10 @@ classes of benchmarks.
 % such as the parameterized ``max'' benchmarks.
 \end{inparaenum}
 
-\vspace*{-2ex}
+\vspace*{-3mm}
 \section{Concluding Remarks}
 \label{sec:conclusion}
-\vspace*{-1ex}
+\vspace*{-2mm}
 
 \paragraph{Related Work}
 Program synthesis has seen a revived interest in the last decade,
@@ -1710,8 +1711,8 @@ are correct on subsets of the inputs. These expressions are then used
 to form a conditional expression using Boolean combinations of
 enumerated predicates using decision trees. We have demonstrated the
 ability of the algorithm to generalize from input-output examples by
-solving most of the previously unsolved ICFP benchmarks, which are
-part of the \sygus benchmark suite. The algorithm is generic, efficient,
+solving most of the previously unsolved ICFP benchmarks in
+the \sygus benchmark suite. The algorithm is generic, efficient,
 produces compact solutions,
 and is \emph{anytime} --- in that continued execution can potentially
 produce more compact solutions.

@@ -7,6 +7,7 @@
 \input{results_anytime_table_2}
 \input{results_one_shot_max_table}
 
+\vspace*{-1ex}
 Detailed results of running our solver on the ICFP benchmarks are
 presented in in
 Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}. For
@@ -28,17 +29,8 @@ at the solution, as well as the number of comparisons in the solution
 obtained by each of the solvers, for different values of the parameter
 $n$, indicated in the first column.
 
-\section{Description of the {\scshape{enumerate}} Procedure}
+\section{Description of the Enumeration Procedure}
 \label{section:appendix_esolver}
-Algorithm~\ref{algo:enumerate} describes the \textsc{enumerate}
-algorithm referred to in Section~\ref{sec:enumeration}. We continue to
-use the same notation here that was introduced in Section~\ref{sec:enumeration}.
-The \textsc{enumerate} procedure maintains a map $\Productions : \NonTerminals \to
-\Powerset{\Theory[\FormalParameters]}$ from non-terminals to
-expressions they can produce.
-The invariant maintained by the procedure is that every pair of
-expressions in $\Productions[\NonTerminal]$ is distinct on $\Points$.
-
 \begin{algorithm}
   \begin{algorithmic}[1]
     \fontsize{8}{10}\selectfont
@@ -71,6 +63,15 @@ expressions in $\Productions[\NonTerminal]$ is distinct on $\Points$.
   \caption{Enumerating distinct expressions from a grammar}
   \label{algo:enumerate}
 \end{algorithm}
+
+Algorithm~\ref{algo:enumerate} describes the \textsc{enumerate}
+algorithm referred to in Section~\ref{sec:enumeration}. We continue to
+use the same notation here that was introduced in Section~\ref{sec:enumeration}.
+The \textsc{enumerate} procedure maintains a map $\Productions : \NonTerminals \to
+\Powerset{\Theory[\FormalParameters]}$ from non-terminals to
+expressions they can produce.
+The invariant maintained by the procedure is that every pair of
+expressions in $\Productions[\NonTerminal]$ is distinct on $\Points$.
 
 The algorithm starts by first accumulating into
 $\Productions[\NonTerminal]$ the expressions that can be produced from
@@ -118,7 +119,7 @@ succeed.
   \begin{alltt}
   \fontsize{9}{10}\selectfont
                       S ::= T | if (C) then T else T
-                      T ::= 0 | 1 | 2 | x 
+                      T ::= 0 | 1 | 2 | x
                       C ::= T < 0
 \end{alltt}
 \caption{Grammar for~\ref{sec:app:ex}}
