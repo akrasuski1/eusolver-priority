@@ -2,8 +2,8 @@
 
 % \sloppy
 % \fussy
-
 \usepackage{marginnote}
+\usepackage{microtype}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 %\usepackage{times}
@@ -27,6 +27,13 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.12}
 \usepackage{hyperref}
+
+% \DeclareCaptionFormat{myformat}{#1#2#3\hrulefill}
+% \captionsetup[figure]{format=myformat}
+
+\DeclareCaptionFormat{myformat}{#1#2{\fontsize{8.5}{10}\sffamily\selectfont {#3}}}
+\captionsetup[figure]{format=myformat}
+\captionsetup[table]{format=myformat}
 
 \newcommand\comment[1]{}
 \newcommand\arsays[1]{{\bf AR: #1}}
@@ -363,7 +370,7 @@ The main contributions are as follows:
 \begin{wrapfigure}{r}{0.4\textwidth}
   \vspace*{-3ex}
   \begin{alltt}
-  \fontsize{9}{10}\selectfont
+  \fontsize{8}{10}\selectfont
 S ::= T | if (C) then T else T
 T ::= 0 | 1 | x | y | T + T
 C ::= T \(\leq\) T | C \(\wedge\) C | \(\neg\) C
@@ -411,11 +418,11 @@ incorrect, is added to $\Points$.
       2 & $0$, $1$ & $1$ & $\{ x \mapsto 0, y \mapsto 2 \}$ \\\hlx{h}
       3 & $0$, $1$, $x$, $y$, $\ldots$, $x + y$,  & $x+y$ & $\{ x \mapsto 1, y \mapsto 2 \}$ \\\hlx{h}
       \vdots & \vdots & \vdots & \vdots\\\hlx{h}
-      $n$ & $0$, \ldots, $\ITE{x \leq y}{y}{x}$  & $\ITE{x \leq y}{y}{x}$ &  \\\hlx{hv}
+      $n$ & $0$, \ldots, $\ITE{x \leq y}{y}{x}$  & $\ITE{x \leq y}{y}{x}$ &  \\\hlx{hvv}
   \end{tabular*}
   \caption{Example run of the na\"ive enumerative algorithm}
   \label{table:enumerative_example}
-  \vspace{-4ex}
+  \vspace{-3ex}
 \end{table}
 
 The algorithm generates the candidate solution expression by
@@ -499,7 +506,7 @@ expressions.
       2 & $0$, $1$ & $1$ & $\emptyset$ &  $\{ x \mapsto 0, y \mapsto 2 \}$ \\\hlx{hv}
       \multirow{2}{*}{3} & \multirow{2}{*}{$0$, $1$, $x$, $y$} & $0 \leq 0$, \ldots $0 \leq y$, & \multirow{2}{*}{$\ITE{1 \leq y}{y}{1}$} & \multirow{2}{*}{$\{ x \mapsto 2, y \mapsto 0 \}$} \\
       & & $1 \leq 0$, \ldots $1 \leq y$ & & \\\hlx{hv}
-      4 & $0$, $1$, $x$, $y$ & $0 \leq 0$, \ldots $x \leq y$ & $\ITE{x \leq y}{y}{x}$ & \\\hlx{hv}
+      4 & $0$, $1$, $x$, $y$ & $0 \leq 0$, \ldots $x \leq y$ & $\ITE{x \leq y}{y}{x}$ & \\\hlx{hvv}
   \end{tabular*}
   \caption{Example run of the divide-and-conquer enumerative algorithm}
   \label{table:dq_example}
@@ -603,9 +610,7 @@ An expression $\Expr$ is a solution to the instance if $\Expr \models
 From our definitions, it is clear that we restrict ourselves to a
 version of the \sygus problem where there is exactly one unknown function
 to be synthesized, and the grammar does not contain {\tt let} rules.
-Further, we assume that our specifications are {\em
-  point-wise}\footnote{For brief discussion on different syntactic and
-semantic notions of point-wise specifications, see the appendix}.
+Further, we assume that our specifications are \emph{point-wise}.
 Intuitively, if a specification is point-wise, if it just relates the
 input point to its output, and not the outputs of different inputs.
 
@@ -671,11 +676,6 @@ We extend this definition to sets of points as follows: $\Expr \models
 \subsection{The Enumerative Solver}
 \label{sec:enumeration}
 
-The principal idea behind the enumerative solver is to enumerate all
-expressions from the given syntax with some pruning.
-Only expressions that are distinct with respect to a set of concrete
-input points are enumerated.
-
 \begin{wrapfigure}{l}{0.46\textwidth}
   \begin{minipage}{0.46\textwidth}
     \begin{algorithm}[H]
@@ -699,6 +699,11 @@ input points are enumerated.
     \end{algorithm}
   \end{minipage}
 \end{wrapfigure}
+The principal idea behind the enumerative solver is to enumerate all
+expressions from the given syntax with some pruning.
+Only expressions that are distinct with respect to a set of concrete
+input points are enumerated.
+
 \noindent
 The full pseudo-code is given in Algorithm~\ref{algo:basic}.
 Initially, the set of points is set to be empty at
@@ -851,11 +856,12 @@ to a standard text-book (see, for example,~\cite{bishop-book}).
 \end{example}
 
 \begin{wrapfigure}{l}{0.33\textwidth}
+  \centering
   \begin{tikzpicture}
     [every tree node/.style={draw}, level distance=18pt,
-      level 1/.style={sibling distance=80pt},
-      level 2/.style={sibling distance=50pt},
-    level 3/.style={sibling distance=25pt}]
+      level 1/.style={sibling distance=78pt},
+      level 2/.style={sibling distance=48pt},
+    level 3/.style={sibling distance=23pt}]
     \node[draw] {$y \leq 0$}
       child {node[draw] {$x \leq y$}
         child {node[fill=gray,draw] {$0$}}
@@ -864,6 +870,7 @@ to a standard text-book (see, for example,~\cite{bishop-book}).
       child {node[fill=gray,draw] {$y$}}
       ;
   \end{tikzpicture}
+  \vspace*{1pt}
   \caption{Sample decision tree}
   \label{fig:dt}
 \end{wrapfigure}
@@ -1110,10 +1117,8 @@ Assuming a uniform distribution for picking points, we have that
 \subsection{Extensions and Optimizations}
 \label{sec:optimizations}
 
-We will now discuss several extensions and optimizations for
-Algorithm~\ref{algo:main}.
-
-
+% We will now discuss several extensions and optimizations for
+% Algorithm~\ref{algo:main}.
 \paragraph{The Anytime Extension.}
 In the presentation from Section~\ref{sec:algo:main}, the algorithm
 stops enumeration of terms and predicates as soon as it finds a single
@@ -1154,8 +1159,9 @@ solutions.
   2~\mathtt{then}~1~\mathtt{else}~0$.
 \end{example}
 
-\begin{figure}
+\begin{wrapfigure}{l}{0.5\textwidth}
   \begin{subfigure}{0.5\textwidth}
+    \centering
     \begin{tikzpicture}
       [every tree node/.style={draw}, level distance=18pt,
       level 1/.style={sibling distance=80pt},
@@ -1187,6 +1193,11 @@ solutions.
   \begin{subfigure}{0.5\textwidth}
     \centering
     \begin{tikzpicture}
+      [every tree node/.style={draw}, level distance=18pt,
+      level 1/.style={sibling distance=80pt},
+      level 2/.style={sibling distance=50pt},
+      level 3/.style={sibling distance=25pt}]
+
       \node[draw] {$x + y \leq 2$}
         child {node [fill=gray,draw] {$1$}}
         child {node [fill=gray,draw] {$0$}}
@@ -1195,7 +1206,8 @@ solutions.
     \caption{Decision tree for predicates of size $4$}
     \label{fig:dt:small}
   \end{subfigure}
-\end{figure}
+  \vspace*{-2ex}
+\end{wrapfigure}
 
 \paragraph{Decision tree repair}
 In Algorithm~\ref{algo:main}, we discard the terms and predicates that
@@ -1361,7 +1373,7 @@ tree separately.
     solution produced by \dcsolve. The $y$-coordinate gives the size
     of the \emph{smallest} solution produced by \dcsolve within 3600
     seconds. Points below the $x = y$ line correspond to benchmarks
-    which benefit from continued execution.}
+    which benefit from continued execution, beyond the first solution.}
   \label{subfigure:first_vs_best}
 \end{subfigure}
 \caption{Summary graphs of experimental results on the ICFP benchmarks}
@@ -1516,8 +1528,9 @@ longer.
 % generalize well from input-output examples as we will now discuss.
 
 \paragraph{Quality of Solutions}
-In the case of the ICFP benchmarks, Table~\ref{table:anytime_results}
-indicates that most of the solutions that our algorithm generates are
+In the case of the ICFP benchmarks,
+Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}
+indicate that most of the solutions that our algorithm generates are
 rather compact, and are of a size that are comprehensible to a
 human. We do not know if solutions smaller than these exist. The CVC4
 solver has been able to synthesize solutions for some of the ICFP
@@ -1554,9 +1567,10 @@ future work.
 For about half the ICFP benchmarks, we were able to obtain a more
 compact solution by letting the algorithm continue execution after the
 first solution was discovered (last column in
-Table~\ref{table:anytime_results}, and Figure~\ref{subfigure:first_vs_best}).
-Also, the difference in the first and
-smallest solutions is sometimes very significant, for example, in the
+Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2},
+and Figure~\ref{subfigure:first_vs_best}).
+Further, the difference in the first and
+smallest solutions is sometimes very significant. For example, in the
 case of the ``icfp\_95\_100'' benchmark, we see the size of the
 solution go down from 220 to 24.
 % by almost an order of magnitude, from 220 to 24.
@@ -1589,7 +1603,7 @@ reducing the size of the computed solution;
 % by allowing additional execution time.
 \item
 The \dcsolve algorithm works competently on problems from different
-classes of benchmarks;
+classes of benchmarks.
 % domaother
 % classes of benchmarks that admit conditional expressions as solutions,
 % such as the parameterized ``max'' benchmarks.
