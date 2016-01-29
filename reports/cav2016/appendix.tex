@@ -1,30 +1,47 @@
 \newpage
 \renewcommand{\thesection}{\appendixname~\Alph{section}}
 \begin{appendices}
+\section{Detailed Experimental Results}
+\label{section:appendix_experimental_results}
+\input{results_anytime_table}
+\input{results_anytime_table_2}
+\input{results_one_shot_max_table}
+
+Detailed results of running our solver on the ICFP benchmarks are
+presented in in
+Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}. For
+each benchmark,
+we report
+\begin{inparaenum}[(a)]
+\item the size of the first solution discovered, the time at which it
+was discovered, and the associated decision tree size;
+\item the same details for the minimal solution discovered; and
+\item whether the first solution discovered was itself minimal sized
+  solution.
+\end{inparaenum}
+
+Table~\ref{table:max_results} demonstrates how our algorithm stacks up
+against the state-of-the-art CVC4 solver, when evaluated with the
+``max'' benchmarks, which are described in Section~\ref{sec:evaluation}.
+The columns indicate the sizes of solutions generated, the time to arrive
+at the solution, as well as the number of comparisons in the solution
+obtained by each of the solvers, for different values of the parameter
+$n$, indicated in the first column.
+
 \section{Description of the {\scshape{enumerate}} Procedure}
 \label{section:appendix_esolver}
+Algorithm~\ref{algo:enumerate} describes the \textsc{enumerate}
+algorithm referred to in Section~\ref{sec:enumeration}. We continue to
+use the same notation here that was introduced in Section~\ref{sec:enumeration}.
 The \textsc{enumerate} procedure maintains a map $\Productions : \NonTerminals \to
 \Powerset{\Theory[\FormalParameters]}$ from non-terminals to
 expressions they can produce.
 The invariant maintained by the procedure is that every pair of
 expressions in $\Productions[\NonTerminal]$ is distinct on $\Points$.
 
-The algorithm starts by first accumulating into
-$\Productions[\NonTerminal]$ the expressions that can be produced from
-$\NonTerminal$ in one step
-(lines~\ref{line:enumerate:level_one_iter}-\ref{line:enumerate:level_one}).
-Then, for each possible expression size $\Size$, it attempts to
-instantiate each production rule in the grammar with expressions already
-generated and stored in $\Productions$, to generate new expressions of
-size at most $\Size$.
-These newly generated expression are checked for distinctness from
-already generated ones, and if so, added to
-$\Productions[\NonTerminal]$.
-The algorithm returns all the expressions produced from the starting
-non-terminal $\StartSymbol$.
-
 \begin{algorithm}
   \begin{algorithmic}[1]
+    \fontsize{8}{10}\selectfont
     \Require Grammar $\Grammar = \tuple { \NonTerminals, \StartSymbol, \Rules }$ and a set of points $\Points$
     \Ensure Expressions $\tuple { \Expr_1, \Expr_2, \ldots }$ s.t. $\forall i < j : \vert \Expr_i \vert \leq \vert \Expr_j
     \vert \wedge \exists \Point \in \Points : \Expr_i[\Point] \neq \Expr_j[\Point]$
@@ -54,5 +71,21 @@ non-terminal $\StartSymbol$.
   \caption{Enumerating distinct expressions from a grammar}
   \label{algo:enumerate}
 \end{algorithm}
+
+The algorithm starts by first accumulating into
+$\Productions[\NonTerminal]$ the expressions that can be produced from
+$\NonTerminal$ in one step
+(lines~\ref{line:enumerate:level_one_iter}-\ref{line:enumerate:level_one}).
+Then, for each possible expression size $\Size$, it attempts to
+instantiate each production rule in the grammar with expressions already
+generated and stored in $\Productions$, to generate new expressions of
+size at most $\Size$.
+These newly generated expression are checked for distinctness from
+already generated ones, and if so, added to
+$\Productions[\NonTerminal]$.
+The algorithm returns all the expressions produced from the starting
+non-terminal $\StartSymbol$.
+
+
 
 \end{appendices}

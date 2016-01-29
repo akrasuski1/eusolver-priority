@@ -1,10 +1,12 @@
 \documentclass{llncs}
 
-\sloppy
+% \sloppy
+% \fussy
 
 \usepackage{marginnote}
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
+%\usepackage{times}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
@@ -92,11 +94,12 @@
 \newcommand{\sketch}{\textsc{sketch}\xspace}
 \newcommand{\pwsolve}{{\sffamily\fontsize{8.5}{10}\selectfont
     PWSolve}\xspace}
+\newcommand{\labl}[1]{\mathsf{label}(#1)}
 
 % Make floats and equations behave sensibly
 \setlength{\intextsep}{1pt}
-\setlength{\textfloatsep}{1pt}
-\setlength{\floatsep}{1pt}
+\setlength{\textfloatsep}{3pt}
+\setlength{\floatsep}{2pt}
 \abovedisplayskip=6pt plus 3pt minus 9pt
 \abovedisplayshortskip=0pt plus 3pt
 \belowdisplayskip=6pt plus 3pt minus 9pt
@@ -115,7 +118,7 @@
 % \newpage
 
 \pagestyle{plain}
-\title{Scaling Enumerative Program Synthesis via Divide and Conquer}
+\title{Scaling Enumerative Program Synthesis\\via Divide and Conquer}
 % \author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
 \author{}
 % \institute{University of Pennsylvania}
@@ -124,8 +127,8 @@
 \vspace*{-6ex}
 
 \begin{abstract}
-  Given a semantic constraint specified by a logical formula and
-  syntactic constraint specified by a context-free grammar, the
+  Given a semantic constraint specified by a logical formula, and
+  syntactic constraints specified by a context-free grammar, the
   Syntax-Guided Synthesis (\sygus) problem is to find an expression
   that satisfies both the syntactic and semantic constraints.
   An enumerative approach to solve this problem is to systematically
@@ -953,7 +956,7 @@ predicates and retry.
     \Ensure Expression $\Expr$ s.t.  $\Expr \in \sem{\Grammar} \wedge \Expr \models \Spec$
     \State $\Points \gets \emptyset$ \label{line:main:init}
 
-    \While { $\True$ }
+    \While {$\mathtt{true}$}
     \State $\Terms \gets \emptyset; \Predicates \gets \emptyset; \Cover \gets \emptyset; \DecisionTree = \bot$ \label{line:main:start_iter}
 
     \While { $\bigcup_{\Term \in \Terms} \Cover[\Term] \neq \Points$ } \label{line:term_solver:while} \Comment { Term solver }
@@ -962,7 +965,7 @@ predicates and retry.
 
     \While { $\DecisionTree = \bot$ }\label{line:main:unify:start} \Comment { Unifier }
     \State $\Terms \gets \Terms \cup \Call{NextDistinctTerm}{\Points, \Terms, \Cover$}\label{line:main:more_terms}
-    \State $\Predicates \gets \Predicates \cup \Call{Enumerate}{\Grammar_P,\Points}$\label{line:main:more_preds}
+    \State $\Predicates \gets \Predicates \cup \Call{enumerate}{\Grammar_P,\Points}$\label{line:main:more_preds}
     \State $\DecisionTree \gets \Call{LearnDT}{\Terms, \Predicates}$ \label{line:main:unify:end}
     \EndWhile
 
@@ -973,7 +976,7 @@ predicates and retry.
 
     \Function{NextDistinctTerm}{$\Points, \Terms, \Cover$}
     \While { $\True$ }
-    \State $\Term \gets \Call{Enumerate}{\Grammar_T,\Points}; \Cover[\Term] \gets \{ \Point \mid \Point \in \Points \wedge \Term \models \Spec \downharpoonleft \Point \} $\label{line:main:compute_cover}
+    \State $\Term \gets \Call{enumerate}{\Grammar_T,\Points}; \Cover[\Term] \gets \{ \Point \mid \Point \in \Points \wedge \Term \models \Spec \downharpoonleft \Point \} $\label{line:main:compute_cover}
     \If { $\forall \Term' \in \Terms : \Cover[\Term] \neq
     \Cover[\Term']$ } \Return $\Term$ \EndIf \label{line:main:duplicate_cover}
     \EndWhile
@@ -1058,7 +1061,7 @@ $H(\Points')$ is defined in terms of the probability
 $\Prob{\Points'}{label(\Point) = t}$ of a point $\Point \in \Point'$ being
 labeled with the term $\Term$ as
 \[
-H(\Points') = -\sum_{\Term} \Prob{\Points'}{label(\Point) = \Term} \cdot \log_2{\Prob{\Points'}{label(\Point) = \Term}}
+H(\Points') = -\sum_{\Term} \Prob{\Points'}{\labl{\Point} = \Term} \cdot \log_2{\Prob{\Points'}{\labl{\Point} = \Term}}
 \]
 Further, given a predicate $\Pred \in \Predicates$, the information
 gain of $\Pred$ is defined as
@@ -1073,14 +1076,14 @@ Hence, at line~\ref{line:dt:pick_pred}, we compute the value $G(\Pred)$
 for each predicate in $\Predicates$, and pick the one which maximizes
 $G(\Pred)$.
 
-We use conditional probabilities $\Prob{\Points'}{label(\Point) = \Term \mid
-\Point}$ to compute $\Prob{\Points'}{label(\Point) = t}$.
+We use conditional probabilities $\Prob{\Points'}{\labl{\Point} = \Term \mid
+\Point}$ to compute the probability $\Prob{\Points'}{\labl{\Point} = t}$.
 The assumption we make about the prior distribution is that the
 likelihood of a given point $\Point$ being labelled by a given term
 $\Term$ is proportional to the number of points in $\Cover[\Term]$.
 Formally, we define:
 \[
-    \Prob{\Points'}{label(\Point) = t \mid \Point} =
+    \Prob{\Points'}{\labl{\Point} = t \mid \Point} =
     \begin{cases}
         \qquad\qquad\quad 0  & \mathrm{if}\ \Point \notin \Cover[\Term]\\
       \displaystyle
@@ -1090,11 +1093,11 @@ Formally, we define:
     \end{cases}
 \]
 Now, the unconditional probability of an arbitrary point being labelled
-with $\Term$ is given by $\Prob{\Points'}{label(\Point) = \Term} = \sum_{\Point}
-\Prob{\Points'}{label(\Point) = \Term \mid \Point}\cdot\Prob{\Points'}{\Point}$.
+with $\Term$ is given by $\Prob{\Points'}{\labl{\Point} = \Term} = \sum_{\Point}
+\Prob{\Points'}{\labl{\Point} = \Term \mid \Point}\cdot\Prob{\Points'}{\Point}$.
 Assuming a uniform distribution for picking points, we have that
 \[
-    \Prob{\Points'}{label(\Point) = t} =  \frac{1}{\vert \Points \vert} \cdot \sum_{\Point} \Prob{\Points'}{label(\Point) = \Term \mid \Point}
+    \Prob{\Points'}{\labl{\Point} = t} =  \frac{1}{\vert \Points \vert} \cdot \sum_{\Point} \Prob{\Points'}{\labl{\Point} = \Term \mid \Point}
 \]
 
 
@@ -1291,8 +1294,7 @@ tree separately.
 \section{Evaluation}
 \label{sec:evaluation}
 % \input{results_one_shot_table}
-\input{results_anytime_table}
-\input{results_one_shot_max_table}
+% \input{results_one_shot_max_table}
 
 \begin{figure}[!t]
 \centering
@@ -1315,7 +1317,13 @@ tree separately.
       \addplot[mark=.,color=red] table {cumulative_min_finding.dat};
     \end{axis}
   \end{tikzpicture}
-  \caption{Total number of benchmarks solved as a function of elapsed time}
+  \caption{Total number of ICFP benchmarks solved by \dcsolve as a
+    function of elapsed
+    time. Interpretation: The $y$-coordinate of every point on the
+    black (resp. red) plot gives the number of benchmarks for which
+    the \dcsolve algorithm can produce the first (resp. smallest)
+    solution within the time indicated by the $x$-coordinate of the
+    point. All times reported here are \emph{per benchmark} times.}
   \label{subfigure:solved_vs_time}
 \end{subfigure}
 \quad
@@ -1341,7 +1349,13 @@ tree separately.
       \addplot[only marks,mark=x,color=blue] table {cumulative_improvement.dat};
     \end{loglogaxis}
   \end{tikzpicture}
-  \caption{Scatter plot of first vs. minimum size solutions}
+  \caption{Scatter plot of first vs. minimum size
+    solutions. Interpretation: Each point represents a benchmark. The
+    $x$-coordinate of each point gives the size of the \emph{first}
+    solution produced by \dcsolve. The $y$-coordinate gives the size
+    of the \emph{smallest} solution produced by \dcsolve within 3600
+    seconds. Points below the $x = y$ line correspond to benchmarks
+    which benefit from continued execution.}
   \label{subfigure:first_vs_best}
 \end{subfigure}
 \caption{Summary graphs of experimental results on the ICFP benchmarks}
@@ -1404,16 +1418,10 @@ benchmarks. These are bit-twiddling problems with
 \item behaviour specified using only concrete input-output examples
 \end{inparaenum}
 To the best of our knowledge, no existing \sygus solver has been able to
-solve these benchmarks.
-The results of running our solver on these benchmarks is summarized in
-Table~\ref{table:anytime_results}.
-For each benchmark, we report
-\begin{inparaenum}[(a)]
-\item the size of the first solution discovered, the time at which it
-  was discovered, and the associated decision tree size;
-\item the same details for the minimal solution discovered; and
-\item whether the first solution discovered was minimal.
-\end{inparaenum}
+solve these benchmarks. Detailed experimental results on the ICFP
+benchmarks can be found in
+Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}
+in \ref{section:appendix_experimental_results}.
 % The first column of
 % Table~\ref{table:anytime_results} gives the name of the benchmark, the
 % second, third, and fourth columns give the size of the first solution
@@ -1428,13 +1436,8 @@ For each benchmark, we report
 
 The second class of benchmarks that we considered compute the
 maximum of $n$ integers, where $n$ is a
-parameter.
-Table~\ref{table:max_results} demonstrates how our algorithm stacks up
-against the state-of-the-art CVC4 solver.
-The columns indicate the sizes of solutions generated, the time to arrive
-at the solution, as well as the number of comparisons in the solution
-obtained by each of the solvers, for different values of the parameter
-$n$, indicated in the first column.
+parameter. Detailed results on these benchmarks can be found in
+Table~\ref{table:max_results} in \ref{section:appendix_experimental_results}.
 
 \comment{
 One can broadly categorize the existing \sygus solvers into two
@@ -1466,14 +1469,17 @@ competition, losing to the CVC4 solver, which came in first.
 % solvers along the three dimensions described earlier.
 
 \paragraph{Performance}
-As Table~\ref{table:anytime_results} demonstrates, our algorithm was
-able to produce a solution for 47 out of the 50 ICFP benchmarks,
-within an hour. We emphasize that we know of no other solver that has
-been able to provide satisfactory solutions to these
-benchmarks.
-The solutions produced by our divide and conquer algorithm, while being
-compact, are often of size larger than $20$, indicating that the
-solutions are beyond the reach of a na\"ive enumerative strategy.
+As
+Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2},
+as well as the black plot in Figure~\ref{subfigure:solved_vs_time}
+demonstrate, our algorithm was able to produce a solution for 47 out
+of the 50 ICFP benchmarks, within an hour.
+We emphasize that we know
+of no other solver that has been able to provide satisfactory
+solutions to these benchmarks.  The solutions produced by our divide
+and conquer algorithm, while being compact, are often of size larger
+than $20$, indicating that the solutions are beyond the reach of a
+na\"ive enumerative strategy.
 % Further, as Figure~\ref{figure:random_exponential_graph}
 % indicates, it would be impossible to explore expressions of the size
 % indicated in Table~\ref{table:anytime_results} --- which are often
@@ -1482,10 +1488,7 @@ solutions are beyond the reach of a na\"ive enumerative strategy.
 % The solutions produced by our divide and
 % conquer algorithm are quite compact, and
 Of the $47$ solved instances, only $5$ benchmarks take longer than $10$
-minutes, as seen in Figure~\ref{subfigure:solved_vs_time} indicates
-this, with the black line denoting the time to find the first
-solution, and the red line denoting the time to find the best
-solution.
+minutes, as seen in Figure~\ref{subfigure:solved_vs_time}.
 % of them are computed in less than ten minutes, with only five
 % benchmarks taking longer.
 
@@ -1549,7 +1552,7 @@ Table~\ref{table:anytime_results}, and Figure~\ref{subfigure:first_vs_best}).
 Also, the difference in the first and
 smallest solutions is sometimes very significant, for example, in the
 case of the ``icfp\_95\_100'' benchmark, we see the size of the
-solution went down from 220 to 24.
+solution go down from 220 to 24.
 % by almost an order of magnitude, from 220 to 24.
 An interesting phenomenon that we observed was that while the size of
 the decision tree almost always went down with time, the size of the
