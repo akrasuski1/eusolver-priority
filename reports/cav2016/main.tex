@@ -1286,28 +1286,29 @@ tree separately.
   incorrect.
 \end{example}
 
+\newpage
 \section{Evaluation}
 \label{sec:evaluation}
 % \input{results_one_shot_table}
 \input{results_anytime_table}
 \input{results_one_shot_max_table}
 
-We built a prototype \sygus solver based on the ideas presented in
-this paper. The algorithms for enumeration were implemented in
-about 3000 lines of Python code, while the algorithms for decision
-tree learning were implemented in about 3000 lines of
-C$\raisebox{1pt}{+\!+}$ code. All experiments were executed on a
-32-core machine with four Intel Xeon E7-4820 processors running at 2.0
-GHz, and 128 GB of memory, with a one hour time limit.
+We built a prototype \sygus solver that uses the divide-and-conquer
+enumerative algorithm.
+% based on the ideas presented in this paper.
+The tool consists of 3000 lines of Python code implementing the
+enumeration, and 3000 lines of C$\raisebox{1pt}{+\!+}$ code implementing
+the decision tree learning.
+% The algorithms for enumeration were implemented in
+% about 3000 lines of Python code, while the algorithms for decision
+% tree learning were implemented in about 3000 lines of
+% C$\raisebox{1pt}{+\!+}$ code. 
+All experiments were executed on a
+32-core machine with four Intel Xeon E7-4820 processors 
+% running at 2.0 GHz,
+and 128 GB of memory, with a one hour time limit.
 
-This section first sets up the questions that we would like for our
-experimental evaluation to answer, We then briefly describe
-the benchmarks used and comment on the state-of-the-art in solving
-these benchmarks, to provide some context to the reader.
-We then conclude this section with a discussion about our
-experimental observations.
-
-\subsection{Goals, Benchmarks and the State-of-the-art}
+% \subsection{Goals, Benchmarks and the State-of-the-art}
 \paragraph{Goals}
 We seek to empirically evaluate how our synthesis algorithm compares
 to other state-of-the-art synthesis techniques along the following
@@ -1318,52 +1319,70 @@ dimensions:
 solution?
 \item
 \emph{Quality}: How \emph{good} are the solutions produced by the
-algorithms? We use compactness of solutions, in terms of syntactic
-size, as a metric for the quality of solutions.
+algorithms? We use compactness of solutions
+% , in terms of syntactic size,
+as a metric for the quality of solutions.
 \item
 \emph{Effect of continued execution}: How significant is the
-improvement in the quality of the solutions generated if the
-algorithm is given an additional (but fixed) time budget.
+improvement in the quality of the solutions generated
+% if the algorithm is 
+given an additional (but fixed) time budget.
 \end{inparaenum}
 
+% To compare and contrast the \dcsolve algorithm with contemporary
+% techniques along each of these dimensions,
+% We did not consider the other classes in the general-track \sygus
+% benchmarks because:
+% \begin{inparaenum}[(a)]
+% \item the solutions were not conditional expressions, or
+% \item the benchmarks were not plainly separable, or
+% \item the benchmarks were similar to the ones that we considered.
+% \end{inparaenum}
+
 \paragraph{Benchmarks}
-To compare and contrast the \dcsolve algorithm with contemporary
-techniques along each of these dimensions, we considered two classes
-of \sygus benchmarks. We did not consider the other classes in the
-general-track \sygus benchmarks because:
-\begin{inparaenum}[(a)]
-\item the solutions were not conditional expressions, as is the case
-with the bit-vector benchmarks, or
-\item the benchmarks were not plainly separable, or
-\item the benchmarks were very similar to the ones that we have
-considered.
-\end{inparaenum}
+We considered two classes of \sygus benchmarks taken from the \sygus
+competition 2015.
 The first class that we considered consists of the ICFP
-benchmarks. These are bit-twiddling problems, with very specific
-restrictions on the bitwise operations that are allowed. The behavior
-of the function to be synthesized is specified only using concrete
-input-output examples. To the best of our knowledge, no existing
-\sygus solver has been able to solve these benchmarks. The results of
-running our solver on these benchmarks is summarized in
-Table~\ref{table:anytime_results}. The first column of
-Table~\ref{table:anytime_results} gives the name of the benchmark, the
-second and third columns give the size of the earliest solution
-discovered by the algorithm, the time taken to discover the solution,
-and the size of the decision tree associated with the solution,
-respectively. The next three columns provide the same details, but for
-the \emph{minimal} sized solution discovered by the
-algorithm. Finally, the last column indicates whether the solution
-that was discovered earliest was also the solution with the minimal
-size. The second class of benchmarks that we considered compute the
+benchmarks. These are bit-twiddling problems with 
+\begin{inparaenum}[(a)]
+\item very specific syntactic restrictions on the operations allowed,
+  and
+\item behaviour specified using only concrete input-output examples
+\end{inparaenum}
+To the best of our knowledge, no existing \sygus solver has been able to
+solve these benchmarks.
+The results of running our solver on these benchmarks is summarized in
+Table~\ref{table:anytime_results}.
+For each benchmark, we report
+\begin{inparaenum}[(a)]
+\item the size of the first solution discovered, the time at which it
+  was discovered, and the associated decision tree size;
+\item the same details for the minimal solution discovered; and
+\item whether the first solution discovered was minimal.
+\end{inparaenum}
+% The first column of
+% Table~\ref{table:anytime_results} gives the name of the benchmark, the
+% second, third, and fourth columns give the size of the first solution
+% discovered, the time at which it was discoverd by the algorithm, the time taken to discover the solution,
+% and the size of the decision tree associated with the solution,
+% respectively. The next three columns provide the same details, but for
+% the \emph{minimal} sized solution discovered by the
+% algorithm.
+% Finally, the last column indicates whether the solution
+% that was discovered earliest was also the solution with the minimal
+% size.
+
+The second class of benchmarks that we considered compute the
 maximum of $n$ integers, where $n$ is a
-parameter. Table~\ref{table:max_results} demonstrates how our
-algorithm stacks up against the state-of-the-art CVC4 solver. The
-columns indicate the sizes of solutions generated, the time to arrive
+parameter.
+Table~\ref{table:max_results} demonstrates how our algorithm stacks up
+against the state-of-the-art CVC4 solver.
+The columns indicate the sizes of solutions generated, the time to arrive
 at the solution, as well as the number of comparisons in the solution
 obtained by each of the solvers, for different values of the parameter
 $n$, indicated in the first column.
 
-\paragraph{The State-of-the-art}
+\comment{
 One can broadly categorize the existing \sygus solvers into two
 categories:\begin{inparaenum}[(a)]
 \item
@@ -1376,6 +1395,9 @@ specification to generate terms and predicates for solutions. Examples
 for white-box solvers include the solvers based on the \textsc{stun}
 algorithms~\cite{alur-15}, and the CVC4 solver~\cite{reynolds-15}.
 \end{inparaenum}
+}
+
+\paragraph{The State-of-the-art}
 Empirically, black-box algorithms are able to generalize well from
 underconstrained correctness specification, whereas it is not clear
 how white-box solvers can generalize from such specifications, given
@@ -1386,23 +1408,29 @@ version of the na\"ive enumerative algorithm discussed earlier won the
 competition, losing to the CVC4 solver, which came in first.
 
 \subsection{Discussion}
-Having set the context with respect to the benchmarks and contemporary
-solvers, we now proceed to a discussion on how the
-\dcsolve algorithm compares to contemporary solvers along the three
-dimensions described earlier.
+% We compare the \dcsolve algorithm compares to contemporary
+% solvers along the three dimensions described earlier.
 
 \paragraph{Performance}
 As Table~\ref{table:anytime_results} demonstrates, our algorithm was
 able to produce a solution for 47 out of the 50 ICFP benchmarks,
 within an hour. We emphasize that we know of no other solver that has
 been able to provide satisfactory solutions to these
-benchmarks. Further, as Figure~\ref{figure:random_exponential_graph}
-indicates, it would be impossible to explore expressions of the size
-indicated in Table~\ref{table:anytime_results} --- which are often
-larger than 20 --- using a na\"ive enumeration strategy, such as the
-one used by \esolver.  The solutions produced by our divide and
-conquer algorithm are quite compact, and most of them are computed in
-less than ten minutes, with only five benchmarks taking longer.
+benchmarks.
+The solutions produced by our divide and conquer algorithm, while being
+compact, are often of size larger than $20$, indicating that the
+solutions are beyond the reach of a na\"ive enumerative strategy.
+% Further, as Figure~\ref{figure:random_exponential_graph}
+% indicates, it would be impossible to explore expressions of the size
+% indicated in Table~\ref{table:anytime_results} --- which are often
+% larger than 20 --- using a na\"ive enumeration strategy.
+% such as the one used by \esolver.
+% The solutions produced by our divide and
+% conquer algorithm are quite compact, and
+Of the $47$ solved instances, only $5$ benchmarks take longer than $10$
+minutes.
+% of them are computed in less than ten minutes, with only five
+% benchmarks taking longer.
 
 Table~\ref{table:max_results} indicates that our algorithm is competitive
 with the state-of-the-art CVC4 solver on the parameterized ``max of
@@ -1413,10 +1441,13 @@ number of concrete counterexample points that the algorithm maintains,
 which in turn leads to the decision tree learning algorithms taking
 longer.
 
-To summarize, the \dcsolve algorithm demonstrates vastly better
-performance than other black-box solvers. Its performance is
-competitive with white-box solvers, while also being able to
-generalize well from input-output examples as we will now discuss.
+% To summarize, the \dcsolve algorithm demonstrates vastly better
+% performance than other black-box solvers on both benchmark suites, and
+% white-box solvers on the ICFP benchmarks.
+% For the linear integer arithmetic benchmarks, its performance is
+% competitive with white-box solvers.
+% while also being able to
+% generalize well from input-output examples as we will now discuss.
 
 \paragraph{Quality of Solutions}
 In the case of the ICFP benchmarks, Table~\ref{table:anytime_results}
@@ -1424,64 +1455,78 @@ indicates that most of the solutions that our algorithm generates are
 rather compact, and are of a size that are comprehensible to a
 human. We do not know if solutions smaller than these exist. The CVC4
 solver has been able to synthesize solutions for some of the ICFP
-benchmarks, but only when syntactic restrictions are lifted. However,
-upon closer inspection, we discovered that the solutions were just a
+benchmarks, {\em but only when syntactic restrictions are lifted}. However,
+upon closer inspection, we discovered that the solutions generated are a
 large case-split corresponding to the input-output examples that form
 the constraints for the problem. Although technically correct, the
 solutions are extremely large, perform no generalization and are
-unlikely to be the intended or desired solutions. We emphasize
-that no solution generated by our algorithm is a similar large
-conditional expression that matches inputs to outputs. The solutions
-that we report are all compact expressions that perform some
+unlikely to be the intended or desired solutions.
+% We emphasize that no solution generated by our algorithm is a similar large
+% conditional expression that matches inputs to outputs.
+The solutions that we report are all compact expressions that perform some
 computation on the input, to return an output.
 
 In the case of the ``max'' benchmarks, we again see from
 Table~\ref{table:max_results} that our algorithm performs well for
 small parameter values, often beating the solutions obtained from the
-CVC4 solver in terms of size and number of comparisons. At larger
-parameter values, the solutions are still reasonably compact and not
-excessively large. The reason for the somewhat larger solutions for
+CVC4 solver in terms of size and number of comparisons.
+At larger parameter values, the solutions are still reasonably compact
+and not excessively large.
+The reason for the somewhat larger solutions for
 larger parameter values is that the decision tree learning algorithm
 is not optimal, \ie, it does not guarantee the most compact decision
 tree. Instead a greedy heuristic is used, which rapidly yields
 suboptimal solutions as the number of samples (counterexample points)
-increases, as with the ``max'' benchmarks for larger
-parameter values. We intend to explore how we can adapt other
-heuristics~\cite{madhusudan-16-pw}, into the setting of our problem, in future
-work.
+increases.
+% as with the ``max'' benchmarks for larger
+% parameter values.
+We intend to explore how we can adapt other
+heuristics~\cite{madhusudan-16-pw}, into the setting of our problem, in
+future work.
 
 \paragraph{Effect of Continued Execution}
-We observe from the last column in Table~\ref{table:anytime_results}
-that for about half the ICFP benchmarks, we were able to obtain a more
-compact solution by continuing to execute our algorithm even after the
-first solution was discovered. Also, the difference in the first and
+For about half the ICFP benchmarks, we were able to obtain a more
+compact solution by letting the algorithm continue execution after the
+first solution was discovered (last column in
+Table~\ref{table:anytime_results}).
+Also, the difference in the first and
 smallest solutions is sometimes very significant, for example, in the
 case of the ``icfp\_95\_100'' benchmark, we see the size of the
-solutions go down by almost an order of magnitude, from 220 to 24. An
-interesting phenomenon that we observed was that our algorithm would
-sometimes find \emph{larger} solutions when allowed to run
-longer. However, we observed that the size of the decision trees
-almost always reduced with time. It turns out that although the
-decision trees learned were smaller, running the algorithm longer also
-meant that larger terms and predicates were enumerated, thus leading
-to the overall expression sizes of the solutions to sometimes increase
-with time.
+solution went down from 220 to 24.
+% by almost an order of magnitude, from 220 to 24.
+An interesting phenomenon that we observed was that while the size of
+the decision tree almost always went down with time, the size of the
+solutions sometimes increased.
+% our algorithm would
+% sometimes find \emph{larger} solutions when allowed to run
+% longer.
+% However, the size of the decision trees almost always reduced with time.
+This is because the algorithm generated larger terms and predicates
+over time, increasing the size of the labels and attributes in each node
+of the decision tree.
 
-Our experimental evaluation thus allows us to draw the following
-conclusions:
+% It turns out that although the decision trees learned were smaller,
+% running the algorithm longer also meant that larger terms and predicates
+% were enumerated, thus leading to the overall expression sizes of the
+% solutions to sometimes increase with time.
+
+Overall, our experimental evaluation suggests that:
+% thus allows us to draw the following conclusions:
 \begin{inparaenum}[(a)]
 \item
-The \dcsolve algorithm is able to quickly learn compact solutions for
-a large fraction of the ICFP benchmarks, and generalizes well from
-input-output examples.
+The \dcsolve algorithm is able to quickly learn compact solutions,
+% for a large fraction of the ICFP benchmarks,
+and generalizes well from input-output examples.
 \item
 The anytime nature of the \dcsolve algorithm is often useful in
-reducing the size of the computed solution by allowing additional
-execution time.
+reducing the size of the computed solution;
+% by allowing additional execution time.
 \item
-The \dcsolve algorithm works competently on problems from other
-classes of benchmarks that admit conditional expressions as solutions,
-such as the parameterized ``max'' benchmarks.
+The \dcsolve algorithm works competently on problems from different
+classes of benchmarks;
+% domaother
+% classes of benchmarks that admit conditional expressions as solutions,
+% such as the parameterized ``max'' benchmarks.
 \end{inparaenum}
 
 \section{Concluding Remarks}
