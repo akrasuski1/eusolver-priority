@@ -1,0 +1,83 @@
+We thank the reviewers for their detailed comments and suggestions. We first
+address the issue of benchmarks and evaluation that has been raised by multiple
+reviewers.
+
+The choice of presenting evaluation on ICFP and max benchmarks was based on
+the results of the SyGuS competition 2015 which showed that these benchmarks
+were the hardest for most solvers [1]. We expect performance comparable to
+the enumerative solver (placed second in the SyGuS competition) on the other
+benchmarks.
+
+We emphasize that one of the advantages of our techniques and solver is that
+they are  domain and theory agnostic. In comparison, CVC4 is built into the SMT
+solver and heavily leverages theory-specific reasoning during the synthesis
+process. Hence, the fact that CVC4 scales better than our solver on the max
+benchmarks is not surprising as linear-integer-arithmetic is a comparatively
+"well-behaved theory". On the other hand, on the not-so-well-behaved bit-vector
+theory (ICFP benchmarks), the CVC4 solver falters, while our solver works well.
+
+Reviewer-A:
+
+* "The quality of results is sensitive to the order in which predicates/terms
+  are generated..."
+- As the reviewer points out, this is expected. Since, the solver is domain
+  agnostic, there is no natural way to tune the order in which predicates/terms
+  are generated. However, the anytime extension presented in Sec-4.3 (results in
+  Table-5b), is meant to alleviate this issue.
+
+* "that a point pt being labeled by a given term t is proportional to |cover(t)|"
+- This is a standard choice in many machine-learning techniques to compute
+  information gain. There exist other heuristic priors--we leave research into
+  the different heuristics for future work.
+
+* "Why does the predicate enumeration remain based on size only?"
+- Since the enumeration is domain agnostic, it is not feasible to tune the
+  enumeration towards "good" predicates first. Additionally, as the number of
+  predicates grows exponentially with size, enumeration time can be very
+  expensive if larger predicates are enumerated early.
+
+* known techniques for dealing with decision-tree over-fitting.
+- We thank the reviewer for pointing this out-- we will look into this.
+
+Reviewer-B:
+
+* "In fact, I am surprised that this method was not deployed earlier"
+- We agree that the method is quite natural. However, it were not applied in
+  earlier work. Further, the syntax-guided synthesis problem is quite new, and
+  there is significant ground yet to be explored.
+
+* ICFP benchmarks were randomly generated for the ICFP contest 2013.
+
+* "it is not clear if branch-wise verification has been implemented..."
+- Branch-wise verification was implemented, while decision-tree repair was not.
+  We will rephrase the offending sentence.
+
+Reviewer-C:
+
+* "learning a term in the way proposed here is not entirely new"
+- The reviewer is right is noting that the general approach is not new--early
+  work on deductive synthesis by Manna/Waldinger included splitting. We will
+  expand the related work section to include comparison to prior work (including
+  Kneuss etal).
+
+* "It is unclear how the splitting predicate is selected from the grammar..."
+* "How did you pick the grammar for the predicates?"
+- In SyGuS, the grammar is given as a part of the input problem instance. In
+  fact, there can be benchmarks with the same specifications, but with different
+  grammars. In the experiments, the predicate grammar was linear inequalities
+  for the max benchmarks, while the ICFP benchmarks came with a specific
+  non-standard predicate grammar.
+
+* "Are the gains due to decision trees or due to knowing most of the predicates?"
+- In our experiments, the performance gains are clearly due to the decision
+  trees as the procedure is not aware of or tuned to any specific predicate grammar.
+
+* "when there are fewer examples, it would benefit not to use decision trees..."
+- This is an excellent suggestion and we will incorporate it into the tool as an
+  optimization. Further, it would be very interesting to build a portfolio
+  solver that runs two separate solvers with and without decision trees.
+
+-----
+
+[1] Rajeev Alur, Dana Fisman, Rishabh Singh, Armando Solar-Lezama: Results and
+Analysis of SyGuS-Comp'15. SYNT 2015
