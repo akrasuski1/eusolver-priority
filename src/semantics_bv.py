@@ -145,6 +145,31 @@ class BVIs1(InterpretedFunctionBase):
         eval_context_object.pop()
         eval_context_object.push(res)
 
+# (if0 (_ BitVec m) (_ BitVec m) (_ BitVec m))
+# - if (cond == 1) then . else .
+
+class BVIf0(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('if0', 3, (exprtypes.BitVectorType(bv_size), 
+                                     exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return z3.If(child_terms[0] == 1, child_terms[1], child_terms[2])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_expr(expr_object.children[0], eval_context_object)
+        condition = eval_context_object.peek(0).is_one()
+        eval_context_object.pop()
+        if (condition):
+            self._evaluate_expr(expr_object.children[1], eval_context_object)
+        else:
+            self._evaluate_expr(expr_object.children[2], eval_context_object)
+
+
 # (bvand (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - bitwise and
 
@@ -420,6 +445,8 @@ class BVInstantiator(semantics_types.InstantiatorBase):
                 self.instances[function_name] = BVAdd(self.bv_size)
             elif function_name == 'is1':
                 self.instances[function_name] = BVIs1(self.bv_size)
+            elif function_name == 'if0':
+                self.instances[function_name] = BVIf0(self.bv_size)
             else:
                 self._raise_failure(function_name, [])
         return self.instances[function_name]
@@ -433,6 +460,9 @@ class BVInstantiator(semantics_types.InstantiatorBase):
     def is_binary(self, function_name):
         return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd' ]
 
+    def is_ternary(self, function_name):
+        return function_name in [ 'if0' ]
+
     def _do_instantiation(self, function_name, mangled_name, arg_types):
         if self.is_unary(function_name):
             if (len(arg_types) != 1 or
@@ -442,6 +472,12 @@ class BVInstantiator(semantics_types.InstantiatorBase):
 
         elif self.is_binary(function_name):
             if (len(arg_types) != 2 or
+                    (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.bit_vector_type))):
+                self._raise_failure(function_name, arg_types)
+            return self._get_instance(function_name)
+
+        elif self.is_ternary(function_name):
+            if (len(arg_types) != 3 or
                     (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.bit_vector_type))):
                 self._raise_failure(function_name, arg_types)
             return self._get_instance(function_name)
