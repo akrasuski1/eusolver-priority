@@ -732,28 +732,6 @@ def test_solver_max(num_vars, run_anytime_version):
 
 def get_icfp_valuations(benchmark_name):
     import parser
-    test_icfp_valuations =  [
-            (
-                BitVector(1, 64),
-                BitVector(1, 64)
-            ),
-            (
-                BitVector(2, 64),
-                BitVector(0, 64)
-            ),
-            (
-                BitVector(3, 64),
-                BitVector(3, 64)
-            ),
-            (
-                BitVector(4, 64),
-                BitVector(0, 64)
-            ),
-            (
-                BitVector(5, 64),
-                BitVector(5, 64)
-            )
-            ]
 
     sexp = parser.sexpFromFile(benchmark_name)
     if sexp is None:
@@ -764,7 +742,6 @@ def get_icfp_valuations(benchmark_name):
         print("Could not parse icfp")
 
     return points
-    # return test_icfp_valuations
 
 def test_solver_icfp(benchmark_name, run_anytime_version):
     import synthesis_context
