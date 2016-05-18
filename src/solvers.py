@@ -199,7 +199,7 @@ class TermSolver(object):
     def add_point(self, point):
         self.points.append(point)
 
-    def _compute_term_signature(self, term, sig_to_term):
+    def _compute_term_signature(self, term):
         points = self.points
         num_points = len(points)
         retval = self.signature_factory()
@@ -230,6 +230,15 @@ class TermSolver(object):
             eval_cache[term.expr_id] = retval
             return retval
 
+    def _do_complete_sig_to_term(self, old_sig_to_term):
+        new_sig_to_term = {}
+
+        for sig, term in old_sig_to_term.items():
+            new_sig = self._compute_term_signature(term)
+            new_sig_to_term[new_sig] = term
+
+        return new_sig_to_term
+
     def extend_sig_to_term_map(self, sig_to_term):
         points = self.points
         num_points = len(points)
@@ -246,7 +255,7 @@ class TermSolver(object):
             # print('Generated Term: %s' % _expr_to_str(term))
             term = _get_expr_with_id(term, self.monotonic_expr_id)
             self.monotonic_expr_id += 1
-            sig = self._compute_term_signature(term, sig_to_term)
+            sig = self._compute_term_signature(term)
 
             if (sig in sig_to_term or sig.is_empty()):
                 continue
@@ -257,20 +266,31 @@ class TermSolver(object):
     def get_largest_term_size_enumerated(self):
         return self.bunch_generator.current_object_size
 
-    def solve(self):
+    def solve(self, old_sig_to_term=None):
         points = self.points;
         num_points = len(points)
+        self.signature_factory = BitSet.make_factory(num_points)
+
         if (num_points == 0):
             return self._trivial_solve()
 
-        sig_to_term = {}
+        if old_sig_to_term is None:
+            # No previous solve
+            sig_to_term = {}
+        elif len(old_sig_to_term) == 1 and (list(old_sig_to_term.keys())[0]) is None:
+            # Special case immediately after trivial solve
+            # when empty signature may be in old_sig_to_term
+            sig_to_term = {}
+        elif old_sig_to_term is not None:
+            sig_to_term = self._do_complete_sig_to_term(old_sig_to_term)
+            if check_term_sufficiency(sig_to_term, num_points):
+                return sig_to_term
 
         self.bunch_generator = enumerators.BunchedGenerator(self.term_generator,
                                                             self.max_term_size)
         self.bunch_generator_state = self.bunch_generator.generate()
 
         self.monotonic_expr_id = 0
-        self.signature_factory = BitSet.make_factory(num_points)
 
         while (not check_term_sufficiency(sig_to_term, num_points)):
             extended_sig_to_term = self.extend_sig_to_term_map(sig_to_term)
@@ -597,13 +617,15 @@ class Solver(object):
         unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator, term_solver)
         time_origin = time.clock()
 
+        sig_to_term = None
         while (True):
             # iterate until we have terms that are "sufficient"
-            sig_to_term = term_solver.solve()
+            sig_to_term = term_solver.solve(sig_to_term)
             if (sig_to_term == None):
                 return None
             # we now have a sufficient set of terms
             # print('Term solve complete!')
+            # print([ _expr_to_str(term) for sig,term in sig_to_term.items()])
             unifier_state = unifier.unify(sig_to_term)
 
             while (True):
