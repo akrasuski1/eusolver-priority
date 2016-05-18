@@ -183,23 +183,27 @@ class TermSolver(object):
         self.eval_ctx = evaluation.EvaluationContext()
         self.eval_cache = {}
         self.current_largest_term_size = 0
+        self.signature_to_term = {}
+        self.bunch_generator = None
 
     def _trivial_solve(self):
         term_size = 1
         while (term_size <= self.max_term_size):
             self.term_generator.set_size(term_size)
             for term in self.term_generator.generate():
-                retval = {None : term}
+                self.signature_to_term = {None : term}
                 # print('Term Solve complete!')
                 # print({str(x) : _expr_to_str(y) for (x, y) in retval[1].items()})
-                return retval
+                return True
             term_size += 1
 
         # print('Term Solve failed!')
-        return None
+        return False
 
-    def add_point(self, point):
-        self.points.append(point)
+    def add_points(self, points):
+        self.points.extend(points)
+        self.signature_factory = BitSet.make_factory(len(self.points))
+        self._do_complete_sig_to_term()
 
     def _compute_term_signature(self, term):
         points = self.points
@@ -232,16 +236,18 @@ class TermSolver(object):
             eval_cache[term.expr_id] = retval
             return retval
 
-    def _do_complete_sig_to_term(self, old_sig_to_term):
+    def _do_complete_sig_to_term(self):
+        old_sig_to_term = self.signature_to_term
         new_sig_to_term = {}
 
         for sig, term in old_sig_to_term.items():
             new_sig = self._compute_term_signature(term)
-            new_sig_to_term[new_sig] = term
+            if not new_sig.is_empty():
+                new_sig_to_term[new_sig] = term
 
-        return new_sig_to_term
+        self.signature_to_term = new_sig_to_term
 
-    def extend_sig_to_term_map(self, sig_to_term):
+    def extend_sig_to_term_map(self):
         points = self.points
         num_points = len(points)
 
@@ -251,7 +257,7 @@ class TermSolver(object):
         try:
             bunch = next(bunch_generator_state)
         except StopIteration:
-            return None
+            return False
 
         for term in bunch:
             # print('Generated Term: %s' % _expr_to_str(term))
@@ -259,34 +265,28 @@ class TermSolver(object):
             self.monotonic_expr_id += 1
             sig = self._compute_term_signature(term)
 
-            if (sig in sig_to_term or sig.is_empty()):
+            if (sig in self.signature_to_term or sig.is_empty()):
                 continue
 
-            sig_to_term[sig] = term
-        return sig_to_term
+            self.signature_to_term[sig] = term
+        return True
 
     def get_largest_term_size_enumerated(self):
-        return self.bunch_generator.current_object_size
+        return max(self.current_largest_term_size,
+                self.bunch_generator.current_object_size)
 
-    def solve(self, old_sig_to_term=None):
-        points = self.points;
-        num_points = len(points)
-        self.signature_factory = BitSet.make_factory(num_points)
+    def solve(self):
+        num_points = len(self.points)
 
-        if (num_points == 0):
+        if (num_points == 0): # No points, any term will do
             return self._trivial_solve()
+        elif check_term_sufficiency(self.signature_to_term, num_points): # Old terms will do
+            return True
 
-        if old_sig_to_term is None:
-            # No previous solve
-            sig_to_term = {}
-        elif len(old_sig_to_term) == 1 and (list(old_sig_to_term.keys())[0]) is None:
-            # Special case immediately after trivial solve
-            # when empty signature may be in old_sig_to_term
-            sig_to_term = {}
-        elif old_sig_to_term is not None:
-            sig_to_term = self._do_complete_sig_to_term(old_sig_to_term)
-            if check_term_sufficiency(sig_to_term, num_points):
-                return sig_to_term
+        # Book keeping
+        if self.bunch_generator is not None:
+            self.current_largest_term_size = max(self.current_largest_term_size,
+                    self.bunch_generator.current_object_size)
 
         self.bunch_generator = enumerators.BunchedGenerator(self.term_generator,
                                                             self.max_term_size)
@@ -294,11 +294,11 @@ class TermSolver(object):
 
         self.monotonic_expr_id = 0
 
-        while (not check_term_sufficiency(sig_to_term, num_points)):
-            extended_sig_to_term = self.extend_sig_to_term_map(sig_to_term)
-            if (extended_sig_to_term == None):
-                return None
-        return sig_to_term
+        while (not check_term_sufficiency(self.signature_to_term, num_points)):
+            success = self.extend_sig_to_term_map()
+            if not success:
+                return False
+        return True
 
 class Unifier(object):
     def __init__(self, syn_ctx, smt_ctx, pred_generator, term_solver, max_pred_size = 1024):
@@ -335,11 +335,27 @@ class Unifier(object):
         neg_canon_spec_with_outvar = syn_ctx.make_function_expr('not', canon_spec_with_outvar)
         frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)
         self.smt_solver.add(frozen_smt_cnstr)
+        self.signature_to_pred = {}
 
-    def add_point(self, point):
-        self.points.append(point)
+    def add_points(self, points):
+        self.points.extend(points)
+        self.signature_factory = BitSet.make_factory(len(self.points))
+        self._do_complete_sig_to_pred()
 
-    def _compute_pred_signature(self, pred, sig_to_pred):
+
+    def _do_complete_sig_to_pred(self):
+        old_sig_to_pred = self.signature_to_pred
+        new_sig_to_pred = {}
+
+        for sig, pred in old_sig_to_pred.items():
+            new_sig = self._compute_pred_signature(pred)
+            if not new_sig.is_empty():
+                new_sig_to_pred[new_sig] = pred
+
+        self.signature_to_pred = new_sig_to_pred
+
+
+    def _compute_pred_signature(self, pred):
         points = self.points;
         num_points = len(points)
         retval = self.signature_factory()
@@ -444,11 +460,11 @@ class Unifier(object):
             return e
 
 
-    def _try_trivial_unification(self, signature_to_term):
+    def _try_trivial_unification(self):
         # we can trivially unify if there exists a term
         # which satisfies the spec at all points
         trivial_term = None
-        for (sig, term) in signature_to_term.items():
+        for (sig, term) in self.term_solver.signature_to_term.items():
             if (sig is None or sig.is_full()):
                 trivial_term = term
                 break
@@ -459,15 +475,15 @@ class Unifier(object):
         # try to verify the trivial term
         return self._verify_expr(trivial_term)
 
-    def _try_decision_tree_learning(self, signature_to_term, signature_to_pred):
+    def _try_decision_tree_learning(self):
         term_list = []
         term_sig_list = []
         pred_list = []
         pred_sig_list = []
-        for (term_sig, term) in signature_to_term.items():
+        for (term_sig, term) in self.term_solver.signature_to_term.items():
             term_list.append(term)
             term_sig_list.append(term_sig)
-        for (pred_sig, pred) in signature_to_pred.items():
+        for (pred_sig, pred) in self.signature_to_pred.items():
             pred_list.append(pred)
             pred_sig_list.append(pred_sig)
 
@@ -492,12 +508,12 @@ class Unifier(object):
     2. [list of counterexample points]
     3. None, in case of exhaustion of terms/preds
     """
-    def unify(self, signature_to_term):
-        triv = self._try_trivial_unification(signature_to_term)
+    def unify(self):
+        triv = self._try_trivial_unification()
         if (triv != None):
             # print('Unifier: returning %s' % str(triv))
             if (_is_expr(triv)):
-                yield (triv, 0, len(signature_to_term), 0,
+                yield (triv, 0, len(self.term_solver.signature_to_term), 0,
                        self.term_solver.get_largest_term_size_enumerated(), 0)
             else:
                 yield triv
@@ -506,7 +522,6 @@ class Unifier(object):
         # cannot be trivially unified
         num_points = len(self.points)
         self.signature_factory = BitSet.make_factory(num_points)
-        signature_to_pred = {}
         max_pred_size = self.max_pred_size
         generator = self.pred_generator
         monotonic_pred_id = 0
@@ -519,14 +534,14 @@ class Unifier(object):
                 pred = _get_expr_with_id(pred, monotonic_pred_id)
                 monotonic_pred_id += 1
 
-                sig = self._compute_pred_signature(pred, signature_to_pred)
+                sig = self._compute_pred_signature(pred)
                 # print('Generated predicate %s with sig %s' % (_expr_to_str(pred), str(sig)))
                 # if the predicate evaluates universally to true or false
                 # at all points, then it isn't worth considering it.
-                if (not sig.is_empty() and not sig.is_full() and sig not in signature_to_pred):
+                if (not sig.is_empty() and not sig.is_full() and sig not in self.signature_to_pred):
                     # print('Generated pred %s' % _expr_to_str(pred))
                     # print('predicate was new!')
-                    signature_to_pred[sig] = pred
+                    self.signature_to_pred[sig] = pred
                     new_preds_generated = True
                 else:
                     # print('predicate was already seen!')
@@ -540,16 +555,14 @@ class Unifier(object):
             # we've generated a bunch of (new) predicates
             # try to learn a decision tree
             # print('Unifier.unify(): Attempting to learn decision tree...', flush=True)
-            dt_tuple = self._try_decision_tree_learning(signature_to_term,
-                                                        signature_to_pred)
+            dt_tuple = self._try_decision_tree_learning()
             if (dt_tuple == None):
                 # print('Unifier.unify(): Could not learn decision tree!')
-                extended_signature_to_term = self.term_solver.extend_sig_to_term_map(signature_to_term)
-                if (extended_signature_to_term == None):
+                success = self.term_solver.extend_sig_to_term_map()
+                if not success:
                     yield None
                     return
 
-                signature_to_term = extended_signature_to_term
                 continue
 
             # print('Unifier.unify(): Learned a decision tree!')
@@ -563,14 +576,13 @@ class Unifier(object):
             sol_or_cex = self._verify_guard_term_list(guard_term_list, dt_tuple)
             if (_is_expr(sol_or_cex)):
                 yield (sol_or_cex, get_decision_tree_size(dt),
-                       len(signature_to_term), len(signature_to_pred),
+                       len(self.term_solver.signature_to_term), len(self.signature_to_pred),
                        self.term_solver.get_largest_term_size_enumerated(),
                        bunch_generator.current_object_size)
 
-                extended_signature_to_term = self.term_solver.extend_sig_to_term_map(signature_to_term)
-                if (extended_signature_to_term == None):
+                success = self.term_solver.extend_sig_to_term_map()
+                if not success:
                     return
-                signature_to_term = extended_signature_to_term
                 continue
             else:
                 # this a counterexample. stop yielding after this
@@ -593,13 +605,14 @@ class Solver(object):
         self.points = []
         self.point_set = set()
 
-    def add_point(self, point):
-        # print('Solver: Added point %s' % str([str(c.value_object) for c in point]))
-        # print([ (str(x[0].value_object), hash(x[0].value_object)) for x in self.point_set ])
-        if (point in self.point_set):
-            raise DuplicatePointException(point)
-        self.point_set.add(point)
-        self.points.append(point)
+    def add_points(self, points):
+        for point in points:
+            # print('Solver: Added point %s' % str([str(c.value_object) for c in point]))
+            # print([ (str(x[0].value_object), hash(x[0].value_object)) for x in self.point_set ])
+            if (point in self.point_set):
+                raise DuplicatePointException(point)
+            self.point_set.add(point)
+            self.points.append(point)
 
     def add_specification(self, specification):
         syn_ctx = self.syn_ctx
@@ -617,20 +630,20 @@ class Solver(object):
         unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator, term_solver)
         time_origin = time.clock()
 
-        sig_to_term = None
         while (True):
             # iterate until we have terms that are "sufficient"
-            sig_to_term = term_solver.solve(sig_to_term)
-            if (sig_to_term == None):
+            success = term_solver.solve()
+            if not success:
                 return None
             # we now have a sufficient set of terms
             # print('Term solve complete!')
-            # print([ _expr_to_str(term) for sig,term in sig_to_term.items()])
-            unifier_state = unifier.unify(sig_to_term)
+            # print([ _expr_to_str(term) for sig,term in term_solver.signature_to_term.items()])
+            unifier_state = unifier.unify()
 
             while (True):
                 r = next(unifier_state)
                 # print('Unification Complete!')
+                # print([ _expr_to_str(pred) for sig,pred in unifier.signature_to_pred.items()])
                 if (isinstance(r, tuple)):
                     (sol, dt_size, num_t, num_p, max_t, max_p) = r
                     solution_found_at = time.clock() - time_origin
@@ -640,11 +653,9 @@ class Solver(object):
                 elif (isinstance(r, list)):
                     # this is a set of counterexamples
                     # print('Solver: Adding %d points' % len(r))
-                    for point in r:
-                        self.add_point(point)
-                        term_solver.add_point(point)
-                        unifier.add_point(point)
-                        # print([ str(x[0].value_object) for x in self.points])
+                    term_solver.add_points(r) # Term solver can add all points at once
+                    unifier.add_points(r)
+                    self.add_points(r)
                     break
                 else:
                     return None
