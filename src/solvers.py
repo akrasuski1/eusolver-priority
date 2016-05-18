@@ -121,25 +121,27 @@ def _decision_tree_to_guard_term_list_internal(decision_tree, pred_list, term_li
                                                    retval, guard_stack)
         guard_stack.pop()
 
+# The leaves of the decision trees are listed left to right
 def decision_tree_to_guard_term_list(decision_tree, pred_list, term_list, syn_ctx):
     retval = []
     _decision_tree_to_guard_term_list_internal(decision_tree, pred_list,
                                                term_list, syn_ctx, retval, [])
     return retval
 
-def _decision_tree_to_expr_internal(decision_tree, pred_list, term_list, syn_ctx):
+def _decision_tree_to_expr_internal(decision_tree, pred_list, syn_ctx, selected_leaf_terms):
     if (decision_tree.is_leaf()):
-        return term_list[decision_tree.get_label_id()]
+        return selected_leaf_terms.pop(0)
     else:
         if_term = _decision_tree_to_expr_internal(decision_tree.get_positive_child(),
-                                                  pred_list, term_list, syn_ctx)
+                                                  pred_list, syn_ctx, selected_leaf_terms)
         else_term = _decision_tree_to_expr_internal(decision_tree.get_negative_child(),
-                                                    pred_list, term_list, syn_ctx)
+                                                    pred_list, syn_ctx, selected_leaf_terms)
         return syn_ctx.make_function_expr('ite', pred_list[decision_tree.get_split_attribute_id()],
                                           if_term, else_term)
 
-def decision_tree_to_expr(decision_tree, pred_list, term_list, syn_ctx):
-    return _decision_tree_to_expr_internal(decision_tree, pred_list, term_list, syn_ctx)
+# We use the fact that the guard_term_list lists leaves left to right
+def decision_tree_to_expr(decision_tree, pred_list, syn_ctx, selected_leaf_terms):
+    return _decision_tree_to_expr_internal(decision_tree, pred_list, syn_ctx, selected_leaf_terms)
 
 def guard_term_list_to_expr(guard_term_list, syn_ctx):
     num_branches = len(guard_term_list)
@@ -396,7 +398,7 @@ class Unifier(object):
         smt_solver = self.smt_solver
         intro_vars = self.smt_intro_vars
         cex_points = []
-        working_terms_list = []
+        selected_leaf_terms = []
 
         at_least_one_branch_failed = False
         for (pred, term_list) in guard_term_list:
@@ -425,7 +427,7 @@ class Unifier(object):
                                                      self.var_info_list))
                 else:
                     all_terms_failed = False
-                    working_terms_list.append((pred, term))
+                    selected_leaf_terms.append(term)
                     break
 
             if (all_terms_failed):
@@ -438,7 +440,7 @@ class Unifier(object):
             return retval
         else:
             (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
-            e = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
+            e = decision_tree_to_expr(dt, pred_list, self.syn_ctx, selected_leaf_terms)
             return e
 
 
@@ -552,12 +554,10 @@ class Unifier(object):
 
             # print('Unifier.unify(): Learned a decision tree!')
             (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
-            # expr = decision_tree_to_expr(dt, pred_list, term_list, self.syn_ctx)
             guard_term_list = decision_tree_to_guard_term_list(dt, pred_list,
                                                                term_list,
                                                                self.syn_ctx)
             # print('Guard term list:\n%s' % _guard_term_list_to_str(guard_term_list))
-            # print('Obtained expr: %s' % _expr_to_str(expr))
             # print('Unifier: enumerated %d predicates!' % monotonic_pred_id)
             # return self._verify_expr(expr)
             sol_or_cex = self._verify_guard_term_list(guard_term_list, dt_tuple)
@@ -675,7 +675,7 @@ def _do_solve(solver, term_generator, pred_generator, run_anytime_version):
         print('Solution                     : %s' % _expr_to_str(sol), flush=True)
         print('----------------------------------------------')
         if (not run_anytime_version):
-            return
+            return sol
 
 
 def test_solver_max(num_vars, run_anytime_version):
@@ -838,7 +838,14 @@ def test_solver_icfp(benchmark_name, run_anytime_version):
     syn_ctx.assert_spec(constraint)
 
     solver = Solver(syn_ctx)
-    _do_solve(solver, term_generator, pred_generator, run_anytime_version)
+    sol = _do_solve(solver, term_generator, pred_generator, run_anytime_version)
+
+    for inp, result in valuations:
+        solver.eval_ctx.set_valuation_map([exprs.Value(inp, exprtypes.BitVectorType(64))])
+        sol_out = evaluation.evaluate_expression_raw(sol, solver.eval_ctx)
+        if sol_out != result:
+            print(inp, sol_out, result)
+        assert sol_out == result
 
 def die():
     print('Usage: %s [--anytime] <timeout in seconds> max <num args to max function>' % sys.argv[0])
