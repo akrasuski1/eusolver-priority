@@ -159,20 +159,25 @@ class IcfpInstanceGenerator(object):
         term_generator, pred_generator = icfp_grammar(self.syn_ctx, self.synth_fun, full_grammer=True)
         valuations = initial_valuations
         while True:
+            self.syn_ctx.clear_assertions()
             self.syn_ctx.assert_spec(self._points_to_spec(valuations))
             solver = solvers.Solver(self.syn_ctx)
 
             for sol_tuple in solver.solve(term_generator, pred_generator):
                 (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
-                # print("Found    solution: " + exprs.expression_to_string(sol))
-                # print("Intended solution: " + exprs.expression_to_string(self.solution))
+
+                act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = self.syn_ctx.get_synthesis_spec()
+
                 maybe_cex_point = self.check_solution(sol)
 
                 if maybe_cex_point is None:
-                    return valuations
+                    return (valuations, sol)
                 else:
-                    print('Added point ' + str(maybe_cex_point))
+                    # print('Added point ' + str(maybe_cex_point))
+                    assert maybe_cex_point not in valuations
                     valuations.append(maybe_cex_point)
+
+                break
 
 
 
@@ -236,6 +241,46 @@ def icfp_grammar(syn_ctx, synth_fun, full_grammer=True, operations=[]):
 
     return (term_generator, pred_generator)
 
+
+'''
+Property functions
+'''
+def get_max_term_size(expr):
+    if not exprs.is_function_expression(expr):
+        return 1
+    elif exprs.is_application_of(expr, 'if0'):
+        return max(get_max_term_size(expr.children[1]), get_max_term_size(expr.children[2]))
+    else:
+        return 1 + sum([get_max_term_size(child) for child in expr.children])
+
+def get_all_terms(syn_ctx, expr):
+    import itertools
+    if not exprs.is_function_expression(expr):
+        return [ expr ]
+    elif exprs.is_application_of(expr, 'if0'):
+        return get_all_terms(syn_ctx, expr.children[1]) + get_all_terms(syn_ctx, expr.children[2])
+    else:
+        children_list = itertools.product(*[get_all_terms(syn_ctx, child) for child in expr.children])
+        return [ syn_ctx.make_function_expr(expr.function_info, *children) for children in children_list ]
+
+def get_pred_term_mapping(syn_ctx, expr):
+    import itertools
+    if not exprs.is_function_expression(expr):
+        return [ ([], expr) ]
+    elif exprs.is_application_of(expr, 'if0'):
+        thens = [ (ps + [(expr.children[0], True)], t) for ps, t in get_pred_term_mapping(syn_ctx, expr.children[1]) ]
+        elses = [ (ps + [(expr.children[0], False)], t)for ps, t in get_pred_term_mapping(syn_ctx, expr.children[2]) ]
+        return thens + elses
+    else:
+        combs = itertools.product(*[get_pred_term_mapping(syn_ctx, child) for child in expr.children])
+        ret = []
+        for comb in combs:
+            (plists, children) = zip(*comb)
+            plist = list(itertools.chain(*plists))
+            term = syn_ctx.make_function_expr(expr.function_info, *children) 
+            ret.append((plist, term))
+        return ret
+
 '''
 Testing methods
 '''
@@ -250,7 +295,7 @@ def get_generator(gen_id):
 def benchmark_file(bench_id):
     return '../benchmarks/icfp/' + bench_id + '.sl'
 
-def test_parsing(debug=True):
+def test_parsing(debug=False):
     import os
     generator_file_dir = '../benchmarks/icfp_gen/'
     icfp_generator_instances = []
@@ -264,23 +309,47 @@ def test_parsing(debug=True):
         for igi in icfp_generator_instances:
             print(str(igi))
 
+    return icfp_generator_instances
+
 def test_benchmark_completeness(debug=True):
     import solvers
     import evaluation
-    bench_id = 'icfp_103_10'
-    points = solvers.get_icfp_valuations(benchmark_file(bench_id))
-    assert len(points[0]) == 2
-    points = [ (list(t[0:-1]), t[-1]) for t in points ]
+    for bench_id in benchmark_generator_mapping.keys():
+        print("Starting", bench_id)
 
-    generator = get_generator(benchmark_generator_mapping[bench_id])
+        points = solvers.get_icfp_valuations(benchmark_file(bench_id))
+        assert len(points[0]) == 2
+        points = [ (list(t[0:-1]), t[-1]) for t in points ]
 
-    # Sanity check: benchmark corresponds to generator
-    for (args, value) in points:
-        assert value == generator.intended_solution_at_point(args)
+        generator = get_generator(benchmark_generator_mapping[bench_id])
 
-    new_points = generator.do_complete_benchmark(points)
+        # Sanity check: benchmark corresponds to generator
+        for (args, value) in points:
+            assert value == generator.intended_solution_at_point(args)
 
-    raise NotImplementedError
+        new_points, found_solution = generator.do_complete_benchmark(points.copy())
+
+        print("Completed", bench_id, "with", len(new_points) - len(points), "additional points")
+
+def test_max_term_size(generators):
+    for generator in generators:
+        solution = generator.solution
+        term_size = get_max_term_size(solution)
+        print(generator.id, '->', term_size)
+
+def test_get_all_terms(generators):
+    for generator in generators:
+        solution = generator.solution
+        terms = get_all_terms(generator.syn_ctx, solution)
+        print(generator.id, '->', [ exprs.expression_to_string(e) for e in terms ] )
+
+def test_get_pred_term_mapping(generators):
+    for generator in generators:
+        solution = generator.solution
+        pred_term_mapping = get_pred_term_mapping(generator.syn_ctx, solution)
+        print(generator.id, '->')
+        for preds, term in pred_term_mapping:
+            print([ (exprs.expression_to_string(p[0]), p[1]) for p in preds ], "====>", exprs.expression_to_string(term))
 
 benchmark_generator_mapping = {
         "icfp_103_10" : "6.3",
@@ -339,6 +408,10 @@ benchmark_generator_mapping = {
     }
 
 if __name__ == '__main__':
-    test_benchmark_completeness(debug=True)
-    test_parsing(debug=False)
+    # test_benchmark_completeness(debug=False)
+    # test_parsing(debug=False)
+    generators = test_parsing(debug=False)
+    test_max_term_size(generators)
+    test_get_all_terms(generators)
+    test_get_pred_term_mapping(generators)
 

@@ -216,11 +216,31 @@ def substitute(expr, old_term, new_term, syn_ctx):
     else:
         return expr
 
+def find_all_applications(expr, function_name):
+    ret = []
+    if (isinstance(expr, _FunctionExpression)):
+        if (expr.function_info.function_name == function_name):
+            ret.append(expr)
+        for child in expr.children:
+            ret.extend(find_all_applications(child, function_name))
+    return ret
+
 def is_expression(obj):
     return (isinstance(obj, _VariableExpression) or
             isinstance(obj, _ConstantExpression) or
             isinstance(obj, _FormalParameterExpression) or
             isinstance(obj, _FunctionExpression))
+
+def is_function_expression(obj):
+    return isinstance(obj, _FunctionExpression)
+
+def is_application_of(obj, func_name_or_info):
+    assert is_expression(obj)
+    if not isinstance(obj, _FunctionExpression):
+        return False
+    if func_name_or_info == obj.function_info or func_name_or_info == obj.function_info.function_name:
+        return True
+    return False
 
 #
 # exprs.py ends here
