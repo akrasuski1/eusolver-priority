@@ -157,6 +157,12 @@ def check_term_sufficiency(sig_to_term, num_points):
         accumulator |= sig
     return (accumulator.is_full())
 
+def check_one_term_sufficiency(sig_to_term, num_points):
+    for (sig, term) in sig_to_term.items():
+        if sig.is_full():
+            return True
+    return False
+
 def get_decision_tree_size(dt):
     if (dt.is_leaf()):
         return 1
@@ -192,17 +198,15 @@ class TermSolver(object):
             self.term_generator.set_size(term_size)
             for term in self.term_generator.generate():
                 self.signature_to_term = {None : term}
-                # print('Term Solve complete!')
-                # print({str(x) : _expr_to_str(y) for (x, y) in retval[1].items()})
                 return True
             term_size += 1
 
-        # print('Term Solve failed!')
         return False
 
-    def add_points(self, points):
-        self.points.extend(points)
-        self.signature_factory = BitSet.make_factory(len(self.points))
+    def add_points(self, new_points):
+        points = self.points
+        points.extend(new_points)
+        self.signature_factory = BitSet.make_factory(len(points))
         self._do_complete_sig_to_term()
 
     def _compute_term_signature(self, term):
@@ -250,6 +254,7 @@ class TermSolver(object):
     def extend_sig_to_term_map(self):
         points = self.points
         num_points = len(points)
+        signature_to_term = self.signature_to_term
 
         assert (num_points > 0)
 
@@ -265,22 +270,30 @@ class TermSolver(object):
             self.monotonic_expr_id += 1
             sig = self._compute_term_signature(term)
 
-            if (sig in self.signature_to_term or sig.is_empty()):
+            if (sig in signature_to_term or sig.is_empty()):
                 continue
 
-            self.signature_to_term[sig] = term
+            signature_to_term[sig] = term
         return True
 
     def get_largest_term_size_enumerated(self):
+        if self.bunch_generator is None:
+            return self.current_largest_term_size
         return max(self.current_largest_term_size,
                 self.bunch_generator.current_object_size)
 
-    def solve(self):
+    def solve(self, one_term_coverage=False):
         num_points = len(self.points)
+        signature_to_term = self.signature_to_term
+
+        if one_term_coverage:
+            stopping_condition = check_one_term_sufficiency
+        else:
+            stopping_condition = check_term_sufficiency
 
         if (num_points == 0): # No points, any term will do
             return self._trivial_solve()
-        elif check_term_sufficiency(self.signature_to_term, num_points): # Old terms will do
+        elif stopping_condition(signature_to_term, num_points): # Old terms will do
             return True
 
         # Book keeping
@@ -294,7 +307,7 @@ class TermSolver(object):
 
         self.monotonic_expr_id = 0
 
-        while (not check_term_sufficiency(self.signature_to_term, num_points)):
+        while (not stopping_condition(signature_to_term, num_points)):
             success = self.extend_sig_to_term_map()
             if not success:
                 return False
@@ -337,9 +350,10 @@ class Unifier(object):
         self.smt_solver.add(frozen_smt_cnstr)
         self.signature_to_pred = {}
 
-    def add_points(self, points):
-        self.points.extend(points)
-        self.signature_factory = BitSet.make_factory(len(self.points))
+    def add_points(self, new_points):
+        points = self.points
+        self.points.extend(new_points)
+        self.signature_factory = BitSet.make_factory(len(points))
         self._do_complete_sig_to_pred()
 
 
@@ -509,12 +523,15 @@ class Unifier(object):
     3. None, in case of exhaustion of terms/preds
     """
     def unify(self):
+        term_solver = self.term_solver
+        signature_to_term = term_solver.signature_to_term
+        signature_to_pred = self.signature_to_pred
         triv = self._try_trivial_unification()
         if (triv != None):
             # print('Unifier: returning %s' % str(triv))
             if (_is_expr(triv)):
-                yield (triv, 0, len(self.term_solver.signature_to_term), 0,
-                       self.term_solver.get_largest_term_size_enumerated(), 0)
+                yield (triv, 0, len(signature_to_term), 0,
+                       term_solver.get_largest_term_size_enumerated(), 0)
             else:
                 yield triv
             return
@@ -538,10 +555,10 @@ class Unifier(object):
                 # print('Generated predicate %s with sig %s' % (_expr_to_str(pred), str(sig)))
                 # if the predicate evaluates universally to true or false
                 # at all points, then it isn't worth considering it.
-                if (not sig.is_empty() and not sig.is_full() and sig not in self.signature_to_pred):
+                if (not sig.is_empty() and not sig.is_full() and sig not in signature_to_pred):
                     # print('Generated pred %s' % _expr_to_str(pred))
                     # print('predicate was new!')
-                    self.signature_to_pred[sig] = pred
+                    signature_to_pred[sig] = pred
                     new_preds_generated = True
                 else:
                     # print('predicate was already seen!')
@@ -558,7 +575,7 @@ class Unifier(object):
             dt_tuple = self._try_decision_tree_learning()
             if (dt_tuple == None):
                 # print('Unifier.unify(): Could not learn decision tree!')
-                success = self.term_solver.extend_sig_to_term_map()
+                success = term_solver.extend_sig_to_term_map()
                 if not success:
                     yield None
                     return
@@ -576,11 +593,11 @@ class Unifier(object):
             sol_or_cex = self._verify_guard_term_list(guard_term_list, dt_tuple)
             if (_is_expr(sol_or_cex)):
                 yield (sol_or_cex, get_decision_tree_size(dt),
-                       len(self.term_solver.signature_to_term), len(self.signature_to_pred),
-                       self.term_solver.get_largest_term_size_enumerated(),
+                       len(signature_to_term), len(signature_to_pred),
+                       term_solver.get_largest_term_size_enumerated(),
                        bunch_generator.current_object_size)
 
-                success = self.term_solver.extend_sig_to_term_map()
+                success = term_solver.extend_sig_to_term_map()
                 if not success:
                     return
                 continue
@@ -622,7 +639,7 @@ class Solver(object):
             self.spec = syn_ctx.make_ac_function_expr('and', self.spec,
                                                       specification)
 
-    def solve(self, term_generator, pred_generator):
+    def solve(self, term_generator, pred_generator, divide_and_conquer=True):
         import time
         act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
@@ -632,7 +649,7 @@ class Solver(object):
 
         while (True):
             # iterate until we have terms that are "sufficient"
-            success = term_solver.solve()
+            success = term_solver.solve(one_term_coverage=not divide_and_conquer)
             if not success:
                 return None
             # we now have a sufficient set of terms
