@@ -352,7 +352,10 @@ def canonicalize_specification(expr, syn_ctx):
         unknown_function_list[i].unknown_function_id = i
 
     neg_clauses = [syn_ctx.make_function_expr('not', clause) for clause in intro_clauses]
-    canon_spec = syn_ctx.make_function_expr('and', *intro_clauses);
+    if len(intro_clauses) == 1:
+        canon_spec = intro_clauses[0]
+    else:
+        canon_spec = syn_ctx.make_function_expr('and', *intro_clauses);
 
     return (variable_list, unknown_function_list, canon_spec,
             clauses, neg_clauses, intro_vars)
