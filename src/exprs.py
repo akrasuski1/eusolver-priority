@@ -225,6 +225,34 @@ def find_all_applications(expr, function_name):
             ret.extend(find_all_applications(child, function_name))
     return ret
 
+# Returns only the first application of a function it finds
+def find_application(expr, function_name):
+    if isinstance(expr, _FunctionExpression):
+        if expr.function_info.function_name == function_name:
+            return expr
+        else:
+            for child in expr.children:
+                ret = find_application(child, function_name)
+                if ret is not None:
+                    return ret
+    return None
+
+
+def get_all_formal_parameters(expr):
+    if is_function_expression(expr):
+        ret = set()
+        for child in expr.children:
+            ret = ret.union(get_all_formal_parameters(child))
+        return ret
+    elif is_constant_expression(expr):
+        return set()
+    elif is_formal_parameter_expression(expr):
+        return set([expr])
+    elif is_variable_expression(expr):
+        return set()
+    else:
+        raise Exception
+
 def is_expression(obj):
     return (isinstance(obj, _VariableExpression) or
             isinstance(obj, _ConstantExpression) or
@@ -234,6 +262,15 @@ def is_expression(obj):
 def is_function_expression(obj):
     return isinstance(obj, _FunctionExpression)
 
+def is_constant_expression(obj):
+    return isinstance(obj, _ConstantExpression)
+
+def is_formal_parameter_expression(obj):
+    return isinstance(obj, _FormalParameterExpression)
+
+def is_variable_expression(obj):
+    return isinstance(obj, _VariableExpression)
+
 def is_application_of(obj, func_name_or_info):
     assert is_expression(obj)
     if not isinstance(obj, _FunctionExpression):
@@ -241,6 +278,52 @@ def is_application_of(obj, func_name_or_info):
     if func_name_or_info == obj.function_info or func_name_or_info == obj.function_info.function_name:
         return True
     return False
+
+def check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint=None):
+    import semantics_types
+    import z3
+
+    expr1_smt = semantics_types.expression_to_smt(expr1, smt_ctx, arg_vars)
+    expr2_smt = semantics_types.expression_to_smt(expr2, smt_ctx, arg_vars)
+    if constraint != None:
+        constraint_smt = semantics_types.expression_to_smt(constraint, smt_ctx, arg_vars)
+        condition = (constraint_smt and (expr1_smt != expr2_smt))
+    else:
+        condition = (expr1_smt != expr2_smt)
+
+    smt_solver = z3.Solver(ctx=smt_ctx.ctx())
+    smt_solver.push()
+    smt_solver.add(condition)
+    r = smt_solver.check()
+    smt_solver.pop()
+
+    if (r == z3.sat):
+        point = [ smt_solver.model().evaluate(arg_var, True) for arg_var in arg_vars ]
+        return point
+    else:
+        return None
+
+
+def check_equivalence(expr1, expr2, smt_ctx, arg_vars):
+    return check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars)
+
+def sample(pred, smt_ctx, arg_vars):
+    import semantics_types
+    import z3
+
+    pred_smt = semantics_types.expression_to_smt(pred, smt_ctx, arg_vars)
+
+    smt_solver = z3.Solver(ctx=smt_ctx.ctx())
+    smt_solver.push()
+    smt_solver.add(pred_smt)
+    r = smt_solver.check()
+    smt_solver.pop()
+
+    if (r == z3.sat):
+        point = [ smt_solver.model().evaluate(arg_var, True) for arg_var in arg_vars ]
+        return point
+    else:
+        return None
 
 #
 # exprs.py ends here
