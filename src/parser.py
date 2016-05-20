@@ -50,7 +50,7 @@ def parse_icfp_constraint(exp):
     val = parse_bitvec(rhs)
     if arg is None or val is None:
         return None
-    return (arg, val)
+    return ([arg], val)
 
 icfp_rest = [['set-logic', 'BV'], ['define-fun', 'shr1', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['bvlshr', 'x', (['BitVec', ('Int', 64)], 1)]], ['define-fun', 'shr4', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['bvlshr', 'x', (['BitVec', ('Int', 64)], 4)]], ['define-fun', 'shr16', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['bvlshr', 'x', (['BitVec', ('Int', 64)], 16)]], ['define-fun', 'shl1', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['bvshl', 'x', (['BitVec', ('Int', 64)], 1)]], ['define-fun', 'if0', [['x', ['BitVec', ('Int', 64)]], ['y', ['BitVec', ('Int', 64)]], ['z', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['ite', ['=', 'x', (['BitVec', ('Int', 64)], 1)], 'y', 'z']], ['synth-fun', 'f', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], [['Start', ['BitVec', ('Int', 64)], [(['BitVec', ('Int', 64)], 0), (['BitVec', ('Int', 64)], 1), 'x', ['bvnot', 'Start'], ['shl1', 'Start'], ['shr1', 'Start'], ['shr4', 'Start'], ['shr16', 'Start'], ['bvand', 'Start', 'Start'], ['bvor', 'Start', 'Start'], ['bvxor', 'Start', 'Start'], ['bvadd', 'Start', 'Start'], ['if0', 'Start', 'Start', 'Start']]]]], ['check-synth']]
 

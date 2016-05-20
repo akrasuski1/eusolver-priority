@@ -576,9 +576,9 @@ class Unifier(object):
             if (dt_tuple == None):
                 # print('Unifier.unify(): Could not learn decision tree!')
                 success = term_solver.extend_sig_to_term_map()
-                if not success:
-                    yield None
-                    return
+                # if not success:
+                #     yield None
+                #     return
 
                 continue
 
@@ -598,8 +598,8 @@ class Unifier(object):
                        bunch_generator.current_object_size)
 
                 success = term_solver.extend_sig_to_term_map()
-                if not success:
-                    return
+                # if not success:
+                #     return
                 continue
             else:
                 # this a counterexample. stop yielding after this
@@ -780,100 +780,27 @@ def test_solver_max(num_vars, run_anytime_version):
     solver = Solver(syn_ctx)
     _do_solve(solver, term_generator, pred_generator, run_anytime_version)
 
-def get_icfp_valuations(benchmark_name):
-    import parser
-
-    sexp = parser.sexpFromFile(benchmark_name)
-    if sexp is None:
-        die()
-
-    points = parser.get_icfp_points(sexp)
-    if points == None:
-        print("Could not parse icfp")
-
-    return points
-
 def test_solver_icfp(benchmark_name, run_anytime_version):
     import synthesis_context
     import semantics_core
     import semantics_bv
     import enumerators
+    import icfp_helpers
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_bv.BVInstantiator(64))
     synth_fun = syn_ctx.make_unknown_function('f', [exprtypes.BitVectorType(64)],
                                             exprtypes.BitVectorType(64))
 
-    # Unary
-    unary_funcs = [ syn_ctx.make_function(name, exprtypes.BitVectorType(64))
-            for name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot' ]]
-    # Binary
-    binary_funcs = [ syn_ctx.make_function(name, exprtypes.BitVectorType(64), exprtypes.BitVectorType(64))
-            for name in [ 'bvand', 'bvor', 'bvxor', 'bvadd' ]]
-
-    param_exprs = [exprs.FormalParameterExpression(synth_fun, exprtypes.BitVectorType(64), 0)]
-    param_generator = enumerators.LeafGenerator(param_exprs, 'Argument Generator')
-    zero_value = exprs.Value(BitVector(0, 64), exprtypes.BitVectorType(64))
-    one_value = exprs.Value(BitVector(1, 64), exprtypes.BitVectorType(64))
-    const_generator = enumerators.LeafGenerator([exprs.ConstantExpression(zero_value),
-                                                 exprs.ConstantExpression(one_value)])
-    leaf_generator = enumerators.AlternativesGenerator([param_generator, const_generator],
-                                                       'Leaf Term Generator')
-
-    generator_factory = enumerators.RecursiveGeneratorFactory()
-    term_generator_ph = generator_factory.make_placeholder('TermGenerator')
-    pred_bool_generator_ph = generator_factory.make_placeholder('PredGenerator')
-
-    unary_function_generators = [
-            enumerators.FunctionalGenerator(func, [term_generator_ph])
-            for func in unary_funcs
-            ]
-    binary_function_generators = [
-            enumerators.FunctionalGenerator(func, [term_generator_ph, term_generator_ph])
-            for func in binary_funcs
-            ]
-
-    term_generator = \
-            generator_factory.make_generator('TermGenerator',
-                    enumerators.AlternativesGenerator, (
-                        ([leaf_generator] +
-                        unary_function_generators +
-                        binary_function_generators),
-                        ))
-
-    is1 = syn_ctx.make_function('is1', exprtypes.BitVectorType(64))
-    is1_generator = enumerators.FunctionalGenerator(is1, [term_generator_ph])
-
-    pred_generator = \
-            generator_factory.make_generator('PredGenerator', enumerators.AlternativesGenerator, ([is1_generator],))
-
-    valuations = get_icfp_valuations(benchmark_name)
-
-    # construct the spec
-    arg_exprs = [ exprs.ConstantExpression(exprs.Value(arg, exprtypes.BitVectorType(64)))
-            for (arg, result) in valuations ]
-    result_exprs = [ exprs.ConstantExpression(exprs.Value(result, exprtypes.BitVectorType(64)))
-            for (arg, result) in valuations ]
-
-    constraints = []
-    for (arg_expr, result_expr) in zip(arg_exprs, result_exprs):
-        app = syn_ctx.make_function_expr(synth_fun, arg_expr)
-        c = syn_ctx.make_function_expr('eq', app, result_expr)
-        constraints.append(c)
-
-    constraint = syn_ctx.make_function_expr('and', *constraints)
+    term_generator, pred_generator = icfp_helpers.icfp_grammar(syn_ctx, synth_fun, full_grammer=True)
+    valuations = icfp_helpers.get_icfp_valuations(benchmark_name)
+    constraint = icfp_helpers.points_to_spec(syn_ctx, synth_fun, valuations) 
 
     syn_ctx.assert_spec(constraint)
 
     solver = Solver(syn_ctx)
     sol = _do_solve(solver, term_generator, pred_generator, run_anytime_version)
-
-    for inp, result in valuations:
-        solver.eval_ctx.set_valuation_map([exprs.Value(inp, exprtypes.BitVectorType(64))])
-        sol_out = evaluation.evaluate_expression_raw(sol, solver.eval_ctx)
-        if sol_out != result:
-            print(inp, sol_out, result)
-        assert sol_out == result
+    icfp_helpers.verify_solution(sol, valuations, solver.eval_ctx)
 
 def die():
     print('Usage: %s [--anytime] <timeout in seconds> max <num args to max function>' % sys.argv[0])

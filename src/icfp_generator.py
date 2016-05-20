@@ -41,16 +41,19 @@
 """ ICFP generator stuff """
 
 import synthesis_context
+from icfp_helpers import *
+import solvers
 import evaluation
 import z3smt
 import z3
-import semantics_core
 import semantics_types
 import semantics_bv
 import exprtypes
 from bitvectors import *
 import exprs
 from sexp import sexp
+
+_expr_to_str = exprs.expression_to_string
 
 # ICFP functions and their built-in equivalents
 icfp_function_alias_map = {
@@ -68,9 +71,12 @@ icfp_function_alias_map = {
 
 class IcfpInstanceGenerator(object):
     def __init__(self, id, intended_solution_size, operators, solution_str):
+        import semantics_core
+        import z3
         self.syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_bv.BVInstantiator(64))
-        self.synth_fun = self.syn_ctx.make_unknown_function('f', [exprtypes.BitVectorType(64)],
+        self.num_args = 1
+        self.synth_fun = self.syn_ctx.make_unknown_function('f', [exprtypes.BitVectorType(64)] * self.num_args,
                                             exprtypes.BitVectorType(64))
         self.id = id
         self.intended_solution_size = intended_solution_size
@@ -79,12 +85,14 @@ class IcfpInstanceGenerator(object):
 
         self.smt_ctx = z3smt.Z3SMTContext()
         self.eval_ctx = evaluation.EvaluationContext()
+        self.arg_vars = [ z3.Const('x_' + str(i), exprtypes.BitVectorType(64).get_smt_type(self.smt_ctx))
+                for i in range(self.num_args) ]
 
     def __str__(self):
         return ("id: " + str(self.id) +
                 "\nsol_size: " + str(self.intended_solution_size) +
                 "\nops: " + str(self.operators) +
-                "\nsolution: " + exprs.expression_to_string(self.solution)
+                "\nsolution: " + _expr_to_str(self.solution)
                 )
 
     def intended_solution_at_point(self, point):
@@ -120,131 +128,14 @@ class IcfpInstanceGenerator(object):
 
         return self.expr_parse_to_expr(parse[1], parse[2])
 
-    def _points_to_spec(self, points):
-        arg_exprss = [ [ exprs.ConstantExpression(exprs.Value(arg, exprtypes.BitVectorType(64)))
-                for arg in args ] for (args, result) in points ]
-        result_exprs = [ exprs.ConstantExpression(exprs.Value(result, exprtypes.BitVectorType(64)))
-                for (arg, result) in points ]
-        constraints = []
-        for (arg_exprs, result_expr) in zip(arg_exprss, result_exprs):
-            app = self.syn_ctx.make_function_expr(self.synth_fun, *arg_exprs)
-            c = self.syn_ctx.make_function_expr('eq', app, result_expr)
-            constraints.append(c)
-        return self.syn_ctx.make_function_expr('and', *constraints)
-
     def check_solution(self, found_solution):
-        arg_variables = [ z3.BitVec('x'+str(i), 64, self.smt_ctx.ctx()) for i in range(self.synth_fun.function_arity) ]
-        found_smt = semantics_types.expression_to_smt(found_solution, self.smt_ctx, arg_variables)
-        intended_smt = semantics_types.expression_to_smt(self.solution, self.smt_ctx, arg_variables)
-        formula = (found_smt != intended_smt)
-
-        smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
-        smt_solver.push()
-        smt_solver.add(formula)
-        r = smt_solver.check()
-        smt_solver.pop()
-
-        if (r == z3.sat):
-            eval_values = [ smt_solver.model().evaluate(arg_variable, True) 
-                    for arg_variable in arg_variables ]
-            point = [ BitVector(int(str(eval_value)), 64) for eval_value in eval_values ]
-            output = self.intended_solution_at_point(point)
-            return (point, output)
-        else:
+        raw_point = exprs.check_equivalence(found_solution, self.solution, self.smt_ctx, self.arg_vars)
+        if raw_point is None:
             return None
+        point = [ BitVector(int(str(p)), 64) for p in raw_point ]
+        output = self.intended_solution_at_point(point)
+        return (point, output)
 
-    def do_complete_benchmark(self, initial_valuations):
-        import solvers 
-
-        term_generator, pred_generator = icfp_grammar(self.syn_ctx, self.synth_fun, full_grammer=True)
-        valuations = initial_valuations
-        while True:
-            self.syn_ctx.clear_assertions()
-            self.syn_ctx.assert_spec(self._points_to_spec(valuations))
-            solver = solvers.Solver(self.syn_ctx)
-
-            for sol_tuple in solver.solve(term_generator, pred_generator):
-                (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
-
-                act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = self.syn_ctx.get_synthesis_spec()
-
-                maybe_cex_point = self.check_solution(sol)
-
-                if maybe_cex_point is None:
-                    return (valuations, sol)
-                else:
-                    # print('Added point ' + str(maybe_cex_point))
-                    assert maybe_cex_point not in valuations
-                    valuations.append(maybe_cex_point)
-
-                break
-
-
-
-def parse_json_file(file_name):
-    import json
-    with open(file_name, 'r') as json_file:
-        json_string = json_file.read()
-    benchmark_json_objects = json.loads(json_string)
-    icfp_generator_instances = [
-            IcfpInstanceGenerator(benchmark['id'],
-                                  benchmark['size'],
-                                  benchmark['operators'],
-                                  benchmark['challenge'])
-            for benchmark in benchmark_json_objects ]
-    return icfp_generator_instances
-
-def icfp_grammar(syn_ctx, synth_fun, full_grammer=True, operations=[]):
-    import enumerators
-
-    unary_funcs = [ syn_ctx.make_function(name, exprtypes.BitVectorType(64))
-            for name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot' ] if full_grammer or (name in operations) ]
-    # Binary
-    binary_funcs = [ syn_ctx.make_function(name, exprtypes.BitVectorType(64), exprtypes.BitVectorType(64))
-            for name in [ 'bvand', 'bvor', 'bvxor', 'bvadd' ] if full_grammer or (name in operations) ]
-
-    param_exprs = [exprs.FormalParameterExpression(synth_fun, exprtypes.BitVectorType(64), 0)]
-    param_generator = enumerators.LeafGenerator(param_exprs, 'Argument Generator')
-    zero_value = exprs.Value(BitVector(0, 64), exprtypes.BitVectorType(64))
-    one_value = exprs.Value(BitVector(1, 64), exprtypes.BitVectorType(64))
-    const_generator = enumerators.LeafGenerator([exprs.ConstantExpression(zero_value),
-                                                 exprs.ConstantExpression(one_value)])
-    leaf_generator = enumerators.AlternativesGenerator([param_generator, const_generator],
-                                                       'Leaf Term Generator')
-
-    generator_factory = enumerators.RecursiveGeneratorFactory()
-    term_generator_ph = generator_factory.make_placeholder('TermGenerator')
-    pred_bool_generator_ph = generator_factory.make_placeholder('PredGenerator')
-
-    unary_function_generators = [
-            enumerators.FunctionalGenerator(func, [term_generator_ph])
-            for func in unary_funcs
-            ]
-    binary_function_generators = [
-            enumerators.FunctionalGenerator(func, [term_generator_ph, term_generator_ph])
-            for func in binary_funcs
-            ]
-
-    term_generator = \
-            generator_factory.make_generator('TermGenerator',
-                    enumerators.AlternativesGenerator, (
-                        ([leaf_generator] +
-                        unary_function_generators +
-                        binary_function_generators),
-                        ))
-
-    is1 = syn_ctx.make_function('is1', exprtypes.BitVectorType(64))
-    is1_generator = enumerators.FunctionalGenerator(is1, [term_generator_ph])
-
-    pred_generator = \
-            generator_factory.make_generator('PredGenerator', enumerators.AlternativesGenerator, ([is1_generator],))
-
-    return (term_generator, pred_generator)
-
-
-'''
-Property functions
-'''
 def get_max_term_size(expr):
     if not exprs.is_function_expression(expr):
         return 1
@@ -281,19 +172,172 @@ def get_pred_term_mapping(syn_ctx, expr):
             ret.append((plist, term))
         return ret
 
+def get_sufficient_samples(syn_ctx, synth_fun, grammar, check_solution, initial_valuations, divide_and_conquer=True):
+    assert len(initial_valuations) > 0
+ 
+    term_generator, pred_generator = grammar
+    valuations = initial_valuations
+    while True:
+        syn_ctx.clear_assertions()
+        syn_ctx.assert_spec(points_to_spec(syn_ctx, synth_fun, valuations))
+        solver = solvers.Solver(syn_ctx)
+
+        sol_tuple = next(solver.solve(term_generator, pred_generator, divide_and_conquer))
+        (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
+        act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = syn_ctx.get_synthesis_spec()
+
+        maybe_cex_point = check_solution(sol)
+        if maybe_cex_point is None:
+            return valuations
+        else:
+            assert maybe_cex_point not in valuations
+            # print('Added point: ', maybe_cex_point)
+            valuations.append(maybe_cex_point)
+
+def do_complete_benchmark(generator, initial_valuations):
+    def check_solution(found_solution):
+        return generator.check_solution(found_solution)
+    return get_sufficient_samples(
+            generator.syn_ctx,
+            generator.synth_fun,
+            icfp_grammar(syn_ctx, synth_fun, full_grammer=True),
+            check_solution,
+            initial_valuations,
+            divide_and_conquer=True)
+
+def get_guarded_term_sufficient_samples(generator, guard_pred, term, initial_valuations):
+    def get_valuation(raw_point):
+        point = [ BitVector(int(str(p)), 64) for p in raw_point ]
+        generator.eval_ctx.set_valuation_map([ exprs.Value(arg, exprtypes.BitVectorType(64)) for arg in point ])
+        output = evaluation.evaluate_expression_raw(term, generator.eval_ctx)
+        return (point, output)
+    def check_solution(found_term):
+        raw_point = exprs.check_equivalence_under_constraint(found_term, term, generator.smt_ctx, generator.arg_vars)
+        if raw_point is None:
+            return None
+        return get_valuation(raw_point)
+    if len(initial_valuations) == 0:
+        raw_point = exprs.sample(guard_pred, generator.smt_ctx, generator.arg_vars)
+        if raw_point is None:
+            return []
+        initial_valuations.append(get_valuation(raw_point))
+    return get_sufficient_samples(
+            generator.syn_ctx,
+            generator.synth_fun,
+            icfp_grammar(generator.syn_ctx, generator.synth_fun, full_grammer=True),
+            check_solution,
+            initial_valuations,
+            divide_and_conquer=False)
+
+def get_atomic_predicates(syn_ctx, expr):
+    ifs = exprs.find_all_applications(expr, 'if0')
+    preds = set([ e.children[0] for e in ifs ])
+
+    while True:
+        for pred in preds:
+            app = exprs.find_application(pred, 'if0')
+            if app is not None:
+                preds.remove(pred)
+                preds.add(exprs.substitute(pred, app, app.children[1], syn_ctx))
+                preds.add(exprs.substitute(pred, app, app.children[2], syn_ctx))
+                break
+        else:
+            return preds
+
+
+def get_pred_sufficient_samples(generator, initial_valuations):
+    syn_ctx = generator.syn_ctx
+    atomic_preds = get_atomic_predicates(syn_ctx, generator.solution)
+    ap_term_mapping = [ (dict(pv),t) for pv,t in get_atomic_pred_term_mapping(syn_ctx, generator.solution) ]
+
+    for ap_vals_d1, term1 in ap_term_mapping:
+        for ap_vals_d2, term2 in ap_term_mapping:
+            if term1 == term2:
+                continue
+            differing_pred_vals = [ p for p in atomic_preds if ap_vals_d1[p] != ap_vals_d2[p] ]
+            same_pred_vals = [ (p, ap_vals_d1[p]) for p in atomic_preds if ap_vals_d1[p] == ap_vals_d2[p] ]
+            # conditional1 = pred_valuation_list_to_pred(syn_ctx, same_pred_vals)
+            # conditional2 = syn_ctx.make_function_expr('ne', term1, term2)
+            # pre_condition = syn_ctx.make_function_expr('and', conditional1, conditional2)
+
+            # Generate points till you can semantically synthesize (if pre_condition (if differing_pred_vals 1 else 0))
+
+    raise NotImplementedError
+
+def get_atomic_pred_term_mapping(syn_ctx, expr):
+    def power_set_as_indicators(x):
+        if len(x) == 0:
+            return [ [] ]
+        elem = x.pop()
+        sub_ps = power_set_as_indicators(x)
+        return [ [(elem, False)] + s for s in sub_ps ] + [ [(elem, True)] + s for s in sub_ps ]
+    def evaluate_pred(pred, ap_map_d):
+        if pred in ap_map_d:
+            return ap_map_d[pred]
+        else:
+            if0 = exprs.find_application(pred, 'if0')
+            assert if0 is not None
+            child = 1 if evaluate_pred(if0.children[0], ap_map_d) else 2
+            return evaluate_pred(exprs.substitute(pred, if0, if0.children[child], syn_ctx), ap_map_d)
+    def evaluate_pred_list(pred_list, ap_map_d):
+        for pred, tv in pred_list:
+            if evaluate_pred(pred, ap_map_d) != tv:
+                return False
+        return True
+
+    pred_term_mapping = get_pred_term_mapping(syn_ctx, expr)
+
+    ret = []
+    atomic_preds = get_atomic_predicates(syn_ctx, expr)
+    for ap_map in power_set_as_indicators(atomic_preds):
+        good_terms = [ term for pred_list, term in pred_term_mapping
+                if evaluate_pred_list(pred_list, dict(ap_map)) ]
+        assert len(good_terms) == 1
+        ret.append((ap_map, good_terms[0]))
+    return ret
+
+
+def pred_valuation_list_to_pred(syn_ctx, pred_list):
+    full_preds = []
+    for pred, tv in pred_list:
+        base_pred = syn_ctx.make_function_expr('is1', pred)
+        if tv:
+            full_pred = base_pred
+        else:
+            full_pred = syn_ctx.make_function_expr('not', base_pred)
+        full_preds.append(full_pred)
+    if len(full_preds) == 1:
+        return full_preds[0]
+    else:
+        return syn_ctx.make_function_expr('and', *full_preds)
+
+def get_term_sufficient_samples(generator, initial_valuations):
+    syn_ctx = generator.syn_ctx
+    pred_term_mapping = get_pred_term_mapping(syn_ctx, generator.solution)
+
+    def eval_pred_list(pred_list, point):
+        generator.eval_ctx.set_valuation_map([ exprs.Value(arg, exprtypes.BitVectorType(64)) for arg in point ])
+        for (pred, tv) in pred_list:
+            pred_value = evaluation.evaluate_expression_raw(pred, generator.eval_ctx)
+            if (pred_value == BitVector(1, 64)) != tv:
+                return False
+        return True
+
+    for pred_list, term in pred_term_mapping:
+        # print([ (_expr_to_str(p[0]), p[1]) for p in pred_list ], "====>", _expr_to_str(term))
+        print("Some pred", "====>", _expr_to_str(term))
+        relevent_valuations = [ (point, output) 
+                for point, output in initial_valuations 
+                if eval_pred_list(pred_list, point) ]
+        guard_pred = pred_valuation_list_to_pred(syn_ctx, pred_list)
+        new_valuations = get_guarded_term_sufficient_samples(generator, guard_pred, term, relevent_valuations.copy())
+        for valuation in new_valuations:
+            if valuation not in relevent_valuations:
+                print('Added: ', valuation)
+
 '''
 Testing methods
 '''
-
-def get_generator(gen_id):
-    basename = gen_id.partition('.')[0]
-    generators = [ igi for igi in parse_json_file('../benchmarks/icfp_gen/' + basename + '.json')
-            if igi.id == gen_id ]
-    assert len(generators) == 1
-    return generators[0]
-
-def benchmark_file(bench_id):
-    return '../benchmarks/icfp/' + bench_id + '.sl'
 
 def test_parsing(debug=False):
     import os
@@ -302,7 +346,7 @@ def test_parsing(debug=False):
     for root, dirs, files in os.walk(generator_file_dir):
         for file_name in files:
             if file_name.endswith('.json'):
-                icfp_generator_instances.extend(parse_json_file(os.path.join(root, file_name)))
+                icfp_generator_instances.extend(parse_generator_json_file(os.path.join(root, file_name)))
     print("Parsed", len(icfp_generator_instances), "generators")
 
     if debug:
@@ -312,22 +356,18 @@ def test_parsing(debug=False):
     return icfp_generator_instances
 
 def test_benchmark_completeness(debug=True):
-    import solvers
     import evaluation
     for bench_id in benchmark_generator_mapping.keys():
         print("Starting", bench_id)
 
-        points = solvers.get_icfp_valuations(benchmark_file(bench_id))
-        assert len(points[0]) == 2
-        points = [ (list(t[0:-1]), t[-1]) for t in points ]
-
+        points = get_icfp_valuations(benchmark_file(bench_id))
         generator = get_generator(benchmark_generator_mapping[bench_id])
 
         # Sanity check: benchmark corresponds to generator
         for (args, value) in points:
             assert value == generator.intended_solution_at_point(args)
 
-        new_points, found_solution = generator.do_complete_benchmark(points.copy())
+        new_points = do_complete_benchmark(generator, points.copy())
 
         print("Completed", bench_id, "with", len(new_points) - len(points), "additional points")
 
@@ -341,7 +381,7 @@ def test_get_all_terms(generators):
     for generator in generators:
         solution = generator.solution
         terms = get_all_terms(generator.syn_ctx, solution)
-        print(generator.id, '->', [ exprs.expression_to_string(e) for e in terms ] )
+        print(generator.id, '->', [ _expr_to_str(e) for e in terms ] )
 
 def test_get_pred_term_mapping(generators):
     for generator in generators:
@@ -349,69 +389,37 @@ def test_get_pred_term_mapping(generators):
         pred_term_mapping = get_pred_term_mapping(generator.syn_ctx, solution)
         print(generator.id, '->')
         for preds, term in pred_term_mapping:
-            print([ (exprs.expression_to_string(p[0]), p[1]) for p in preds ], "====>", exprs.expression_to_string(term))
+            print([ (_expr_to_str(p[0]), p[1]) for p in preds ], "====>", _expr_to_str(term))
 
-benchmark_generator_mapping = {
-        "icfp_103_10" : "6.3",
-        "icfp_104_10" : "6.4",
-        "icfp_105_1000" : "6.5",
-        "icfp_105_100" : "6.5",
-        "icfp_113_1000" : "6.13",
-        "icfp_114_100" : "6.14",
-        "icfp_118_100" : "6.18",
-        "icfp_118_10" : "6.18",
-        "icfp_125_10" : "7.5",
-        "icfp_134_1000" : "7.14",
-        "icfp_135_100" : "7.15",
-        "icfp_139_10" : "7.19",
-        "icfp_14_1000" : "1.14",
-        "icfp_143_1000" : "8.3",
-        "icfp_144_1000" : "8.4",
-        "icfp_144_100" : "8.4",
-        "icfp_147_1000" : "8.7",
-        "icfp_150_10" : "8.10",
-        "icfp_21_1000" : "2.1",
-        "icfp_25_1000" : "2.5",
-        "icfp_28_10" : "11.17",
-        "icfp_28_10" : "11.7",
-        "icfp_28_10" : "2.8",
-        "icfp_28_10" : "4.10",
-        "icfp_30_10" : "2.10",
-        "icfp_32_10" : "2.12",
-        "icfp_38_10" : "2.18",
-        "icfp_39_100" : "2.19",
-        "icfp_45_1000" : "3.5",
-        "icfp_45_10" : "3.5",
-        "icfp_5_1000" : "1.5",
-        "icfp_51_10" : "3.11",
-        "icfp_54_1000" : "3.14",
-        "icfp_56_1000" : "3.16",
-        "icfp_64_10" : "4.4",
-        "icfp_68_1000" : "4.8",
-        "icfp_69_10" : "4.9",
-        "icfp_7_1000" : "1.7",
-        "icfp_7_10" : "1.7",
-        "icfp_72_10" : "4.12",
-        "icfp_73_10" : "4.13",
-        "icfp_81_1000" : "5.1",
-        "icfp_82_100" : "5.2",
-        "icfp_82_10" : "5.2",
-        "icfp_87_10" : "5.7",
-        "icfp_9_1000" : "1.9",
-        "icfp_93_1000" : "5.13",
-        "icfp_94_1000" : "5.14",
-        "icfp_94_100" : "5.14",
-        "icfp_95_100" : "5.15",
-        "icfp_96_1000" : "5.16",
-        "icfp_96_10" : "5.16",
-        "icfp_99_100" : "5.19"
-    }
+
+def test_get_term_sufficient_samples():
+    for bench_id in benchmark_generator_mapping.keys():
+        if bench_id not in [ 'icfp_96_1000', 'icfp_9_1000' ]:
+            print("Starting", bench_id)
+            valuations = get_icfp_valuations(benchmark_file(bench_id))
+            generator = get_generator(benchmark_generator_mapping[bench_id])
+            get_term_sufficient_samples(generator, valuations)
+
+def test_get_pred_sufficient_samples():
+    bench_id = "icfp_105_1000"
+    valuations = get_icfp_valuations(benchmark_file(bench_id))
+    generator = get_generator(benchmark_generator_mapping[bench_id])
+    get_pred_sufficient_samples(generator, valuations)
+
+def test_get_atomic_predicates():
+    bench_id = "icfp_105_1000"
+    valuations = get_icfp_valuations(benchmark_file(bench_id))
+    generator = get_generator(benchmark_generator_mapping[bench_id])
+    for ap in get_atomic_predicates(generator.syn_ctx, generator.solution):
+        print(_expr_to_str(ap))
 
 if __name__ == '__main__':
     # test_benchmark_completeness(debug=False)
-    # test_parsing(debug=False)
-    generators = test_parsing(debug=False)
-    test_max_term_size(generators)
-    test_get_all_terms(generators)
-    test_get_pred_term_mapping(generators)
+    # generators = test_parsing(debug=False)
+    # test_max_term_size(generators)
+    # test_get_all_terms(generators)
+    # test_get_pred_term_mapping(generators)
+    test_get_term_sufficient_samples()
+    # test_get_pred_sufficient_samples()
+    # test_get_atomic_predicates()
 
