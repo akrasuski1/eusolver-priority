@@ -53,14 +53,22 @@ def icfp_predicate_indicator_grammar(syn_ctx, synth_fun):
     one_value = exprs.Value(BitVector(1, 64), exprtypes.BitVectorType(64))
     const_generator = enumerators.LeafGenerator([exprs.ConstantExpression(zero_value),
                                                  exprs.ConstantExpression(one_value)])
+
+    leaf_generator = enumerators.AlternativesGenerator([const_generator],
+                                                       'Leaf Term Generator')
+    generator_factory = enumerators.RecursiveGeneratorFactory()
+    term_generator_ph = generator_factory.make_placeholder('01TermGenerator')
     new_term_generator = \
-            generator_factory.make_generator('TermGenerator',
+            generator_factory.make_generator('01TermGenerator',
                     enumerators.AlternativesGenerator, (
                         ([leaf_generator]),
                         ))
 
-def icfp_grammar(syn_ctx, synth_fun, full_grammer=True, operations=[]):
+    return new_term_generator, pred_generator
 
+
+
+def icfp_grammar(syn_ctx, synth_fun, full_grammer=True, operations=[]):
     unary_funcs = [ syn_ctx.make_function(name, exprtypes.BitVectorType(64))
             for name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot' ] if full_grammer or (name in operations) ]
     # Binary
@@ -204,8 +212,9 @@ benchmark_generator_mapping = {
 
 def points_to_spec(syn_ctx, synth_fun, points):
     if len(points) == 0:
-        zero = exprs.ConstantExpression(exprs.Value(0, exprtypes.BitVectorType(64)))
-        return syn_ctx.make_function_expr('eq', zero, zero)
+        zero = exprs.ConstantExpression(exprs.Value(BitVector(0, 64), exprtypes.BitVectorType(64)))
+        fzero = syn_ctx.make_function_expr(synth_fun, zero)
+        return syn_ctx.make_function_expr('eq', fzero, fzero)
     arg_exprss = [ [ exprs.ConstantExpression(exprs.Value(arg, exprtypes.BitVectorType(64)))
             for arg in args ] for (args, result) in points ]
     result_exprs = [ exprs.ConstantExpression(exprs.Value(result, exprtypes.BitVectorType(64)))

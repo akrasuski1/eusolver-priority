@@ -285,11 +285,12 @@ def check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constrai
 
     expr1_smt = semantics_types.expression_to_smt(expr1, smt_ctx, arg_vars)
     expr2_smt = semantics_types.expression_to_smt(expr2, smt_ctx, arg_vars)
-    if constraint != None:
+    if constraint is not None:
         constraint_smt = semantics_types.expression_to_smt(constraint, smt_ctx, arg_vars)
-        condition = (constraint_smt and (expr1_smt != expr2_smt))
     else:
-        condition = (expr1_smt != expr2_smt)
+        constraint_smt = z3.BoolVal(True, ctx=smt_ctx.ctx())
+    condition = z3.And(constraint_smt, (expr1_smt != expr2_smt), smt_ctx.ctx())
+    # print('\tCondition:', condition)
 
     smt_solver = z3.Solver(ctx=smt_ctx.ctx())
     smt_solver.push()
@@ -307,9 +308,12 @@ def check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constrai
 def check_equivalence(expr1, expr2, smt_ctx, arg_vars):
     return check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars)
 
-def sample(pred, smt_ctx, arg_vars):
+def sample(pred, smt_ctx, arg_vars, random=False):
     import semantics_types
     import z3
+
+    if random:
+        return random_sample(pred, smt_ctx, arg_vars)
 
     pred_smt = semantics_types.expression_to_smt(pred, smt_ctx, arg_vars)
 
@@ -324,6 +328,9 @@ def sample(pred, smt_ctx, arg_vars):
         return point
     else:
         return None
+
+def random_sample(pred, smt_ctx, arg_vars):
+    pass
 
 #
 # exprs.py ends here
