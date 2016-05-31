@@ -252,10 +252,11 @@ def test_parsing(debug=False):
 
     return icfp_generator_instances
 
-def test_max_term_size(generators):
+def test_max_sizes(generators):
     for generator in generators:
         term_size = generator.get_max_term_size()
-        print(generator.id, '->', term_size)
+        pred_size = generator.get_max_atomic_pred_size()
+        print(generator.id, '->', term_size, ',', pred_size)
 
 def test_get_all_terms(generators):
     for generator in generators:
@@ -290,8 +291,8 @@ def test_get_atomic_pred_term_mapping(generators):
 if __name__ == '__main__':
     generators = test_parsing(debug=False)
     # test_get_all_terms(generators)
-    # test_max_term_size(generators)
+    test_max_sizes(generators)
     # test_get_pred_term_mapping(generators)
-    test_get_atomic_predicates(generators)
+    # test_get_atomic_predicates(generators)
     # test_get_atomic_pred_term_mapping(generators)
 

@@ -210,6 +210,8 @@ benchmark_generator_mapping = {
         "icfp_99_100" : "5.19"
     }
 
+generator_benchmark_mapping = { v : k for k,v in benchmark_generator_mapping.items() }
+
 def points_to_spec(syn_ctx, synth_fun, points):
     if len(points) == 0:
         zero = exprs.ConstantExpression(exprs.Value(BitVector(0, 64), exprtypes.BitVectorType(64)))

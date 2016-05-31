@@ -41,6 +41,7 @@
 from icfp_helpers import *
 import solvers
 import itertools
+import signal
 
 _expr_to_str = exprs.expression_to_string
 
@@ -299,7 +300,24 @@ def get_icfp_sufficient_samples(generator, initial_valuations):
     print('Pred sufficient: ', len(valuations) - len(initial_valuations))
     valuations.extend(generator.do_complete_benchmark(valuations))
     print('Full sufficient: ', len(valuations) - len(initial_valuations))
-    return [ x for x in valuations if x not in initial_valuations ]
+    # return [ x for x in valuations if x not in initial_valuations ]
+    return valuations
+
+def get_icfp_samples(json_id):
+    import random
+    generator = get_generator(json_id)
+    if json_id in generator_benchmark_mapping:
+        bench_id = generator_benchmark_mapping[json_id]
+        initial_valuations = get_icfp_valuations(benchmark_file(bench_id))
+    else:
+        initial_points = [ [ BitVector(random.getrandbits(64), 64) ] for k in range(10) ]
+        initial_valuations = [ (p, generator.intended_solution_at_point(p)) 
+                for p in initial_points ]
+    print("Max term size:", generator.get_max_term_size())
+    print("Max pred size:", generator.get_max_atomic_pred_size())
+    all_valuations = get_icfp_sufficient_samples(generator, initial_valuations)
+    for v in all_valuations:
+        print(v)
 
 
 '''
@@ -345,9 +363,48 @@ def test_get_icfp_sufficient_samples():
         new_valuations = get_icfp_sufficient_samples(generator, valuations)
         print('Added', len(new_valuations), 'points to complete benchmark')
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # test_benchmark_completeness(debug=False)
     # test_get_term_sufficient_samples()
     # test_get_pred_sufficient_samples()
-    test_get_icfp_sufficient_samples()
+    # test_get_icfp_sufficient_samples()
 
+def die():
+    print('Usage: %s <timeout in seconds> icfp_gen <json id>' % sys.argv[0])
+    exit(1)
+
+def _timeout_handler(signum, frame):
+    if (signum != -1):
+        print('[sample_sufficiency.main]: Timed out!')
+        print('[sample_sufficiency.main]: Trying to exit gracefully...')
+        sys.exit(1)
+    else:
+        print('[sample_sufficiency.main]: Exiting gracefully...')
+        sys.exit(1)
+
+if __name__ == '__main__':
+    import time
+    import sys
+    if (len(sys.argv) < 3):
+        die()
+    run_anytime_version = False
+    try:
+        time_limit = int(sys.argv[1])
+        benchmark_type = sys.argv[2]
+        assert benchmark_type == "icfp_gen"
+        json_id = sys.argv[3]
+    except Exception:
+        die()
+
+    start_time = time.clock()
+    print('[sample_sufficiency.main]: Started %s %s' % (benchmark_type, json_id))
+    print('[sample_sufficiency.main]: Setting time limit to %d seconds' % time_limit)
+    signal.signal(signal.SIGVTALRM, _timeout_handler)
+    signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
+
+    get_icfp_samples(json_id)
+
+    _timeout_handler(-1, None)
+
+#
+# solvers.py ends here
