@@ -225,6 +225,7 @@ class TermSolver(object):
             num_new_points = retval.size_of_universe()
             for i in range(num_old_points, num_new_points):
                 eval_ctx.set_valuation_map(points[i])
+                # print(_expr_to_str(term), points[i], evaluation.evaluate_expression_raw(spec, eval_ctx))
                 if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
                     retval.add(i)
             if (num_new_points > num_old_points):
@@ -235,6 +236,7 @@ class TermSolver(object):
             # need to actually evaluate at every point :-(
             for i in range(num_points):
                 eval_ctx.set_valuation_map(points[i])
+                # print(_expr_to_str(term), points[i], _expr_to_str(spec), evaluation.evaluate_expression_raw(spec, eval_ctx))
                 if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
                     retval.add(i)
             eval_cache[term.expr_id] = retval
@@ -269,6 +271,7 @@ class TermSolver(object):
             term = _get_expr_with_id(term, self.monotonic_expr_id)
             self.monotonic_expr_id += 1
             sig = self._compute_term_signature(term)
+            # print('Signature:', sig)
 
             if (sig in signature_to_term or sig.is_empty()):
                 continue

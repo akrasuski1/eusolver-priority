@@ -279,7 +279,7 @@ def is_application_of(obj, func_name_or_info):
         return True
     return False
 
-def check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint=None):
+def _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint):
     import semantics_types
     import z3
 
@@ -304,9 +304,11 @@ def check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constrai
     else:
         return None
 
+def check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint):
+    return _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint)
 
 def check_equivalence(expr1, expr2, smt_ctx, arg_vars):
-    return check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars)
+    return _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, None)
 
 def sample(pred, smt_ctx, arg_vars, random=False):
     import semantics_types
@@ -330,7 +332,7 @@ def sample(pred, smt_ctx, arg_vars, random=False):
         return None
 
 def random_sample(pred, smt_ctx, arg_vars):
-    pass
+    raise NotImplementedError
 
 #
 # exprs.py ends here

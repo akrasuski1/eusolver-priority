@@ -71,13 +71,12 @@ def _pred_valuation_list_to_pred(syn_ctx, pred_list):
 
 
 def get_sufficient_samples(syn_ctx, synth_fun, grammar, check_solution, initial_valuations, divide_and_conquer=True):
+    # print("Entering get_sufficient_samples")
     term_generator, pred_generator = grammar
     valuations = initial_valuations.copy()
     # print('\x1b[s', end="", flush=True) # Save cursor position
     # print('')
     while True:
-        # print('\x1b[2K\x1b[G', end="", flush=True)
-        # print('Added', len(valuations) - len(initial_valuations), 'points', end='', flush=True)
         syn_ctx.clear_assertions()
         syn_ctx.assert_spec(points_to_spec(syn_ctx, synth_fun, valuations))
         solver = solvers.Solver(syn_ctx)
@@ -86,9 +85,11 @@ def get_sufficient_samples(syn_ctx, synth_fun, grammar, check_solution, initial_
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
         act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = syn_ctx.get_synthesis_spec()
 
+        # print("Intermediate solution:", _expr_to_str(sol))
+
         maybe_cex_point = check_solution(sol)
         if maybe_cex_point is None:
-            # print('\x1b[u', end="", flush=True) # Restore cursor position
+            # print("Exiting get_sufficient_samples")
             return [ val for val in valuations if val not in initial_valuations ]
         else:
             assert maybe_cex_point not in valuations
@@ -99,9 +100,10 @@ def get_guarded_term_sufficient_samples(generator, guard_pred, term, initial_val
         point = [ BitVector(int(str(p)), 64) for p in raw_point ]
         generator.eval_ctx.set_valuation_map([ exprs.Value(arg, exprtypes.BitVectorType(64)) for arg in point ])
         output = evaluation.evaluate_expression_raw(term, generator.eval_ctx)
+        # print(_expr_to_str(term), 'evaluated to', output, 'at', point)
         return (point, output)
     def check_solution(found_term):
-        raw_point = exprs.check_equivalence_under_constraint(found_term, term, generator.smt_ctx, generator.arg_vars)
+        raw_point = exprs.check_equivalence_under_constraint(found_term, term, generator.smt_ctx, generator.arg_vars, guard_pred)
         if raw_point is None:
             return None
         return get_valuation(raw_point)
@@ -109,14 +111,18 @@ def get_guarded_term_sufficient_samples(generator, guard_pred, term, initial_val
         raw_point = exprs.sample(guard_pred, generator.smt_ctx, generator.arg_vars)
         if raw_point is None:
             return []
-        initial_valuations.append(get_valuation(raw_point))
-    return get_sufficient_samples(
+        sampled_vals = [ get_valuation(raw_point) ]
+        # print('Sampled:', sampled_vals)
+    else:
+        sampled_vals = []
+    suff = get_sufficient_samples(
             generator.syn_ctx,
             generator.synth_fun,
             icfp_grammar(generator.syn_ctx, generator.synth_fun, full_grammer=True),
             check_solution,
-            initial_valuations,
+            initial_valuations + sampled_vals,
             divide_and_conquer=False)
+    return suff + sampled_vals
 
 
 def _pred_term_mapping_to_expr(syn_ctx, mapping):
@@ -275,24 +281,29 @@ def get_term_sufficient_samples(generator, initial_valuations):
     total = len(pred_term_mapping)
     current = 0
     for pred_list, term in pred_term_mapping:
-        # print([ (_expr_to_str(p[0]), p[1]) for p in pred_list ], "====>", _expr_to_str(term))
-        # print("Some pred", "====>", _expr_to_str(term))
         current += 1
-        # print('\x1b[2K\x1b[G', end="", flush=True)
         print("Doing conditional term", current, "of", total, '[ size =', exprs.get_expression_size(term), ']', _expr_to_str(term))
+        # print([ (_expr_to_str(p[0]), p[1]) for p in pred_list ], "====>", _expr_to_str(term))
         relevant_valuations = [ (point, output) 
                 for point, output in valuations
                 if _eval_pred_list(generator.eval_ctx, pred_list, point) ]
+        # print("Relevant Vals:", len(relevant_valuations))
+        # for val in relevant_valuations:
+        #     print('\t', val)
         guard_pred = _pred_valuation_list_to_pred(syn_ctx, pred_list)
+        # print("Guard pred:", _expr_to_str(guard_pred))
         new_valuations = get_guarded_term_sufficient_samples(generator, guard_pred, term, relevant_valuations)
+        # print("Added:", len(new_valuations))
+        # for val in new_valuations:
+        #     print('\t', val)
         valuations.extend(new_valuations)
 
-    # print('\x1b[2K\x1b[G', end="", flush=True)
     return [ x for x in valuations if x not in initial_valuations ] 
 
 
 def get_icfp_sufficient_samples(generator, initial_valuations):
     syn_ctx = generator.syn_ctx
+    print('Solution:', _expr_to_str(generator.solution))
     valuations = initial_valuations.copy()
     valuations.extend(get_term_sufficient_samples(generator, valuations))
     print('Term sufficient: ', len(valuations) - len(initial_valuations))

@@ -98,7 +98,8 @@ class IcfpInstanceGenerator(object):
 
     def intended_solution_at_point(self, point):
         self.eval_ctx.set_valuation_map([ exprs.Value(arg, exprtypes.BitVectorType(64)) for arg in point ])
-        return evaluation.evaluate_expression_raw(self.solution, self.eval_ctx)
+        result = evaluation.evaluate_expression_raw(self.solution, self.eval_ctx)
+        return result
 
     def expr_parse_to_expr(self, arg_names, full_expr_parse):
         arg_map = dict([ (name, exprs.FormalParameterExpression(self.synth_fun, exprtypes.BitVectorType(64), position))
