@@ -279,7 +279,7 @@ def is_application_of(obj, func_name_or_info):
         return True
     return False
 
-def _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint):
+def _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint, random):
     import semantics_types
     import z3
 
@@ -290,49 +290,88 @@ def _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constra
     else:
         constraint_smt = z3.BoolVal(True, ctx=smt_ctx.ctx())
     condition = z3.And(constraint_smt, (expr1_smt != expr2_smt), smt_ctx.ctx())
-    # print('\tCondition:', condition)
-
-    smt_solver = z3.Solver(ctx=smt_ctx.ctx())
-    smt_solver.push()
-    smt_solver.add(condition)
-    r = smt_solver.check()
-    smt_solver.pop()
-
-    if (r == z3.sat):
-        point = [ smt_solver.model().evaluate(arg_var, True) for arg_var in arg_vars ]
-        return point
-    else:
-        return None
-
-def check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint):
-    return _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint)
-
-def check_equivalence(expr1, expr2, smt_ctx, arg_vars):
-    return _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, None)
-
-def sample(pred, smt_ctx, arg_vars, random=False):
-    import semantics_types
-    import z3
-
     if random:
-        return random_sample(pred, smt_ctx, arg_vars)
+        return random_sample(condition, smt_ctx.ctx(), arg_vars)
+    else:
+        return _z3_solve(condition, arg_vars)
 
-    pred_smt = semantics_types.expression_to_smt(pred, smt_ctx, arg_vars)
+def check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint, random=False):
+    return _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint, random)
 
-    smt_solver = z3.Solver(ctx=smt_ctx.ctx())
+def check_equivalence(expr1, expr2, smt_ctx, arg_vars, random=False):
+    return _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, None, random)
+
+def _z3_solve(z3_expr, arg_vars):
+    import z3
+    smt_solver = z3.Solver(ctx=z3_expr.ctx)
     smt_solver.push()
-    smt_solver.add(pred_smt)
+    smt_solver.add(z3_expr)
     r = smt_solver.check()
     smt_solver.pop()
 
-    if (r == z3.sat):
+    if r == z3.sat:
         point = [ smt_solver.model().evaluate(arg_var, True) for arg_var in arg_vars ]
         return point
     else:
         return None
 
-def random_sample(pred, smt_ctx, arg_vars):
-    raise NotImplementedError
+
+def sample(pred_or_pred_smt, smt_ctx, arg_vars):
+    import semantics_types
+    if is_expression(pred_or_pred_smt):
+        pred_smt = semantics_types.expression_to_smt(pred_or_pred_smt, smt_ctx, arg_vars)
+    else:
+        pred_smt = pred_or_pred_smt
+    return _z3_solve(pred_smt, arg_vars)
+
+# Is not really uniform random
+# The purpose is to make the pattern opaque to human eye
+def random_sample(pred_or_pred_smt, smt_ctx, arg_vars):
+    import z3
+    import random
+    import semantics_types
+
+    if len(arg_vars) != 1 or type(arg_vars[0]) != z3.BitVecRef:
+        raise NotImplementedError
+
+    arg = arg_vars[0]
+    bit_vec_size = arg.size()
+
+    positions = list(range(bit_vec_size))
+    random.shuffle(positions)
+
+    if is_expression(pred_or_pred_smt):
+        pred_smt = semantics_types.expression_to_smt(pred_or_pred_smt, smt_ctx, arg_vars)
+    else:
+        pred_smt = pred_or_pred_smt
+
+    orig_sample = _z3_solve(pred_smt, arg_vars)
+    if orig_sample is None:
+        return None
+
+    zero = z3.BitVecVal(0, bit_vec_size, pred_smt.ctx)
+    for position in positions:
+        mask = z3.BitVecVal((1 << position), bit_vec_size, pred_smt.ctx)
+
+        with_one = z3.And(pred_smt, (arg & mask == mask), pred_smt.ctx)
+        with_zero = z3.And(pred_smt, (arg & mask == zero), pred_smt.ctx)
+
+        with_one_sat = _z3_solve(with_one, arg_vars)
+        with_zero_sat = _z3_solve(with_zero, arg_vars)
+
+        assert with_one_sat is not None or with_zero_sat is not None
+
+        if with_one_sat == None:
+            pred_smt = with_zero
+        elif with_zero_sat == None:
+            pred_smt = with_one
+        else: # Choose randomly
+            pred_smt = random.choice([with_one, with_zero])
+
+    result = _z3_solve(pred_smt, arg_vars)
+    assert result is not None
+
+    return result
 
 #
 # exprs.py ends here

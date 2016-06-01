@@ -130,8 +130,8 @@ class IcfpInstanceGenerator(object):
 
         return self.expr_parse_to_expr(parse[1], parse[2])
 
-    def check_solution(self, found_solution):
-        raw_point = exprs.check_equivalence(found_solution, self.solution, self.smt_ctx, self.arg_vars)
+    def check_solution(self, found_solution, random_samples):
+        raw_point = exprs.check_equivalence(found_solution, self.solution, self.smt_ctx, self.arg_vars, random=random_samples)
         if raw_point is None:
             return None
         point = [ BitVector(int(str(p)), 64) for p in raw_point ]
@@ -220,14 +220,16 @@ class IcfpInstanceGenerator(object):
         assert len(ap_vals) == len(ret)
         return ret
 
-    def do_complete_benchmark(self, initial_valuations):
+    def do_complete_benchmark(self, initial_valuations, random_samples):
         import sample_sufficiency
         import icfp_helpers
+        def _check_solution(sol):
+            return self.check_solution(sol, random_samples)
         return sample_sufficiency.get_sufficient_samples(
                 self.syn_ctx,
                 self.synth_fun,
                 icfp_helpers.icfp_grammar(self.syn_ctx, self.synth_fun, full_grammer=True),
-                self.check_solution,
+                _check_solution,
                 initial_valuations,
                 divide_and_conquer=True)
 

@@ -95,7 +95,7 @@ def get_sufficient_samples(syn_ctx, synth_fun, grammar, check_solution, initial_
             assert maybe_cex_point not in valuations
             valuations.append(maybe_cex_point)
 
-def get_guarded_term_sufficient_samples(generator, guard_pred, term, initial_valuations):
+def get_guarded_term_sufficient_samples(generator, guard_pred, term, initial_valuations, random):
     def get_valuation(raw_point):
         point = [ BitVector(int(str(p)), 64) for p in raw_point ]
         generator.eval_ctx.set_valuation_map([ exprs.Value(arg, exprtypes.BitVectorType(64)) for arg in point ])
@@ -103,12 +103,12 @@ def get_guarded_term_sufficient_samples(generator, guard_pred, term, initial_val
         # print(_expr_to_str(term), 'evaluated to', output, 'at', point)
         return (point, output)
     def check_solution(found_term):
-        raw_point = exprs.check_equivalence_under_constraint(found_term, term, generator.smt_ctx, generator.arg_vars, guard_pred)
+        raw_point = exprs.check_equivalence_under_constraint(found_term, term, generator.smt_ctx, generator.arg_vars, guard_pred, random)
         if raw_point is None:
             return None
         return get_valuation(raw_point)
     if len(initial_valuations) == 0:
-        raw_point = exprs.sample(guard_pred, generator.smt_ctx, generator.arg_vars)
+        raw_point = exprs.random_sample(guard_pred, generator.smt_ctx, generator.arg_vars)
         if raw_point is None:
             return []
         sampled_vals = [ get_valuation(raw_point) ]
@@ -144,7 +144,8 @@ def get_distinguishing_points(generator,
         fixed_preds_val,
         unfixed_preds,
         relevant_valuations, 
-        relevant_ap_term_mapping):
+        relevant_ap_term_mapping,
+        random):
     syn_ctx = generator.syn_ctx
 
     # fixed_pred_vals to condition
@@ -187,7 +188,7 @@ def get_distinguishing_points(generator,
         # print('\tChecking solution:', _expr_to_str(found_term))
         # print('\tIntended solution:', _expr_to_str(correct_term))
         # print('\tPrecondition:', _expr_to_str(pre_cond))
-        raw_point = exprs.check_equivalence_under_constraint(found_term, correct_term, generator.smt_ctx, generator.arg_vars, pre_cond)
+        raw_point = exprs.check_equivalence_under_constraint(found_term, correct_term, generator.smt_ctx, generator.arg_vars, pre_cond, random=random)
         if raw_point is None:
             # print('\tGot no point')
             return None
@@ -203,7 +204,7 @@ def get_distinguishing_points(generator,
             remapped_relevant_valuations,
             divide_and_conquer=True)
 
-def get_pred_sufficient_samples(generator, initial_valuations):
+def get_pred_sufficient_samples(generator, initial_valuations, random):
     syn_ctx = generator.syn_ctx
     atomic_preds = generator.get_atomic_predicates()
     ap_term_mapping = [ (dict(pv),t) for pv,t in generator.get_atomic_pred_term_mapping() ]
@@ -260,7 +261,8 @@ def get_pred_sufficient_samples(generator, initial_valuations):
                         fixed_preds_val,
                         unfixed_preds,
                         relevant_valuations,
-                        relevant_ap_term_mapping)
+                        relevant_ap_term_mapping,
+                        random)
                 more_points = [ (point, generator.intended_solution_at_point(point)) for point,value in more_points ]
                 # print('Added', len(more_points))
                 # for point in more_points:
@@ -273,7 +275,7 @@ def get_pred_sufficient_samples(generator, initial_valuations):
     return [ x for x in valuations if x not in initial_valuations ]
 
 
-def get_term_sufficient_samples(generator, initial_valuations):
+def get_term_sufficient_samples(generator, initial_valuations, random):
     syn_ctx = generator.syn_ctx
     pred_term_mapping = generator.get_pred_term_mapping()
     valuations = initial_valuations
@@ -292,7 +294,7 @@ def get_term_sufficient_samples(generator, initial_valuations):
         #     print('\t', val)
         guard_pred = _pred_valuation_list_to_pred(syn_ctx, pred_list)
         # print("Guard pred:", _expr_to_str(guard_pred))
-        new_valuations = get_guarded_term_sufficient_samples(generator, guard_pred, term, relevant_valuations)
+        new_valuations = get_guarded_term_sufficient_samples(generator, guard_pred, term, relevant_valuations, random)
         # print("Added:", len(new_valuations))
         # for val in new_valuations:
         #     print('\t', val)
@@ -305,11 +307,11 @@ def get_icfp_sufficient_samples(generator, initial_valuations):
     syn_ctx = generator.syn_ctx
     print('Solution:', _expr_to_str(generator.solution))
     valuations = initial_valuations.copy()
-    valuations.extend(get_term_sufficient_samples(generator, valuations))
+    valuations.extend(get_term_sufficient_samples(generator, valuations, random=True))
     print('Term sufficient: ', len(valuations) - len(initial_valuations))
-    valuations.extend(get_pred_sufficient_samples(generator, valuations))
+    valuations.extend(get_pred_sufficient_samples(generator, valuations, random=True))
     print('Pred sufficient: ', len(valuations) - len(initial_valuations))
-    valuations.extend(generator.do_complete_benchmark(valuations))
+    valuations.extend(generator.do_complete_benchmark(valuations, random_samples=True))
     print('Full sufficient: ', len(valuations) - len(initial_valuations))
     # return [ x for x in valuations if x not in initial_valuations ]
     return valuations
@@ -329,6 +331,29 @@ def get_icfp_samples(json_id):
     all_valuations = get_icfp_sufficient_samples(generator, initial_valuations)
     for v in all_valuations:
         print(v)
+    return all_valuations
+
+
+def get_blind_icfp_samples(json_id):
+    import random
+    generator = get_generator(json_id)
+    num_points = 5
+
+    sampled_points = []
+    for ap_map_list, term in generator.get_atomic_pred_term_mapping():
+        cond = _pred_valuation_list_to_pred(generator.syn_ctx, ap_map_list)
+        for i in range(num_points):
+            raw_point =  exprs.random_sample(cond, generator.smt_ctx, generator.arg_vars)
+            if raw_point is not None:
+                point = [ BitVector(int(str(p)), 64) for p in raw_point ]
+                if point not in sampled_points:
+                    sampled_points.append(point)
+
+    valuations = [ (p, generator.intended_solution_at_point(p))
+            for p in sampled_points ]
+    # for v in valuations:
+    #     print(v)
+    return valuations
 
 
 '''
@@ -346,7 +371,7 @@ def test_benchmark_completeness(debug=True):
         for (args, value) in points:
             assert value == generator.intended_solution_at_point(args)
 
-        new_points = generator.do_complete_benchmark(points)
+        new_points = generator.do_complete_benchmark(points, random_samples=True)
         print("Completed", bench_id, "with", len(new_points), "additional points")
 
 def test_get_term_sufficient_samples():
@@ -374,6 +399,17 @@ def test_get_icfp_sufficient_samples():
         new_valuations = get_icfp_sufficient_samples(generator, valuations)
         print('Added', len(new_valuations), 'points to complete benchmark')
 
+def test_get_blind_icfp_sufficient_samples():
+    for file_no in range(1, 16):
+        for bench_no in range(1, 21):
+            json_id = str(file_no) + '.' + str(bench_no)
+            valuations = get_blind_icfp_samples(json_id)
+            print('Sampled', len(valuations), 'for', json_id)
+            generator = get_generator(json_id)
+            # new_valuations = generator.do_complete_benchmark(valuations, random_samples=True)
+            # print('Completed benchmark with', len(new_valuations), 'additional samples')
+
+
 # if __name__ == '__main__':
     # test_benchmark_completeness(debug=False)
     # test_get_term_sufficient_samples()
@@ -394,28 +430,31 @@ def _timeout_handler(signum, frame):
         sys.exit(1)
 
 if __name__ == '__main__':
-    import time
-    import sys
-    if (len(sys.argv) < 3):
-        die()
-    run_anytime_version = False
-    try:
-        time_limit = int(sys.argv[1])
-        benchmark_type = sys.argv[2]
-        assert benchmark_type == "icfp_gen"
-        json_id = sys.argv[3]
-    except Exception:
-        die()
+    test_get_blind_icfp_sufficient_samples()
 
-    start_time = time.clock()
-    print('[sample_sufficiency.main]: Started %s %s' % (benchmark_type, json_id))
-    print('[sample_sufficiency.main]: Setting time limit to %d seconds' % time_limit)
-    signal.signal(signal.SIGVTALRM, _timeout_handler)
-    signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
+# if __name__ == '__main__':
+#     import time
+#     import sys
+#     if (len(sys.argv) < 3):
+#         die()
+#     run_anytime_version = False
+#     try:
+#         time_limit = int(sys.argv[1])
+#         benchmark_type = sys.argv[2]
+#         assert benchmark_type == "icfp_gen"
+#         json_id = sys.argv[3]
+#     except Exception:
+#         die()
 
-    get_icfp_samples(json_id)
+#     start_time = time.clock()
+#     print('[sample_sufficiency.main]: Started %s %s' % (benchmark_type, json_id))
+#     print('[sample_sufficiency.main]: Setting time limit to %d seconds' % time_limit)
+#     signal.signal(signal.SIGVTALRM, _timeout_handler)
+#     signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
 
-    _timeout_handler(-1, None)
+#     get_icfp_samples(json_id)
+
+#     _timeout_handler(-1, None)
 
 #
 # solvers.py ends here
