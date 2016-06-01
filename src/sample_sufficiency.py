@@ -430,31 +430,28 @@ def _timeout_handler(signum, frame):
         sys.exit(1)
 
 if __name__ == '__main__':
-    test_get_blind_icfp_sufficient_samples()
+    import time
+    import sys
+    if (len(sys.argv) < 3):
+        die()
+    run_anytime_version = False
+    try:
+        time_limit = int(sys.argv[1])
+        benchmark_type = sys.argv[2]
+        assert benchmark_type == "icfp_gen"
+        json_id = sys.argv[3]
+    except Exception:
+        die()
 
-# if __name__ == '__main__':
-#     import time
-#     import sys
-#     if (len(sys.argv) < 3):
-#         die()
-#     run_anytime_version = False
-#     try:
-#         time_limit = int(sys.argv[1])
-#         benchmark_type = sys.argv[2]
-#         assert benchmark_type == "icfp_gen"
-#         json_id = sys.argv[3]
-#     except Exception:
-#         die()
+    start_time = time.clock()
+    print('[sample_sufficiency.main]: Started %s %s' % (benchmark_type, json_id))
+    print('[sample_sufficiency.main]: Setting time limit to %d seconds' % time_limit)
+    signal.signal(signal.SIGVTALRM, _timeout_handler)
+    signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
 
-#     start_time = time.clock()
-#     print('[sample_sufficiency.main]: Started %s %s' % (benchmark_type, json_id))
-#     print('[sample_sufficiency.main]: Setting time limit to %d seconds' % time_limit)
-#     signal.signal(signal.SIGVTALRM, _timeout_handler)
-#     signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
+    get_icfp_samples(json_id)
 
-#     get_icfp_samples(json_id)
-
-#     _timeout_handler(-1, None)
+    _timeout_handler(-1, None)
 
 #
 # solvers.py ends here
