@@ -351,8 +351,8 @@ def get_blind_icfp_samples(json_id):
 
     valuations = [ (p, generator.intended_solution_at_point(p))
             for p in sampled_points ]
-    # for v in valuations:
-    #     print(v)
+    for v in valuations:
+        print(v)
     return valuations
 
 
@@ -438,7 +438,7 @@ if __name__ == '__main__':
     try:
         time_limit = int(sys.argv[1])
         benchmark_type = sys.argv[2]
-        assert benchmark_type == "icfp_gen"
+        assert benchmark_type == "icfp_gen" or benchmark_type == "icfp_gen_blind"
         json_id = sys.argv[3]
     except Exception:
         die()
@@ -449,7 +449,10 @@ if __name__ == '__main__':
     signal.signal(signal.SIGVTALRM, _timeout_handler)
     signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
 
-    get_icfp_samples(json_id)
+    if benchmark_type == "icfp_gen":
+        get_icfp_samples(json_id)
+    else:
+        get_blind_icfp_samples(json_id)
 
     _timeout_handler(-1, None)
 
