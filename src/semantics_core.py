@@ -237,6 +237,7 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
             return function_name
 
     def _do_instantiation(self, function_name, mangled_name, arg_types):
+        function_name = self._get_canonical_function_name(function_name)
         if (function_name == 'eq' or function_name == 'ne'):
             if (len(arg_types) != 2 or arg_types[0] != arg_types[1]):
                 self._raise_failure(function_name, arg_types)
@@ -277,6 +278,29 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
 
         else:
             return None
+
+
+class MacroInstantiator(semantics_types.InstantiatorBase):
+    def __init__(self, function_interpretations={}):
+        super().__init__('macro')
+        self.function_interpretations = function_interpretations
+
+    def _do_instantiation(self, function_name, mangled_name, arg_types):
+        if function_name not in self.function_interpretations:
+            return None
+
+        function_interpretation = function_interpretations[function_name]
+        assert function_name == function_interpretation.function_name
+        assert len(arg_types) == function_interpretation.function_arity
+        assert arg_types == function_arity.domain_types
+
+        return function_interpretation
+
+    def _get_canonical_function_name(self, function_name):
+        return function_name
+
+    def add_function(self, function_name, function_interpretation):
+        self.function_interpretations[function_name] = function_interpretation
 
 #
 # semantics_core.py ends here

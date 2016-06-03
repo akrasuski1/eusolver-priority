@@ -223,6 +223,7 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
             return function_name
 
     def _do_instantiation(self, function_name, mangled_name, arg_types):
+        function_name = self._get_canonical_function_name(function_name)
         if (function_name == 'add' or function_name == 'mul'):
             if (len(arg_types) < 2 or
                 (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):

@@ -205,14 +205,18 @@ def get_expression_size(expr):
     else:
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % expr.expr_kind)
 
-def substitute(expr, old_term, new_term, syn_ctx):
-    if (expr == old_term):
-        return new_term
-    kind = expr.expr_kind
-    if (kind == _function_expression):
-        subst_children = [substitute(x, old_term, new_term, syn_ctx)
+def substitute(expr, old_term, new_term):
+    ret = substitute_all(expr, [(old_term, new_term)])
+    return ret
+
+def substitute_all(expr, substitute_pairs):
+    for old,new in substitute_pairs:
+        if expr == old:
+            return new
+    if (expr.expr_kind == _function_expression):
+        subst_children = [substitute_all(x, substitute_pairs)
                           for x in expr.children]
-        return syn_ctx.make_function_expr(expr.function_info, *subst_children)
+        return FunctionExpression(expr.function_info, tuple(subst_children))
     else:
         return expr
 

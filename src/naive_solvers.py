@@ -122,7 +122,7 @@ class Verifier(object):
         fun_app = syn_ctx.make_function_expr(fun_list[0], *intro_vars)
         fun_app_subst_var = syn_ctx.make_variable_expr(fun_list[0].range_type, '__output__')
         self.outvar_cnstr = syn_ctx.make_function_expr('eq', fun_app_subst_var, fun_app)
-        canon_spec_with_outvar = exprs.substitute(canon_spec, fun_app, fun_app_subst_var, syn_ctx)
+        canon_spec_with_outvar = exprs.substitute(canon_spec, fun_app, fun_app_subst_var)
         # print('Unifier.__init__(), canon_spec_with_outvar:\n%s' % _expr_to_str(canon_spec_with_outvar))
         neg_canon_spec_with_outvar = syn_ctx.make_function_expr('not', canon_spec_with_outvar)
         frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)

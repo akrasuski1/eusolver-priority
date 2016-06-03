@@ -252,6 +252,41 @@ class BVAdd(InterpretedFunctionBase):
         eval_context_object.push(res)
 
 
+class BVLShR(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvlshr', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return z3.LShR(child_terms[0], child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = eval_context_object.peek(0) >> eval_context_object.peek(1)
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
+class BVShl(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvshl', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return child_terms[0] << child_terms[1]
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = eval_context_object.peek(0) << eval_context_object.peek(1)
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
+
 class ShrConst(InterpretedFunctionBase):
     def __init__(self, bv_size, shift_amount):
         super().__init__('shr'+ str(shift_amount), 1, (exprtypes.BitVectorType(bv_size), ),
@@ -443,6 +478,10 @@ class BVInstantiator(semantics_types.InstantiatorBase):
                 self.instances[function_name] = BVXor(self.bv_size)
             elif function_name == 'bvadd':
                 self.instances[function_name] = BVAdd(self.bv_size)
+            elif function_name == 'bvlshr':
+                self.instances[function_name] = BVLShR(self.bv_size)
+            elif function_name == 'bvshl':
+                self.instances[function_name] = BVShl(self.bv_size)
             elif function_name == 'is1':
                 self.instances[function_name] = BVIs1(self.bv_size)
             elif function_name == 'if0':
@@ -458,7 +497,7 @@ class BVInstantiator(semantics_types.InstantiatorBase):
         return function_name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot', 'is1' ]
 
     def is_binary(self, function_name):
-        return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd' ]
+        return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd', 'bvlshr', 'bvshl' ]
 
     def is_ternary(self, function_name):
         return function_name in [ 'if0' ]

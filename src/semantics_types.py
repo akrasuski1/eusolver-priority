@@ -224,7 +224,7 @@ class InterpretedFunctionBase(FunctionBase):
 class MacroFunction(InterpretedFunctionBase):
     def __init__(self, function_name, function_arity,
                  domain_types, range_type, interpretation_expression):
-        super().__init__(FunctionKinds.interpreted_function, function_name, function_arity,
+        super().__init__(function_name, function_arity,
                          domain_types, range_type)
         assert (len(domain_types) == function_arity)
         self.interpretation_expression = interpretation_expression

@@ -296,7 +296,7 @@ def _intro_new_universal_vars(clauses, syn_ctx, uf_info):
             clause_disjuncts = [clause]
 
         for i in range(len(arg_tuple)):
-            clause_disjuncts = [exprs.substitute(c, arg_tuple[i], intro_vars[i], syn_ctx)
+            clause_disjuncts = [exprs.substitute(c, arg_tuple[i], intro_vars[i])
                                 for c in clause_disjuncts]
         eq_constraints.extend(clause_disjuncts)
         retval.append(syn_ctx.make_ac_function_expr('or', *eq_constraints))

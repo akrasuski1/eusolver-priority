@@ -186,8 +186,8 @@ class IcfpInstanceGenerator(object):
                 app = exprs.find_application(pred, 'if0')
                 if app is not None:
                     preds.remove(pred)
-                    preds.add(exprs.substitute(pred, app, app.children[1], syn_ctx))
-                    preds.add(exprs.substitute(pred, app, app.children[2], syn_ctx))
+                    preds.add(exprs.substitute(pred, app, app.children[1]))
+                    preds.add(exprs.substitute(pred, app, app.children[2]))
                     break
             else:
                 return preds
@@ -205,7 +205,7 @@ class IcfpInstanceGenerator(object):
             if0 = exprs.find_application(pred, 'if0')
             assert if0 is not None
             child = 1 if evaluate_pred(if0.children[0], ap_map_d) else 2
-            return evaluate_pred(exprs.substitute(pred, if0, if0.children[child], syn_ctx), ap_map_d)
+            return evaluate_pred(exprs.substitute(pred, if0, if0.children[child]), ap_map_d)
         def evaluate_pred_list(pred_list, ap_map_d):
             return all([ evaluate_pred(pred, ap_map_d) == tv for pred, tv in pred_list ])
 

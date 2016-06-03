@@ -346,8 +346,7 @@ class Unifier(object):
         fun_app = syn_ctx.make_function_expr(fun_list[0], *intro_vars)
         fun_app_subst_var = syn_ctx.make_variable_expr(fun_list[0].range_type, '__output__')
         self.outvar_cnstr = syn_ctx.make_function_expr('eq', fun_app_subst_var, fun_app)
-        canon_spec_with_outvar = exprs.substitute(canon_spec, fun_app, fun_app_subst_var, syn_ctx)
-        # print('Unifier.__init__(), canon_spec_with_outvar:\n%s' % _expr_to_str(canon_spec_with_outvar))
+        canon_spec_with_outvar = exprs.substitute(canon_spec, fun_app, fun_app_subst_var)
         neg_canon_spec_with_outvar = syn_ctx.make_function_expr('not', canon_spec_with_outvar)
         frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)
         self.smt_solver.add(frozen_smt_cnstr)
@@ -529,6 +528,9 @@ class Unifier(object):
         term_solver = self.term_solver
         signature_to_term = term_solver.signature_to_term
         signature_to_pred = self.signature_to_pred
+        # print('Unifying:')
+        # print([ (str(sig), sig is None or sig.is_full(), _expr_to_str(term)) for sig,term in term_solver.signature_to_term.items()])
+        # print(signature_to_pred)
         triv = self._try_trivial_unification()
         if (triv != None):
             # print('Unifier: returning %s' % str(triv))
@@ -673,6 +675,8 @@ class Solver(object):
                 elif (isinstance(r, list)):
                     # this is a set of counterexamples
                     # print('Solver: Adding %d points' % len(r))
+                    # for p in r:
+                        # print('\t', p)
                     term_solver.add_points(r) # Term solver can add all points at once
                     unifier.add_points(r)
                     self.add_points(r)
