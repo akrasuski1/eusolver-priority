@@ -50,7 +50,7 @@ class Z3SMTContext(object):
     """A simple wrapper around the z3.Context class."""
     def __init__(self, *args, **kwargs):
         self.context_obj = z3.Context(*args, **kwargs)
-        self.interpretation_map = None
+        self.interpretation_map = {}
 
     def ctx(self):
         return self.context_obj
@@ -70,11 +70,8 @@ class Z3SMTContext(object):
     def make_bitvector_sort(self, size):
         return z3.BitVecSort(size, self.ctx())
 
-    def set_interpretation_map(self, interpretation_map):
-        self.interpretation_map = interpretation_map
-
-    def clear_interpretation_map(self):
-        self.interpretation_map = None
+    def set_interpretation(self, unknown_function_id, interpretation):
+        self.interpretation_map[unknown_function_id] = interpretation
 
 
 #

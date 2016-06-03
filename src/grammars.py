@@ -92,6 +92,8 @@ class FunctionRewrite(RewriteBase):
 
     def to_generator(self, place_holders):
         ph_vars, nts, expr_template = self._to_template_expr()
+        if len(ph_vars) == 0:
+            return enumerators.LeafGenerator([expr_template])
         sub_gens = [ place_holders[_nt_to_generator_name(nt)] for nt in nts ]
         return enumerators.ExpressionTemplateGenerator(expr_template, ph_vars, sub_gens)
 
@@ -103,8 +105,8 @@ class Grammar(object):
 
     def to_generator(self):
         generator_factory = enumerators.RecursiveGeneratorFactory()
-        place_holders = { 
-                _nt_to_generator_name(nt):generator_factory.make_placeholder(_nt_to_generator_name(nt)) 
+        place_holders = {
+                _nt_to_generator_name(nt):generator_factory.make_placeholder(_nt_to_generator_name(nt))
                 for nt in self.non_terminals }
         ret = None
         for nt in self.non_terminals:
@@ -114,7 +116,7 @@ class Grammar(object):
                 if type(rewrite) == ExpressionRewrite:
                     leaves.append(rewrite.expr)
                 elif type(rewrite) == NTRewrite:
-                    generators.append(place_holders[rewrite.non_terminal])
+                    generators.append(place_holders[_nt_to_generator_name(rewrite.non_terminal)])
                 elif type(rewrite) == FunctionRewrite:
                     generators.append(rewrite.to_generator(place_holders))
                 else:
@@ -126,5 +128,10 @@ class Grammar(object):
             if nt == 'Start':
                 ret = nt_generator
         return ret
+
+    def decompose(self):
+        if len(self.non_terminals) != 1:
+            return None
+        raise NotImplementedError
 
 # Tests:

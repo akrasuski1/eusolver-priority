@@ -721,7 +721,7 @@ def test_solver_max(num_vars, run_anytime_version):
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_lia.LIAInstantiator())
-    max_fun = syn_ctx.make_unknown_function('max', [exprtypes.IntType()] * num_vars,
+    max_fun = syn_ctx.make_synth_function('max', [exprtypes.IntType()] * num_vars,
                                             exprtypes.IntType())
     add_fun = syn_ctx.make_function('add', exprtypes.IntType(), exprtypes.IntType())
     sub_fun = syn_ctx.make_function('sub', exprtypes.IntType(), exprtypes.IntType())
@@ -795,8 +795,8 @@ def test_solver_icfp(benchmark_name, run_anytime_version):
     import icfp_helpers
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
-                                                 semantics_bv.BVInstantiator(64))
-    synth_fun = syn_ctx.make_unknown_function('f', [exprtypes.BitVectorType(64)],
+                                                 semantics_bv.BVInstantiator())
+    synth_fun = syn_ctx.make_synth_function('f', [exprtypes.BitVectorType(64)],
                                             exprtypes.BitVectorType(64))
 
     term_generator, pred_generator = icfp_helpers.icfp_grammar(syn_ctx, synth_fun, full_grammer=True)

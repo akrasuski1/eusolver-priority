@@ -38,6 +38,7 @@
 
 # Code:
 
+import basetypes
 import utils
 import exprs
 import exprtypes
@@ -213,29 +214,29 @@ def check_expr_binding_to_context(expr, syn_ctx):
     else:
         return
 
-def _get_unknown_function_invocation_args(expr):
+def _get_synth_function_invocation_args(expr):
     kind = expr.expr_kind
     retval = set()
     if (kind == exprs.ExpressionKinds.function_expression):
-        if (expr.function_info.function_kind == semantics_types.FunctionKinds.unknown_function):
+        if (expr.function_info.function_kind == semantics_types.FunctionKinds.synth_function):
             retval.add(expr.children)
         for child in expr.children:
-            retval = retval | _get_unknown_function_invocation_args(child)
+            retval = retval | _get_synth_function_invocation_args(child)
     return retval
 
 
 def check_single_invocation_property(expr, syn_ctx):
-    """Checks if the expression has only one unknown function, and also
+    """Checks if the expression has only one synth function, and also
     that the expression satisfies the single invocation property, i.e.,
-    the unknown function appears only in one syntactic form in the expression."""
+    the synth function appears only in one syntactic form in the expression."""
     if (not isinstance(expr, list)):
-        unknown_function_set = gather_unknown_functions(expr)
+        synth_function_set = gather_synth_functions(expr)
     else:
-        unknown_function_set = set()
+        synth_function_set = set()
         for clause in expr:
-            unknown_function_set = unknown_function_set | gather_unknown_functions(clause)
+            synth_function_set = synth_function_set | gather_synth_functions(clause)
 
-    if (len(unknown_function_set) > 1):
+    if (len(synth_function_set) > 1):
         return False
 
     if (not isinstance(expr, list)):
@@ -245,7 +246,7 @@ def check_single_invocation_property(expr, syn_ctx):
         clauses = expr
 
     for clause in clauses:
-        fun_arg_tuples = _get_unknown_function_invocation_args(clause)
+        fun_arg_tuples = _get_synth_function_invocation_args(clause)
         if (len(fun_arg_tuples) > 1):
             return False
 
@@ -265,17 +266,17 @@ def gather_variables(expr):
     _gather_variables(expr, var_set)
     return var_set
 
-def _gather_unknown_functions(expr, fun_set):
+def _gather_synth_functions(expr, fun_set):
     kind = expr.expr_kind
     if (kind == exprs.ExpressionKinds.function_expression):
-        if (isinstance(expr.function_info, semantics_types.UnknownFunctionBase)):
+        if (isinstance(expr.function_info, semantics_types.SynthFunction)):
             fun_set.add(expr.function_info)
         for child in expr.children:
-            _gather_unknown_functions(child, fun_set)
+            _gather_synth_functions(child, fun_set)
 
-def gather_unknown_functions(expr):
+def gather_synth_functions(expr):
     fun_set = set()
-    _gather_unknown_functions(expr, fun_set)
+    _gather_synth_functions(expr, fun_set)
     return fun_set
 
 def _intro_new_universal_vars(clauses, syn_ctx, uf_info):
@@ -283,7 +284,7 @@ def _intro_new_universal_vars(clauses, syn_ctx, uf_info):
                   for i in range(len(uf_info.domain_types))]
     retval = []
     for clause in clauses:
-        arg_tuple = _get_unknown_function_invocation_args(clause).pop()
+        arg_tuple = _get_synth_function_invocation_args(clause).pop()
         eq_constraints = []
         for i in range(len(arg_tuple)):
             arg = arg_tuple[i]
@@ -306,25 +307,25 @@ def canonicalize_specification(expr, syn_ctx):
     """Performs a bunch of operations:
     1. Checks that the expr is "well-bound" to the syn_ctx object.
     2. Checks that the specification has the single-invocation property.
-    3. Gathers the set of unknown functions (should be only one).
+    3. Gathers the set of synth functions (should be only one).
     4. Gathers the variables used in the specification.
     5. Converts the specification to CNF (as part of the single-invocation test)
     6. Given that the spec is single invocation, rewrites the CNF spec (preserving and sat)
        by introducing new variables that correspond to a uniform way of invoking the
-       (single) unknown function
+       (single) synth function
 
     Returns a tuple containing:
     1. A list of 'variable_info' objects corresponding to the variables used in the spec
-    2. A list of unknown functions (should be a singleton list)
+    2. A list of synth functions (should be a singleton list)
     3. A list of clauses corresponding to the CNF specification
     4. A list of NEGATED clauses
-    5. A list containing the set of formal parameters that all appearances of the unknown
+    5. A list containing the set of formal parameters that all appearances of the synth
        functions are invoked with.
     """
     check_expr_binding_to_context(expr, syn_ctx)
-    unknown_function_set = gather_unknown_functions(expr)
-    unknown_function_list = list(unknown_function_set)
-    num_funs = len(unknown_function_list)
+    synth_function_set = gather_synth_functions(expr)
+    synth_function_list = list(synth_function_set)
+    num_funs = len(synth_function_list)
 
     orig_variable_set = gather_variables(expr)
     orig_variable_list = [x.variable_info for x in orig_variable_set]
@@ -339,7 +340,7 @@ def canonicalize_specification(expr, syn_ctx):
                                       exprs.expression_to_string(expr))
 
     (intro_clauses, intro_vars) = _intro_new_universal_vars(clauses, syn_ctx,
-                                                            unknown_function_list[0])
+                                                            synth_function_list[0])
     # for c in intro_clauses:
     #     print(_expr_to_str(c))
 
@@ -349,7 +350,7 @@ def canonicalize_specification(expr, syn_ctx):
     for i in range(num_vars):
         variable_list[i].variable_eval_offset = i
     for i in range(num_funs):
-        unknown_function_list[i].unknown_function_id = i
+        synth_function_list[i].synth_function_id = i
 
     neg_clauses = [syn_ctx.make_function_expr('not', clause) for clause in intro_clauses]
     if len(intro_clauses) == 1:
@@ -357,7 +358,7 @@ def canonicalize_specification(expr, syn_ctx):
     else:
         canon_spec = syn_ctx.make_function_expr('and', *intro_clauses);
 
-    return (variable_list, unknown_function_list, canon_spec,
+    return (variable_list, synth_function_list, canon_spec,
             clauses, neg_clauses, intro_vars)
 
 #######################################################################
@@ -372,7 +373,7 @@ def test_cnf_conversion():
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_lia.LIAInstantiator())
     var_exprs = [syn_ctx.make_variable_expr(exprtypes.IntType(), 'x%d' % i) for i in range(10)]
-    max_fun = syn_ctx.make_unknown_function('max', [exprtypes.IntType()] * 10,
+    max_fun = syn_ctx.make_synth_function('max', [exprtypes.IntType()] * 10,
                                             exprtypes.IntType())
     max_app = syn_ctx.make_function_expr(max_fun, *var_exprs)
     max_ge_vars = [syn_ctx.make_function_expr('ge', max_app, var_expr) for var_expr in var_exprs]
@@ -387,7 +388,7 @@ def test_cnf_conversion():
     print([exprs.expression_to_string(cnf_clause) for cnf_clause in cnf_clauses])
 
     print(check_single_invocation_property(formula, syn_ctx))
-    binary_max = syn_ctx.make_unknown_function('max2', [exprtypes.IntType(),
+    binary_max = syn_ctx.make_synth_function('max2', [exprtypes.IntType(),
                                                         exprtypes.IntType()],
                                                exprtypes.IntType())
     binary_max_app = syn_ctx.make_function_expr(binary_max, var_exprs[0], var_exprs[1])

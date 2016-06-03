@@ -75,9 +75,9 @@ class IcfpInstanceGenerator(object):
         import semantics_core
         import z3
         self.syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
-                                                 semantics_bv.BVInstantiator(64))
+                                                 semantics_bv.BVInstantiator())
         self.num_args = 1
-        self.synth_fun = self.syn_ctx.make_unknown_function('f', [exprtypes.BitVectorType(64)] * self.num_args,
+        self.synth_fun = self.syn_ctx.make_synth_function('f', [exprtypes.BitVectorType(64)] * self.num_args,
                                             exprtypes.BitVectorType(64))
         self.id = id
         self.intended_solution_size = intended_solution_size

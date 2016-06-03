@@ -45,8 +45,7 @@ import functools
 import utils
 import z3
 import semantics_types
-from semantics_types import FunctionBase, InterpretedFunctionBase
-from semantics_types import UnknownFunctionBase
+from semantics_types import InterpretedFunctionBase
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -125,50 +124,6 @@ class BVNot(InterpretedFunctionBase):
         res = ~(eval_context_object.peek(0))
         eval_context_object.pop()
         eval_context_object.push(res)
-
-# (is1 (_ BitVec m) (_ Bool))
-# - is 1
-
-class BVIs1(InterpretedFunctionBase):
-    def __init__(self, bv_size):
-        super().__init__('is1', 1, (exprtypes.BitVectorType(bv_size),),
-                         exprtypes.BoolType())
-        self.bv_size = bv_size
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return (child_terms[0] == 1)
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        res = eval_context_object.peek(0).is_one()
-        eval_context_object.pop()
-        eval_context_object.push(res)
-
-# (if0 (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - if (cond == 1) then . else .
-
-class BVIf0(InterpretedFunctionBase):
-    def __init__(self, bv_size):
-        super().__init__('if0', 3, (exprtypes.BitVectorType(bv_size), 
-                                     exprtypes.BitVectorType(bv_size),
-                                     exprtypes.BitVectorType(bv_size)),
-                         exprtypes.BitVectorType(bv_size))
-        self.bv_size = bv_size
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.If(child_terms[0] == 1, child_terms[1], child_terms[2])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_expr(expr_object.children[0], eval_context_object)
-        condition = eval_context_object.peek(0).is_one()
-        eval_context_object.pop()
-        if (condition):
-            self._evaluate_expr(expr_object.children[1], eval_context_object)
-        else:
-            self._evaluate_expr(expr_object.children[2], eval_context_object)
-
 
 # (bvand (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - bitwise and
@@ -251,6 +206,22 @@ class BVAdd(InterpretedFunctionBase):
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
+class BVSub(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvsub', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.bv_size = bv_size
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return (child_terms[0] - child_terms[1])
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = eval_context_object.peek(1) - eval_context_object.peek(0)
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
 
 class BVLShR(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -265,7 +236,7 @@ class BVLShR(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = eval_context_object.peek(0) >> eval_context_object.peek(1)
+        res = eval_context_object.peek(1).lshr(eval_context_object.peek(0))
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
@@ -282,43 +253,25 @@ class BVShl(InterpretedFunctionBase):
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = eval_context_object.peek(0) << eval_context_object.peek(1)
+        res = eval_context_object.peek(1) << eval_context_object.peek(0)
         eval_context_object.pop(2)
         eval_context_object.push(res)
 
-
-class ShrConst(InterpretedFunctionBase):
-    def __init__(self, bv_size, shift_amount):
-        super().__init__('shr'+ str(shift_amount), 1, (exprtypes.BitVectorType(bv_size), ),
-                         exprtypes.BitVectorType(bv_size))
+class BVUle(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvule', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BoolType())
         self.bv_size = bv_size
-        self.shift_amount = shift_amount
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.LShR(child_terms[0], self.shift_amount)
+        return z3.ULE(child_terms[0],  child_terms[1])
 
     def evaluate(self, expr_object, eval_context_object):
         self._evaluate_children(expr_object, eval_context_object)
-        res = eval_context_object.peek(0) >> self.shift_amount
-        eval_context_object.pop(1)
-        eval_context_object.push(res)
-
-class ShlConst(InterpretedFunctionBase):
-    def __init__(self, bv_size, shift_amount):
-        super().__init__('shl' + str(shift_amount), 1, (exprtypes.BitVectorType(bv_size), ),
-                         exprtypes.BitVectorType(bv_size))
-        self.bv_size = bv_size
-        self.shift_amount = shift_amount
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return (child_terms[0] << self.shift_amount)
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        res = eval_context_object.peek(0) << self.shift_amount
-        eval_context_object.pop(1)
+        res = eval_context_object.peek(1).ule(eval_context_object.peek(0))
+        eval_context_object.pop(2)
         eval_context_object.push(res)
 
 '''
@@ -349,14 +302,6 @@ class BVMul(InterpretedFunctionBase):
 
 # (bvurem (_ BitVec m) (_ BitVec m) (_ BitVec m))
 # - unsigned remainder from truncating division (undefined if divisor is 0)
-
-# (bvshl (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - shift left (equivalent to multiplication by 2^x where x is the value of
-# the second argument)
-
-# (bvlshr (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - logical shift right (equivalent to unsigned division by 2^x where x is
-# the value of the second argument)
 
 # (bvult (_ BitVec m) (_ BitVec m) Bool)
 # - binary predicate for unsigned less-than
@@ -453,149 +398,60 @@ class BVXor(InterpretedFunctionBase):
 # - binary predicate for signed greater than or equal
 
 class BVInstantiator(semantics_types.InstantiatorBase):
-    def __init__(self, bv_size):
+    def __init__(self):
         super().__init__('bv')
         self.instances = {}
-        self.bv_size = bv_size
 
-    def _get_instance(self, function_name):
+    def _get_instance(self, function_name, bv_size):
         if function_name not in self.instances:
-            if function_name == 'shr1':
-                self.instances[function_name] = ShrConst(self.bv_size, 1)
-            elif function_name == 'shr4':
-                self.instances[function_name] = ShrConst(self.bv_size, 4)
-            elif function_name == 'shr16':
-                self.instances[function_name] = ShrConst(self.bv_size, 16)
-            elif function_name == 'shl1':
-                self.instances[function_name] = ShlConst(self.bv_size, 1)
-            elif function_name == 'bvnot':
-                self.instances[function_name] = BVNot(self.bv_size)
+            if function_name == 'bvnot':
+                self.instances[(function_name, bv_size)] = BVNot(bv_size)
             elif function_name == 'bvand':
-                self.instances[function_name] = BVAnd(self.bv_size)
+                self.instances[(function_name, bv_size)] = BVAnd(bv_size)
             elif function_name == 'bvor':
-                self.instances[function_name] = BVOr(self.bv_size)
+                self.instances[(function_name, bv_size)] = BVOr(bv_size)
             elif function_name == 'bvxor':
-                self.instances[function_name] = BVXor(self.bv_size)
+                self.instances[(function_name, bv_size)] = BVXor(bv_size)
             elif function_name == 'bvadd':
-                self.instances[function_name] = BVAdd(self.bv_size)
+                self.instances[(function_name, bv_size)] = BVAdd(bv_size)
+            elif function_name == 'bvsub':
+                self.instances[(function_name, bv_size)] = BVSub(bv_size)
             elif function_name == 'bvlshr':
-                self.instances[function_name] = BVLShR(self.bv_size)
+                self.instances[(function_name, bv_size)] = BVLShR(bv_size)
             elif function_name == 'bvshl':
-                self.instances[function_name] = BVShl(self.bv_size)
-            elif function_name == 'is1':
-                self.instances[function_name] = BVIs1(self.bv_size)
-            elif function_name == 'if0':
-                self.instances[function_name] = BVIf0(self.bv_size)
+                self.instances[(function_name, bv_size)] = BVShl(bv_size)
+            elif function_name == 'bvule':
+                self.instances[(function_name, bv_size)] = BVUle(bv_size)
             else:
                 self._raise_failure(function_name, [])
-        return self.instances[function_name]
+        return self.instances[(function_name, bv_size)]
 
     def _get_canonical_function_name(self, function_name):
         return function_name
 
     def is_unary(self, function_name):
-        return function_name in [ 'shr1', 'shr4', 'shr16', 'shl1', 'bvnot', 'is1' ]
+        return function_name in [ 'bvnot' ]
 
-    def is_binary(self, function_name):
-        return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd', 'bvlshr', 'bvshl' ]
-
-    def is_ternary(self, function_name):
-        return function_name in [ 'if0' ]
+    def is_binary_of_identical_lengths(self, function_name):
+        return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd', 'bvsub', 'bvlshr', 'bvshl', 'bvule' ]
 
     def _do_instantiation(self, function_name, mangled_name, arg_types):
         if self.is_unary(function_name):
             if (len(arg_types) != 1 or
                     (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.bit_vector_type))):
                 self._raise_failure(function_name, arg_types)
-            return self._get_instance(function_name)
+            bv_size = arg_types[0].size
+            return self._get_instance(function_name, bv_size)
 
-        elif self.is_binary(function_name):
+        elif self.is_binary_of_identical_lengths(function_name):
             if (len(arg_types) != 2 or
                     (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.bit_vector_type))):
                 self._raise_failure(function_name, arg_types)
-            return self._get_instance(function_name)
-
-        elif self.is_ternary(function_name):
-            if (len(arg_types) != 3 or
-                    (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.bit_vector_type))):
-                self._raise_failure(function_name, arg_types)
-            return self._get_instance(function_name)
+            bv_size = arg_types[0].size
+            return self._get_instance(function_name, bv_size)
 
         else:
             return None
-
-# class BitVector(object):
-#     __slots__ = ['value']
-#     def __init__(self, value):
-#         self.value = value
-
-#     def __hash__(self):
-#         return hash(str(self.value))
-
-#     def __lt__(self, other):
-#         if isinstance(other, BitVector):
-#             return self.value.uint < other.value.uint
-#         elif isinstance(other, int):
-#             return self.value.uint < other
-#         raise ArgumentError()
-
-#     def __eq__(self, other):
-#         return self.value == other.value
-
-#     def __str__(self):
-#         return str(self.value)
-
-#     def is_one(self):
-#         return self.value.uint == 1
-
-#     def __rshift__(self, other):
-#         if isinstance(other, int):
-#             return BitVector(self.value >> other)
-#         elif isinstance(other, BitVector):
-#             return BitVector(self.value >> other.value)
-#         else:
-#             raise ArgumentError()
-
-#     def __lshift__(self, other):
-#         if isinstance(other, int):
-#             return BitVector(self.value << other)
-#         elif isinstance(other, BitVector):
-#             return BitVector(self.value << other.value)
-#         else:
-#             raise ArgumentError()
-
-#     def __and__(self, other):
-#         if isinstance(other, BitVector):
-#             return BitVector(self.value & other.value)
-#         else:
-#             raise ArgumentError()
-
-#     def __or__(self, other):
-#         if isinstance(other, BitVector):
-#             return BitVector(self.value | other.value)
-#         else:
-#             raise ArgumentError()
-
-#     def __xor__(self, other):
-#         if isinstance(other, BitVector):
-#             return BitVector(self.value ^ other.value)
-#         else:
-#             raise ArgumentError()
-
-#     def __add__(self, other):
-#         if isinstance(other, BitVector):
-#             a = self.value.uint
-#             b = other.value.uint
-#             length = self.value.length
-#             if length != other.value.length:
-#                 raise ArgumentError()
-#             return BitVector(bitstring.BitArray(uint=(a+b) % (2**length), length=length))
-#         else:
-#             raise ArgumentError()
-
-#     def __invert__(self):
-#         return BitVector(~self.value)
-
 
 #
 # semantics_bv.py ends here

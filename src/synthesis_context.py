@@ -107,7 +107,7 @@ class SynthesisContext(object):
 
         return function_info
 
-    def make_unknown_function(self, function_name, domain_types, range_type):
+    def make_synth_function(self, function_name, domain_types, range_type):
         predef_function = self.make_function(function_name, *domain_types)
         if (predef_function != None):
             raise ArgumentError(('Function named \'%s\' is a predefined function ' +
@@ -119,9 +119,8 @@ class SynthesisContext(object):
         if (existing_fun != None):
             return existing_fun
 
-        new_fun = semantics_types.UnknownFunctionBase(function_name, len(domain_types),
-                                                      domain_types, range_type,
-                                                      len(self.unknown_function_map))
+        new_fun = semantics_types.SynthFunction(function_name, len(domain_types),
+                                                      domain_types, range_type)
         new_fun.synthesis_ctx = self
         self.unknown_function_map[mangled_name] = new_fun
         return new_fun

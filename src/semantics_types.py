@@ -44,7 +44,6 @@ various function symbols."""
 import basetypes
 import utils
 import exprtypes
-from evaluation import evaluate_expression, evaluate_expression_raw
 from evaluation import evaluate_expression_on_stack
 import evaluation
 import exprs
@@ -68,7 +67,8 @@ class FunctionKinds(IntEnum):
     """
     interpreted_function = 1
     uninterpreted_function = 2
-    unknown_function = 3
+    synth_function = 3
+    macro_function = 4
 
 def mangle_function_name(function_name, domain_types):
     return '_'.join([function_name] + [str(dom_type.type_id) for dom_type in domain_types])
@@ -99,16 +99,17 @@ def _to_smt_constant_expression(expr_object, smt_context_object):
 def expression_to_smt(expr_object, smt_context_object, var_subst_map = None):
     kind = expr_object.expr_kind
     if (kind == _variable_expression):
-        return _to_smt_variable_expression(expr_object, smt_context_object)
+        ret = _to_smt_variable_expression(expr_object, smt_context_object)
     elif (kind == _formal_parameter_expression):
-        return var_subst_map[expr_object.parameter_position]
+        ret = var_subst_map[expr_object.parameter_position]
     elif (kind == _constant_expression):
-        return _to_smt_constant_expression(expr_object, smt_context_object)
+        ret = _to_smt_constant_expression(expr_object, smt_context_object)
     elif (kind == _function_expression):
         fun_info = expr_object.function_info
-        return fun_info.to_smt(expr_object, smt_context_object, var_subst_map)
+        ret = fun_info.to_smt(expr_object, smt_context_object, var_subst_map)
     else:
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+    return ret
 
 
 class FunctionBase(object):
@@ -165,13 +166,13 @@ class FunctionBase(object):
 
 
 class UnknownFunctionBase(FunctionBase):
-    _undefined_function_id = 1000000000
-    def __init__(self, function_name, function_arity, domain_types, range_type,
-                 unknown_function_id = _undefined_function_id):
-        super().__init__(FunctionKinds.unknown_function, function_name, function_arity,
+    _unknown_function_id = 1000000000
+    def __init__(self, function_kind, function_name, function_arity, domain_types, range_type):
+        super().__init__(function_kind, function_name, function_arity,
                          domain_types, range_type, )
         assert (len(domain_types) == function_arity)
-        self.unknown_function_id = unknown_function_id
+        self.unknown_function_id = UnknownFunctionBase._unknown_function_id
+        UnknownFunctionBase._unknown_function_id += 1
 
     def evaluate(self, expr_object, eval_context_object):
         """The eval_context_object is assumed to have a map called interpretations.
@@ -190,17 +191,14 @@ class UnknownFunctionBase(FunctionBase):
         #                                       str(parameter_map)))
 
         orig_valuation_map = eval_context_object.valuation_map
-        eval_context_object.valuation_map = parameter_map
+        eval_context_object.set_valuation_map(parameter_map)
         interpretation = eval_context_object.interpretation_map[self.unknown_function_id]
         evaluate_expression_on_stack(interpretation, eval_context_object)
-        eval_context_object.valuation_map = orig_valuation_map
+        eval_context_object.set_valuation_map(orig_valuation_map)
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
         child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        if (smt_context_object.interpretation_map != None):
-            interpretation = smt_context_object.interpretation_map[self.unknown_function_id]
-        else:
-            interpretation = None
+        interpretation = smt_context_object.interpretation_map[self.unknown_function_id]
 
         if (interpretation == None):
             # treat this as an uninterpreted function
@@ -215,34 +213,33 @@ class UnknownFunctionBase(FunctionBase):
         # we have an interpretation, recurse on that
         return expression_to_smt(interpretation, smt_context_object, child_terms)
 
+class SynthFunction(UnknownFunctionBase):
+    def __init__(self, function_name, function_arity, domain_types, range_type):
+        super().__init__(FunctionKinds.synth_function, function_name, function_arity, domain_types, range_type)
 
 class InterpretedFunctionBase(FunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type):
         super().__init__(FunctionKinds.interpreted_function, function_name, function_arity,
                          domain_types, range_type)
 
-class MacroFunction(InterpretedFunctionBase):
-    def __init__(self, function_name, function_arity,
-                 domain_types, range_type, interpretation_expression):
-        super().__init__(function_name, function_arity,
-                         domain_types, range_type)
-        assert (len(domain_types) == function_arity)
-        self.interpretation_expression = interpretation_expression
+class MacroFunction(UnknownFunctionBase):
+    def __init__(self, function_name, function_arity, domain_types, range_type, interpretation_expression, arg_vars):
+        super().__init__(FunctionKinds.macro_function, function_name, function_arity, domain_types, range_type)
+        substitute_pairs = []
+        for arg_var in arg_vars:
+            substitute_pairs.append((arg_var, exprs.FormalParameterExpression(self,
+                arg_var.variable_info.variable_type,
+                arg_var.variable_info.variable_eval_offset)))
+        self.interpretation_expression = \
+                exprs.substitute_all(interpretation_expression, substitute_pairs)
 
     def evaluate(self, expr_object, eval_context_object):
-        num_children = len(expr_object.children)
-        self._evaluate_children(expr_object, eval_context_object)
-        parameter_map = eval_context_object.peek_items(num_children)
-        eval_context_object.pop(num_children)
-
-        orig_valuation_map = eval_context_object.valuation_map
-        eval_context_object.valuation_map = parameter_map
-        evaluate_expression_on_stack(self.interpretation_expression, eval_context_object)
-        eval_context_object.valuation_map = orig_valuation_map
+        eval_context_object.interpretation_map[self.unknown_function_id] = self.interpretation_expression
+        return super().evaluate(expr_object, eval_context_object)
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._to_smt_children(expr_object, smt_context_object, var_subst_map)
-        return expression_to_smt(self.interpretation_expression, smt_context_object, child_terms)
+        smt_context_object.interpretation_map[self.unknown_function_id] = self.interpretation_expression
+        return super().to_smt(expr_object, smt_context_object, var_subst_map)
 
 
 class InstantiatorBase(object):
@@ -259,7 +256,7 @@ class InstantiatorBase(object):
     def instantiate(self, function_name, child_exps):
         canonical_function_name = self._get_canonical_function_name(function_name)
         if (not isinstance(child_exps[0], exprtypes.TypeBase)):
-            arg_types = [exprs.get_expression_type(x) for x in child_exps]
+            arg_types = tuple([exprs.get_expression_type(x) for x in child_exps])
         else:
             arg_types = child_exps
 

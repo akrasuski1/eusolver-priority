@@ -51,6 +51,7 @@ class BitVector(object):
             self.value = int(value)
         else:
             raise ArgumentError('Invalid value for BitVector')
+        assert value >= 0
         self.size = size
         if (size <= 0):
             raise ArgumentError('Size of BitVector must be greater than 1')
@@ -64,8 +65,8 @@ class BitVector(object):
     def __hash__(self):
         return (hash(self.value) ^ hash(self.size))
 
-    def __lt__(self, other):
-        return (self.value < other.value)
+    # def __lt__(self, other):
+    #     return (self.value < other.value)
 
     def _is_negative(self):
         return ((self.value & self.sign_mask) != 0)
@@ -91,17 +92,50 @@ class BitVector(object):
         return BitVector(self.value + other.value, self.size)
 
     def __sub__(self, other):
-        return BitVector(self.value - other.value, self.size)
+        return BitVector(self._to_unsigned(self.value - other.value), self.size)
 
-    def __lshift__(self, shift_amount):
-        if (shift_amount == 0):
-            return self
-        return BitVector(self.value << shift_amount, self.size)
+    def __lshift__(self, other):
+        return BitVector(self.value << other.value, self.size)
 
-    def __rshift__(self, shift_amount):
-        if (shift_amount == 0):
-            return self
-        return BitVector(self.value >> shift_amount, self.size)
+    def _signed_value(self):
+        if self._is_negative():
+            return self.value - (self.mask + 1)
+        else:
+            return self.value
+
+    def _to_unsigned(self, x):
+        return x if x >= 0 else (self.mask + 1 + x)
+
+    def ule(self, other):
+        return self.value <= other.value
+
+    def ult(self, other):
+        return self.value < other.value
+
+    def uge(self, other):
+        return self.value >= other.value
+
+    def ugt(self, other):
+        return self.value > other.value
+
+    def sle(self, other):
+        return self._signed_value() <= other._signed_value()
+
+    def slt(self, other):
+        return self._signed_value() < other._signed_value()
+
+    def sge(self, other):
+        return self._signed_value() >= other._signed_value()
+
+    def sgt(self, other):
+        return self._signed_value() > other._signed_value()
+
+    def lshr(self, other):
+        return BitVector(self.value >> other.value, self.size)
+
+    def ashr(self, other):
+        sans = self._signed_value() >> other.value
+        return _to_unsigned(sans)
 
     def __eq__(self, other):
         return (self.value == other.value and self.size == other.size)
@@ -127,9 +161,11 @@ class BitVector(object):
 ###################################################################
 
 def _test_repr_str():
-    a = BitVector(123, 8)
+    a = BitVector(1, 8)
+    b = BitVector(255, 8)
     print(a)
     print(a.__repr__())
+    print(b._signed_value())
 
 if __name__ == '__main__':
     _test_repr_str()

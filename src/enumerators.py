@@ -117,6 +117,7 @@ class NonLeafGenerator(GeneratorBase):
         self.sub_generators = [x.clone() for x in sub_generators]
         self.arity = len(sub_generators)
         self.allowed_size = 0
+        assert self.arity > 0
 
     def set_size(self, new_size):
         self.allowed_size = new_size
@@ -383,16 +384,16 @@ class StreamGenerator(GeneratorBase):
                         current_size_end_time = time.clock()
                         current_size_time = current_size_end_time - current_size_start_time
                         cumulative_size_time = current_size_end_time - generation_start_time
-                        print(('StreamGenerator: Enumerated objects of size %d in %f ' +
-                               'seconds.') % (current_size, current_size_time))
-                        print(('StreamGenerator: Total time to enumerate objects upto and ' +
-                               'including size %d is %f seconds') % (current_size,
-                                                                     cumulative_size_time))
+                        # print(('StreamGenerator: Enumerated objects of size %d in %f ' +
+                        #        'seconds.') % (current_size, current_size_time))
+                        # print(('StreamGenerator: Total time to enumerate objects upto and ' +
+                        #        'including size %d is %f seconds') % (current_size,
+                        #                                              cumulative_size_time))
                         total_exps += total_of_current_size
-                        print(('StreamGenerator: Total expressions of ' +
-                               'size %d = %d') % (current_size, total_of_current_size))
-                        print(('StreamGenerator: Total expressions of ' +
-                               'size upto and including %d = %d') % (current_size, total_exps))
+                        # print(('StreamGenerator: Total expressions of ' +
+                        #        'size %d = %d') % (current_size, total_of_current_size))
+                        # print(('StreamGenerator: Total expressions of ' +
+                        #        'size upto and including %d = %d') % (current_size, total_exps))
 
                     current_size += 1
                     break

@@ -119,6 +119,9 @@ class Verifier(object):
         self.intro_vars = intro_vars
         self.smt_intro_vars = [_expr_to_smt(x, self.smt_ctx) for x in self.intro_vars]
 
+        self.synth_fun = fun_list[0]
+        assert type(self.synth_fun) == semantics_types.SynthFunction
+
         fun_app = syn_ctx.make_function_expr(fun_list[0], *intro_vars)
         fun_app_subst_var = syn_ctx.make_variable_expr(fun_list[0].range_type, '__output__')
         self.outvar_cnstr = syn_ctx.make_function_expr('eq', fun_app_subst_var, fun_app)
@@ -133,7 +136,7 @@ class Verifier(object):
         smt_ctx = self.smt_ctx
         smt_solver = self.smt_solver
 
-        smt_ctx.set_interpretation_map([term])
+        smt_ctx.set_interpretation(self.synth_fun.unknown_function_id, term)
         eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx)
         smt_solver.push()
         smt_solver.add(eq_cnstr)
@@ -174,9 +177,10 @@ class Solver(object):
         points = self.points
         num_points = len(points)
         eval_ctx = self.eval_ctx
-        eval_ctx.set_interpretation_map([term])
+        eval_ctx.set_interpretation(self.synth_fun.unknown_function_id, term)
         spec = self.spec
         for i in range(num_points):
+            # print("HERE Evaluation for:", points[i])
             eval_ctx.set_valuation_map(points[i])
             if (not evaluation.evaluate_expression_raw(spec, eval_ctx)):
                 return False
@@ -198,6 +202,8 @@ class Solver(object):
 
         act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
         self.spec = canon_spec
+        self.synth_fun = uf_list[0]
+        assert type(self.synth_fun) == semantics_types.SynthFunction
         self.stream_generator = enumerators.StreamGenerator(term_generator, True)
         self.stream_generator_state = self.stream_generator.generate()
 
@@ -208,6 +214,7 @@ class Solver(object):
 
         while (True):
             pointwise_solution = self._solve_for_points()
+            # print("SOL:", _expr_to_str(pointwise_solution))
             sol_or_cex = verifier.verify_term(pointwise_solution)
             if (_is_expr(sol_or_cex)):
                 solve_end_time = time.clock()
@@ -231,7 +238,7 @@ def test_solver_max(num_vars):
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_lia.LIAInstantiator())
-    max_fun = syn_ctx.make_unknown_function('max', [exprtypes.IntType()] * num_vars,
+    max_fun = syn_ctx.make_synth_function('max', [exprtypes.IntType()] * num_vars,
                                             exprtypes.IntType())
     add_fun = syn_ctx.make_function('add', exprtypes.IntType(), exprtypes.IntType())
     sub_fun = syn_ctx.make_function('sub', exprtypes.IntType(), exprtypes.IntType())
@@ -347,8 +354,8 @@ def test_solver_icfp(benchmark_name):
     import enumerators
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
-                                                 semantics_bv.BVInstantiator(64))
-    synth_fun = syn_ctx.make_unknown_function('f', [exprtypes.BitVectorType(64)],
+                                                 semantics_bv.BVInstantiator())
+    synth_fun = syn_ctx.make_synth_function('f', [exprtypes.BitVectorType(64)],
                                             exprtypes.BitVectorType(64))
 
     # Unary

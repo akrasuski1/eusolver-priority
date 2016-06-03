@@ -47,7 +47,6 @@ import utils
 import z3
 import semantics_types
 from semantics_types import FunctionBase, InterpretedFunctionBase
-from semantics_types import UnknownFunctionBase
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -249,8 +248,6 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
         elif (function_name == 'and' or function_name == 'or'):
             if (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.boolean_type)):
                 self._raise_failure(function_name, arg_types)
-            if (len(arg_types) < 2):
-                self._raise_failure(function_name, arg_types)
             return self._get_and_instance() if function_name == 'and' else self._get_or_instance()
 
         elif (function_name == 'not'):
@@ -289,10 +286,10 @@ class MacroInstantiator(semantics_types.InstantiatorBase):
         if function_name not in self.function_interpretations:
             return None
 
-        function_interpretation = function_interpretations[function_name]
+        function_interpretation = self.function_interpretations[function_name]
         assert function_name == function_interpretation.function_name
         assert len(arg_types) == function_interpretation.function_arity
-        assert arg_types == function_arity.domain_types
+        assert arg_types == function_interpretation.domain_types
 
         return function_interpretation
 

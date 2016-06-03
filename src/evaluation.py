@@ -71,6 +71,7 @@ def evaluate_expression_on_stack(expr_object, eval_context):
         fun_info.evaluate(expr_object, eval_context)
     else:
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+    # print('Evaluated', exprs.expression_to_string(expr_object), 'to', eval_context.peek())
 
 def evaluate_expression_raw(expr_object, eval_context):
     evaluate_expression_on_stack(expr_object, eval_context)
@@ -89,7 +90,7 @@ class EvaluationContext(object):
         self.eval_stack_size = eval_stack_size
         self.eval_stack_top = 0
         self.valuation_map = None
-        self.interpretation_map = None
+        self.interpretation_map = {}
 
     def peek(self, peek_depth = 0):
         return self.eval_stack[self.eval_stack_top - 1 - peek_depth]
@@ -105,16 +106,15 @@ class EvaluationContext(object):
         self.eval_stack_top += 1
 
     def set_valuation_map(self, valuation_map):
+        if type(valuation_map[0]) != exprs.Value:
+            raise Exception
         self.valuation_map = valuation_map
 
     def clear_valuation_map(self):
         self.valuation_map = None
 
-    def set_interpretation_map(self, interpretation_map):
-        self.interpretation_map = interpretation_map
-
-    def clear_interpretation_map(self):
-        self.interpretation_map = None
+    def set_interpretation(self, unknown_function_id, interpretation):
+        self.interpretation_map[unknown_function_id] = interpretation
 
 
 def test_evaluation():

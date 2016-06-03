@@ -57,7 +57,7 @@ def get_theory_instantiator(theory):
     elif theory == "BV":
         # Arjun: This has to cleaned up.
         # We need to find the right bit vector length
-        return semantics_bv.BVInstantiator(64)
+        return semantics_bv.BVInstantiator()
     else:
         raise Exception("Unknown theory")
 
@@ -133,14 +133,14 @@ def process_definitions(defs, syn_ctx, macro_instantiator):
         ((arg_vars, arg_types, arg_var_map), return_type) = _process_function_defintion(args_data, ret_type_data)
 
         expr = sexp_to_expr(interpretation, syn_ctx, arg_var_map)
-        macro_func = semantics_types.MacroFunction(name, len(arg_vars), arg_types, return_type, expr)
+        macro_func = semantics_types.MacroFunction(name, len(arg_vars), tuple(arg_types), return_type, expr, arg_vars)
         macro_instantiator.add_function(name, macro_func)
 
 def process_synth_func(synth_fun_data, syn_ctx):
     [name, args_data, ret_type_data, grammar_data] = synth_fun_data
     ((arg_vars, arg_types, arg_var_map), return_type) = _process_function_defintion(args_data, ret_type_data)
 
-    synth_fun = syn_ctx.make_unknown_function(name, arg_types, return_type) 
+    synth_fun = syn_ctx.make_synth_function(name, arg_types, return_type)
 
     return synth_fun, arg_var_map, grammar_data
 
@@ -161,19 +161,17 @@ def _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, rule_
     elif type(rule_data) == list:
         function_name = rule_data[0]
         function_args = [ _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, child) for child in rule_data[1:] ]
-        function_arg_types = [ x.type for x in function_args ]
+        function_arg_types = tuple([ x.type for x in function_args ])
         function = syn_ctx.make_function(function_name, *function_arg_types)
         return grammars.FunctionRewrite(function, *function_args)
     else:
         raise Exception('Unknown right hand side: %s' % rule_data)
 
-def _process_forall_vars(forall_vars_data):
+def _process_forall_vars(forall_vars_data, syn_ctx):
     forall_var_map = {}
     for [variable_name, var_type_data] in forall_vars_data:
         variable_type = sexp_to_type(var_type_data)
-        variable = exprs.VariableExpression(
-                exprs.VariableInfo(variable_type, variable_name)
-                )
+        variable = syn_ctx.make_variable_expr(variable_type, variable_name)
         forall_var_map[variable_name] = variable
     return forall_var_map
 
@@ -221,20 +219,21 @@ def make_solver(file_sexp):
     grammar = sexp_to_grammar(arg_var_map, grammar_data, synth_fun, syn_ctx)
 
     forall_vars_data, file_sexp = filter_sexp_for('declare-var', file_sexp)
-    forall_vars_map = _process_forall_vars(forall_vars_data)
+    forall_vars_map = _process_forall_vars(forall_vars_data, syn_ctx)
 
     constraints_data, file_sexp = filter_sexp_for('constraint', file_sexp)
     constraints = process_constraints(constraints_data, syn_ctx, forall_vars_map, synth_fun)
-    # syn_ctx.assert_spec(syn_ctx.make_function_expr('and', *constraints))
+    syn_ctx.assert_spec(syn_ctx.make_function_expr('and', *constraints))
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
     assert check_sats == [[]]
 
     generator = grammar.to_generator()
 
-    # import naive_solvers
-    # naive_solver = naive_solvers.Solver(syn_ctx)
-    # naive_solver.solve(generator)
+    import naive_solvers
+    solver = naive_solvers.Solver(syn_ctx)
+    sol = solver.solve(generator)
+    print(exprs.expression_to_string(sol))
 
     assert file_sexp == []
 
@@ -244,9 +243,9 @@ def make_solver(file_sexp):
 def test_make_solver():
     import parser
 
-    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl", "../benchmarks/max/max_5.sl" ]:
+    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl", "../benchmarks/max/max_2.sl" ]:
     # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
-    for benchmark_file in [ "../benchmarks/max/max_2.sl" ]:
+    for benchmark_file in [ "/home/aradha/Downloads/invertD" ]:
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
 
