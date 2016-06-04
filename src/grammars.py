@@ -39,6 +39,10 @@
 # Code:
 
 import basetypes
+import itertools
+import exprtypes
+import semantics_types
+import random
 import exprs
 import enumerators
 
@@ -53,6 +57,9 @@ class RewriteBase(object):
     def _to_template_expr(self):
         raise basetypes.AbstractMethodError('RewriteBase._to_template_expr()')
 
+    def rename_nt(self, old_name, new_name):
+        raise basetypes.AbstractMethodError('RewriteBase.rename_nt()')
+
 class ExpressionRewrite(RewriteBase):
     def __init__(self, expr):
         super().__init__(exprs.get_expression_type(expr))
@@ -60,6 +67,9 @@ class ExpressionRewrite(RewriteBase):
 
     def _to_template_expr(self):
         return [], [], self.expr
+
+    def rename_nt(self, old_name, new_name):
+        return self
 
 class NTRewrite(RewriteBase):
     def __init__(self, non_terminal, nt_type):
@@ -71,6 +81,12 @@ class NTRewrite(RewriteBase):
         name = self.non_terminal + '_ph_' + str(random.randint(1, 1000000))
         ph_var = exprs.VariableExpression(exprs.VariableInfo(self.type, name))
         return [ph_var], [self.non_terminal], ph_var
+
+    def rename_nt(self, old_name, new_name):
+        if self.non_terminal == old_name:
+            return NTRewrite(new_name, self.type)
+        else:
+            return self
 
 class FunctionRewrite(RewriteBase):
     def __init__(self, function_info, *children):
@@ -97,17 +113,49 @@ class FunctionRewrite(RewriteBase):
         sub_gens = [ place_holders[_nt_to_generator_name(nt)] for nt in nts ]
         return enumerators.ExpressionTemplateGenerator(expr_template, ph_vars, sub_gens)
 
+    def rename_nt(self, old_name, new_name):
+        new_children = [ child.rename_nt(old_name, new_name) 
+                for child in self.children ]
+        return FunctionRewrite(self.function_info, *new_children)
+
+def expr_template_to_rewrite(expr_template, ph_var_nt_map, grammar):
+    if expr_template in ph_var_nt_map:
+        nt = ph_var_nt_map[expr_template]
+        nt_type = grammar.nt_type[nt]
+        return NTRewrite(nt, nt_type)
+    elif exprs.is_function_expression(expr_template):
+        children = [ expr_template_to_rewrite(child, ph_var_nt_map, grammar) 
+                for child in expr_template.children ]
+        return FunctionRewrite(expr_template.function_info, *children)
+    else:
+        return ExpressionRewrite(expr_template)
+
 class Grammar(object):
-    def __init__(self, non_terminals, nt_type, rules):
+    def __init__(self, non_terminals, nt_type, rules, start='Start'):
         self.non_terminals = non_terminals
         self.nt_type = nt_type
         self.rules = rules
+        self.start = start
 
-    def to_generator(self):
-        generator_factory = enumerators.RecursiveGeneratorFactory()
-        place_holders = {
-                _nt_to_generator_name(nt):generator_factory.make_placeholder(_nt_to_generator_name(nt))
-                for nt in self.non_terminals }
+    def __str__(self):
+        return self.str()
+
+    def str(self):
+        ret = ""
+        for nt in self.non_terminals:
+            ret = ret + nt + "[" + str(self.nt_type[nt]) + "] ->\n"
+            for rule in self.rules[nt]:
+                ph_vars, nts, expr_template = rule._to_template_expr()
+                ret = ret + "\t" + exprs.expression_to_string(expr_template) + "\n"
+        return ret
+
+    def to_generator(self, generator_factory=None):
+        if generator_factory == None:
+            generator_factory = enumerators.RecursiveGeneratorFactory()
+        for nt in self.non_terminals:
+            if not generator_factory.has_placeholder(_nt_to_generator_name(nt)):
+                generator_factory.make_placeholder(_nt_to_generator_name(nt))
+        place_holders = generator_factory.generator_map
         ret = None
         for nt in self.non_terminals:
             generators = []
@@ -125,13 +173,96 @@ class Grammar(object):
             nt_generator = generator_factory.make_generator(_nt_to_generator_name(nt),
                     enumerators.AlternativesGenerator,
                             ([ leaf_generator ] + generators ,))
-            if nt == 'Start':
+            if nt == self.start:
                 ret = nt_generator
         return ret
 
-    def decompose(self):
-        if len(self.non_terminals) != 1:
-            return None
-        raise NotImplementedError
+    def copy_with_nt_rename(self, old_nt_name, new_nt_name):
+        new_nts = [ nt if nt != old_nt_name else new_nt_name 
+                for nt in self.non_terminals ]
+
+        new_nt_type = self.nt_type.copy()
+        type = new_nt_type.pop(old_nt_name)
+        new_nt_type[new_nt_name] = type
+
+        new_rules = {}
+        for nt in self.non_terminals:
+            rewrites = self.rules[nt]
+            new_nt = nt if nt != old_nt_name else new_nt_name
+            new_rules[new_nt] = [ rew.rename_nt(old_nt_name, new_nt_name)
+                    for rew in rewrites ]
+        return Grammar(new_nts, new_nt_type, new_rules)
+
+    # Quick and dirty for now
+    def decompose(self, macro_instantiator):
+        start_nt = self.start
+
+        term_productions = []
+        pred_productions = []
+        for rewrite in self.rules[start_nt]:
+            ph_vars, nts, expr_template = rewrite._to_template_expr()
+            ph_var_nt_map = dict(zip(ph_vars, nts))
+            expr_template = macro_instantiator.instantiate_all(expr_template)
+            ifs = exprs.find_all_applications(expr_template, 'ite')
+
+            # Either there are no ifs or it is an concrete expression
+            if len(ifs) == 0 or len(nts) == 0:
+                term_productions.append(rewrite)
+                continue
+            elif len(ifs) > 1 and ifs[0] != expr_template:
+                return None
+
+            [cond, thent, elset] = ifs[0].children
+            if (
+                    thent not in ph_vars or \
+                    elset not in ph_vars or \
+                    ph_var_nt_map[thent] != start_nt or \
+                    ph_var_nt_map[elset] != start_nt):
+                return None
+
+            cond_rewrite = expr_template_to_rewrite(cond, ph_var_nt_map, self)
+
+            # Make dummy function to recognize predicate
+            arg_var = exprs.VariableExpression(exprs.VariableInfo(exprtypes.BoolType(), 'd', 0))
+            dummy_macro_func = semantics_types.MacroFunction(
+                    'dummy_pred_id_' + str(random.randint(1, 1000000)), 1, (exprtypes.BoolType(),),
+                    exprtypes.BoolType(), arg_var, [arg_var])
+            pred_production = FunctionRewrite(dummy_macro_func, cond_rewrite)
+            pred_productions.append(pred_production)
+
+        # Non-terminals
+        [ term_start, pred_start ] = [ x + start_nt for x in  [ 'Term', 'Pred' ] ]
+        [ term_nts, pred_nts ] = [ self.non_terminals + [ x ] 
+                for x in [ term_start, pred_start ]  ]
+        term_nts.remove(start_nt)
+        pred_nts.remove(start_nt)
+
+        # Non-terminal types
+        term_nt_type, pred_nt_type = self.nt_type.copy(), self.nt_type.copy()
+        term_nt_type.pop(start_nt)
+        term_nt_type[term_start] = self.nt_type[start_nt]
+        pred_nt_type.pop(start_nt)
+        pred_nt_type[pred_start] = exprtypes.BoolType()
+
+        # Rules
+        term_rules = {}
+        term_rules[term_start] = [ rew.rename_nt(start_nt, term_start)
+                for rew in term_productions ]
+        for nt in self.non_terminals:
+            if nt != start_nt:
+                term_rules[nt] = [ rew.rename_nt(start_nt, term_start)
+                for rew in self.rules[nt] ]
+
+        pred_rules = {}
+        pred_rules[pred_start] = [ rew.rename_nt(start_nt, term_start)
+                for rew in pred_productions ]
+        for nt in self.non_terminals:
+            if nt != start_nt:
+                pred_rules[nt] = [ rew.rename_nt(start_nt, term_start)
+                for rew in self.rules[nt] ]
+
+        term_grammar = Grammar(term_nts, term_nt_type, term_rules, term_start)
+        pred_grammar = Grammar(pred_nts, pred_nt_type, pred_rules, pred_start)
+        return term_grammar, pred_grammar
 
 # Tests:

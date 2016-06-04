@@ -40,7 +40,10 @@
 
 from bitvectors import BitVector
 import parser
+import naive_solvers
+import solvers
 import exprs
+import enumerators
 import exprtypes
 import semantics_core
 import semantics_bv
@@ -227,15 +230,24 @@ def make_solver(file_sexp):
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
     assert check_sats == [[]]
-
-    generator = grammar.to_generator()
-
-    import naive_solvers
-    solver = naive_solvers.Solver(syn_ctx)
-    sol = solver.solve(generator)
-    print(exprs.expression_to_string(sol))
-
     assert file_sexp == []
+
+    ans = grammar.decompose(macro_instantiator)
+    if ans == None:
+        generator = grammar.to_generator()
+        solver = naive_solvers.Solver(syn_ctx)
+        sol = solver.solve(generator)
+        print(exprs.expression_to_string(sol))
+    else:
+        term_grammar, pred_grammar = ans
+        print("Original grammar:\n", grammar)
+        print("Term grammar:\n", term_grammar)
+        print("Pred grammar:\n", pred_grammar)
+        generator_factory = enumerators.RecursiveGeneratorFactory()
+        term_generator = term_grammar.to_generator(generator_factory)
+        pred_generator = pred_grammar.to_generator(generator_factory)
+        solver = solvers.Solver(syn_ctx)
+        solvers._do_solve(solver, term_generator, pred_generator, False)
 
 
 # Tests:
@@ -243,9 +255,8 @@ def make_solver(file_sexp):
 def test_make_solver():
     import parser
 
-    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl", "../benchmarks/max/max_2.sl" ]:
-    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
-    for benchmark_file in [ "/home/aradha/Downloads/invertD" ]:
+    for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl", "../benchmarks/max/max_2.sl" ]:
+    # for benchmark_file in [ "../benchmarks/invertD.sl" ]:
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
 

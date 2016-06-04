@@ -272,6 +272,9 @@ class RecursiveGeneratorFactory(object):
         self.generator_factories[generator_name] = (generator_factory, arg_tuple_to_factory)
         return self.generator_map[generator_name]
 
+    def has_placeholder(self, identifier):
+        return identifier in self.generator_map
+
     def _instantiate_placeholder(self, placeholder):
         assert (placeholder.factory is self)
         (factory, arg_tuple) = self.generator_factories[placeholder.identifier]

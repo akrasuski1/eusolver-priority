@@ -70,7 +70,11 @@ class Z3SMTContext(object):
     def make_bitvector_sort(self, size):
         return z3.BitVecSort(size, self.ctx())
 
-    def set_interpretation(self, unknown_function_id, interpretation):
+    def set_interpretation(self, unknown_function_or_unknown_function_id, interpretation):
+        if type(unknown_function_or_unknown_function_id) != int:
+            unknown_function_id = unknown_function_or_unknown_function_id.unknown_function_id
+        else:
+            unknown_function_id = unknown_function_or_unknown_function_id
         self.interpretation_map[unknown_function_id] = interpretation
 
 

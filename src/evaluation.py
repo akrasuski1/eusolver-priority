@@ -113,7 +113,11 @@ class EvaluationContext(object):
     def clear_valuation_map(self):
         self.valuation_map = None
 
-    def set_interpretation(self, unknown_function_id, interpretation):
+    def set_interpretation(self, unknown_function_or_unknown_function_id, interpretation):
+        if type(unknown_function_or_unknown_function_id) != int:
+            unknown_function_id = unknown_function_or_unknown_function_id.unknown_function_id
+        else:
+            unknown_function_id = unknown_function_or_unknown_function_id
         self.interpretation_map[unknown_function_id] = interpretation
 
 

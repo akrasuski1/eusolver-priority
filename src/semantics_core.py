@@ -299,5 +299,19 @@ class MacroInstantiator(semantics_types.InstantiatorBase):
     def add_function(self, function_name, function_interpretation):
         self.function_interpretations[function_name] = function_interpretation
 
+    def instantiate_all(self, expr):
+        for fname, fint in self.function_interpretations.items():
+            while True:
+                app = exprs.find_application(expr, fname)
+                if app is None:
+                    break
+                actual_params = app.children
+                formal_params = fint.formal_parameters
+                new_app = exprs.substitute_all(
+                        fint.interpretation_expression,
+                        list(zip(formal_params, actual_params)))
+                expr = exprs.substitute(expr, app, new_app)
+        return expr
+
 #
 # semantics_core.py ends here

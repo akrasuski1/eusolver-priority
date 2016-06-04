@@ -181,7 +181,7 @@ class DuplicatePointException(Exception):
 
 
 class TermSolver(object):
-    def __init__(self, spec, term_generator, max_term_size = 1024):
+    def __init__(self, spec, term_generator, synth_fun, max_term_size = 1024):
         self.spec = spec
         self.term_generator = term_generator
         self.points = []
@@ -191,6 +191,7 @@ class TermSolver(object):
         self.current_largest_term_size = 0
         self.signature_to_term = {}
         self.bunch_generator = None
+        self.synth_fun = synth_fun
 
     def _trivial_solve(self):
         term_size = 1
@@ -214,7 +215,7 @@ class TermSolver(object):
         num_points = len(points)
         retval = self.signature_factory()
         eval_ctx = self.eval_ctx
-        eval_ctx.set_interpretation_map([term])
+        eval_ctx.set_interpretation(self.synth_fun, term)
         spec = self.spec
         eval_cache = self.eval_cache
 
@@ -317,7 +318,7 @@ class TermSolver(object):
         return True
 
 class Unifier(object):
-    def __init__(self, syn_ctx, smt_ctx, pred_generator, term_solver, max_pred_size = 1024):
+    def __init__(self, syn_ctx, smt_ctx, pred_generator, term_solver, synth_fun, max_pred_size = 1024):
         self.pred_generator = pred_generator
         self.term_solver = term_solver
         self.syn_ctx = syn_ctx
@@ -325,6 +326,7 @@ class Unifier(object):
         self.false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
         spec_tuple = syn_ctx.get_synthesis_spec()
         act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = spec_tuple
+        self.synth_fun = synth_fun
 
         self.smt_ctx = smt_ctx
         self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
@@ -410,7 +412,7 @@ class Unifier(object):
         smt_ctx = self.smt_ctx
         smt_solver = self.smt_solver
 
-        smt_ctx.set_interpretation_map([term])
+        smt_ctx.set_interpretation(self.synth_fun, term)
         eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx)
         smt_solver.push()
         smt_solver.add(eq_cnstr)
@@ -445,7 +447,7 @@ class Unifier(object):
                 # print(_expr_to_str(term))
                 # print('with guard')
                 # print(_expr_to_str(pred))
-                smt_ctx.set_interpretation_map([term])
+                smt_ctx.set_interpretation(self.synth_fun, term)
                 eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx);
                 # print('SMT constraint')
                 # print(eq_cnstr)
@@ -648,8 +650,9 @@ class Solver(object):
         import time
         act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
-        term_solver = TermSolver(canon_spec, term_generator)
-        unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator, term_solver)
+        synth_fun = uf_list[0]
+        term_solver = TermSolver(canon_spec, term_generator, synth_fun)
+        unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator, term_solver, synth_fun)
         time_origin = time.clock()
 
         while (True):

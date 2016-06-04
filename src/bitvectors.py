@@ -51,13 +51,14 @@ class BitVector(object):
             self.value = int(value)
         else:
             raise ArgumentError('Invalid value for BitVector')
-        assert value >= 0
         self.size = size
         if (size <= 0):
             raise ArgumentError('Size of BitVector must be greater than 1')
         self.mask = (1 << size) - 1
         self.sign_mask = (1 << (size - 1))
         self._apply_mask()
+        if self.value < 0:
+            self.value = self._to_unsigned(self.value) 
 
     def _apply_mask(self):
         self.value &= self.mask
@@ -65,8 +66,8 @@ class BitVector(object):
     def __hash__(self):
         return (hash(self.value) ^ hash(self.size))
 
-    # def __lt__(self, other):
-    #     return (self.value < other.value)
+    def __lt__(self, other):
+        return self.slt(other)
 
     def _is_negative(self):
         return ((self.value & self.sign_mask) != 0)
