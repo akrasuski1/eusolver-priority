@@ -40,6 +40,7 @@
 
 from bitvectors import BitVector
 import parser
+import esolver
 import naive_solvers
 import solvers
 import exprs
@@ -197,7 +198,7 @@ def sexp_to_grammar(arg_var_map, grammar_sexp, synth_fun, syn_ctx):
         rules[nt] = rewrites
     return grammars.Grammar(non_terminals, nt_type, rules)
 
-def make_solver(file_sexp):
+def make_solver(file_sexp, use_esolver=False):
     core_instantiator = semantics_core.CoreInstantiator()
 
     theories, file_sexp = filter_sexp_for('set-logic', file_sexp)
@@ -232,22 +233,26 @@ def make_solver(file_sexp):
     assert check_sats == [[]]
     assert file_sexp == []
 
-    ans = grammar.decompose(macro_instantiator)
-    if ans == None:
-        generator = grammar.to_generator()
-        solver = naive_solvers.Solver(syn_ctx)
-        sol = solver.solve(generator)
-        print(exprs.expression_to_string(sol))
+    if use_esolver:
+        solver = esolver.ESolver(syn_ctx, grammar)
+        solver.solve()
     else:
-        term_grammar, pred_grammar = ans
-        print("Original grammar:\n", grammar)
-        print("Term grammar:\n", term_grammar)
-        print("Pred grammar:\n", pred_grammar)
-        generator_factory = enumerators.RecursiveGeneratorFactory()
-        term_generator = term_grammar.to_generator(generator_factory)
-        pred_generator = pred_grammar.to_generator(generator_factory)
-        solver = solvers.Solver(syn_ctx)
-        solvers._do_solve(solver, term_generator, pred_generator, False)
+        ans = grammar.decompose(macro_instantiator)
+        if ans == None:
+            generator = grammar.to_generator()
+            solver = naive_solvers.Solver(syn_ctx)
+            sol = solver.solve(generator)
+            print(exprs.expression_to_string(sol))
+        else:
+            term_grammar, pred_grammar = ans
+            print("Original grammar:\n", grammar)
+            print("Term grammar:\n", term_grammar)
+            print("Pred grammar:\n", pred_grammar)
+            generator_factory = enumerators.RecursiveGeneratorFactory()
+            term_generator = term_grammar.to_generator(generator_factory)
+            pred_generator = pred_grammar.to_generator(generator_factory)
+            solver = solvers.Solver(syn_ctx)
+            solvers._do_solve(solver, term_generator, pred_generator, False)
 
 
 # Tests:
@@ -255,10 +260,11 @@ def make_solver(file_sexp):
 def test_make_solver():
     import parser
 
-    for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl", "../benchmarks/max/max_2.sl" ]:
+    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl", "../benchmarks/max/max_2.sl" ]:
+    for benchmark_file in [ "../benchmarks/max/max_3.sl" ]:
     # for benchmark_file in [ "../benchmarks/invertD.sl" ]:
         file_sexp = parser.sexpFromFile(benchmark_file)
-        make_solver(file_sexp)
+        make_solver(file_sexp, use_esolver=True)
 
 if __name__ == "__main__":
     test_make_solver()

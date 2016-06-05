@@ -39,6 +39,7 @@
 # Code:
 
 import utils
+import evaluation
 import basetypes
 import copy
 import itertools
@@ -163,7 +164,7 @@ class ExpressionTemplateGenerator(NonLeafGenerator):
         return ExpressionTemplateGenerator(
                 self.expr_template,
                 self.place_holder_vars,
-                self.sub_generators,
+                [x.clone() for x in self.sub_generators],
                 self.name)
 
 class FunctionalGenerator(NonLeafGenerator):
@@ -248,8 +249,7 @@ class _RecursiveGeneratorPlaceholder(GeneratorBase):
     def clone(self):
         return _RecursiveGeneratorPlaceholder(self.factory, self.identifier)
 
-
-class RecursiveGeneratorFactory(object):
+class GeneratorFactoryBase(object):
     """A factory for creating recursive generators
     (possibly mutually recursive as well). We associate names with
     generator objects, and also allow these names to be used as placeholders.
@@ -258,7 +258,7 @@ class RecursiveGeneratorFactory(object):
 
     def __init__(self):
         self.generator_map = {}
-        self.generator_factories = {}
+        self.generator_constructors = {}
 
     def make_placeholder(self, identifier):
         if (identifier in self.generator_map):
@@ -267,19 +267,134 @@ class RecursiveGeneratorFactory(object):
         self.generator_map[identifier] = retval
         return retval
 
-    def make_generator(self, generator_name, generator_factory,
-                       arg_tuple_to_factory):
-        self.generator_factories[generator_name] = (generator_factory, arg_tuple_to_factory)
+    def make_generator(self, generator_name, generator_constructor,
+                       arg_tuple_to_constructor):
+        self.generator_constructors[generator_name] = (generator_constructor, arg_tuple_to_constructor)
         return self.generator_map[generator_name]
 
     def has_placeholder(self, identifier):
         return identifier in self.generator_map
 
     def _instantiate_placeholder(self, placeholder):
-        assert (placeholder.factory is self)
-        (factory, arg_tuple) = self.generator_factories[placeholder.identifier]
-        return factory(*arg_tuple)
+        raise basetypes.AbstractMethodError('GeneratorFactoryBase._instantiate_placeholder()')
 
+class RecursiveGeneratorFactory(GeneratorFactoryBase):
+    def __init__(self):
+        super().__init__() 
+
+    def _instantiate_placeholder(self, placeholder):
+        assert (placeholder.factory is self)
+        (constructor, arg_tuple) = self.generator_constructors[placeholder.identifier]
+        return constructor(*arg_tuple)
+
+
+class PointDistinctGenerator(GeneratorBase):
+    def __init__(self, placeholder, factory):
+        super().__init__()
+        self.factory = factory
+        self.size = None
+        self.generated = 0
+        self.placeholder = placeholder
+
+    def generate(self):
+        self.generated = 0
+        while True:
+            ret = self.factory.get_from(self.placeholder, self.size, self.generated)
+            if ret is None:
+                break
+            yield ret
+            self.generated += 1
+
+    def set_size(self, new_size):
+        self.size = new_size
+        self.generated = 0
+
+    def clone(self):
+        raise basetypes.UnhandledCaseError('PointDistinctGenerator.clone()')
+
+
+class PointDistinctGeneratorFactory(GeneratorFactoryBase):
+    def __init__(self):
+        super().__init__()
+        self.points = []
+        self.signatures = {}
+        self.cache = {}
+        self.base_generators = {}
+        self.finished_generators = {}
+        self.eval_ctx = evaluation.EvaluationContext()
+
+    def clear_caches(self):
+        # self.print_caches()
+        self.cache = {}
+        self.signatures = {}
+        self.base_generators = {}
+        self.finished_generators = {}
+
+    def print_caches(self):
+        print('++++++++++++')
+        for placeholder, size in self.cache:
+            print(placeholder, size, '->')
+            for term in self.cache[(placeholder, size)]:
+                print(exprs.expression_to_string(term))
+        print('++++++++++++')
+
+    def add_point(self, point):
+        self.points.append(point)
+        self.clear_caches()
+
+    def _initialize_base_generator(self, placeholder, size):
+        self.cache[(placeholder, size)] = []
+        if placeholder not in self.signatures:
+            self.signatures[placeholder] = []
+        (constructor, arg_tuple) = self.generator_constructors[placeholder]
+        generator = constructor(*arg_tuple)
+        generator.set_size(size)
+        self.base_generators[(placeholder, size)] = generator.generate()
+        self.finished_generators[(placeholder, size)] = False
+
+    def _compute_signature(self, expr):
+        points = self.points
+        res = [ None ] * len(points)
+        for i in range(len(points)):
+            self.eval_ctx.set_valuation_map(points[i])
+            res[i] = evaluation.evaluate_expression_raw(expr, self.eval_ctx)
+        return res
+
+    def get_from(self, placeholder, size, position):
+        placeholder = placeholder.identifier
+
+        # Have not started generation
+        if (placeholder, size) not in self.cache:
+            self._initialize_base_generator(placeholder, size)
+
+        cached_exprs = self.cache[(placeholder, size)]
+        assert position <= len(cached_exprs)
+
+        # Have already generated required expression
+        if position < len(cached_exprs):
+            return cached_exprs[position]
+
+        # Have finished generation
+        if self.finished_generators[(placeholder, size)]:
+            return None
+
+        # In the middle of generation
+        while True:
+            next_expr = next(self.base_generators[(placeholder, size)])
+            if next_expr is None:
+                self.finished_generators[(placeholder, size)] = True
+                return None
+            signature = self._compute_signature(next_expr)
+            if signature not in self.signatures[placeholder]:
+                cached_exprs.append(next_expr)
+                self.signatures[placeholder].append(signature)
+                return next_expr 
+            else:
+                pass
+                # print('Eliminated', placeholder, size, ':', exprs.expression_to_string(next_expr))
+
+    def _instantiate_placeholder(self, placeholder):
+        return PointDistinctGenerator(placeholder, self)
 
 class FilteredGenerator(GeneratorBase):
     """A class for implementing a filtered generator."""
