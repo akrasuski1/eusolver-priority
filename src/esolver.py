@@ -39,6 +39,7 @@
 # Code:
 
 import evaluation
+import basetypes
 import exprs
 import exprtypes
 import z3smt
@@ -65,6 +66,10 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
             point[i] = exprs.Value(BitVector(int(str(eval_value)),
                                              var_info_list[i].variable_type.size),
                                    var_info_list[i].variable_type)
+        elif (var_info_list[i].variable_type == exprtypes.StringType()):
+            assert eval_value.is_string_value()
+            eval_value = (str(eval_value))[1:-1] # Hack to get rid of double quotes
+            point[i] = exprs.Value(eval_value, exprtypes.StringType())
         else:
             raise basetypes.UnhandledCaseError('solvers.In model_to_point')
     return tuple(point)
@@ -107,7 +112,10 @@ class ESolver(object):
         eval_ctx.set_interpretation(self.synth_fun, term)
         for point in self.points:
             eval_ctx.set_valuation_map(point)
-            if not evaluation.evaluate_expression_raw(self.canon_spec, eval_ctx):
+            try:
+                if not evaluation.evaluate_expression_raw(self.canon_spec, eval_ctx):
+                    return False
+            except basetypes.PartialFunctionError:
                 return False
         return True
 
@@ -160,7 +168,7 @@ class ESolver(object):
         while True:
             try:
                 term = next(terms)
-                # print(exprs.expression_to_string(term))
+                # print('GOT:', exprs.expression_to_string(term))
             except StopIteration:
                 # self.generator_factory.print_caches()
                 size = size + 1

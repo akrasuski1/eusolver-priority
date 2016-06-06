@@ -50,18 +50,19 @@ import semantics_core
 import semantics_bv
 import semantics_types
 import semantics_lia
+import semantics_slia
 import synthesis_context
 import grammars
 
-_known_theories = [ "LIA", "BV" ]
+_known_theories = [ "LIA", "BV", "SLIA" ]
 
 def get_theory_instantiator(theory):
     if theory == "LIA":
         return semantics_lia.LIAInstantiator()
     elif theory == "BV":
-        # Arjun: This has to cleaned up.
-        # We need to find the right bit vector length
         return semantics_bv.BVInstantiator()
+    elif theory == "SLIA":
+        return semantics_slia.SLIAInstantiator()
     else:
         raise Exception("Unknown theory")
 
@@ -85,6 +86,8 @@ def sexp_to_value(sexp):
         value = True if value_exp == 'true' else False
     elif value_type.type_code == exprtypes.TypeCodes.bit_vector_type:
         value = BitVector(int(str(value_exp)), value_type.size)
+    elif value_type.type_code == exprtypes.TypeCodes.string_type:
+        value = value_exp
     else:
         raise Exception('Unknown type: %s' % value_type)
     return exprs.Value(value, value_type)
@@ -114,6 +117,8 @@ def sexp_to_type(sexp):
         return exprtypes.IntType()
     elif sexp == 'Bool':
         return exprtypes.BoolType()
+    elif sexp == 'String':
+        return exprtypes.StringType()
     else:
         raise Exception("Unknown type: %s" % str(sexp))
 
@@ -167,6 +172,7 @@ def _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, rule_
         function_args = [ _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, child) for child in rule_data[1:] ]
         function_arg_types = tuple([ x.type for x in function_args ])
         function = syn_ctx.make_function(function_name, *function_arg_types)
+        assert function is not None
         return grammars.FunctionRewrite(function, *function_args)
     else:
         raise Exception('Unknown right hand side: %s' % rule_data)
@@ -261,7 +267,8 @@ def test_make_solver():
     import parser
 
     # for benchmark_file in [ "../benchmarks/invertD.sl" ]:
-    for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
+    # for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
+    for benchmark_file in [ "../benchmarks/str.sl" ]:
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp, use_esolver=True)
 

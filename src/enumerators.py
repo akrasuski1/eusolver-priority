@@ -385,14 +385,22 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
             if next_expr is None:
                 self.finished_generators[(placeholder, size)] = True
                 return None
-            signature = self._compute_signature(next_expr)
-            if signature not in self.signatures[placeholder]:
-                cached_exprs.append(next_expr)
-                self.signatures[placeholder].append(signature)
-                return next_expr 
-            else:
+            try:
+                signature = self._compute_signature(next_expr)
+                if signature not in self.signatures[placeholder]:
+                    cached_exprs.append(next_expr)
+                    self.signatures[placeholder].append(signature)
+                    # print('Generated', placeholder, size, ':', exprs.expression_to_string(next_expr),
+                    #         'with signature', signature)
+                    return next_expr 
+                else:
+                    pass
+                    # print('Eliminated', placeholder, size, ':', exprs.expression_to_string(next_expr),
+                    #         'with signature', signature)
+            except basetypes.PartialFunctionError:
+                # print('Undefined', placeholder, size, ':', exprs.expression_to_string(next_expr),
+                #         'with signature', signature)
                 pass
-                # print('Eliminated', placeholder, size, ':', exprs.expression_to_string(next_expr))
 
     def _instantiate_placeholder(self, placeholder):
         return PointDistinctGenerator(placeholder, self)

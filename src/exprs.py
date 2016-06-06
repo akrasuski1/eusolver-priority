@@ -154,6 +154,8 @@ def _constant_to_string(constant_type, constant_value):
     if (constant_type == exprtypes.BoolType() or
         constant_type == exprtypes.IntType()):
         return str(constant_value)
+    elif constant_type == exprtypes.StringType():
+        return '"%s"' % constant_value
     else:
         return utils.bitvector_to_string(constant_value, constant_type.size)
 

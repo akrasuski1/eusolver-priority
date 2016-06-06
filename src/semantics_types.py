@@ -92,6 +92,8 @@ def _to_smt_constant_expression(expr_object, smt_context_object):
         int_value = val_obj.value_object.value
         return z3.BitVecVal(int_value, constant_type.size,
                             smt_context_object.ctx())
+    elif (constant_type.type_code == exprtypes.TypeCodes.string_type):
+        return z3.StringVal(val_obj.value_object, smt_context_object.ctx())
     else:
         raise basetypes.UnhandledCaseError('Odd type code: %s' % constant_type.type_code)
 

@@ -71,11 +71,13 @@ def evaluate_expression_on_stack(expr_object, eval_context):
         fun_info.evaluate(expr_object, eval_context)
     else:
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+    # print(exprs.expression_to_string(expr_object), 'evaluated to', eval_context.peek())
 
 def evaluate_expression_raw(expr_object, eval_context):
     evaluate_expression_on_stack(expr_object, eval_context)
     retval = eval_context.peek()
     eval_context.pop()
+    # print(exprs.expression_to_string(expr_object), 'evaluated to', retval)
     return retval
 
 def evaluate_expression(expr_object, eval_context):

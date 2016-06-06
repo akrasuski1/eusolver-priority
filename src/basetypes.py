@@ -86,5 +86,9 @@ class UnhandledCaseError(Exception):
         """Unhandled case, could be new subclass, or just a non-exhaustive
         pattern/case match. Details: """ + error_msg
 
+class PartialFunctionError(Exception):
+    def __init__(self):
+        pass
+
 #
 # basetypes.py ends here

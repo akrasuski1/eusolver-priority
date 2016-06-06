@@ -37,142 +37,119 @@
 # Code:
 
 from semantics_types import FunctionBase, InterpretedFunctionBase
+import semantics_types
+import basetypes
+import semantics_lia
+import exprtypes
+import z3
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
 class StrConcat(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.++', 2,
+        super().__init__('str.++', 2,
                 (exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.StringType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        res = eval_context_object.peek(1) + eval_context_object.peek(0)
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
+        self.smt_function = z3.Concat
+        self.eval_children = lambda a,b: a + b
 
 class StrReplace(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.replace', 3,
+        super().__init__('str.replace', 3,
                 (exprtypes.StringType(), exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.StringType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(3)
-        eval_context_object.push(res)
+        self.smt_function = z3.Replace
+        self.eval_children = lambda a,b,c: str.replace(a, b, c, 1)
 
 class StrAt(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.at', 2,
+        super().__init__('str.at', 2,
                 (exprtypes.StringType(), exprtypes.IntType()),
                 exprtypes.StringType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
+        self.smt_function = lambda a,b: a[b]
+        def eval_c(a, b):
+            if 0 <= b < len(a):
+                return a[b]
+            else:
+                raise basetypes.PartialFunctionError()
+        # def eval_c(a, b):
+            # return a[b] if 0 <= b < len(a) else "ಠ"
+        self.eval_children = eval_c
 
 class IntToStr(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('int.to.str', 1,
+        super().__init__('int.to.str', 1,
                 (exprtypes.StringType(),),
                 exprtypes.StringType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(1)
-        eval_context_object.push(res)
+        self.smt_function = z3.Itos
+        self.eval_children = lambda a : str(a)
+        # raise NotImplementedError
 
 class Substr(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.substr', 3,
+        super().__init__('str.substr', 3,
                 (exprtypes.StringType(), exprtypes.IntType(), exprtypes.IntType()),
                 exprtypes.StringType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(3)
-        eval_context_object.push(res)
+        self.smt_function = z3.Extract
+        self.eval_children = lambda a,b,c: a[b:(c+1)]
 
 class StrLen(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.len', 1,
+        super().__init__('str.len', 1,
                 (exprtypes.StringType(),),
                 exprtypes.IntType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(1)
-        eval_context_object.push(res)
+        self.smt_function = z3.Length
+        self.eval_children = lambda a: len(a)
 
 class StrToInt(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.to.int', 1,
+        super().__init__('str.to.int', 1,
                 (exprtypes.StringType(),),
                 exprtypes.IntType())
-
-    # Only positive decimal numbers
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(1)
-        eval_context_object.push(res)
+        self.smt_function = z3.Stoi
+        def eval_c(a):
+            try:
+                ret = int(a)
+                if (a < 0): 
+                    raise  basetypes.PartialFunctionError()
+                return ret
+            except ValueError:
+                raise basetypes.PartialFunctionError()
+        self.eval_children = eval_c
+        # raise NotImplementedError
 
 class StrIndexOf(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.indexof', 3,
-                (exprtypes.StringType(), exprtypes.StringType()),
+        super().__init__('str.indexof', 3,
+                (exprtypes.StringType(), exprtypes.StringType(), exprtypes.IntType()),
                 exprtypes.IntType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(3)
-        eval_context_object.push(res)
+        self.smt_function = z3.IndexOf
+        self.eval_children = str.find
 
 class StrPrefixOf(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.prefixof', 2,
+        super().__init__('str.prefixof', 2,
                 (exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.BoolType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
+        self.smt_function = z3.PrefixOf
+        self.eval_children = str.startswith
 
 class StrSuffixOf(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.suffixof', 2,
+        super().__init__('str.suffixof', 2,
                 (exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.BoolType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
+        self.smt_function = z3.SuffixOf
+        self.eval_children = str.endswith
 
 class StrContains(InterpretedFunctionBase):
     def __init__(self):
-        super.__init__('str.contains', 2,
+        super().__init__('str.contains', 2,
                 (exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.BoolType())
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
+        self.smt_function = z3.Contains
+        self.eval_children = lambda a,b: str.find(a,b) != -1
 
 class SLIAInstantiator(semantics_types.InstantiatorBase):
     def __init__(self):
@@ -181,15 +158,15 @@ class SLIAInstantiator(semantics_types.InstantiatorBase):
         self.function_types = {
                 'str.++': (exprtypes.StringType(), exprtypes.StringType()),
                 'str.replace': (exprtypes.StringType(), exprtypes.StringType(), exprtypes.StringType()),
-                'str.at': (exprtypes.StringType() exprtypes.IntType()),
-                'int.to.str': (exprtypes.StringType()),
-                'str.substr': (exprtypes.StringType() exprtypes.IntType() exprtypes.IntType()),
-                'str.len': (exprtypes.StringType()),
-                'str.to.int': (exprtypes.StringType()),
-                'str.indexof': (exprtypes.StringType() exprtypes.StringType() exprtypes.IntType()),
-                'str.prefixof': (exprtypes.StringType() exprtypes.StringType()),
-                'str.suffixof': (exprtypes.StringType() exprtypes.StringType()),
-                'str.contains': (exprtypes.StringType() exprtypes.StringType())
+                'str.at': (exprtypes.StringType(), exprtypes.IntType()),
+                'int.to.str': (exprtypes.StringType(), ),
+                'str.substr': (exprtypes.StringType(), exprtypes.IntType(), exprtypes.IntType()),
+                'str.len': (exprtypes.StringType(), ),
+                'str.to.int': (exprtypes.StringType(), ),
+                'str.indexof': (exprtypes.StringType(), exprtypes.StringType(), exprtypes.IntType()),
+                'str.prefixof': (exprtypes.StringType(), exprtypes.StringType()),
+                'str.suffixof': (exprtypes.StringType(), exprtypes.StringType()),
+                'str.contains': (exprtypes.StringType(), exprtypes.StringType())
                 }
         self.function_instances = {
                 'str.++': StrConcat(),
@@ -205,6 +182,9 @@ class SLIAInstantiator(semantics_types.InstantiatorBase):
                 'str.contains': StrContains()
                 }
 
+    def _get_canonical_function_name(self, function_name):
+        return function_name
+
     def _do_instantiation(self, function_name, mangled_name, arg_types):
         lia_func = self.lia_instantiator._do_instantiation(
                 function_name,
@@ -216,7 +196,8 @@ class SLIAInstantiator(semantics_types.InstantiatorBase):
         if function_name not in self.function_types:
             return None
 
-        assert arg_types == function_types[function_name]
+        assert arg_types == self.function_types[function_name]
+        return self.function_instances[function_name]
 
 
 #

@@ -60,6 +60,12 @@ def verifyLen(s,l,t):
                     "invalid data of length %d, expected %s" % (t1len, t.len))
     return t[1]
 
+def stripDoubleQuotes(x):
+    if x[0] == '"' and x[-1] == '"':
+        return x[1:-1]
+    else:
+        raise NotImplementedError
+
 # define punctuation literals
 LPAR, RPAR, LBRK, RBRK, LBRC, RBRC, VBAR = map(Suppress, "()[]{}|")
 
@@ -74,14 +80,14 @@ base64_ = Group(Optional(decimal|hexadecimal,default=None)("len") + VBAR
     + VBAR).setParseAction(verifyLen)
     
 qString = Group(Optional(decimal,default=None)("len") + 
-                        dblQuotedString.setParseAction(removeQuotes)).setParseAction(verifyLen)
+        dblQuotedString.setParseAction(lambda s: ('String', stripDoubleQuotes(s[0])))).setParseAction(verifyLen)
 simpleString = base64_ | raw | decimal | token | hexadecimal | qString 
 
 # extended definitions
 
 real = Regex(r"[+-]?\d+\.\d*([eE][+-]?\d+)?").setParseAction(lambda tokens: float(tokens[0]))
-token = Word(alphanums + "-./_:*+=!<>").setParseAction(lambda t: ('Bool', 1) if t[0] == 'true' else \
-  ('Bool', 0) if t[0] == 'false' else t)
+token = Word(alphanums + "-./_:*+=!<>").setParseAction(lambda t: ('Bool', 'true') if t[0] == 'true' else \
+  ('Bool', 'false') if t[0] == 'false' else t)
 
 simpleString = real | base64_ | raw | decimal | token | hexadecimal | qString 
 
