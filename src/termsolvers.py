@@ -46,7 +46,6 @@ import exprs
 import semantics_types
 
 _expr_to_str = exprs.expression_to_string
-_expr_to_smt = semantics_types.expression_to_smt
 _is_expr = exprs.is_expression
 _get_expr_with_id = exprs.get_expr_with_id
 

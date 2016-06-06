@@ -38,19 +38,14 @@
 
 # Code:
 
-import basetypes
-import eusolver
 from termsolvers import TermSolver
 from unifiers import Unifier
-from bitvectors import BitVector
+from verifiers import Verifier
 import evaluation
-import exprtypes
 import exprs
-import z3
 import z3smt
 import semantics_types
 from enum import IntEnum
-import enumerators
 
 import signal
 import resource
@@ -62,33 +57,6 @@ _expr_to_smt = semantics_types.expression_to_smt
 _is_expr = exprs.is_expression
 _get_expr_with_id = exprs.get_expr_with_id
 
-def _point_list_to_str(points):
-    retval = ''
-    for point in points:
-        retval += str([x.value_object for x in point])
-        retval += '\n'
-    return retval
-
-def _guard_term_list_to_str(guard_term_list):
-    retval = ''
-    for (guard, term_list) in guard_term_list:
-        retval += _expr_to_str(guard)
-        retval += ' ->\n'
-        for term in term_list:
-            retval += '        '
-            retval += _expr_to_str(term)
-            retval += '\n'
-    return retval
-
-def guard_term_list_to_expr(guard_term_list, syn_ctx):
-    num_branches = len(guard_term_list)
-    retval = guard_term_list[num_branches-1][1]
-    for i in reversed(range(0, num_branches-1)):
-        retval = syn_ctx.make_function_expr('ite', guard_term_list[i][0],
-                                            guard_term_list[i][1], retval)
-    return retval
-
-
 class DuplicatePointException(Exception):
     def __init__(self, point):
         self.point = point
@@ -96,7 +64,6 @@ class DuplicatePointException(Exception):
     def __str__(self):
         return 'Duplicate Point %s' % str([self.point[i].value_object
                                            for i in range(len(self.point))])
-
 
 class Solver(object):
     def __init__(self, syn_ctx):
@@ -136,7 +103,8 @@ class Solver(object):
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
         synth_fun = uf_list[0]
         term_solver = TermSolver(canon_spec, term_generator, synth_fun)
-        unifier = Unifier(self.syn_ctx, self.smt_ctx, pred_generator, term_solver, synth_fun)
+        unifier = Unifier(pred_generator, term_solver)
+        verifier = Verifier(self.syn_ctx, self.smt_ctx, synth_fun)
         time_origin = time.clock()
 
         while (True):
@@ -148,28 +116,31 @@ class Solver(object):
             # print('Term solve complete!')
             # print([ _expr_to_str(term) for sig,term in term_solver.signature_to_term.items()])
             unifier_state = unifier.unify()
-
             while (True):
-                r = next(unifier_state)
+                unification = next(unifier_state)
+                sol_or_cex = verifier.verify(unification)
                 # print('Unification Complete!')
                 # print([ _expr_to_str(pred) for sig,pred in unifier.signature_to_pred.items()])
-                if (isinstance(r, tuple)):
-                    (sol, dt_size, num_t, num_p, max_t, max_p) = r
-                    solution_found_at = time.clock() - time_origin
-                    yield (sol, dt_size, num_t, num_p, max_t, max_p,
-                           len(self.points), solution_found_at)
 
-                elif (isinstance(r, list)):
+                if _is_expr(sol_or_cex):
+                    solution_found_at = time.clock() - time_origin
+                    yield (sol_or_cex,
+                            unifier.last_dt_size,
+                            len(term_solver.signature_to_term),
+                            len(unifier.signature_to_pred),
+                            term_solver.get_largest_term_size_enumerated(),
+                            unifier.get_largest_pred_size_enumerated(),
+                            len(self.points),
+                            solution_found_at)
+                else:
                     # this is a set of counterexamples
                     # print('Solver: Adding %d points' % len(r))
                     # for p in r:
                         # print('\t', p)
-                    term_solver.add_points(r) # Term solver can add all points at once
-                    unifier.add_points(r)
-                    self.add_points(r)
+                    term_solver.add_points(sol_or_cex) # Term solver can add all points at once
+                    unifier.add_points(sol_or_cex)
+                    self.add_points(sol_or_cex)
                     break
-                else:
-                    return None
 
 
 ########################################################################
@@ -205,6 +176,7 @@ def test_solver_max(num_vars, run_anytime_version):
     import semantics_core
     import semantics_lia
     import enumerators
+    import exprtypes
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_lia.LIAInstantiator())
