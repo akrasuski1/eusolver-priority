@@ -67,6 +67,9 @@ class Z3SMTContext(object):
     def make_int_sort(self):
         return z3.IntSort(self.ctx())
 
+    def make_string_sort(self):
+        return z3.StringSort(self.ctx())
+
     def make_bitvector_sort(self, size):
         return z3.BitVecSort(size, self.ctx())
 

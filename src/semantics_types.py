@@ -222,6 +222,18 @@ class InterpretedFunctionBase(FunctionBase):
         super().__init__(FunctionKinds.interpreted_function, function_name, function_arity,
                          domain_types, range_type)
 
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
+        return self.smt_function(*child_terms)
+
+    def evaluate(self, expr_object, eval_context_object):
+        num_children = len(expr_object.children)
+        self._evaluate_children(expr_object, eval_context_object)
+        res = self.eval_children(*eval_context_object.peek_items(num_children))
+        eval_context_object.pop(num_children)
+        eval_context_object.push(res)
+
+
 class MacroFunction(UnknownFunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type, interpretation_expression, arg_vars):
         super().__init__(FunctionKinds.macro_function, function_name, function_arity, domain_types, range_type)

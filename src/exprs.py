@@ -110,6 +110,7 @@ def ConstantExpression(value_object):
     return _ConstantExpression(_constant_expression, value_object, None)
 
 def FunctionExpression(function_info, children):
+    assert function_info is not None
     return _FunctionExpression(_function_expression,
                                function_info, children, None)
 

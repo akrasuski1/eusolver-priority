@@ -1,0 +1,223 @@
+#!/usr/bin/env python3
+# semantics_slia.py ---
+# Filename: semantics_slia.py
+# Author: Arjun Radhakrishna
+# Created: Sun, 05 Jun 2016 11:49:06 -0400
+#
+# Copyright (c) 2013, Abhishek Udupa, University of Pennsylvania
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#    This product includes software developed by The University of Pennsylvania
+# 4. Neither the name of the University of Pennsylvania nor the
+#    names of its contributors may be used to endorse or promote products
+#    derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER ''AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#
+
+# Code:
+
+from semantics_types import FunctionBase, InterpretedFunctionBase
+
+if __name__ == '__main__':
+    utils.print_module_misuse_and_exit()
+
+class StrConcat(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.++', 2,
+                (exprtypes.StringType(), exprtypes.StringType()),
+                exprtypes.StringType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+        res = eval_context_object.peek(1) + eval_context_object.peek(0)
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
+class StrReplace(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.replace', 3,
+                (exprtypes.StringType(), exprtypes.StringType(), exprtypes.StringType()),
+                exprtypes.StringType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(3)
+        eval_context_object.push(res)
+
+class StrAt(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.at', 2,
+                (exprtypes.StringType(), exprtypes.IntType()),
+                exprtypes.StringType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
+class IntToStr(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('int.to.str', 1,
+                (exprtypes.StringType(),),
+                exprtypes.StringType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(1)
+        eval_context_object.push(res)
+
+class Substr(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.substr', 3,
+                (exprtypes.StringType(), exprtypes.IntType(), exprtypes.IntType()),
+                exprtypes.StringType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(3)
+        eval_context_object.push(res)
+
+class StrLen(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.len', 1,
+                (exprtypes.StringType(),),
+                exprtypes.IntType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(1)
+        eval_context_object.push(res)
+
+class StrToInt(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.to.int', 1,
+                (exprtypes.StringType(),),
+                exprtypes.IntType())
+
+    # Only positive decimal numbers
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(1)
+        eval_context_object.push(res)
+
+class StrIndexOf(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.indexof', 3,
+                (exprtypes.StringType(), exprtypes.StringType()),
+                exprtypes.IntType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(3)
+        eval_context_object.push(res)
+
+class StrPrefixOf(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.prefixof', 2,
+                (exprtypes.StringType(), exprtypes.StringType()),
+                exprtypes.BoolType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
+class StrSuffixOf(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.suffixof', 2,
+                (exprtypes.StringType(), exprtypes.StringType()),
+                exprtypes.BoolType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
+class StrContains(InterpretedFunctionBase):
+    def __init__(self):
+        super.__init__('str.contains', 2,
+                (exprtypes.StringType(), exprtypes.StringType()),
+                exprtypes.BoolType())
+
+    def evaluate(self, expr_object, eval_context_object):
+        self._evaluate_children(expr_object, eval_context_object)
+
+        eval_context_object.pop(2)
+        eval_context_object.push(res)
+
+class SLIAInstantiator(semantics_types.InstantiatorBase):
+    def __init__(self):
+        super().__init__('slia')
+        self.lia_instantiator = semantics_lia.LIAInstantiator()
+        self.function_types = {
+                'str.++': (exprtypes.StringType(), exprtypes.StringType()),
+                'str.replace': (exprtypes.StringType(), exprtypes.StringType(), exprtypes.StringType()),
+                'str.at': (exprtypes.StringType() exprtypes.IntType()),
+                'int.to.str': (exprtypes.StringType()),
+                'str.substr': (exprtypes.StringType() exprtypes.IntType() exprtypes.IntType()),
+                'str.len': (exprtypes.StringType()),
+                'str.to.int': (exprtypes.StringType()),
+                'str.indexof': (exprtypes.StringType() exprtypes.StringType() exprtypes.IntType()),
+                'str.prefixof': (exprtypes.StringType() exprtypes.StringType()),
+                'str.suffixof': (exprtypes.StringType() exprtypes.StringType()),
+                'str.contains': (exprtypes.StringType() exprtypes.StringType())
+                }
+        self.function_instances = {
+                'str.++': StrConcat(),
+                'str.replace': StrReplace(),
+                'str.at': StrAt(),
+                'int.to.str': IntToStr(),
+                'str.substr': Substr(),
+                'str.len': StrLen(),
+                'str.to.int': StrToInt(),
+                'str.indexof': StrIndexOf(),
+                'str.prefixof': StrPrefixOf(),
+                'str.suffixof': StrSuffixOf(),
+                'str.contains': StrContains()
+                }
+
+    def _do_instantiation(self, function_name, mangled_name, arg_types):
+        lia_func = self.lia_instantiator._do_instantiation(
+                function_name,
+                mangled_name,
+                arg_types)
+        if lia_func is not None:
+            return lia_func
+
+        if function_name not in self.function_types:
+            return None
+
+        assert arg_types == function_types[function_name]
+
+
+#
+# semantics_slia.py ends here

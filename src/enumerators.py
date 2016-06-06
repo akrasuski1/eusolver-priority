@@ -178,6 +178,7 @@ class FunctionalGenerator(NonLeafGenerator):
 
     def __init__(self, function_descriptor, sub_generators, name = None):
         super().__init__(sub_generators,  name)
+        assert function_descriptor is not None
         self.function_descriptor = function_descriptor
 
     def _instantiate(self, sub_exprs):

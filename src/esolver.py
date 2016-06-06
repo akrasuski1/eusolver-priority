@@ -45,6 +45,7 @@ import z3smt
 import enumerators
 import z3
 import semantics_types
+from bitvectors import *
 
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
@@ -86,7 +87,7 @@ class ESolver(object):
 
     def add_points(self, points):
         for point in points:
-            print('Adding point:', [ x.value_object for x in point])
+            # print('Adding point:', [ x.value_object for x in point])
             if (point in self.point_set):
                 raise DuplicatePointException(point)
             self.point_set.add(point)
@@ -149,7 +150,7 @@ class ESolver(object):
         frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)
         self.smt_solver.add(frozen_smt_cnstr)
 
-        print([_expr_to_str(var) for var in self.var_expr_list])
+        # print([_expr_to_str(var) for var in self.var_expr_list])
 
         term_generator = self.grammar.to_generator(self.generator_factory)
         size = 1
@@ -163,12 +164,11 @@ class ESolver(object):
             except StopIteration:
                 # self.generator_factory.print_caches()
                 size = size + 1
-                print(size)
+                # print(size)
                 term_generator.set_size(size)
                 terms = term_generator.generate()
                 continue
 
-            # print('Got term:', _expr_to_str(term))
             if not self._concrete_verify(term):
                 continue
             # print('Passed concrete verify:', _expr_to_str(term))

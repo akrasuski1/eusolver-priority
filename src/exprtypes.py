@@ -57,6 +57,7 @@ class TypeCodes(IntEnum):
     boolean_type = 1
     integer_type = 2
     bit_vector_type = 3
+    string_type = 4
 
 _type_id_counter = 0
 
@@ -102,6 +103,28 @@ _boolean_type_instance = _BoolType()
 def BoolType():
     return _boolean_type_instance
 
+class _StringType(TypeBase):
+    """A String Type."""
+
+    def __init__(self):
+        super().__init__(TypeCodes.string_type)
+
+    def __str__(self):
+        return 'StringType'
+
+    def __repr__(self):
+        return 'StringType'
+
+    def __hash__(self):
+        return hash(TypeCodes.string_type)
+
+    def get_smt_type(self, smt_context_object):
+        return smt_context_object.make_string_sort()
+
+_string_type_instance = _StringType()
+
+def StringType():
+    return _string_type_instance
 
 class _IntType(TypeBase):
     """An Integer Type."""

@@ -56,160 +56,64 @@ class EqFunction(InterpretedFunctionBase):
     """A function object for equality. Parametrized by the domain type."""
     def __init__(self, domain_type):
         super().__init__('=', 2, (domain_type, domain_type), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return (child_terms[0] == child_terms[1])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        result = (eval_context_object.peek(0) == eval_context_object.peek(1))
-        eval_context_object.pop(2)
-        eval_context_object.push(result)
-
+        self.smt_function = lambda a, b: a == b
+        self.eval_children = lambda a, b: a == b
 
 class NeFunction(InterpretedFunctionBase):
     def __init__(self, domain_type):
         super().__init__('ne', 2, (domain_type, domain_type), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return (child_terms[0] != child_terms[1])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        result = (eval_context_object.peek(0) != eval_context_object.peek(1))
-        eval_context_object.pop(2)
-        eval_context_object.push(result)
-
+        self.smt_function = lambda a, b: a != b
+        self.eval_children = lambda a, b: a != b
 
 class AndFunction(InterpretedFunctionBase):
     """A function object for conjunctions. Allows arbitrary number of arguments."""
     def __init__(self):
         super().__init__('and', -1, (exprtypes.BoolType(), ), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.And(*(child_terms + [child_terms[0].ctx]))
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        result = True
-        num_children = len(expr_object.children)
-        for i in range(num_children):
-            if (not eval_context_object.peek(i)):
-                result = False
-                break
-        eval_context_object.pop(num_children)
-        eval_context_object.push(result)
-
+        self.smt_function = lambda *children: z3.And(children, children[0].ctx)
+        self.eval_children = lambda *children: all(children)
 
 class OrFunction(InterpretedFunctionBase):
     """A function object for disjunctions. Allows arbitrary number of arguments."""
     def __init__(self):
         super().__init__('or', -1, (exprtypes.BoolType(), ), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.Or(*(child_terms + [child_terms[0].ctx]))
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        num_children = len(expr_object.children)
-        result = False
-        for i in range(num_children):
-            if (eval_context_object.peek(i)):
-                result = True
-                break
-        eval_context_object.pop(num_children)
-        eval_context_object.push(result)
-
+        self.smt_function = lambda *children: z3.Or(children, children[0].ctx)
+        self.eval_children = lambda *children: any(children)
 
 class NotFunction(InterpretedFunctionBase):
     """A function object for negation."""
     def __init__(self):
         super().__init__('not', 1, (exprtypes.BoolType(),), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.Not(child_terms[0])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        result = (not eval_context_object.peek())
-        eval_context_object.pop()
-        eval_context_object.push(result)
-
+        self.smt_function = z3.Not
+        self.eval_children = lambda child: not child
 
 class ImpliesFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('implies', 2, (exprtypes.BoolType(), exprtypes.BoolType()),
                          exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.Implies(child_terms[0], child_terms[1])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        b = eval_context_object.peek(0)
-        a = eval_context_object.peek(1)
-        result = ((not a) or b)
-        eval_context_object.pop(2)
-        eval_context_object.push(result)
-
+        self.smt_function = z3.Implies
+        self.eval_children = lambda a, b: (not a) or b
 
 class IffFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('iff', 2, (exprtypes.BoolType(), exprtypes.BoolType()),
                          exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return (child_terms[0] == child_terms[1])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        result = (eval_context_object.peek(0) == eval_context_object.peek(1))
-        eval_context_object.pop(2)
-        eval_context_object.push(result)
-
+        self.smt_function = lambda a, b: a == b
+        self.eval_children = lambda a, b: a == b
 
 class XorFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('xor', 2, (exprtypes.BoolType(), exprtypes.BoolType()),
                          exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.Xor(child_terms[0], child_terms[1])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        result = (eval_context_object.peek(0) != eval_context_object.peek(1))
-        eval_context_object.pop(2)
-        eval_context_object.push(result)
-
+        self.smt_function = z3.Xor
+        self.eval_children = lambda a, b: a != b
 
 class IteFunction(InterpretedFunctionBase):
     def __init__(self, range_type):
         super().__init__('ite', 3, (exprtypes.BoolType(),
                                     range_type, range_type),
                          range_type)
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.If(child_terms[0], child_terms[1], child_terms[2])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_expr(expr_object.children[0], eval_context_object)
-        condition = eval_context_object.peek(0)
-        eval_context_object.pop(1)
-        if (condition):
-            self._evaluate_expr(expr_object.children[1], eval_context_object)
-        else:
-            self._evaluate_expr(expr_object.children[2], eval_context_object)
-
+        self.smt_function = z3.If
+        self.eval_children = lambda a, b, c: b if a else c
 
 class CoreInstantiator(semantics_types.InstantiatorBase):
     def __init__(self):

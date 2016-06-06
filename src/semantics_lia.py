@@ -51,139 +51,56 @@ if __name__ == '__main__':
 class AddFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('add', -1, (exprtypes.IntType(), ), exprtypes.IntType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.Sum(*child_terms)
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        num_children = len(expr_object.children)
-        retval = sum(eval_context_object.peek_items(num_children))
-        eval_context_object.pop(num_children)
-        eval_context_object.push(retval)
-
+        self.eval_children = lambda *args: sum(args)
+        self.smt_function = z3.Sum
 
 class SubFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('sub', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.IntType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return child_terms[0] - child_terms[1]
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        retval = eval_context_object.peek(1) - eval_context_object.peek(0)
-        eval_context_object.pop(2)
-        eval_context_object.push(retval)
-
+        self.eval_children = lambda a, b : a - b
+        self.smt_function = lambda a, b : a - b
 
 class MinusFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('sub', 1, (exprtypes.IntType(),), exprtypes.IntType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return -(child_terms[0])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        retval = -(eval_context_object.peek())
-        eval_context_object.pop()
-        eval_context_object.push(retval)
-
+        self.eval_children = lambda x: -x
+        self.smt_function = lambda x: -x
 
 class MulFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('mul', -1 (exprtypes.IntType(), ), exprtypes.IntType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.Product(*child_terms)
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        num_children = len(expr_object.children)
-        retval = functools.reduce(lambda x,y: x*y, eval_context_object.peek_items(num_children), 1)
-        eval_context_object.pop(num_children)
-        eval_context_object.push(retval)
-
+        self.eval_children = lambda cs: functools.reduce(lambda x,y: x*y, cs, 1)
+        self.smt_function = z3.Product
 
 class DivFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('div', -1, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.IntType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return child_terms[0] / child_terms[1]
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        res = eval_context_object.peek(1) / eval_context_object.peek(0)
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
-
+        self.eval_children = lambda a, b : a / b
+        self.smt_function = lambda a, b : a / b
 
 class LEFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('<=', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return child_terms[0] <= child_terms[1]
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        res = (eval_context_object.peek(1) <= eval_context_object.peek(0))
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
-
+        self.eval_children = lambda a, b : a <= b
+        self.smt_function = lambda a, b : a <= b
 
 class LTFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('<', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return child_terms[0] < child_terms[1]
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        res = (eval_context_object.peek(1) < eval_context_object.peek(0))
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
-
+        self.eval_children = lambda a, b : a < b
+        self.smt_function = lambda a, b : a < b
 
 class GEFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('>=', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return child_terms[0] >= child_terms[1]
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        res = (eval_context_object.peek(1) >= eval_context_object.peek(0))
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
-
+        self.eval_children = lambda a, b : a >= b
+        self.smt_function = lambda a, b : a >= b
 
 class GTFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('>', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.BoolType())
-
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return child_terms[0] > child_terms[1]
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        res = (eval_context_object.peek(1) > eval_context_object.peek(0))
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
-
+        self.eval_children = lambda a, b : a > b
+        self.smt_function = lambda a, b : a > b
 
 class LIAInstantiator(semantics_types.InstantiatorBase):
     def __init__(self):

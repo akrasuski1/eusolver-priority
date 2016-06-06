@@ -260,9 +260,8 @@ def make_solver(file_sexp, use_esolver=False):
 def test_make_solver():
     import parser
 
-    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl", "../benchmarks/max/max_2.sl" ]:
-    for benchmark_file in [ "../benchmarks/max/max_3.sl" ]:
     # for benchmark_file in [ "../benchmarks/invertD.sl" ]:
+    for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp, use_esolver=True)
 
