@@ -250,4 +250,4 @@ class PointDistinctTermSolver(EnumerativeTermSolverBase):
         return self._default_solve(one_term_coverage)
 
 # TermSolver = PointlessTermSolver
-TermSolver = PointDistinctTermSolver
+# TermSolver = PointDistinctTermSolver

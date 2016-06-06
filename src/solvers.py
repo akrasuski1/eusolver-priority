@@ -38,11 +38,11 @@
 
 # Code:
 
-from termsolvers import TermSolver
-from unifiers import Unifier
-from verifiers import Verifier
 import evaluation
 import exprs
+import termsolvers
+import unifiers
+import verifiers
 import z3smt
 import semantics_types
 from enum import IntEnum
@@ -73,6 +73,11 @@ class Solver(object):
         self.term_solver_time = 0
         self.unifier_time = 0
 
+        act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
+        assert len(uf_list) == 1
+        self.synth_fun = uf_list[0]
+        self.canon_spec = canon_spec
+
     def reset(self):
         self.spec = None
         self.eval_ctx = evaluation.EvaluationContext()
@@ -82,29 +87,16 @@ class Solver(object):
 
     def add_points(self, points):
         for point in points:
-            # print('Solver: Added point %s' % str([str(c.value_object) for c in point]))
-            # print([ (str(x[0].value_object), hash(x[0].value_object)) for x in self.point_set ])
             if (point in self.point_set):
                 raise DuplicatePointException(point)
             self.point_set.add(point)
             self.points.append(point)
 
-    def add_specification(self, specification):
-        syn_ctx = self.syn_ctx
-        if (self.spec == None):
-            self.spec = specification
-        else:
-            self.spec = syn_ctx.make_ac_function_expr('and', self.spec,
-                                                      specification)
-
-    def solve(self, term_generator, pred_generator, generator_factory, divide_and_conquer=True):
+    def solve(self, term_generator, pred_generator, generator_factory, TermSolver, Unifier, divide_and_conquer=True):
         import time
-        act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
-        # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
-        synth_fun = uf_list[0]
-        term_solver = TermSolver(canon_spec, term_generator, synth_fun)
-        unifier = Unifier(pred_generator, term_solver, synth_fun)
-        verifier = Verifier(self.syn_ctx, self.smt_ctx, synth_fun)
+        term_solver = TermSolver(self.canon_spec, term_generator, self.synth_fun)
+        unifier = Unifier(pred_generator, term_solver, self.synth_fun)
+        verifier = verifiers.Verifier(self.syn_ctx, self.smt_ctx, self.synth_fun)
         time_origin = time.clock()
 
         while (True):
@@ -147,7 +139,7 @@ class Solver(object):
 ########################################################################
 def _do_solve(solver, generator_factory, term_generator, pred_generator, run_anytime_version):
     reported_expr_string_set = set()
-    for sol_tuple in solver.solve(term_generator, pred_generator, generator_factory):
+    for sol_tuple in solver.solve(term_generator, pred_generator, generator_factory, termsolvers.PointlessTermSolver, unifiers.PointlessEnumDTUnifier):
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
         sol_str = _expr_to_str(sol)
         if (sol_str in reported_expr_string_set):

@@ -189,4 +189,4 @@ class PointDistinctDTUnifier(EnumerativeDTUnifierBase):
                 indicator_fun)
 
 # Unifier = PointlessEnumDTUnifier
-Unifier = PointDistinctDTUnifier
+# Unifier = PointDistinctDTUnifier

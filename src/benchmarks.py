@@ -41,6 +41,8 @@
 from bitvectors import BitVector
 import parser
 import esolver
+import termsolvers
+import unifiers
 import naive_solvers
 import solvers
 import exprs
@@ -255,7 +257,7 @@ def make_solver(file_sexp, use_esolver=False):
             # print("Term grammar:\n", term_grammar)
             # print("Pred grammar:\n", pred_grammar)
             # generator_factory = enumerators.RecursiveGeneratorFactory()
-            generator_factory = enumerators.PointDistinctGeneratorFactory()
+            generator_factory = enumerators.RecursiveGeneratorFactory()
             term_generator = term_grammar.to_generator(generator_factory)
             pred_generator = pred_grammar.to_generator(generator_factory)
             solver = solvers.Solver(syn_ctx)
