@@ -39,6 +39,9 @@
 # Code:
 
 import exprs
+import termsolvers
+import random
+import semantics_types
 import exprtypes
 import evaluation
 import enumerators
@@ -63,7 +66,7 @@ class UnifierInterface(object):
     def unify(self):
         raise basetypes.AbstractMethodError('UnifierInterface.solve()')
 
-class EnumerativeUnifierBase(object):
+class EnumerativeDTUnifierBase(object):
     def __init__(self, pred_generator, term_solver):
         self.pred_generator = pred_generator
         self.term_solver = term_solver
@@ -74,71 +77,10 @@ class EnumerativeUnifierBase(object):
         self.points.extend(new_points)
         self.pred_solver.add_points(new_points)
 
-class Unifier(object):
-    def __init__(self, pred_generator, term_solver):
-        self.pred_generator = pred_generator
-        self.term_solver = term_solver
-        self.points = []
-        self.eval_ctx = evaluation.EvaluationContext()
-        self.eval_cache = {}
-        self.signature_to_pred = {}
-        self.bunch_generator = None
-        self.max_pred_size = 1024
-        self.current_largest_pred_size = 0
-        self.last_dt_size = 1
-
-    def add_points(self, new_points):
-        points = self.points
-        self.points.extend(new_points)
-        self.signature_factory = BitSet.make_factory(len(points))
-        self._do_complete_sig_to_pred()
-
-
-    def _do_complete_sig_to_pred(self):
-        old_sig_to_pred = self.signature_to_pred
-        new_sig_to_pred = {}
-
-        for sig, pred in old_sig_to_pred.items():
-            new_sig = self._compute_pred_signature(pred)
-            if not new_sig.is_empty():
-                new_sig_to_pred[new_sig] = pred
-
-        self.signature_to_pred = new_sig_to_pred
-
-
-    def _compute_pred_signature(self, pred):
-        points = self.points;
-        num_points = len(points)
-        retval = self.signature_factory()
-        eval_ctx = self.eval_ctx
-        eval_cache = self.eval_cache;
-
-        try:
-            r = eval_cache[pred.expr_id]
-            retval.copy_in(r)
-            # print('computing signature of predicate: %s' % _expr_to_str(pred))
-            # print('r      = %s' % str(r))
-            num_old_points = r.size_of_universe()
-            num_new_points = retval.size_of_universe()
-            for i in range(num_old_points, num_new_points):
-                eval_ctx.set_valuation_map(points[i])
-                if (evaluation.evaluate_expression_raw(pred, eval_ctx)):
-                    retval.add(i)
-            # print('retval = %s' % str(retval))
-            if (num_new_points > num_old_points):
-                eval_cache[pred.expr_id] = retval
-            # return retval
-
-        except KeyError:
-            # need to actually evaluate
-            for i in range(num_points):
-                eval_ctx.set_valuation_map(points[i])
-                if (evaluation.evaluate_expression_raw(pred, eval_ctx)):
-                    retval.add(i)
-            eval_cache[pred.expr_id] = retval
-            # return retval
-        # print(_expr_to_str(pred), " has signature ", retval, " on ", [ str(x[0].value_object) for x in points])
-        return retval
+    def get_largest_pred_size_enumerated(self):
+        if self.pred_solver is not None:
+            return self.pred_solver.get_largest_term_size_enumerated()
+        return -1
 
     def _try_trivial_unification(self):
         # we can trivially unify if there exists a term
@@ -158,7 +100,7 @@ class Unifier(object):
         for (term_sig, term) in self.term_solver.get_signature_to_term().items():
             term_list.append(term)
             term_sig_list.append(term_sig)
-        for (pred_sig, pred) in self.signature_to_pred.items():
+        for (pred_sig, pred) in self.pred_solver.signature_to_term.items():
             pred_list.append(pred)
             pred_sig_list.append(pred_sig)
 
@@ -178,52 +120,25 @@ class Unifier(object):
         else:
             return (term_list, term_sig_list, pred_list, pred_sig_list, dt)
 
-    def get_largest_pred_size_enumerated(self):
-        if self.bunch_generator is None:
-            return self.current_largest_pred_size
-        return max(self.current_largest_pred_size,
-                self.bunch_generator.current_object_size)
+    def get_num_distinct_preds(self):
+        return len(self.pred_solver.signature_to_term)
 
-
-    """returns/yields one of:
-    1. (expression, DT size, num terms, num preds, max term size, max pred size)
-    2. [list of counterexample points]
-    3. None, in case of exhaustion of terms/preds
-    """
     def unify(self):
         term_solver = self.term_solver
         signature_to_term = term_solver.get_signature_to_term()
-        signature_to_pred = self.signature_to_pred
+
         triv = self._try_trivial_unification()
         if triv is not None:
             yield ("TERM", triv)
             return
 
-        # cannot be trivially unified
-        num_points = len(self.points)
-        self.signature_factory = BitSet.make_factory(num_points)
-        monotonic_pred_id = 0
-
-        if self.bunch_generator is not None:
-            self.current_largest_pred_size = max(self.current_largest_pred_size,
-                    self.bunch_generator.current_object_size)
-
-        self.bunch_generator = enumerators.BunchedGenerator(self.pred_generator, self.max_pred_size)
-
-        for bunch in self.bunch_generator.generate():
-            new_preds_generated = False
-            for pred in bunch:
-                pred = _get_expr_with_id(pred, monotonic_pred_id)
-                monotonic_pred_id += 1
-
-                sig = self._compute_pred_signature(pred)
-                if (not sig.is_empty() and not sig.is_full() and sig not in signature_to_pred):
-                    signature_to_pred[sig] = pred
-                    new_preds_generated = True
-                else:
-                    continue
-
-            if (not new_preds_generated):
+        pred_solver = self.pred_solver
+        pred_solver.restart_bunched_generator()
+        while True:
+            old_pred_num = len(pred_solver.signature_to_term)
+            self.pred_solver.generate_more_terms()
+            new_pred_num = len(pred_solver.signature_to_term)
+            if old_pred_num == new_pred_num:
                 continue
 
             dt_tuple = self._try_decision_tree_learning()
@@ -235,3 +150,29 @@ class Unifier(object):
             yield ("DT_TUPLE", dt_tuple)
             success = term_solver.generate_more_terms()
 
+    def _dummy_spec(synth_fun):
+        func = semantics_types.SynthFunction(
+                'pred_indicator_' + str(random.randint(1, 10000000)),
+                synth_fun.function_arity,
+                synth_fun.domain_types,
+                exprtypes.BoolType())
+        args = []
+        for i, argtype in enumerate(synth_fun.domain_types):
+            arg = exprs.FormalParameterExpression(
+                    func, argtype, i)
+            args.append(arg)
+        expr = exprs.FunctionExpression(func, tuple(args))
+        return func, expr
+
+
+class PointlessEnumDTUnifier(EnumerativeDTUnifierBase):
+    def __init__(self, pred_generator, term_solver, synth_fun):
+        super().__init__(pred_generator, term_solver)
+        indicator_fun, indicator_expr = \
+                PointlessEnumDTUnifier._dummy_spec(synth_fun)
+        self.pred_solver = termsolvers.PointlessTermSolver(
+                indicator_expr,
+                pred_generator,
+                indicator_fun)
+
+Unifier = PointlessEnumDTUnifier

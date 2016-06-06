@@ -175,6 +175,9 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
         self.signature_to_term = new_sig_to_term
 
+    def get_num_distinct_terms(self):
+        return len(self.signature_to_term)
+
     def _default_generate_more_terms(self, transform_term=None):
         signature_to_term = self.signature_to_term
         bunch_generator_state = self.bunch_generator_state
@@ -195,11 +198,12 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
 
 
-class TermSolver(EnumerativeTermSolverBase):
+class PointlessTermSolver(EnumerativeTermSolverBase):
     def __init__(self, spec, term_generator, synth_fun):
         super().__init__(spec, synth_fun)
         self.term_generator = term_generator
         self.eval_cache = {}
+        self.monotonic_expr_id = 0
 
     def add_points(self, new_points):
         return self._default_add_points(new_points)
@@ -241,3 +245,4 @@ class PointDistinctTermSolver(EnumerativeTermSolverBase):
     def solve(self, one_term_coverage=False):
         return self._default_solve(one_term_coverage)
 
+TermSolver = PointlessTermSolver

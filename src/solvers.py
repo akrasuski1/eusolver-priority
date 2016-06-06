@@ -103,7 +103,7 @@ class Solver(object):
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
         synth_fun = uf_list[0]
         term_solver = TermSolver(canon_spec, term_generator, synth_fun)
-        unifier = Unifier(pred_generator, term_solver)
+        unifier = Unifier(pred_generator, term_solver, synth_fun)
         verifier = Verifier(self.syn_ctx, self.smt_ctx, synth_fun)
         time_origin = time.clock()
 
@@ -126,8 +126,8 @@ class Solver(object):
                     solution_found_at = time.clock() - time_origin
                     yield (sol_or_cex,
                             unifier.last_dt_size,
-                            len(term_solver.signature_to_term),
-                            len(unifier.signature_to_pred),
+                            term_solver.get_num_distinct_terms(),
+                            unifier.get_num_distinct_preds(),
                             term_solver.get_largest_term_size_enumerated(),
                             unifier.get_largest_pred_size_enumerated(),
                             len(self.points),
