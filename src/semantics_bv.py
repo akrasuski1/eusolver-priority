@@ -50,38 +50,27 @@ from semantics_types import InterpretedFunctionBase
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
-
-# (concat (_ BitVec i) (_ BitVec j) (_ BitVec m))
-# - concatenation of bitvectors of size i and j to get a new bitvector of
-# size m, where m = i + j
-
 '''
+All functions and semantics should match the file at 
+http://smtlib.cs.uiowa.edu/Logics/QF_BV.smt2 downloaded on
+Mon, 06 Jun 2016 10:01:57 -0400
+
+File header:
+ :smt-lib-version 2.5
+ :written-by "Silvio Ranise, Cesare Tinelli, and Clark Barrett"
+ :date "2010-05-02"
+ :last-updated "2015-04-25"
+'''
+
 class BVConcat(InterpretedFunctionBase):
     def __init__(self, size1, size2):
         super().__init__('concat', 2, (exprtypes.BitVectorType(size1),
                                        exprtypes.BitVectorType(size2)),
                          exprtypes.BitVectorType(size1 + size2))
-        self.size1 = size1
-        self.size2 = size2
+        self.smt_function = z3.Concat
+        self.eval_children = lambda a, b: a.concat(b)
 
-    def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        child_terms = self._children_to_smt(expr_object, smt_context_object, var_subst_map)
-        return z3.Concat(child_terms[0], child_terms[1])
-
-    def evaluate(self, expr_object, eval_context_object):
-        self._evaluate_children(expr_object, eval_context_object)
-        a = eval_context_object.peek(0)
-        b = eval_context_object.peek(1)
-        res = (a << size2) | (b)
-        eval_context_object.pop(2)
-        eval_context_object.push(res)
-
-
-
-# ((_ extract i j) (_ BitVec m) (_ BitVec n))
-# - extraction of bits i down to j from a bitvector of size m to yield a
-# new bitvector of size n, where n = i - j + 1
-
+'''
 class BVExtract(InterpretedFunctionBase):
     def __init__(self, start_offset, end_offset, bv_size):
         super().__init__('extract', 1, (exprtypes.BitVectorType(bv_size),),
@@ -144,6 +133,14 @@ class BVAdd(InterpretedFunctionBase):
         self.smt_function = lambda a,b: a + b
         self.eval_children = lambda a,b: a + b
 
+class BVMul(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvmul', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.smt_function = lambda a,b: a * b
+        self.eval_children = lambda a,b: a * b
+
 class BVSub(InterpretedFunctionBase):
     def __init__(self, bv_size):
         super().__init__('bvsub', 2, (exprtypes.BitVectorType(bv_size),
@@ -152,13 +149,21 @@ class BVSub(InterpretedFunctionBase):
         self.smt_function = lambda a,b: a - b
         self.eval_children = lambda a,b: a - b
 
-class BVLShR(InterpretedFunctionBase):
+class BVUDiv(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvlshr', 2, (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvudiv', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
-        self.smt_function = z3.LShR
-        self.eval_children = lambda a, b : a.lshr(b)
+        self.smt_function = z3.UDiv
+        self.eval_children = lambda a,b: a.udiv(b)
+
+class BVURem(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvurem', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.smt_function = z3.URem
+        self.eval_children = lambda a,b: a.urem(b)
 
 class BVShl(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -168,13 +173,13 @@ class BVShl(InterpretedFunctionBase):
         self.smt_function = lambda a, b : a << b
         self.eval_children = lambda a, b : a << b
 
-class BVUle(InterpretedFunctionBase):
+class BVLShR(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvule', 2, (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvlshr', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
-                         exprtypes.BoolType())
-        self.smt_function = z3.ULE
-        self.eval_children = lambda a, b : a.ule(b)
+                         exprtypes.BitVectorType(bv_size))
+        self.smt_function = z3.LShR
+        self.eval_children = lambda a, b : a.lshr(b)
 
 class BVUlt(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -183,6 +188,14 @@ class BVUlt(InterpretedFunctionBase):
                          exprtypes.BoolType())
         self.smt_function = z3.ULT
         self.eval_children = lambda a, b : a.ult(b)
+
+class BVUle(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvule', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BoolType())
+        self.smt_function = z3.ULE
+        self.eval_children = lambda a, b : a.ule(b)
 
 class BVUge(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -202,44 +215,35 @@ class BVUgt(InterpretedFunctionBase):
 
 class BVSle(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvule', 2, (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvsle', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BoolType())
         self.smt_function = z3.SLE
         self.eval_children = lambda a, b : a.sle(b)
 
-class BVUlt(InterpretedFunctionBase):
+class BVSlt(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvult', 2, (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvslt', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BoolType())
-        self.smt_function = z3.ULT
-        self.eval_children = lambda a, b : a.ult(b)
+        self.smt_function = z3.SLT
+        self.eval_children = lambda a, b : a.slt(b)
 
-class BVUge(InterpretedFunctionBase):
+class BVSge(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvuge', 2, (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvsge', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BoolType())
-        self.smt_function = z3.UGE
-        self.eval_children = lambda a, b : a.uge(b)
+        self.smt_function = z3.SGE
+        self.eval_children = lambda a, b : a.sge(b)
 
-class BVUgt(InterpretedFunctionBase):
+class BVSgt(InterpretedFunctionBase):
     def __init__(self, bv_size):
-        super().__init__('bvugt', 2, (exprtypes.BitVectorType(bv_size),
+        super().__init__('bvsgt', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BoolType())
-        self.smt_function = z3.UGT
-        self.eval_children = lambda a, b : a.ugt(b)
-
-class BVMul(InterpretedFunctionBase):
-    def __init__(self, bv_size):
-        super().__init__('bvmul', 2, (exprtypes.BitVectorType(bv_size),
-                                     exprtypes.BitVectorType(bv_size)),
-                         exprtypes.BitVectorType(bv_size))
-        raise NotImplementedError
-        # self.smt_function = lambda a, b : a * b
-        # self.eval_children = raise NotImplementedError # lambda a, b : a * b
+        self.smt_function = z3.SGT
+        self.eval_children = lambda a, b : a.sgt(b)
 
 class BVXor(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -249,77 +253,38 @@ class BVXor(InterpretedFunctionBase):
         self.smt_function = lambda a, b : a ^ b
         self.eval_children = lambda a, b : a ^ b
 
+class BVXNor(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvxnor', 2, (exprtypes.BitVectorType(bv_size),
+                                    exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.smt_function = lambda a, b : ~(a ^ b)
+        self.eval_children = lambda a, b : ~(a ^ b)
 
-# (bvudiv (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - unsigned division, truncating towards 0 (undefined if divisor is 0)
+class BVNand(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvnand', 2, (exprtypes.BitVectorType(bv_size),
+                                    exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.smt_function = lambda a, b : ~(a & b)
+        self.eval_children = lambda a, b : ~(a & b)
 
-# (bvurem (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - unsigned remainder from truncating division (undefined if divisor is 0)
-
-# (bvnand (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - bitwise nand (negation of and)
-
-# (bvnor (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - bitwise nor (negation of or)
-
-# (bvxor (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - bitwise exclusive or
+class BVNor(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvnor', 2, (exprtypes.BitVectorType(bv_size),
+                                    exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+        self.smt_function = lambda a, b : ~(a | b)
+        self.eval_children = lambda a, b : ~(a | b)
 
 
-# (bvxnor (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - bitwise equivalence (equivalently, negation of bitwise exclusive or)
-
-# (bvcomp (_ BitVec m) (_ BitVec m) (_ BitVec 1))
-# - bit comparator: equals #b1 iff all bits are equal
-
-# (bvsub (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - 2's complement subtraction modulo 2^m
-
-# (bvsdiv (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - 2's complement signed division
-
-# (bvsrem (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - 2's complement signed remainder (sign follows dividend)
-
-# (bvsmod (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - 2's complement signed remainder (sign follows divisor)
-
-# (bvashr (_ BitVec m) (_ BitVec m) (_ BitVec m))
-# - Arithmetic shift right, like logical shift right except that the most
-# significant bits of the result always copy the most significant
-# bit of the first argument.
-
-# The following symbols are parameterized by the numeral i, where i >= 1.
-# ((_ repeat i) (_ BitVec m) (_ BitVec i*m))
-# - ((_ repeat i) x) means concatenate i copies of x
-
-# The following symbols are parameterized by the numeral i, where i >= 0.
-
-# ((_ zero_extend i) (_ BitVec m) (_ BitVec m+i))
-# - ((_ zero_extend i) x) means extend x with zeroes to the (unsigned)
-# equivalent bitvector of size m+i
-
-# ((_ sign_extend i) (_ BitVec m) (_ BitVec m+i))
-# - ((_ sign_extend i) x) means extend x to the (signed) equivalent bitvector
-# of size m+i
-
-# ((_ rotate_left i) (_ BitVec m) (_ BitVec m))
-# - ((_ rotate_left i) x) means rotate bits of x to the left i times
-
-# ((_ rotate_right i) (_ BitVec m) (_ BitVec m))
-# - ((_ rotate_right i) x) means rotate bits of x to the right i times
-
-# (bvslt (_ BitVec m) (_ BitVec m) Bool)
-# - binary predicate for signed less than
-
-# (bvsle (_ BitVec m) (_ BitVec m) Bool)
-# - binary predicate for signed less than or equal
-
-# (bvsgt (_ BitVec m) (_ BitVec m) Bool)
-# - binary predicate for signed greater than
-
-# (bvsge (_ BitVec m) (_ BitVec m) Bool)
-# - binary predicate for signed greater than or equal
+class BVComp(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvcomp', 2, (exprtypes.BitVectorType(bv_size),
+                                    exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(1))
+        self.smt_function = lambda a, b : z3.If(a == b, z3.BitVecVal(1, 1), z3.BitVecVal(0, 1))
+        self.eval_children = lambda a, b : a.bvcomp(b)
 
 class BVInstantiator(semantics_types.InstantiatorBase):
     def __init__(self):
