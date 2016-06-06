@@ -41,14 +41,11 @@
 import basetypes
 import eusolver
 from eusolver import BitSet
-# from semantics_bv import BitVector
+from termsolvers import TermSolver
 from bitvectors import BitVector
 import evaluation
-import functools
-import hashcache
 import exprtypes
 import exprs
-import expr_transforms
 import z3
 import z3smt
 import semantics_types
@@ -93,8 +90,6 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
         elif (var_info_list[i].variable_type == exprtypes.IntType()):
             point[i] = exprs.Value(int(str(eval_value)), exprtypes.IntType())
         elif (var_info_list[i].variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
-            # point[i] = exprs.Value(int(str(eval_value)), var_info_list.variable_type)
-            # Z3 always prints unsigned integers?
             point[i] = exprs.Value(BitVector(int(str(eval_value)),
                                              var_info_list[i].variable_type.size),
                                    var_info_list[i].variable_type)
@@ -151,18 +146,6 @@ def guard_term_list_to_expr(guard_term_list, syn_ctx):
                                             guard_term_list[i][1], retval)
     return retval
 
-def check_term_sufficiency(sig_to_term, num_points):
-    accumulator = BitSet(num_points)
-    for (sig, term) in sig_to_term.items():
-        accumulator |= sig
-    return (accumulator.is_full())
-
-def check_one_term_sufficiency(sig_to_term, num_points):
-    for (sig, term) in sig_to_term.items():
-        if sig.is_full():
-            return True
-    return False
-
 def get_decision_tree_size(dt):
     if (dt.is_leaf()):
         return 1
@@ -179,143 +162,6 @@ class DuplicatePointException(Exception):
         return 'Duplicate Point %s' % str([self.point[i].value_object
                                            for i in range(len(self.point))])
 
-
-class TermSolver(object):
-    def __init__(self, spec, term_generator, synth_fun, max_term_size = 1024):
-        self.spec = spec
-        self.term_generator = term_generator
-        self.points = []
-        self.max_term_size = max_term_size
-        self.eval_ctx = evaluation.EvaluationContext()
-        self.eval_cache = {}
-        self.current_largest_term_size = 0
-        self.signature_to_term = {}
-        self.bunch_generator = None
-        self.synth_fun = synth_fun
-
-    def _trivial_solve(self):
-        term_size = 1
-        while (term_size <= self.max_term_size):
-            self.term_generator.set_size(term_size)
-            for term in self.term_generator.generate():
-                self.signature_to_term = {None : term}
-                return True
-            term_size += 1
-
-        return False
-
-    def add_points(self, new_points):
-        points = self.points
-        points.extend(new_points)
-        self.signature_factory = BitSet.make_factory(len(points))
-        self._do_complete_sig_to_term()
-
-    def _compute_term_signature(self, term):
-        points = self.points
-        num_points = len(points)
-        retval = self.signature_factory()
-        eval_ctx = self.eval_ctx
-        eval_ctx.set_interpretation(self.synth_fun, term)
-        spec = self.spec
-        eval_cache = self.eval_cache
-
-        try:
-            r = eval_cache[term.expr_id]
-            retval.copy_in(r)
-            num_old_points = r.size_of_universe()
-            num_new_points = retval.size_of_universe()
-            for i in range(num_old_points, num_new_points):
-                eval_ctx.set_valuation_map(points[i])
-                # print(_expr_to_str(term), points[i], evaluation.evaluate_expression_raw(spec, eval_ctx))
-                if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
-                    retval.add(i)
-            if (num_new_points > num_old_points):
-                eval_cache[term.expr_id] = retval
-            return retval
-
-        except KeyError:
-            # need to actually evaluate at every point :-(
-            for i in range(num_points):
-                eval_ctx.set_valuation_map(points[i])
-                # print(_expr_to_str(term), points[i], _expr_to_str(spec), evaluation.evaluate_expression_raw(spec, eval_ctx))
-                if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
-                    retval.add(i)
-            eval_cache[term.expr_id] = retval
-            return retval
-
-    def _do_complete_sig_to_term(self):
-        old_sig_to_term = self.signature_to_term
-        new_sig_to_term = {}
-
-        for sig, term in old_sig_to_term.items():
-            new_sig = self._compute_term_signature(term)
-            if not new_sig.is_empty():
-                new_sig_to_term[new_sig] = term
-
-        self.signature_to_term = new_sig_to_term
-
-    def extend_sig_to_term_map(self):
-        points = self.points
-        num_points = len(points)
-        signature_to_term = self.signature_to_term
-
-        assert (num_points > 0)
-
-        bunch_generator_state = self.bunch_generator_state
-        try:
-            bunch = next(bunch_generator_state)
-        except StopIteration:
-            return False
-
-        for term in bunch:
-            # print('Generated Term: %s' % _expr_to_str(term))
-            term = _get_expr_with_id(term, self.monotonic_expr_id)
-            self.monotonic_expr_id += 1
-            sig = self._compute_term_signature(term)
-            # print('Signature:', sig)
-
-            if (sig in signature_to_term or sig.is_empty()):
-                continue
-
-            signature_to_term[sig] = term
-        return True
-
-    def get_largest_term_size_enumerated(self):
-        if self.bunch_generator is None:
-            return self.current_largest_term_size
-        return max(self.current_largest_term_size,
-                self.bunch_generator.current_object_size)
-
-    def solve(self, one_term_coverage=False):
-        num_points = len(self.points)
-        signature_to_term = self.signature_to_term
-
-        if one_term_coverage:
-            stopping_condition = check_one_term_sufficiency
-        else:
-            stopping_condition = check_term_sufficiency
-
-        if (num_points == 0): # No points, any term will do
-            return self._trivial_solve()
-        elif stopping_condition(signature_to_term, num_points): # Old terms will do
-            return True
-
-        # Book keeping
-        if self.bunch_generator is not None:
-            self.current_largest_term_size = max(self.current_largest_term_size,
-                    self.bunch_generator.current_object_size)
-
-        self.bunch_generator = enumerators.BunchedGenerator(self.term_generator,
-                                                            self.max_term_size)
-        self.bunch_generator_state = self.bunch_generator.generate()
-
-        self.monotonic_expr_id = 0
-
-        while (not stopping_condition(signature_to_term, num_points)):
-            success = self.extend_sig_to_term_map()
-            if not success:
-                return False
-        return True
 
 class Unifier(object):
     def __init__(self, syn_ctx, smt_ctx, pred_generator, term_solver, synth_fun, max_pred_size = 1024):
@@ -482,7 +328,7 @@ class Unifier(object):
         # we can trivially unify if there exists a term
         # which satisfies the spec at all points
         trivial_term = None
-        for (sig, term) in self.term_solver.signature_to_term.items():
+        for (sig, term) in self.term_solver.get_signature_to_term().items():
             if (sig is None or sig.is_full()):
                 trivial_term = term
                 break
@@ -498,7 +344,7 @@ class Unifier(object):
         term_sig_list = []
         pred_list = []
         pred_sig_list = []
-        for (term_sig, term) in self.term_solver.signature_to_term.items():
+        for (term_sig, term) in self.term_solver.get_signature_to_term().items():
             term_list.append(term)
             term_sig_list.append(term_sig)
         for (pred_sig, pred) in self.signature_to_pred.items():
@@ -528,7 +374,7 @@ class Unifier(object):
     """
     def unify(self):
         term_solver = self.term_solver
-        signature_to_term = term_solver.signature_to_term
+        signature_to_term = term_solver.get_signature_to_term()
         signature_to_pred = self.signature_to_pred
         # print('Unifying:')
         # print([ (str(sig), sig is None or sig.is_full(), _expr_to_str(term)) for sig,term in term_solver.signature_to_term.items()])
@@ -582,7 +428,7 @@ class Unifier(object):
             dt_tuple = self._try_decision_tree_learning()
             if (dt_tuple == None):
                 # print('Unifier.unify(): Could not learn decision tree!')
-                success = term_solver.extend_sig_to_term_map()
+                success = term_solver.generate_more_terms()
                 # if not success:
                 #     yield None
                 #     return
@@ -604,7 +450,7 @@ class Unifier(object):
                        term_solver.get_largest_term_size_enumerated(),
                        bunch_generator.current_object_size)
 
-                success = term_solver.extend_sig_to_term_map()
+                success = term_solver.generate_more_terms()
                 # if not success:
                 #     return
                 continue

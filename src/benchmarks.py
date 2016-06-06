@@ -251,9 +251,9 @@ def make_solver(file_sexp, use_esolver=False):
             print(exprs.expression_to_string(sol))
         else:
             term_grammar, pred_grammar = ans
-            print("Original grammar:\n", grammar)
-            print("Term grammar:\n", term_grammar)
-            print("Pred grammar:\n", pred_grammar)
+            # print("Original grammar:\n", grammar)
+            # print("Term grammar:\n", term_grammar)
+            # print("Pred grammar:\n", pred_grammar)
             generator_factory = enumerators.RecursiveGeneratorFactory()
             term_generator = term_grammar.to_generator(generator_factory)
             pred_generator = pred_grammar.to_generator(generator_factory)
@@ -266,11 +266,11 @@ def make_solver(file_sexp, use_esolver=False):
 def test_make_solver():
     import parser
 
-    # for benchmark_file in [ "../benchmarks/one_off/invertD.sl" ]:
-    # for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
-    for benchmark_file in [ "../benchmarks/one_off/str.sl" ]:
+    # for benchmark_file in [ "../benchmarks/one_off/invertD.sl", "../benchmarks/one_off/str.sl" ]:
+    for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
+    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
         file_sexp = parser.sexpFromFile(benchmark_file)
-        make_solver(file_sexp, use_esolver=True)
+        make_solver(file_sexp, use_esolver=False)
 
 if __name__ == "__main__":
     test_make_solver()
