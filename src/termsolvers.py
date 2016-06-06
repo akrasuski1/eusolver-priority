@@ -121,8 +121,12 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             self.current_largest_term_size = max(self.current_largest_term_size,
                     self.bunch_generator.current_object_size)
 
+        # HACK HACK HACK: BunchGenerator bunch_size should be initialized properly.
+        # If bunch_size is larger than the number of point_distinct predicates, it goes into an infinite loop
+        # 
         self.bunch_generator = enumerators.BunchedGenerator(self.term_generator,
-                                                            self.max_term_size)
+                                                            # self.max_term_size, len(self.points) * 2)
+                                                            self.max_term_size, 1)
         self.bunch_generator_state = self.bunch_generator.generate()
 
 
@@ -230,7 +234,7 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
 class PointDistinctTermSolver(EnumerativeTermSolverBase):
     def __init__(self, spec, term_generator, synth_fun):
         super().__init__(spec, synth_fun)
-        assert term_generator is enumerators.PointDistinctGenerator
+        assert type(term_generator.factory) is enumerators.PointDistinctGeneratorFactory
         self.term_generator = term_generator
 
     def add_points(self, new_points):
@@ -245,4 +249,5 @@ class PointDistinctTermSolver(EnumerativeTermSolverBase):
     def solve(self, one_term_coverage=False):
         return self._default_solve(one_term_coverage)
 
-TermSolver = PointlessTermSolver
+# TermSolver = PointlessTermSolver
+TermSolver = PointDistinctTermSolver

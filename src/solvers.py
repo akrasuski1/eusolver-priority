@@ -97,7 +97,7 @@ class Solver(object):
             self.spec = syn_ctx.make_ac_function_expr('and', self.spec,
                                                       specification)
 
-    def solve(self, term_generator, pred_generator, divide_and_conquer=True):
+    def solve(self, term_generator, pred_generator, generator_factory, divide_and_conquer=True):
         import time
         act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
         # print('Solver.solve(), variable infos:\n%s' % [str(x) for x in self.var_info_list])
@@ -114,13 +114,11 @@ class Solver(object):
                 return None
             # we now have a sufficient set of terms
             # print('Term solve complete!')
-            # print([ _expr_to_str(term) for sig,term in term_solver.signature_to_term.items()])
+            # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
             unifier_state = unifier.unify()
             while (True):
                 unification = next(unifier_state)
                 sol_or_cex = verifier.verify(unification)
-                # print('Unification Complete!')
-                # print([ _expr_to_str(pred) for sig,pred in unifier.signature_to_pred.items()])
 
                 if _is_expr(sol_or_cex):
                     solution_found_at = time.clock() - time_origin
@@ -134,21 +132,22 @@ class Solver(object):
                             solution_found_at)
                 else:
                     # this is a set of counterexamples
-                    # print('Solver: Adding %d points' % len(r))
-                    # for p in r:
-                        # print('\t', p)
+                    # print('Solver: Adding %d points' % len(sol_or_cex))
+                    # for p in sol_or_cex:
+                    #     print('\t', [ c.value_object for c in p ])
                     term_solver.add_points(sol_or_cex) # Term solver can add all points at once
                     unifier.add_points(sol_or_cex)
                     self.add_points(sol_or_cex)
+                    generator_factory.add_points(sol_or_cex)
                     break
 
 
 ########################################################################
 # TEST CASES
 ########################################################################
-def _do_solve(solver, term_generator, pred_generator, run_anytime_version):
+def _do_solve(solver, generator_factory, term_generator, pred_generator, run_anytime_version):
     reported_expr_string_set = set()
-    for sol_tuple in solver.solve(term_generator, pred_generator):
+    for sol_tuple in solver.solve(term_generator, pred_generator, generator_factory):
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
         sol_str = _expr_to_str(sol)
         if (sol_str in reported_expr_string_set):
@@ -170,103 +169,6 @@ def _do_solve(solver, term_generator, pred_generator, run_anytime_version):
         if (not run_anytime_version):
             return sol
 
-
-def test_solver_max(num_vars, run_anytime_version):
-    import synthesis_context
-    import semantics_core
-    import semantics_lia
-    import enumerators
-    import exprtypes
-
-    syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
-                                                 semantics_lia.LIAInstantiator())
-    max_fun = syn_ctx.make_synth_function('max', [exprtypes.IntType()] * num_vars,
-                                            exprtypes.IntType())
-    add_fun = syn_ctx.make_function('add', exprtypes.IntType(), exprtypes.IntType())
-    sub_fun = syn_ctx.make_function('sub', exprtypes.IntType(), exprtypes.IntType())
-    le_fun = syn_ctx.make_function('le', exprtypes.IntType(), exprtypes.IntType())
-    ge_fun = syn_ctx.make_function('ge', exprtypes.IntType(), exprtypes.IntType())
-    eq_fun = syn_ctx.make_function('eq', exprtypes.IntType(), exprtypes.IntType())
-
-    param_exprs = [exprs.FormalParameterExpression(max_fun, exprtypes.IntType(), i)
-                   for i in range(num_vars)]
-    param_generator = enumerators.LeafGenerator(param_exprs, 'Argument Generator')
-    zero_value = exprs.Value(0, exprtypes.IntType())
-    one_value = exprs.Value(1, exprtypes.IntType())
-    const_generator = enumerators.LeafGenerator([exprs.ConstantExpression(zero_value),
-                                                 exprs.ConstantExpression(one_value)])
-    leaf_generator = enumerators.AlternativesGenerator([param_generator, const_generator],
-                                                       'Leaf Term Generator')
-
-    generator_factory = enumerators.RecursiveGeneratorFactory()
-    term_generator_ph = generator_factory.make_placeholder('TermGenerator')
-    pred_bool_generator_ph = generator_factory.make_placeholder('PredGenerator')
-    term_generator = \
-    generator_factory.make_generator('TermGenerator',
-                                     enumerators.AlternativesGenerator,
-                                     ([leaf_generator] +
-                                      [enumerators.FunctionalGenerator(add_fun,
-                                                                       [term_generator_ph,
-                                                                        term_generator_ph]),
-                                       enumerators.FunctionalGenerator(sub_fun,
-                                                                       [term_generator_ph,
-                                                                        term_generator_ph])],))
-
-    pred_generator = \
-    generator_factory.make_generator('PredGenerator',
-                                     enumerators.AlternativesGenerator,
-                                     ([enumerators.FunctionalGenerator(le_fun,
-                                                                       [term_generator_ph,
-                                                                        term_generator_ph]),
-                                       enumerators.FunctionalGenerator(eq_fun,
-                                                                       [term_generator_ph,
-                                                                        term_generator_ph]),
-                                       enumerators.FunctionalGenerator(ge_fun,
-                                                                       [term_generator_ph,
-                                                                        term_generator_ph])],))
-
-   # construct the spec
-    uvar_infos = [syn_ctx.make_variable(exprtypes.IntType(), 'x%d' % x, x)
-                  for x in range(num_vars)]
-    uvar_exprs = [exprs.VariableExpression(var_info) for var_info in uvar_infos]
-    max_app = syn_ctx.make_function_expr(max_fun, *uvar_exprs)
-    ge_constraints = []
-    eq_constraints = []
-    for i in range(num_vars):
-        c = syn_ctx.make_function_expr('ge', max_app, uvar_exprs[i])
-        ge_constraints.append(c)
-        c = syn_ctx.make_function_expr('eq', max_app, uvar_exprs[i])
-        eq_constraints.append(c)
-
-    constraint = syn_ctx.make_function_expr('and', *ge_constraints)
-    constraint = syn_ctx.make_function_expr('and', constraint,
-                                            syn_ctx.make_function_expr('or', *eq_constraints))
-    syn_ctx.assert_spec(constraint)
-
-    solver = Solver(syn_ctx)
-    _do_solve(solver, term_generator, pred_generator, run_anytime_version)
-
-def test_solver_icfp(benchmark_name, run_anytime_version):
-    import synthesis_context
-    import semantics_core
-    import semantics_bv
-    import enumerators
-    import icfp_helpers
-
-    syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
-                                                 semantics_bv.BVInstantiator())
-    synth_fun = syn_ctx.make_synth_function('f', [exprtypes.BitVectorType(64)],
-                                            exprtypes.BitVectorType(64))
-
-    term_generator, pred_generator = icfp_helpers.icfp_grammar(syn_ctx, synth_fun, full_grammer=True)
-    valuations = icfp_helpers.get_icfp_valuations(benchmark_name)
-    constraint = icfp_helpers.points_to_spec(syn_ctx, synth_fun, valuations) 
-
-    syn_ctx.assert_spec(constraint)
-
-    solver = Solver(syn_ctx)
-    sol = _do_solve(solver, term_generator, pred_generator, run_anytime_version)
-    icfp_helpers.verify_solution(sol, valuations, solver.eval_ctx)
 
 def die():
     print('Usage: %s [--anytime] <timeout in seconds> max <num args to max function>' % sys.argv[0])

@@ -261,6 +261,9 @@ class GeneratorFactoryBase(object):
         self.generator_map = {}
         self.generator_constructors = {}
 
+    def add_points(self, points):
+        raise basetypes.AbstractMethodError('GeneratorFactoryBase.add_points()')
+
     def make_placeholder(self, identifier):
         if (identifier in self.generator_map):
             raise basetypes.ArgumentError('Identifier already used as placeholder!')
@@ -282,6 +285,9 @@ class GeneratorFactoryBase(object):
 class RecursiveGeneratorFactory(GeneratorFactoryBase):
     def __init__(self):
         super().__init__() 
+
+    def add_points(self, points):
+        pass
 
     def _instantiate_placeholder(self, placeholder):
         assert (placeholder.factory is self)
@@ -339,8 +345,8 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
                 print(exprs.expression_to_string(term))
         print('++++++++++++')
 
-    def add_point(self, point):
-        self.points.append(point)
+    def add_points(self, points):
+        self.points.extend(points)
         self.clear_caches()
 
     def _initialize_base_generator(self, placeholder, size):

@@ -254,11 +254,12 @@ def make_solver(file_sexp, use_esolver=False):
             # print("Original grammar:\n", grammar)
             # print("Term grammar:\n", term_grammar)
             # print("Pred grammar:\n", pred_grammar)
-            generator_factory = enumerators.RecursiveGeneratorFactory()
+            # generator_factory = enumerators.RecursiveGeneratorFactory()
+            generator_factory = enumerators.PointDistinctGeneratorFactory()
             term_generator = term_grammar.to_generator(generator_factory)
             pred_generator = pred_grammar.to_generator(generator_factory)
             solver = solvers.Solver(syn_ctx)
-            solvers._do_solve(solver, term_generator, pred_generator, False)
+            solvers._do_solve(solver, generator_factory, term_generator, pred_generator, False)
 
 
 # Tests:

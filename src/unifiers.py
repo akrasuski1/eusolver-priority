@@ -82,6 +82,9 @@ class EnumerativeDTUnifierBase(object):
             return self.pred_solver.get_largest_term_size_enumerated()
         return -1
 
+    def get_signature_to_pred(self):
+        return self.pred_solver.get_signature_to_term()
+
     def _try_trivial_unification(self):
         # we can trivially unify if there exists a term
         # which satisfies the spec at all points
@@ -127,14 +130,14 @@ class EnumerativeDTUnifierBase(object):
         term_solver = self.term_solver
         signature_to_term = term_solver.get_signature_to_term()
 
-        triv = self._try_trivial_unification()
-        if triv is not None:
-            yield ("TERM", triv)
-            return
-
         pred_solver = self.pred_solver
         pred_solver.restart_bunched_generator()
         while True:
+            triv = self._try_trivial_unification()
+            if triv is not None:
+                yield ("TERM", triv)
+                return
+
             old_pred_num = len(pred_solver.signature_to_term)
             self.pred_solver.generate_more_terms()
             new_pred_num = len(pred_solver.signature_to_term)
@@ -142,13 +145,13 @@ class EnumerativeDTUnifierBase(object):
                 continue
 
             dt_tuple = self._try_decision_tree_learning()
-            self.last_dt_size = get_decision_tree_size(dt_tuple[-1])
             if (dt_tuple == None):
-                success = term_solver.generate_more_terms()
+                term_solver.generate_more_terms()
                 continue
+            self.last_dt_size = get_decision_tree_size(dt_tuple[-1])
 
             yield ("DT_TUPLE", dt_tuple)
-            success = term_solver.generate_more_terms()
+            term_solver.generate_more_terms()
 
     def _dummy_spec(synth_fun):
         func = semantics_types.SynthFunction(
@@ -175,4 +178,15 @@ class PointlessEnumDTUnifier(EnumerativeDTUnifierBase):
                 pred_generator,
                 indicator_fun)
 
-Unifier = PointlessEnumDTUnifier
+class PointDistinctDTUnifier(EnumerativeDTUnifierBase):
+    def __init__(self, pred_generator, term_solver, synth_fun):
+        super().__init__(pred_generator, term_solver)
+        indicator_fun, indicator_expr = \
+                PointDistinctDTUnifier._dummy_spec(synth_fun)
+        self.pred_solver = termsolvers.PointDistinctTermSolver(
+                indicator_expr,
+                pred_generator,
+                indicator_fun)
+
+# Unifier = PointlessEnumDTUnifier
+Unifier = PointDistinctDTUnifier
