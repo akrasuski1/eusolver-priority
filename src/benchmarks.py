@@ -40,7 +40,6 @@
 
 from bitvectors import BitVector
 import parser
-import esolver
 import termsolvers
 import unifiers
 import solvers
@@ -241,11 +240,12 @@ def make_solver(file_sexp, use_esolver=False):
     assert file_sexp == []
 
     if use_esolver:
-        solver = esolver.ESolver(syn_ctx, grammar)
-        solver.solve()
+        # Have to configure solver to esolver
+        raise NotImplementedError
     else:
         ans = grammar.decompose(macro_instantiator)
         if ans == None:
+            # Have to configure solver for naivete
             raise NotImplementedError
         else:
             term_grammar, pred_grammar = ans
