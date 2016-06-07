@@ -43,7 +43,6 @@ import parser
 import esolver
 import termsolvers
 import unifiers
-import naive_solvers
 import solvers
 import exprs
 import enumerators
@@ -247,10 +246,7 @@ def make_solver(file_sexp, use_esolver=False):
     else:
         ans = grammar.decompose(macro_instantiator)
         if ans == None:
-            generator = grammar.to_generator()
-            solver = naive_solvers.Solver(syn_ctx)
-            sol = solver.solve(generator)
-            print(exprs.expression_to_string(sol))
+            raise NotImplementedError
         else:
             term_grammar, pred_grammar = ans
             # print("Original grammar:\n", grammar)
