@@ -58,10 +58,6 @@ class ExprTransformerBase(object):
         self.transform_name = transform_name
         self.expr_stack = []
 
-    def _matches_expression(self, expr_object, fun_name):
-        return (expr_object.expr_kind == exprs.ExpressionKinds.function_expression and
-                expr_object.function_info.function_name == fun_name)
-
     def _matches_expression_any(self, expr_object, *fun_names):
         fun_name_set = set(fun_names)
         if (expr_object.expr_kind != exprs.ExpressionKinds.function_expression):

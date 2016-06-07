@@ -78,12 +78,11 @@ def get_sufficient_samples(syn_ctx, synth_fun, grammar, check_solution, initial_
     # print('')
     while True:
         syn_ctx.clear_assertions()
-        syn_ctx.assert_spec(points_to_spec(syn_ctx, synth_fun, valuations))
+        syn_ctx.assert_spec(points_to_spec(syn_ctx, synth_fun, valuations), synth_fun)
         solver = solvers.Solver(syn_ctx)
 
         sol_tuple = next(solver.solve(term_generator, pred_generator, divide_and_conquer))
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
-        act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = syn_ctx.get_synthesis_spec()
 
         # print("Intermediate solution:", _expr_to_str(sol))
 
