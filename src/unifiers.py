@@ -39,6 +39,7 @@
 # Code:
 
 import exprs
+import specifications
 import termsolvers
 import random
 import semantics_types
@@ -67,11 +68,12 @@ class UnifierInterface(object):
         raise basetypes.AbstractMethodError('UnifierInterface.solve()')
 
 class EnumerativeDTUnifierBase(object):
-    def __init__(self, pred_generator, term_solver):
+    def __init__(self, pred_generator, term_solver, syn_ctx):
         self.pred_generator = pred_generator
         self.term_solver = term_solver
         self.points = []
         self.pred_solver = None
+        self.syn_ctx = syn_ctx
 
     def add_points(self, new_points):
         self.points.extend(new_points)
@@ -153,38 +155,46 @@ class EnumerativeDTUnifierBase(object):
             yield ("DT_TUPLE", dt_tuple)
             term_solver.generate_more_terms()
 
-    def _dummy_spec(synth_fun):
+    def _dummy_spec(self, synth_fun):
         func = semantics_types.SynthFunction(
                 'pred_indicator_' + str(random.randint(1, 10000000)),
                 synth_fun.function_arity,
                 synth_fun.domain_types,
                 exprtypes.BoolType())
-        args = []
-        for i, argtype in enumerate(synth_fun.domain_types):
-            arg = exprs.FormalParameterExpression(
-                    func, argtype, i)
-            args.append(arg)
-        expr = exprs.FunctionExpression(func, tuple(args))
-        return func, expr
+        args = [ exprs.FormalParameterExpression(func, argtype, i) 
+                for i, argtype in enumerate(synth_fun.domain_types)] 
+        indicator_expr = exprs.FunctionExpression(func, tuple(args))
+        eval_ctx = evaluation.EvaluationContext()
+
+        def compute_indicator(term, points):
+            eval_ctx.set_interpretation(func, term)
+
+            retval = []
+            for point in points:
+                eval_ctx.set_valuation_map(point)
+                retval.append(evaluation.evaluate_expression_raw(indicator_expr, eval_ctx))
+            return retval
+
+        return func, compute_indicator
 
 
 class PointlessEnumDTUnifier(EnumerativeDTUnifierBase):
-    def __init__(self, pred_generator, term_solver, synth_fun):
-        super().__init__(pred_generator, term_solver)
-        indicator_fun, indicator_expr = \
-                PointlessEnumDTUnifier._dummy_spec(synth_fun)
+    def __init__(self, pred_generator, term_solver, synth_fun, syn_ctx, spec):
+        super().__init__(pred_generator, term_solver, syn_ctx)
+        indicator_fun, compute_indicator = \
+                self._dummy_spec(synth_fun)
         self.pred_solver = termsolvers.PointlessTermSolver(
-                indicator_expr,
+                compute_indicator,
                 pred_generator,
                 indicator_fun)
 
 class PointDistinctDTUnifier(EnumerativeDTUnifierBase):
-    def __init__(self, pred_generator, term_solver, synth_fun):
-        super().__init__(pred_generator, term_solver)
-        indicator_fun, indicator_expr = \
-                PointDistinctDTUnifier._dummy_spec(synth_fun)
+    def __init__(self, pred_generator, term_solver, synth_fun, syn_ctx, spec):
+        super().__init__(pred_generator, term_solver, syn_ctx)
+        indicator_fun, compute_indicator = \
+                self._dummy_spec(synth_fun)
         self.pred_solver = termsolvers.PointDistinctTermSolver(
-                indicator_expr,
+                compute_indicator,
                 pred_generator,
                 indicator_fun)
 

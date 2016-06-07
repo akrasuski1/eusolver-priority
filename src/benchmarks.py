@@ -41,6 +41,7 @@
 from bitvectors import BitVector
 import parser
 import termsolvers
+import specifications
 import unifiers
 import solvers
 import exprs
@@ -233,7 +234,10 @@ def make_solver(file_sexp, use_esolver=False):
 
     constraints_data, file_sexp = filter_sexp_for('constraint', file_sexp)
     constraints = process_constraints(constraints_data, syn_ctx, forall_vars_map, synth_fun)
-    syn_ctx.assert_spec(syn_ctx.make_function_expr('and', *constraints))
+    specification = specifications.StandardSpec(
+            syn_ctx.make_function_expr('and', *constraints),
+            syn_ctx, synth_fun)
+    syn_ctx.assert_spec(specification, synth_fun)
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
     assert check_sats == [[]]

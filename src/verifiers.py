@@ -40,6 +40,7 @@ import exprs
 import exprtypes
 import z3
 import semantics_types
+import basetypes
 
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
@@ -104,29 +105,50 @@ def _decision_tree_to_expr_internal(decision_tree, pred_list, syn_ctx, selected_
 def decision_tree_to_expr(decision_tree, pred_list, syn_ctx, selected_leaf_terms):
     return _decision_tree_to_expr_internal(decision_tree, pred_list, syn_ctx, selected_leaf_terms)
 
-class Verifier(object):
-    def __init__(self, syn_ctx, smt_ctx, synth_fun):
+class VerifierBase(object):
+    def __init__(self):
+        pass
+
+    def verify(self, unification):
+        raise basetypes.AbstractMethodError('VerifierBase.verify()')
+
+    def _default_verify(self, unification):
+        type, expr_object = unification
+        if type == "TERM":
+            sol_or_cexs = self._verify_expr(expr_object)
+        elif type == "DT_TUPLE":
+            (term_list, term_sig_list, pred_list, pred_sig_list, dt) = expr_object
+            guard_term_list = decision_tree_to_guard_term_list(dt, pred_list,
+                                                               term_list,
+                                                               self.syn_ctx)
+            sol_or_cexs = self._verify_guard_term_list(guard_term_list, expr_object)
+        else:
+            raise Exception('Unexpected unification type: %s', type)
+        return sol_or_cexs
+
+
+class Verifier(VerifierBase):
+    def __init__(self, syn_ctx, smt_ctx):
         self.syn_ctx = syn_ctx
-        spec_tuple = syn_ctx.get_synthesis_spec()
-        act_spec, var_list, fun_list, clauses, neg_clauses, canon_spec, intro_vars = spec_tuple
-        self.synth_fun = synth_fun
+        spec_tuple = syn_ctx.get_specification().get_spec_tuple()
+        spec = syn_ctx.get_specification()
+        self.synth_fun = syn_ctx.get_synth_fun()
 
         self.smt_ctx = smt_ctx
         self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
 
-        self.var_info_list = var_list
-        self.var_expr_list = [exprs.VariableExpression(x) for x in self.var_info_list]
-        self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in self.var_expr_list]
-
-        self.canon_spec = canon_spec
-        self.clauses = clauses
-        self.neg_clauses = neg_clauses
-        self.intro_vars = intro_vars
+        # This var_info_list is the order of variables in cex points
+        self.var_info_list = spec.get_point_variables()
+        var_expr_list = [exprs.VariableExpression(x) for x in self.var_info_list]
+        self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) for x in var_expr_list]
+        
+        self.intro_vars = spec.get_intro_vars()
         self.smt_intro_vars = [_expr_to_smt(x, self.smt_ctx) for x in self.intro_vars]
-        fun_app = syn_ctx.make_function_expr(fun_list[0], *intro_vars)
-        fun_app_subst_var = syn_ctx.make_variable_expr(fun_list[0].range_type, '__output__')
+
+        fun_app = syn_ctx.make_function_expr(self.synth_fun, *self.intro_vars)
+        fun_app_subst_var = syn_ctx.make_variable_expr(self.synth_fun.range_type, '__output__')
         self.outvar_cnstr = syn_ctx.make_function_expr('eq', fun_app_subst_var, fun_app)
-        canon_spec_with_outvar = exprs.substitute(canon_spec, fun_app, fun_app_subst_var)
+        canon_spec_with_outvar = exprs.substitute(spec.get_canonical_specification(), fun_app, fun_app_subst_var)
         neg_canon_spec_with_outvar = syn_ctx.make_function_expr('not', canon_spec_with_outvar)
         frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)
         self.smt_solver.add(frozen_smt_cnstr)
@@ -201,15 +223,23 @@ class Verifier(object):
             return e
 
     def verify(self, unification):
+        return self._default_verify(unification)
+
+class PBEVerifier(VerifierBase):
+    def __init__(self, valuations):
+        self.valuations = valuations
+        self.eval_ctx = evaluation.EvaluationContext()
+
+    def _verify_expr(self, term):
+        eval_ctx = self.eval_ctx
+        for point, value in self.valuations:
+            eval_ctx.set_valuation_map(points[i])
+            result = evaluation.evaluate_expression_raw(term, eval_ctx)
+            print(result, value)
+
+    def verify(self, unification):
         type, expr_object = unification
-        if type == "TERM":
-            sol_or_cexs = self._verify_expr(expr_object)
-        elif type == "DT_TUPLE":
-            (term_list, term_sig_list, pred_list, pred_sig_list, dt) = expr_object
-            guard_term_list = decision_tree_to_guard_term_list(dt, pred_list,
-                                                               term_list,
-                                                               self.syn_ctx)
-            sol_or_cexs = self._verify_guard_term_list(guard_term_list, expr_object)
+        if type == 'TERM':
+            expr = expr_object
         else:
-            raise Exception('Unexpected unification type: %s', type)
-        return sol_or_cexs
+            raise NotImplementedError

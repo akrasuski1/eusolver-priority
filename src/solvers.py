@@ -39,6 +39,7 @@
 # Code:
 
 import evaluation
+import unifiers_lia
 import exprs
 import termsolvers
 import unifiers
@@ -68,18 +69,11 @@ class DuplicatePointException(Exception):
 class Solver(object):
     def __init__(self, syn_ctx):
         self.syn_ctx = syn_ctx
-        self.spec_tuple = syn_ctx.get_synthesis_spec()
         self.reset()
         self.term_solver_time = 0
         self.unifier_time = 0
 
-        act_spec, var_list, uf_list, clauses, neg_clauses, canon_spec, intro_vars = self.spec_tuple
-        assert len(uf_list) == 1
-        self.synth_fun = uf_list[0]
-        self.canon_spec = canon_spec
-
     def reset(self):
-        self.spec = None
         self.eval_ctx = evaluation.EvaluationContext()
         self.smt_ctx = z3smt.Z3SMTContext()
         self.points = []
@@ -94,9 +88,13 @@ class Solver(object):
 
     def solve(self, term_generator, pred_generator, generator_factory, TermSolver, Unifier, divide_and_conquer=True):
         import time
-        term_solver = TermSolver(self.canon_spec, term_generator, self.synth_fun)
-        unifier = Unifier(pred_generator, term_solver, self.synth_fun)
-        verifier = verifiers.Verifier(self.syn_ctx, self.smt_ctx, self.synth_fun)
+        syn_ctx = self.syn_ctx
+        synth_fun = syn_ctx.synth_fun
+        spec = syn_ctx.get_specification()
+
+        term_solver = TermSolver(spec.term_signature, term_generator, synth_fun)
+        unifier = Unifier(pred_generator, term_solver, synth_fun, syn_ctx, spec)
+        verifier = verifiers.Verifier(syn_ctx, self.smt_ctx)
         time_origin = time.clock()
 
         while (True):
@@ -139,7 +137,14 @@ class Solver(object):
 ########################################################################
 def _do_solve(solver, generator_factory, term_generator, pred_generator, run_anytime_version):
     reported_expr_string_set = set()
-    for sol_tuple in solver.solve(term_generator, pred_generator, generator_factory, termsolvers.PointlessTermSolver, unifiers.PointlessEnumDTUnifier):
+    sol_tuples = solver.solve(
+            term_generator,
+            pred_generator,
+            generator_factory,
+            termsolvers.PointlessTermSolver,
+            unifiers.PointlessEnumDTUnifier)
+            # unifiers_lia.SpecAwareLIAUnifier)
+    for sol_tuple in sol_tuples:
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
         sol_str = _expr_to_str(sol)
         if (sol_str in reported_expr_string_set):

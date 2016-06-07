@@ -59,8 +59,8 @@ class SynthesisContext(object):
         self.function_instantiators = function_instantiators
         self.variables_map = {}
         self.unknown_function_map = {}
-        self.specification_clauses = []
         self.spec = None
+        self.synth_fun = None
 
     def make_variable(self, var_type, var_name,
                       var_eval_offset = exprs.VariableInfo._undefined_offset):
@@ -171,26 +171,20 @@ class SynthesisContext(object):
             return False
         return (self.variables_map.get(variable_info.variable_name, None) != None)
 
-    def assert_spec(self, spec_clause):
-        self.spec = None
-        expr_transforms.check_expr_binding_to_context(spec_clause, self)
-        self.specification_clauses.append(spec_clause)
+    def assert_spec(self, spec, synth_fun):
+        assert self.spec is None
+        assert self.synth_fun is None
+        self.synth_fun = synth_fun
+        self.spec = spec
 
-    def get_synthesis_spec(self):
-        if (self.spec == None and len(self.specification_clauses) > 0):
-            if (len(self.specification_clauses) == 1):
-                actual_spec = self.specification_clauses[0]
-            else:
-                actual_spec = self.make_function_expr('and', *self.specification_clauses)
-            variables_list, functions_list, canon_spec, clauses, neg_clauses, intro_vars = \
-            expr_transforms.canonicalize_specification(actual_spec, self)
-            self.spec = (actual_spec, variables_list, functions_list, clauses,
-                         neg_clauses, canon_spec, intro_vars)
+    def get_specification(self):
         return self.spec
 
     def clear_assertions(self):
-        self.specification_clauses = []
         self.spec = None
+
+    def get_synth_fun(self):
+        return self.synth_fun
 
 #
 # synthesis_context.py ends here

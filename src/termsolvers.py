@@ -75,12 +75,11 @@ class TermSolverInterface(object):
         raise basetypes.AbstractMethodError('TermSolverInterface.generate_more_terms()')
 
 class EnumerativeTermSolverBase(TermSolverInterface):
-    def __init__(self, spec, synth_fun):
-        self.spec = spec
+    def __init__(self, term_signature, synth_fun):
         self.synth_fun = synth_fun
+        self.term_signature = term_signature
 
         self.points = []
-        self.eval_ctx = evaluation.EvaluationContext()
         self.current_largest_term_size = 0
         self.signature_to_term = {}
 
@@ -151,9 +150,6 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         points = self.points
         num_points = len(points)
         retval = self.signature_factory()
-        eval_ctx = self.eval_ctx
-        eval_ctx.set_interpretation(self.synth_fun, term)
-        spec = self.spec
 
         if old_signature is not None:
             retval.copy_in(old_signature)
@@ -162,9 +158,9 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             start_index = 0
 
         num_new_points = retval.size_of_universe()
-        for i in range(start_index, num_new_points):
-            eval_ctx.set_valuation_map(points[i])
-            if (evaluation.evaluate_expression_raw(spec, eval_ctx)):
+        new_points = points[start_index:]
+        for i, v in enumerate(self.term_signature(term, new_points), start_index):
+            if v:
                 retval.add(i)
         return retval
 
@@ -203,8 +199,8 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
 
 class PointlessTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, spec, term_generator, synth_fun):
-        super().__init__(spec, synth_fun)
+    def __init__(self, term_signature, term_generator, synth_fun):
+        super().__init__(term_signature, synth_fun)
         self.term_generator = term_generator
         self.eval_cache = {}
         self.monotonic_expr_id = 0
@@ -232,8 +228,8 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
 
 
 class PointDistinctTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, spec, term_generator, synth_fun):
-        super().__init__(spec, synth_fun)
+    def __init__(self, term_signature, term_generator, synth_fun):
+        super().__init__(term_signature, synth_fun)
         assert type(term_generator.factory) is enumerators.PointDistinctGeneratorFactory
         self.term_generator = term_generator
 
