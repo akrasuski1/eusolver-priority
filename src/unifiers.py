@@ -131,6 +131,7 @@ class EnumerativeDTUnifierBase(UnifierInterface):
     def unify(self):
         term_solver = self.term_solver
         signature_to_term = term_solver.get_signature_to_term()
+        self.last_dt_size = 0
 
         pred_solver = self.pred_solver
         pred_solver.restart_bunched_generator()

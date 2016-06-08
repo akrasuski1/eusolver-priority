@@ -51,8 +51,8 @@ class StrConcat(InterpretedFunctionBase):
         super().__init__('str.++', 2,
                 (exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.StringType())
-        self.smt_function = z3.Concat
-        self.eval_children = lambda a,b: a + b
+        # self.smt_function = z3.Concat
+        self.eval_children = str.__add__
 
 class StrReplace(InterpretedFunctionBase):
     def __init__(self):
@@ -67,39 +67,31 @@ class StrAt(InterpretedFunctionBase):
         super().__init__('str.at', 2,
                 (exprtypes.StringType(), exprtypes.IntType()),
                 exprtypes.StringType())
-        self.smt_function = lambda a,b: a[b]
-        def eval_c(a, b):
-            if 0 <= b < len(a):
-                return a[b]
-            else:
-                raise basetypes.PartialFunctionError()
-        # def eval_c(a, b):
-            # return a[b] if 0 <= b < len(a) else "ಠ"
-        self.eval_children = eval_c
+        # self.smt_function = lambda a,b: a[b]
+        self.eval_children = lambda a,b: a[b] if 0 <= b < len(a) else ''
 
 class IntToStr(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('int.to.str', 1,
-                (exprtypes.StringType(),),
+                (exprtypes.IntType(),),
                 exprtypes.StringType())
-        self.smt_function = z3.Itos
-        self.eval_children = lambda a : str(a)
-        # raise NotImplementedError
+        # self.smt_function = z3.Itos
+        self.eval_children = lambda a : str(a) if a >= 0 else ''
 
 class Substr(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('str.substr', 3,
                 (exprtypes.StringType(), exprtypes.IntType(), exprtypes.IntType()),
                 exprtypes.StringType())
-        self.smt_function = z3.Extract
-        self.eval_children = lambda a,b,c: a[b:(c+1)]
+        # self.smt_function = z3.Extract
+        self.eval_children = lambda a,b,c: a[b:c] if 0 <= b < c else ''
 
 class StrLen(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('str.len', 1,
                 (exprtypes.StringType(),),
                 exprtypes.IntType())
-        self.smt_function = z3.Length
+        # self.smt_function = z3.Length
         self.eval_children = lambda a: len(a)
 
 class StrToInt(InterpretedFunctionBase):
@@ -107,24 +99,21 @@ class StrToInt(InterpretedFunctionBase):
         super().__init__('str.to.int', 1,
                 (exprtypes.StringType(),),
                 exprtypes.IntType())
-        self.smt_function = z3.Stoi
+        # self.smt_function = z3.Stoi
         def eval_c(a):
             try:
                 ret = int(a)
-                if (a < 0): 
-                    raise  basetypes.PartialFunctionError()
-                return ret
+                return ret if ret > 0 else -1
             except ValueError:
-                raise basetypes.PartialFunctionError()
+                return -1
         self.eval_children = eval_c
-        # raise NotImplementedError
 
 class StrIndexOf(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('str.indexof', 3,
                 (exprtypes.StringType(), exprtypes.StringType(), exprtypes.IntType()),
                 exprtypes.IntType())
-        self.smt_function = z3.IndexOf
+        # self.smt_function = z3.IndexOf
         self.eval_children = str.find
 
 class StrPrefixOf(InterpretedFunctionBase):
@@ -132,7 +121,7 @@ class StrPrefixOf(InterpretedFunctionBase):
         super().__init__('str.prefixof', 2,
                 (exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.BoolType())
-        self.smt_function = z3.PrefixOf
+        # self.smt_function = z3.PrefixOf
         self.eval_children = str.startswith
 
 class StrSuffixOf(InterpretedFunctionBase):
@@ -140,7 +129,7 @@ class StrSuffixOf(InterpretedFunctionBase):
         super().__init__('str.suffixof', 2,
                 (exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.BoolType())
-        self.smt_function = z3.SuffixOf
+        # self.smt_function = z3.SuffixOf
         self.eval_children = str.endswith
 
 class StrContains(InterpretedFunctionBase):
@@ -148,7 +137,7 @@ class StrContains(InterpretedFunctionBase):
         super().__init__('str.contains', 2,
                 (exprtypes.StringType(), exprtypes.StringType()),
                 exprtypes.BoolType())
-        self.smt_function = z3.Contains
+        # self.smt_function = z3.Contains
         self.eval_children = lambda a,b: str.find(a,b) != -1
 
 class SLIAInstantiator(semantics_types.InstantiatorBase):
@@ -159,7 +148,7 @@ class SLIAInstantiator(semantics_types.InstantiatorBase):
                 'str.++': (exprtypes.StringType(), exprtypes.StringType()),
                 'str.replace': (exprtypes.StringType(), exprtypes.StringType(), exprtypes.StringType()),
                 'str.at': (exprtypes.StringType(), exprtypes.IntType()),
-                'int.to.str': (exprtypes.StringType(), ),
+                'int.to.str': (exprtypes.IntType(), ),
                 'str.substr': (exprtypes.StringType(), exprtypes.IntType(), exprtypes.IntType()),
                 'str.len': (exprtypes.StringType(), ),
                 'str.to.int': (exprtypes.StringType(), ),
