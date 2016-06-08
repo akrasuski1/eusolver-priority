@@ -41,6 +41,8 @@ import exprtypes
 import z3
 import semantics_types
 import basetypes
+import evaluation
+from bitvectors import BitVector
 
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
@@ -226,20 +228,59 @@ class Verifier(VerifierBase):
         return self._default_verify(unification)
 
 class PBEVerifier(VerifierBase):
-    def __init__(self, valuations):
-        self.valuations = valuations
-        self.eval_ctx = evaluation.EvaluationContext()
+    def __init__(self, syn_ctx, smt_ctx):
+        self.spec = syn_ctx.get_specification()
+        self.valuations = self.spec.valuations
+        self.syn_ctx = syn_ctx
+        self.eval_ctx = self.spec.eval_ctx 
 
     def _verify_expr(self, term):
         eval_ctx = self.eval_ctx
-        for point, value in self.valuations:
-            eval_ctx.set_valuation_map(points[i])
+        for point, value in self.valuations.items():
+            eval_ctx.set_valuation_map(point)
             result = evaluation.evaluate_expression_raw(term, eval_ctx)
-            print(result, value)
+            if result != value:
+                return [point]
+        return term
+
+    def _verify_guard_term_list(self, guard_term_list, dt_tuple):
+        eval_ctx = self.eval_ctx
+        cex_points = []
+        selected_leaf_terms = []
+
+        at_least_one_branch_failed = False
+
+        for (pred, term_list) in guard_term_list:
+            good_terms = term_list.copy()
+
+            for point, value in self.spec.valuations.items():
+                eval_ctx.set_valuation_map(point)
+                if not evaluation.evaluate_expression_raw(pred, eval_ctx):
+                    continue
+
+                next_good_terms = []
+                for term in good_terms:
+                    curr_value = evaluation.evaluate_expression_raw(term, eval_ctx)
+                    if curr_value == value:
+                        next_good_terms.append(term)
+                good_terms = next_good_terms
+
+                if len(good_terms) == 0:
+                    at_least_one_branch_failed = True
+                    cex_points.append(point)
+                    break
+                else:
+                    selected_leaf_terms.append(good_terms[0])
+
+
+        if at_least_one_branch_failed:
+            retval = list(set(cex_points))
+            retval.sort()
+            return retval
+        else:
+            (term_list, term_sig_list, pred_list, pred_sig_list, dt) = dt_tuple
+            e = decision_tree_to_expr(dt, pred_list, self.syn_ctx, selected_leaf_terms)
+            return e
 
     def verify(self, unification):
-        type, expr_object = unification
-        if type == 'TERM':
-            expr = expr_object
-        else:
-            raise NotImplementedError
+        return self._default_verify(unification)

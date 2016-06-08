@@ -86,7 +86,7 @@ class Solver(object):
             self.point_set.add(point)
             self.points.append(point)
 
-    def solve(self, term_generator, pred_generator, generator_factory, TermSolver, Unifier, divide_and_conquer=True):
+    def solve(self, term_generator, pred_generator, generator_factory, TermSolver, Unifier, Verifier, divide_and_conquer=True):
         import time
         syn_ctx = self.syn_ctx
         synth_fun = syn_ctx.synth_fun
@@ -94,7 +94,7 @@ class Solver(object):
 
         term_solver = TermSolver(spec.term_signature, term_generator, synth_fun)
         unifier = Unifier(pred_generator, term_solver, synth_fun, syn_ctx, spec)
-        verifier = verifiers.Verifier(syn_ctx, self.smt_ctx)
+        verifier = Verifier(syn_ctx, self.smt_ctx)
         time_origin = time.clock()
 
         while (True):
@@ -142,7 +142,8 @@ def _do_solve(solver, generator_factory, term_generator, pred_generator, run_any
             pred_generator,
             generator_factory,
             termsolvers.PointlessTermSolver,
-            unifiers.PointlessEnumDTUnifier)
+            unifiers.PointlessEnumDTUnifier,
+            verifiers.PBEVerifier)
             # unifiers_lia.SpecAwareLIAUnifier)
     for sol_tuple in sol_tuples:
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple

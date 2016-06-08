@@ -41,16 +41,16 @@
 import basetypes
 import evaluation
 import expr_transforms
+import exprs
 
 class SpecInterface(object):
     def term_signature(self, term, points):
         raise basetypes.AbstractMethodError('SpecInterface.check_on_point()')
 
 class StandardSpec(SpecInterface):
-    def __init__(self, spec_clause, syn_ctx, synth_fun):
+    def __init__(self, specification, syn_ctx, synth_fun):
         self.syn_ctx = syn_ctx
-        expr_transforms.check_expr_binding_to_context(spec_clause, syn_ctx)
-        self.specification_clauses = [ spec_clause ]
+        self.specification = specification
         self.eval_ctx = evaluation.EvaluationContext()
         self.synth_fun = synth_fun
 
@@ -58,17 +58,15 @@ class StandardSpec(SpecInterface):
 
     def init_spec_tuple(self):
         syn_ctx = self.syn_ctx
-        if (len(self.specification_clauses) == 1):
-            actual_spec = self.specification_clauses[0]
-        else:
-            actual_spec = syn_ctx.make_function_expr('and', *self.specification_clauses)
-        variables_list, functions_list, canon_spec, clauses, neg_clauses, intro_vars = \
+        actual_spec = self.specification
+        variables_list, functions_list, canon_spec, clauses, canon_clauses, neg_clauses, intro_vars = \
                 expr_transforms.canonicalize_specification(actual_spec, syn_ctx)
         self.spec_tuple = (actual_spec, variables_list, functions_list, clauses,
                 neg_clauses, canon_spec, intro_vars)
         self.canon_spec = canon_spec
         self.intro_vars = intro_vars
         self.point_vars = variables_list
+        self.canon_clauses = canon_clauses
 
     def get_spec_tuple(self):
         return self.spec_tuple
@@ -82,6 +80,8 @@ class StandardSpec(SpecInterface):
     def get_canonical_specification(self):
         return self.canon_spec
 
+    def get_canon_clauses(self):
+        return self.canon_clauses
 
     def term_signature(self, term, points):
         eval_ctx = self.eval_ctx
@@ -95,14 +95,26 @@ class StandardSpec(SpecInterface):
         return retval
 
 class PBESpec(SpecInterface):
-    def __init__(self, valuations, synth_fun):
-        self.valuations = valuations
+    def __init__(self, expr_valuations, synth_fun):
         self.synth_fun = synth_fun
         self.eval_ctx = evaluation.EvaluationContext()
         
-        args = [ exprs.FormalParameterExpression(func, argtype, i) 
+        self._initialize_valuations(expr_valuations)
+
+        args = [ exprs.FormalParameterExpression(synth_fun, argtype, i) 
                 for i, argtype in enumerate(synth_fun.domain_types)] 
-        self.synth_fun_expr = exprs.FunctionExpression(synth_fun, *args)
+        self.synth_fun_expr = exprs.FunctionExpression(synth_fun, tuple(args))
+
+    def _initialize_valuations(self, expr_valuations):
+        eval_ctx = self.eval_ctx
+        def evaluate(t):
+            return 
+        self.valuations = {}
+        for args, value in expr_valuations:
+            raw_args = tuple([ evaluation.evaluate_expression(a, eval_ctx) for a in args ])
+            raw_value = evaluation.evaluate_expression_raw(value, eval_ctx)
+            self.valuations[raw_args] = raw_value
+
 
     def term_signature(self, term, points):
         eval_ctx = self.eval_ctx
@@ -111,12 +123,12 @@ class PBESpec(SpecInterface):
 
         retval = []
         for point in points:
-            if point not in valuations:
+            if point not in self.valuations:
                 print("Something is almost certainly wrong!")
                 retval.append(True)
                 continue
             eval_ctx.set_valuation_map(point)
-            retval.append(valuations[point] == evaluation.evaluate_expression_raw(synth_fun_expr, eval_ctx))
+            retval.append(self.valuations[point] == evaluation.evaluate_expression_raw(synth_fun_expr, eval_ctx))
 
         return retval
 

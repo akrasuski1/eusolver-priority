@@ -205,7 +205,26 @@ def sexp_to_grammar(arg_var_map, grammar_sexp, synth_fun, syn_ctx):
         rules[nt] = rewrites
     return grammars.Grammar(non_terminals, nt_type, rules)
 
-def make_solver(file_sexp, use_esolver=False):
+def get_pbe_valuations(constraints, synth_fun):
+    valuations = []
+    for constraint in constraints:
+        if not exprs.is_application_of(constraint, 'eq') and \
+                not exprs.is_application_of(constraint, '='):
+            return None
+        if len(exprs.get_all_variables(constraint)) > 0:
+            return None
+        arg_func, arg_other = None, None
+        for a in constraint.children:
+            if exprs.is_application_of(a, synth_fun):
+                arg_func = a
+            else:
+                arg_other = a
+        if arg_func is None or arg_other is None:
+            return None
+        valuations.append((arg_func.children, arg_other))
+    return valuations
+
+def extract_benchmark(file_sexp):
     core_instantiator = semantics_core.CoreInstantiator()
 
     theories, file_sexp = filter_sexp_for('set-logic', file_sexp)
@@ -234,34 +253,40 @@ def make_solver(file_sexp, use_esolver=False):
 
     constraints_data, file_sexp = filter_sexp_for('constraint', file_sexp)
     constraints = process_constraints(constraints_data, syn_ctx, forall_vars_map, synth_fun)
-    specification = specifications.StandardSpec(
-            syn_ctx.make_function_expr('and', *constraints),
-            syn_ctx, synth_fun)
-    syn_ctx.assert_spec(specification, synth_fun)
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
     assert check_sats == [[]]
     assert file_sexp == []
 
-    if use_esolver:
-        # Have to configure solver to esolver
+    return syn_ctx, synth_fun, macro_instantiator, constraints, grammar
+
+def make_solver(file_sexp):
+    syn_ctx, synth_fun, macro_instantiator, constraints, grammar = extract_benchmark(file_sexp)
+
+    valuations = get_pbe_valuations(constraints, synth_fun)
+    if valuations is not None:
+        specification = specifications.PBESpec(valuations, synth_fun)
+    else:
+        specification = specifications.StandardSpec(
+                syn_ctx.make_function_expr('and', *constraints),
+                syn_ctx, synth_fun)
+    syn_ctx.assert_spec(specification, synth_fun)
+
+    ans = grammar.decompose(macro_instantiator)
+    if ans == None:
+        # Have to configure solver for naivete
         raise NotImplementedError
     else:
-        ans = grammar.decompose(macro_instantiator)
-        if ans == None:
-            # Have to configure solver for naivete
-            raise NotImplementedError
-        else:
-            term_grammar, pred_grammar = ans
-            # print("Original grammar:\n", grammar)
-            # print("Term grammar:\n", term_grammar)
-            # print("Pred grammar:\n", pred_grammar)
-            # generator_factory = enumerators.RecursiveGeneratorFactory()
-            generator_factory = enumerators.RecursiveGeneratorFactory()
-            term_generator = term_grammar.to_generator(generator_factory)
-            pred_generator = pred_grammar.to_generator(generator_factory)
-            solver = solvers.Solver(syn_ctx)
-            solvers._do_solve(solver, generator_factory, term_generator, pred_generator, False)
+        term_grammar, pred_grammar = ans
+        # print("Original grammar:\n", grammar)
+        # print("Term grammar:\n", term_grammar)
+        # print("Pred grammar:\n", pred_grammar)
+        # generator_factory = enumerators.RecursiveGeneratorFactory()
+        generator_factory = enumerators.RecursiveGeneratorFactory()
+        term_generator = term_grammar.to_generator(generator_factory)
+        pred_generator = pred_grammar.to_generator(generator_factory)
+        solver = solvers.Solver(syn_ctx)
+        solvers._do_solve(solver, generator_factory, term_generator, pred_generator, False)
 
 
 # Tests:
@@ -270,10 +295,10 @@ def test_make_solver():
     import parser
 
     # for benchmark_file in [ "../benchmarks/one_off/invertD.sl", "../benchmarks/one_off/str.sl" ]:
-    for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
-    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
+    # for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
+    for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
         file_sexp = parser.sexpFromFile(benchmark_file)
-        make_solver(file_sexp, use_esolver=False)
+        make_solver(file_sexp)
 
 if __name__ == "__main__":
     test_make_solver()

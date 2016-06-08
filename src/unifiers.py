@@ -67,7 +67,17 @@ class UnifierInterface(object):
     def unify(self):
         raise basetypes.AbstractMethodError('UnifierInterface.solve()')
 
-class EnumerativeDTUnifierBase(object):
+    def _try_trivial_unification(self):
+        # we can trivially unify if there exists a term
+        # which satisfies the spec at all points
+        trivial_term = None
+        for (sig, term) in self.term_solver.get_signature_to_term().items():
+            if (sig is None or sig.is_full()):
+                trivial_term = term
+                break
+        return trivial_term
+
+class EnumerativeDTUnifierBase(UnifierInterface):
     def __init__(self, pred_generator, term_solver, syn_ctx):
         self.pred_generator = pred_generator
         self.term_solver = term_solver
@@ -86,16 +96,6 @@ class EnumerativeDTUnifierBase(object):
 
     def get_signature_to_pred(self):
         return self.pred_solver.get_signature_to_term()
-
-    def _try_trivial_unification(self):
-        # we can trivially unify if there exists a term
-        # which satisfies the spec at all points
-        trivial_term = None
-        for (sig, term) in self.term_solver.get_signature_to_term().items():
-            if (sig is None or sig.is_full()):
-                trivial_term = term
-                break
-        return trivial_term
 
     def _try_decision_tree_learning(self):
         term_list = []

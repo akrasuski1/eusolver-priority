@@ -244,6 +244,20 @@ def find_application(expr, function_name):
                     return ret
     return None
 
+def get_all_variables(expr):
+    if is_function_expression(expr):
+        ret = set()
+        for child in expr.children:
+            ret = ret.union(get_all_variables(child))
+        return ret
+    elif is_constant_expression(expr):
+        return set()
+    elif is_formal_parameter_expression(expr):
+        return set()
+    elif is_variable_expression(expr):
+        return set([expr])
+    else:
+        raise Exception
 
 def get_all_formal_parameters(expr):
     if is_function_expression(expr):

@@ -337,8 +337,6 @@ def canonicalize_specification(expr, syn_ctx):
 
     (intro_clauses, intro_vars) = _intro_new_universal_vars(clauses, syn_ctx,
                                                             synth_function_list[0])
-    # for c in intro_clauses:
-    #     print(_expr_to_str(c))
 
     # ensure that the intro_vars at the head of the list
     variable_list = [x.variable_info for x in intro_vars] + orig_variable_list
@@ -354,8 +352,16 @@ def canonicalize_specification(expr, syn_ctx):
     else:
         canon_spec = syn_ctx.make_function_expr('and', *intro_clauses);
 
+    canon_clauses = []
+    for ic in intro_clauses:
+        if exprs.is_application_of(ic, 'or'):
+            disjuncts = ic.children
+        else:
+            disjuncts = [ic]
+        canon_clauses.append(disjuncts)
+
     return (variable_list, synth_function_list, canon_spec,
-            clauses, neg_clauses, intro_vars)
+            clauses, canon_clauses, neg_clauses, intro_vars)
 
 #######################################################################
 # TEST CASES
