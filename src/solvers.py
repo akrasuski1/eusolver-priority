@@ -135,15 +135,15 @@ class Solver(object):
 ########################################################################
 # TEST CASES
 ########################################################################
-def _do_solve(solver, generator_factory, term_generator, pred_generator, run_anytime_version):
+def _do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, run_anytime_version):
     reported_expr_string_set = set()
     sol_tuples = solver.solve(
             term_generator,
             pred_generator,
             generator_factory,
-            termsolvers.PointlessTermSolver,
-            unifiers.PointlessEnumDTUnifier,
-            verifiers.PBEVerifier)
+            TermSolver,
+            Unifier,
+            Verifier)
             # unifiers_lia.SpecAwareLIAUnifier)
     for sol_tuple in sol_tuples:
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple

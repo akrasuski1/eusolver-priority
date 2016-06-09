@@ -40,9 +40,11 @@
 
 from bitvectors import BitVector
 import parser
+import verifiers
 import termsolvers
 import specifications
 import unifiers
+import unifiers_lia
 import solvers
 import exprs
 import enumerators
@@ -258,20 +260,36 @@ def extract_benchmark(file_sexp):
     assert check_sats == [[]]
     assert file_sexp == []
 
-    return syn_ctx, synth_fun, macro_instantiator, constraints, grammar
+    return theory, syn_ctx, synth_fun, macro_instantiator, constraints, grammar
 
 def make_solver(file_sexp):
-    syn_ctx, synth_fun, macro_instantiator, constraints, grammar = extract_benchmark(file_sexp)
+    theory, syn_ctx, synth_fun, macro_instantiator, constraints, grammar = extract_benchmark(file_sexp)
 
+    # for constraint in constraints:
+    #     print(exprs.expression_to_string(constraint))
+    # constraints = [ macro_instantiator.instantiate_all(c)
+    #         for c in constraints ]
+    # for constraint in constraints:
+    #     print(exprs.expression_to_string(constraint))
+    # raise Exception
+
+
+    # Spec type (and verifier)
     valuations = get_pbe_valuations(constraints, synth_fun)
     if valuations is not None:
         specification = specifications.PBESpec(valuations, synth_fun)
+        Verifier = verifiers.PBEVerifier
     else:
         specification = specifications.StandardSpec(
                 syn_ctx.make_function_expr('and', *constraints),
                 syn_ctx, synth_fun)
+        Verifier = verifiers.StdVerifier
     syn_ctx.assert_spec(specification, synth_fun)
 
+    TermSolver = termsolvers.PointlessTermSolver
+    Unifier = unifiers_lia.SpecAwareLIAUnifier
+
+    # One shot or unification
     ans = grammar.decompose(macro_instantiator)
     if ans == None:
         # Have to configure solver for naivete
@@ -286,7 +304,7 @@ def make_solver(file_sexp):
         term_generator = term_grammar.to_generator(generator_factory)
         pred_generator = pred_grammar.to_generator(generator_factory)
         solver = solvers.Solver(syn_ctx)
-        solvers._do_solve(solver, generator_factory, term_generator, pred_generator, False)
+        solvers._do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, False)
 
 
 # Tests:
@@ -295,9 +313,11 @@ def test_make_solver():
     import parser
 
     # for benchmark_file in [ "../benchmarks/one_off/invertD.sl", "../benchmarks/one_off/str.sl" ]:
-    # for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
+    # for benchmark_file in [ "../benchmarks/max/max_15.sl" ]:
+    for benchmark_file in [ "../benchmarks/max/max_2.sl" ]:
     # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
-    for benchmark_file in [ "../benchmarks/one_off/str.sl" ]:
+    # for benchmark_file in [ "../benchmarks/one_off/str.sl" ]:
+        print("Doing", benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
 

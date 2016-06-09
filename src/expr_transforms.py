@@ -154,6 +154,23 @@ class CNFConverter(ExprTransformerBase):
     def __init__(self):
         super().__init__('CNFConverter')
 
+    def _flatten_and_or(self, expr_object, syn_ctx):
+        kind = expr_object.expr_kind
+        if (kind != exprs.ExpressionKinds.function_expression):
+            return expr_object
+        elif (not self._matches_expression_any(expr_object, 'and', 'or')):
+            return expr_object
+        else:
+            func = expr_object.function_info
+            new_children = []
+            for child in expr_object.children:
+                if not exprs.is_application_of(child, func):
+                    new_children.append(self._flatten_and_or(child, syn_ctx))
+                else:
+                    childp = self._flatten_and_or(child, syn_ctx)
+                    new_children.extend(childp.children)
+            return syn_ctx.make_function_expr(func, *new_children)
+
     def _do_transform(self, expr_object, syn_ctx):
         """Requires: expression is in NNF."""
 
@@ -188,7 +205,8 @@ class CNFConverter(ExprTransformerBase):
                                           'an expression and a synthesis context object')
         nnf_converter = NNFConverter()
         nnf_expr = nnf_converter.apply(args[0], args[1])
-        clauses = self._do_transform(nnf_expr, args[1])
+        flatted_nnf_expr = self._flatten_and_or(nnf_expr, args[1])
+        clauses = self._do_transform(flatted_nnf_expr, args[1])
         return (clauses, args[1].make_ac_function_expr('and', *clauses))
 
 def check_expr_binding_to_context(expr, syn_ctx):

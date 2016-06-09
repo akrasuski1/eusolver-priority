@@ -129,7 +129,7 @@ class VerifierBase(object):
         return sol_or_cexs
 
 
-class Verifier(VerifierBase):
+class StdVerifier(VerifierBase):
     def __init__(self, syn_ctx, smt_ctx):
         self.syn_ctx = syn_ctx
         spec_tuple = syn_ctx.get_specification().get_spec_tuple()
