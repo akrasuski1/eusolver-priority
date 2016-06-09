@@ -92,7 +92,7 @@ class Solver(object):
         synth_fun = syn_ctx.synth_fun
         spec = syn_ctx.get_specification()
 
-        term_solver = TermSolver(spec.term_signature, term_generator, synth_fun)
+        term_solver = TermSolver(spec.term_signature, term_generator, spec, synth_fun)
         unifier = Unifier(pred_generator, term_solver, synth_fun, syn_ctx, spec)
         verifier = Verifier(syn_ctx, self.smt_ctx)
         time_origin = time.clock()
@@ -105,31 +105,34 @@ class Solver(object):
             # we now have a sufficient set of terms
             # print('Term solve complete!')
             # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
-            unifier_state = unifier.unify()
-            while (True):
+
+            # Check term solver for completeness
+            cexs = verifier.verify_term_solve(list(term_solver.get_signature_to_term().values()))
+
+            if cexs is None:
+                unifier_state = unifier.unify()
                 unification = next(unifier_state)
                 sol_or_cex = verifier.verify(unification)
+            else:
+                # print('Term solve incomplete!')
+                sol_or_cex = cexs
 
-                if _is_expr(sol_or_cex):
-                    solution_found_at = time.clock() - time_origin
-                    yield (sol_or_cex,
-                            unifier.last_dt_size,
-                            term_solver.get_num_distinct_terms(),
-                            unifier.get_num_distinct_preds(),
-                            term_solver.get_largest_term_size_enumerated(),
-                            unifier.get_largest_pred_size_enumerated(),
-                            len(self.points),
-                            solution_found_at)
-                else:
-                    # this is a set of counterexamples
-                    # print('Solver: Adding %d points' % len(sol_or_cex))
-                    # for p in sol_or_cex:
-                    #     print('\t', [ c.value_object for c in p ])
-                    term_solver.add_points(sol_or_cex) # Term solver can add all points at once
-                    unifier.add_points(sol_or_cex)
-                    self.add_points(sol_or_cex)
-                    generator_factory.add_points(sol_or_cex)
-                    break
+            if _is_expr(sol_or_cex):
+                solution_found_at = time.clock() - time_origin
+                yield (sol_or_cex,
+                        unifier.last_dt_size,
+                        term_solver.get_num_distinct_terms(),
+                        unifier.get_num_distinct_preds(),
+                        term_solver.get_largest_term_size_enumerated(),
+                        unifier.get_largest_pred_size_enumerated(),
+                        len(self.points),
+                        solution_found_at)
+                return
+
+            term_solver.add_points(sol_or_cex) # Term solver can add all points at once
+            unifier.add_points(sol_or_cex)
+            self.add_points(sol_or_cex)
+            generator_factory.add_points(sol_or_cex)
 
 
 ########################################################################

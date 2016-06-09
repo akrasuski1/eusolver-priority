@@ -145,10 +145,10 @@ def test_make_solver():
 
     # for benchmark_file in [ "../benchmarks/one_off/invertD.sl", "../benchmarks/one_off/str.sl" ]:
     # for benchmark_file in [ "../benchmarks/max/max_15.sl" ]:
-    # for benchmark_file in [ "../benchmarks/max/max_2.sl" ]:
     # for benchmark_file in [ '../benchmarks/SyGuS-COMP15/LIA-Track/All/fg_mpg_example1.sl' ]:
     # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
-    for benchmark_file in [ "../benchmarks/one_off/uf.sl" ]:
+    # for benchmark_file in [ "../benchmarks/one_off/uf.sl" ]:
+    for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
         print("Doing", benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)

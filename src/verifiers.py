@@ -114,6 +114,9 @@ class VerifierBase(object):
     def verify(self, unification):
         raise basetypes.AbstractMethodError('VerifierBase.verify()')
 
+    def verify_term_solve(self, terms):
+        raise basetypes.AbstractMethodError('VerifierBase.verify()')
+
     def _default_verify(self, unification):
         type, expr_object = unification
         if type == "TERM":
@@ -150,10 +153,12 @@ class StdVerifier(VerifierBase):
         fun_app = syn_ctx.make_function_expr(self.synth_fun, *self.intro_vars)
         fun_app_subst_var = syn_ctx.make_variable_expr(self.synth_fun.range_type, '__output__')
         self.outvar_cnstr = syn_ctx.make_function_expr('eq', fun_app_subst_var, fun_app)
-        canon_spec_with_outvar = exprs.substitute(spec.get_canonical_specification(), fun_app, fun_app_subst_var)
+        self.canon_spec = spec.get_canonical_specification()
+        canon_spec_with_outvar = exprs.substitute(self.canon_spec, fun_app, fun_app_subst_var)
         neg_canon_spec_with_outvar = syn_ctx.make_function_expr('not', canon_spec_with_outvar)
-        frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)
-        self.smt_solver.add(frozen_smt_cnstr)
+        self.frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)
+        self.smt_solver.push()
+        self.smt_solver.add(self.frozen_smt_cnstr)
 
     def _verify_expr(self, term):
         smt_ctx = self.smt_ctx
@@ -227,6 +232,41 @@ class StdVerifier(VerifierBase):
     def verify(self, unification):
         return self._default_verify(unification)
 
+    def verify_term_solve(self, terms):
+        smt_ctx = self.smt_ctx
+        smt_solver = self.smt_solver
+        smt_solver.pop()
+
+        eq_cnstrs = []
+        for term in terms:
+            smt_ctx.set_interpretation(self.synth_fun, term)
+            eq_cnstrs.append(_expr_to_smt(self.canon_spec, smt_ctx))
+        eq_cnstr = z3.And(*[ z3.Not(ec) for ec in eq_cnstrs ], eq_cnstrs[0].ctx)
+
+        # print("----------")
+        # print(eq_cnstr)
+
+        smt_solver.push()
+        smt_solver.add(eq_cnstr)
+        r = smt_solver.check()
+
+        # print(smt_solver)
+        # print(smt_solver.model())
+        # print("----------")
+        smt_solver.pop()
+
+        smt_solver.push()
+        smt_solver.add(self.frozen_smt_cnstr)
+
+        if (r == z3.sat):
+            cex_point = model_to_point(smt_solver.model(),
+                                       self.var_smt_expr_list,
+                                       self.var_info_list)
+            return [cex_point]
+        else:
+            return None
+
+
 class PBEVerifier(VerifierBase):
     def __init__(self, syn_ctx, smt_ctx):
         self.spec = syn_ctx.get_specification()
@@ -284,3 +324,16 @@ class PBEVerifier(VerifierBase):
 
     def verify(self, unification):
         return self._default_verify(unification)
+
+    def verify_term_solve(self, terms):
+        eval_ctx = self.eval_ctx
+        for point, value in self.valuations.items():
+            eval_ctx.set_valuation_map(point)
+            found_one = False
+            for term in terms:
+                result = evaluation.evaluate_expression_raw(term, eval_ctx)
+                if result == value:
+                    found_one = True
+            if not found_one:
+                return [point]
+        return None
