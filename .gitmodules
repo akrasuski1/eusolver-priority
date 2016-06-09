@@ -1,3 +1,4 @@
 [submodule "thirdparty/z3"]
 	path = thirdparty/z3
 	url = https://github.com/Z3Prover/z3.git
+	branch = master
