@@ -219,6 +219,11 @@ class SynthFunction(UnknownFunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type):
         super().__init__(FunctionKinds.synth_function, function_name, function_arity, domain_types, range_type)
 
+class UninterpretedFunction(FunctionBase):
+    def __init__(self, function_name, function_arity, domain_types, range_type):
+        super().__init__(FunctionKinds.uninterpreted_function, function_name, function_arity,
+                         domain_types, range_type)
+
 class InterpretedFunctionBase(FunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type):
         super().__init__(FunctionKinds.interpreted_function, function_name, function_arity,

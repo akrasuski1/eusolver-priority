@@ -64,6 +64,41 @@ class ExprTransformerBase(object):
             return False
         return (expr_object.function_info.function_name in fun_name_set)
 
+class AckermannReduction(ExprTransformerBase):
+    def __init__(self):
+        super().__init__('AckermannReduction')
+
+    # Eliminate the uninterpreted functions by adding more universal variables
+    def apply(constraints, uf_instantiator, syn_ctx):
+        import random
+        conds = []
+        all_apps = set()
+        for uf_name, uf_info in uf_instantiator.get_functions().items():
+            uf_apps = set()
+            for c in constraints:
+                uf_apps |= set(exprs.find_all_applications(c, uf_name))
+            all_apps |= uf_apps
+
+            while len(uf_apps) > 0:
+                uf_app1 = uf_apps.pop()
+                for uf_app2 in uf_apps:
+                    app1_args, app2_args = uf_app1.children, uf_app2.children
+                    args_eq_expr = [ syn_ctx.make_function_expr('=', a1, a2)
+                            for (a1, a2) in zip(app1_args, app2_args) ]
+                    output_neq_expr = syn_ctx.make_function_expr('ne', uf_app1, uf_app2)
+                    cond = syn_ctx.make_function_expr('and', output_neq_expr, *args_eq_expr)
+                    conds.append(cond)
+
+        constraints = [ syn_ctx.make_function_expr('or', *conds, constraint)
+                for constraint in constraints ]
+        for app in sorted(all_apps, key=exprs.get_expression_size):
+            var = syn_ctx.make_variable_expr(app.function_info.range_type,
+                    'ufcall_' + app.function_info.function_name + '_' + str(random.randint(1, 1000000)))
+            constraints = [ exprs.substitute(constraint, app, var)
+                    for constraint in constraints ]
+        return constraints
+
+
 
 class NNFConverter(ExprTransformerBase):
     def __init__(self):
