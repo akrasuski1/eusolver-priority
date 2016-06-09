@@ -298,7 +298,10 @@ def _intro_new_universal_vars(clauses, syn_ctx, uf_info):
                   for i in range(len(uf_info.domain_types))]
     retval = []
     for clause in clauses:
-        arg_tuple = _get_synth_function_invocation_args(clause).pop()
+        arg_tuples = _get_synth_function_invocation_args(clause)
+        if len(arg_tuples) == 0:
+            continue
+        arg_tuple = arg_tuples.pop()
         eq_constraints = []
         for i in range(len(arg_tuple)):
             arg = arg_tuple[i]
