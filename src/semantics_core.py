@@ -204,17 +204,21 @@ class MacroInstantiator(semantics_types.InstantiatorBase):
         self.function_interpretations[function_name] = function_interpretation
 
     def instantiate_all(self, expr):
-        for fname, fint in self.function_interpretations.items():
-            while True:
-                app = exprs.find_application(expr, fname)
-                if app is None:
-                    break
-                actual_params = app.children
-                formal_params = fint.formal_parameters
-                new_app = exprs.substitute_all(
-                        fint.interpretation_expression,
-                        list(zip(formal_params, actual_params)))
-                expr = exprs.substitute(expr, app, new_app)
+        instantiated_one = False
+        while not instantiated_one:
+            instantiated_one = True
+            for fname, fint in self.function_interpretations.items():
+                while True:
+                    app = exprs.find_application(expr, fname)
+                    if app is None:
+                        break
+                    instantiated_one = False
+                    actual_params = app.children
+                    formal_params = fint.formal_parameters
+                    new_app = exprs.substitute_all(
+                            fint.interpretation_expression,
+                            list(zip(formal_params, actual_params)))
+                    expr = exprs.substitute(expr, app, new_app)
         return expr
 
 #
