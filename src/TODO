@@ -1,0 +1,28 @@
+Grammar decomposer - sort of
+	Bug in grammar decomposer - qm_* benchmarks exhibit bug
+	Generally, problem expanding macro functions in grammars
+
+LIA specific unifier -- first version done
+LIA specific termsolver
+
+Grammar pruning
+
+let's
+multi-function synthesis
+
+BV theory - add all functions
+
+Default grammars
+
+All grammar features
+	Other weird things?
+
+Test all semantics
+
+CAV 15 strategy
+	Grammar unroller
+
+LIA optimizations
+	pairwise unification
+	Linear classifier unification
+	Geometric unification? Some evidence that it is slow
