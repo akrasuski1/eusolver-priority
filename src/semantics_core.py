@@ -58,12 +58,14 @@ class EqFunction(InterpretedFunctionBase):
         super().__init__('=', 2, (domain_type, domain_type), exprtypes.BoolType())
         self.smt_function = lambda a, b: a == b
         self.eval_children = lambda a, b: a == b
+        self.commutative = True
 
 class NeFunction(InterpretedFunctionBase):
     def __init__(self, domain_type):
         super().__init__('ne', 2, (domain_type, domain_type), exprtypes.BoolType())
         self.smt_function = lambda a, b: a != b
         self.eval_children = lambda a, b: a != b
+        self.commutative = True
 
 class AndFunction(InterpretedFunctionBase):
     """A function object for conjunctions. Allows arbitrary number of arguments."""
@@ -71,6 +73,8 @@ class AndFunction(InterpretedFunctionBase):
         super().__init__('and', -1, (exprtypes.BoolType(), ), exprtypes.BoolType())
         self.smt_function = lambda *children: z3.And(children, children[0].ctx)
         self.eval_children = lambda *children: all(children)
+        self.commutative = True
+        self.associative = True
 
 class OrFunction(InterpretedFunctionBase):
     """A function object for disjunctions. Allows arbitrary number of arguments."""
@@ -78,6 +82,8 @@ class OrFunction(InterpretedFunctionBase):
         super().__init__('or', -1, (exprtypes.BoolType(), ), exprtypes.BoolType())
         self.smt_function = lambda *children: z3.Or(children, children[0].ctx)
         self.eval_children = lambda *children: any(children)
+        self.commutative = True
+        self.associative = True
 
 class NotFunction(InterpretedFunctionBase):
     """A function object for negation."""
@@ -99,6 +105,8 @@ class IffFunction(InterpretedFunctionBase):
                          exprtypes.BoolType())
         self.smt_function = lambda a, b: a == b
         self.eval_children = lambda a, b: a == b
+        self.commutative = True
+        self.associative = True
 
 class XorFunction(InterpretedFunctionBase):
     def __init__(self):
@@ -106,6 +114,8 @@ class XorFunction(InterpretedFunctionBase):
                          exprtypes.BoolType())
         self.smt_function = z3.Xor
         self.eval_children = lambda a, b: a != b
+        self.commutative = True
+        self.associative = True
 
 class IteFunction(InterpretedFunctionBase):
     def __init__(self, range_type):

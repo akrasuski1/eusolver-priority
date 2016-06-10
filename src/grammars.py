@@ -71,6 +71,11 @@ class ExpressionRewrite(RewriteBase):
     def rename_nt(self, old_name, new_name):
         return self
 
+    def __eq__(self, other):
+        if isinstance(other, ExpressionRewrite):
+            return other.expr == self.expr
+        return False
+
 class NTRewrite(RewriteBase):
     def __init__(self, non_terminal, nt_type):
         super().__init__(nt_type)
@@ -87,6 +92,12 @@ class NTRewrite(RewriteBase):
             return NTRewrite(new_name, self.type)
         else:
             return self
+
+    def __eq__(self, other):
+        if isinstance(other, NTRewrite):
+            return other.non_terminal == self.non_terminal
+        return False
+
 
 class FunctionRewrite(RewriteBase):
     def __init__(self, function_info, *children):
@@ -106,12 +117,26 @@ class FunctionRewrite(RewriteBase):
         expr_template = exprs.FunctionExpression(self.function_info, tuple(child_exprs))
         return ph_vars, nts, expr_template
 
+    def __eq__(self, other):
+        if isinstance(other, FunctionRewrite):
+            return (other.function_info == self.function_info and
+                    all(c1 == c2 for (c1, c2) in zip(self.children, other.children)))
+        return False
+
     def to_generator(self, place_holders):
         ph_vars, nts, expr_template = self._to_template_expr()
         if len(ph_vars) == 0:
             return enumerators.LeafGenerator([expr_template])
         sub_gens = [ place_holders[_nt_to_generator_name(nt)] for nt in nts ]
-        return enumerators.ExpressionTemplateGenerator(expr_template, ph_vars, sub_gens)
+        
+        # Try some pruning rules
+        if (len(self.children) == 2 and
+                self.function_info.commutative and
+                self.children[0] == self.children[1]):
+            good_size_tuple = enumerators.commutative_good_size_tuple
+        else:
+            good_size_tuple = enumerators.default_good_size_tuple
+        return enumerators.ExpressionTemplateGenerator(expr_template, ph_vars, sub_gens, good_size_tuple=good_size_tuple)
 
     def rename_nt(self, old_name, new_name):
         new_children = [ child.rename_nt(old_name, new_name) 

@@ -309,8 +309,9 @@ class PBEVerifier(VerifierBase):
                     at_least_one_branch_failed = True
                     cex_points.append(point)
                     break
-                else:
-                    selected_leaf_terms.append(good_terms[0])
+
+            if len(good_terms) > 0:
+                selected_leaf_terms.append(good_terms[0])
 
 
         if at_least_one_branch_failed:

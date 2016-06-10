@@ -81,6 +81,9 @@ class SynthesisContext(object):
     def get_variable(self, var_name):
         return self.variables_map.get(var_name, None)
 
+    def get_variable_expr(self, var_name):
+        return exprs.VariableExpression(self.get_variable(var_name))
+
     def set_eval_offset_for_variable(self, var_name, var_eval_offset):
         var_info = self.get_variable(var_name)
         if (var_info == None):

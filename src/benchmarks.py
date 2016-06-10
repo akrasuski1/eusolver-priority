@@ -93,7 +93,8 @@ def massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraint
 def make_multifun_solver(benchmark_tuple):
     raise NotImplementedError
 
-def rewrite_solution(solution, reverse_mapping):
+def rewrite_solution(synth_fun, solution, reverse_mapping):
+    # Rewrite any predicates introduced in grammar decomposition
     for function_info, cond, orig_expr_template, expr_template in reverse_mapping:
         while True:
             app = exprs.find_application(solution, function_info.function_name)
@@ -106,6 +107,15 @@ def rewrite_solution(solution, reverse_mapping):
             var_mapping = exprs.match(expr_template, ite_without_dummy)
             new_ite = exprs.substitute_all(orig_expr_template, var_mapping.items())
             solution = exprs.substitute(solution, ite, new_ite)
+
+    # Rewrite back into formal parameters
+    variables = exprs.get_all_formal_parameters(solution)
+    substitute_pairs = []
+    orig_vars = synth_fun.get_named_vars()
+    for v in variables:
+        substitute_pairs.append((v, orig_vars[v.parameter_position]))
+    solution = exprs.substitute_all(solution, substitute_pairs)
+
     return solution
 
 def make_singlefun_solver(benchmark_tuple):
@@ -150,7 +160,7 @@ def make_singlefun_solver(benchmark_tuple):
         pred_generator = pred_grammar.to_generator(generator_factory)
         solver = solvers.Solver(syn_ctx)
         solution = solvers._do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, False)
-        rewritten_solution = rewrite_solution(solution, reverse_mapping)
+        rewritten_solution = rewrite_solution(synth_fun, solution, reverse_mapping)
         print(exprs.expression_to_string(rewritten_solution))
 
 
@@ -180,7 +190,8 @@ def test_make_solver():
 
     # for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
     # for benchmark_file in [ "../benchmarks/SyGuS-COMP15/GENERAL-Track/qm_max3.sl" ]:
-    for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
+    # for benchmark_file in [ "../benchmarks/SyGuS-COMP15/INV-Track/inv-benchmarks-temp/sum1.sl" ]:
+    for benchmark_file in [ "../benchmarks/icfp/icfp_105_1000.sl" ]:
         print("Doing", benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)

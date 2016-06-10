@@ -109,6 +109,8 @@ class BVAnd(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = lambda a,b: a & b
         self.eval_children = lambda a,b: a & b
+        self.commutative = True
+        self.associative = True
 
 class BVOr(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -117,6 +119,8 @@ class BVOr(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = lambda a,b: a | b
         self.eval_children = lambda a,b: a | b
+        self.commutative = True
+        self.associative = True
 
 class BVNeg(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -132,6 +136,8 @@ class BVAdd(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = lambda a,b: a + b
         self.eval_children = lambda a,b: a + b
+        self.commutative = True
+        self.associative = True
 
 class BVMul(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -140,6 +146,8 @@ class BVMul(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = lambda a,b: a * b
         self.eval_children = lambda a,b: a * b
+        self.commutative = True
+        self.associative = True
 
 class BVSub(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -271,6 +279,8 @@ class BVXor(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = lambda a, b : a ^ b
         self.eval_children = lambda a, b : a ^ b
+        self.commutative = True
+        self.associative = True
 
 class BVXNor(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -279,6 +289,8 @@ class BVXNor(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = lambda a, b : ~(a ^ b)
         self.eval_children = lambda a, b : ~(a ^ b)
+        self.commutative = True
+        self.associative = True
 
 class BVNand(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -287,6 +299,8 @@ class BVNand(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = lambda a, b : ~(a & b)
         self.eval_children = lambda a, b : ~(a & b)
+        self.commutative = True
+        self.associative = True
 
 class BVNor(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -295,7 +309,8 @@ class BVNor(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = lambda a, b : ~(a | b)
         self.eval_children = lambda a, b : ~(a | b)
-
+        self.commutative = True
+        self.associative = True
 
 class BVComp(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -304,6 +319,8 @@ class BVComp(InterpretedFunctionBase):
                          exprtypes.BitVectorType(1))
         self.smt_function = lambda a, b : z3.If(a == b, z3.BitVecVal(1, 1), z3.BitVecVal(0, 1))
         self.eval_children = lambda a, b : a.bvcomp(b)
+        self.commutative = True
+        self.associative = True
 
 class BVInstantiator(semantics_types.InstantiatorBase):
     def __init__(self):

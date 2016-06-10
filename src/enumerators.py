@@ -50,6 +50,12 @@ import time
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
 
+def commutative_good_size_tuple(sizes):
+    return sizes[0] >= sizes[1]
+
+def default_good_size_tuple(sizes):
+    return True
+
 def cartesian_product_of_generators(*generators):
     """A generator that produces the cartesian product of the input
     "sub-generators."""
@@ -119,6 +125,7 @@ class NonLeafGenerator(GeneratorBase):
         self.arity = len(sub_generators)
         self.allowed_size = 0
         assert self.arity > 0
+        self.good_size_tuple = default_good_size_tuple
 
     def set_size(self, new_size):
         self.allowed_size = new_size
@@ -138,6 +145,8 @@ class NonLeafGenerator(GeneratorBase):
             return
 
         for partition in utils.partitions(self.allowed_size - 1, self.arity):
+            if not self.good_size_tuple(partition):
+                continue
             self._set_sub_generator_sizes(partition)
             for product_tuple in cartesian_product_of_generators(*self.sub_generators):
                 yield self._instantiate(product_tuple)
@@ -146,11 +155,13 @@ class NonLeafGenerator(GeneratorBase):
 class ExpressionTemplateGenerator(NonLeafGenerator):
     """A generator for expressions with placeholders."""
 
-    def __init__(self, expr_template, place_holder_vars, sub_generators, name=None):
+    def __init__(self, expr_template, place_holder_vars, sub_generators, good_size_tuple, name=None):
         super().__init__(sub_generators, name)
         self.expr_template = expr_template
         self.place_holder_vars = place_holder_vars
         assert len(place_holder_vars) == len(sub_generators)
+        if good_size_tuple is not None:
+            self.good_size_tuple = good_size_tuple
 
     def _instantiate(self, sub_exprs):
         # print('TEMPLATE:', exprs.expression_to_string(self.expr_template))
@@ -165,6 +176,7 @@ class ExpressionTemplateGenerator(NonLeafGenerator):
                 self.expr_template,
                 self.place_holder_vars,
                 [x.clone() for x in self.sub_generators],
+                self.good_size_tuple,
                 self.name)
 
 class FunctionalGenerator(NonLeafGenerator):

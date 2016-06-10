@@ -169,9 +169,30 @@ def process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx):
         ((arg_vars, arg_types, arg_var_map), return_type) = _process_function_defintion(args_data, ret_type_data)
 
         synth_fun = syn_ctx.make_synth_function(name, tuple(arg_types), return_type)
+        synth_fun.set_named_vars(arg_vars)
+
         synth_instantiator.add_function(name, synth_fun)
         ret.append((synth_fun, arg_var_map, grammar_data))
     return ret
+
+def process_synth_invs(synth_invs_data, synth_instantiator, syn_ctx):
+    ret = []
+    for synth_inv_data in synth_invs_data:
+        if len(synth_inv_data) == 3:
+            [name, args_data, grammar_data] = synth_inv_data
+        else:
+            [name, args_data] = synth_inv_data
+            grammar_data = 'Default grammar'
+        ret_type_data = 'Bool'
+        ((arg_vars, arg_types, arg_var_map), return_type) = _process_function_defintion(args_data, ret_type_data)
+
+        synth_inv = syn_ctx.make_synth_function(name, tuple(arg_types), return_type)
+        synth_inv.set_named_vars(arg_vars)
+
+        synth_instantiator.add_function(name, synth_inv)
+        ret.append((synth_inv, arg_var_map, grammar_data))
+    return ret
+
 
 def _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, rule_data):
     if type(rule_data) == tuple:
@@ -204,12 +225,44 @@ def _process_forall_vars(forall_vars_data, syn_ctx):
         forall_var_map[variable_name] = variable
     return forall_var_map
 
+def _process_forall_primed_vars(forall_primed_data, syn_ctx):
+    forall_primed_vars_map = {}
+    for [variable_name, var_type_data] in forall_primed_data:
+        primed_variable_name = variable_name + '!'
+        variable_type = sexp_to_type(var_type_data)
+        for name in [ variable_name, primed_variable_name ]:
+            variable = syn_ctx.make_variable_expr(variable_type, name)
+            forall_primed_vars_map[name] = variable
+    return forall_primed_vars_map
+
+
 def process_constraints(constraints_data, syn_ctx, forall_var_map):
     constraints = []
     for [constraint_data] in constraints_data:
         constraint = sexp_to_expr(constraint_data, syn_ctx, forall_var_map)
         constraints.append(constraint)
     return constraints
+
+def process_inv_constraints(inv_constraints_data, synth_instantiator, syn_ctx, forall_var_map):
+    constraints = []
+    for [inv_name, pre_name, trans_name, post_name] in inv_constraints_data:
+        inv_func = synth_instantiator.functions[inv_name]
+        primed_vars, unprimed_vars = [], []
+        for name in [ v.variable_info.variable_name for v in inv_func.get_named_vars() ]:
+            unprimed_vars.append(syn_ctx.get_variable_expr(name))
+            primed_vars.append(syn_ctx.get_variable_expr(name + '!'))
+
+        inv = syn_ctx.make_function_expr(inv_func, *unprimed_vars)
+        invp = syn_ctx.make_function_expr(inv_func, *primed_vars)
+        pre = syn_ctx.make_function_expr(pre_name, *unprimed_vars)
+        post = syn_ctx.make_function_expr(post_name, *unprimed_vars)
+        trans = syn_ctx.make_function_expr(trans_name, *unprimed_vars, *primed_vars)
+
+        constraints.append(syn_ctx.make_function_expr('=>', pre, inv))
+        constraints.append(syn_ctx.make_function_expr('=>', syn_ctx.make_function_expr('and', inv, trans), invp))
+        constraints.append(syn_ctx.make_function_expr('=>', inv, post))
+    return constraints
+
 
 def sexp_to_grammar(arg_var_map, grammar_sexp, synth_fun, syn_ctx):
     non_terminals = [ t[0] for t in grammar_sexp ]
@@ -231,7 +284,6 @@ def _process_uninterpreted_funcs(uninterpreted_funcs_data, syn_ctx, uf_instantia
         ret_type = sexp_to_type(ret_type_data)
         func = semantics_types.UninterpretedFunction(name, len(arg_types), arg_types, ret_type) 
         uf_instantiator.add_function(name, func)
-
 
 def extract_benchmark(file_sexp):
     core_instantiator = semantics_core.CoreInstantiator()
@@ -261,8 +313,13 @@ def extract_benchmark(file_sexp):
     ufuncs_data, file_sexp = filter_sexp_for('declare-fun', file_sexp)
     _process_uninterpreted_funcs(ufuncs_data, syn_ctx, uf_instantiator)
 
+    # Synthesis functions and synthesis invariants
     synth_funs_data, file_sexp = filter_sexp_for('synth-fun', file_sexp)
-    synth_funs_grammar_data = process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx)
+    if len(synth_funs_data) == 0:
+        synth_funs_data, file_sexp = filter_sexp_for('synth-inv', file_sexp)
+        synth_funs_grammar_data = process_synth_invs(synth_funs_data, synth_instantiator, syn_ctx)
+    else:
+        synth_funs_grammar_data = process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx)
     grammars = {}
     for synth_fun, arg_var_map, grammar_data in synth_funs_grammar_data:
         if grammar_data == 'Default grammar':
@@ -270,11 +327,21 @@ def extract_benchmark(file_sexp):
         else:
             grammars[synth_fun] = sexp_to_grammar(arg_var_map, grammar_data, synth_fun, syn_ctx)
 
+    # Universally quantified variables
     forall_vars_data, file_sexp = filter_sexp_for('declare-var', file_sexp)
     forall_vars_map = _process_forall_vars(forall_vars_data, syn_ctx)
 
+    forall_primed_data, file_sexp = filter_sexp_for('declare-primed-var', file_sexp)
+    forall_primed_vars_map = _process_forall_primed_vars(forall_primed_data, syn_ctx)
+    forall_vars_map.update(forall_primed_vars_map)
+
+    # Constraints
     constraints_data, file_sexp = filter_sexp_for('constraint', file_sexp)
     constraints = process_constraints(constraints_data, syn_ctx, forall_vars_map)
+
+    inv_constraints_data, file_sexp = filter_sexp_for('inv-constraint', file_sexp)
+    inv_constraints = process_inv_constraints(inv_constraints_data, synth_instantiator, syn_ctx, forall_vars_map)
+    constraints.extend(inv_constraints)
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
 

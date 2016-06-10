@@ -135,6 +135,8 @@ class FunctionBase(object):
         self.domain_types = domain_types
         self.range_type = range_type
         self.synthesis_ctx = synthesis_ctx
+        self.commutative = False
+        self.associative = False
 
         if (function_arity >= 0):
             assert (len(domain_types) == function_arity), "Size of domain must be equal to arity!"
@@ -218,6 +220,12 @@ class UnknownFunctionBase(FunctionBase):
 class SynthFunction(UnknownFunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type):
         super().__init__(FunctionKinds.synth_function, function_name, function_arity, domain_types, range_type)
+
+    def set_named_vars(self, named_vars):
+        self.named_vars = named_vars
+
+    def get_named_vars(self):
+        return self.named_vars
 
 class UninterpretedFunction(FunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type):

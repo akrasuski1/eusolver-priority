@@ -53,6 +53,8 @@ class AddFunction(InterpretedFunctionBase):
         super().__init__('add', -1, (exprtypes.IntType(), ), exprtypes.IntType())
         self.eval_children = lambda *args: sum(args)
         self.smt_function = z3.Sum
+        self.commutative = True
+        self.associative = True
 
 class SubFunction(InterpretedFunctionBase):
     def __init__(self):
@@ -77,6 +79,8 @@ class MulFunction(InterpretedFunctionBase):
         super().__init__('mul', -1, (exprtypes.IntType(), ), exprtypes.IntType())
         self.eval_children = lambda cs: functools.reduce(lambda x,y: x*y, cs, 1)
         self.smt_function = z3.Product
+        self.commutative = True
+        self.associative = True
 
 class DivFunction(InterpretedFunctionBase):
     def __init__(self):
