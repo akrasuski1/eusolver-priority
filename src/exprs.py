@@ -244,6 +244,17 @@ def find_application(expr, function_name):
                     return ret
     return None
 
+def parent_of(expr, sub_expr):
+    if not is_function_expression(expr):
+        return None
+    for child in expr.children:
+        if child == sub_expr:
+            return expr
+        sub = parent_of(child, sub_expr)
+        if sub is not None:
+            return sub
+    return None
+
 def get_all_variables(expr):
     if is_function_expression(expr):
         ret = set()
@@ -393,6 +404,27 @@ def random_sample(pred_or_pred_smt, smt_ctx, arg_vars):
     assert result is not None
 
     return result
+
+def match(expr_template, expr):
+    if expr_template == expr:
+        return {}
+    elif is_variable_expression(expr_template):
+        return { expr_template:expr }
+    elif (not is_function_expression(expr_template) or \
+            not is_function_expression(expr) or \
+            expr_template.function_info != expr.function_info):
+        return None
+
+    d = {}
+    for child1, child2 in zip(expr_template.children, expr.children):
+        dd = match(child1, child2)
+        if dd is None:
+            return None
+        for v, e in dd.items():
+            if v in d:
+                return None
+            d[v] = e
+    return d
 
 #
 # exprs.py ends here

@@ -70,7 +70,7 @@ class TermSolverInterface(object):
     def get_signature_to_term(self):
         raise basetypes.AbstractMethodError('TermSolverInterface.get_signature_to_term()')
 
-    def add_points(self):
+    def add_points(self, new_points):
         points = self.points
         points.extend(new_points)
         self.signature_factory = BitSet.make_factory(len(points))

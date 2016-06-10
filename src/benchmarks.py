@@ -93,6 +93,21 @@ def massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraint
 def make_multifun_solver(benchmark_tuple):
     raise NotImplementedError
 
+def rewrite_solution(solution, reverse_mapping):
+    for function_info, cond, orig_expr_template, expr_template in reverse_mapping:
+        while True:
+            app = exprs.find_application(solution, function_info.function_name)
+            if app is None:
+                break
+            assert exprs.is_application_of(expr_template, 'ite')
+
+            ite = exprs.parent_of(solution, app)
+            ite_without_dummy = exprs.FunctionExpression(ite.function_info, (app.children[0], ite.children[1], ite.children[2]))
+            var_mapping = exprs.match(expr_template, ite_without_dummy)
+            new_ite = exprs.substitute_all(orig_expr_template, var_mapping.items())
+            solution = exprs.substitute(solution, ite, new_ite)
+    return solution
+
 def make_singlefun_solver(benchmark_tuple):
     (theories, syn_ctx, synth_instantiator, macro_instantiator, \
             uf_instantiator, constraints, grammars) = benchmark_tuple
@@ -115,8 +130,10 @@ def make_singlefun_solver(benchmark_tuple):
     if grammar == 'Default grammar':
         raise NotImplementedError
 
-    TermSolver = termsolvers_lia.SpecAwareLIATermSolver
-    Unifier = unifiers_lia.SpecAwareLIAUnifier
+    # TermSolver = termsolvers_lia.SpecAwareLIATermSolver
+    # Unifier = unifiers_lia.SpecAwareLIAUnifier
+    TermSolver = termsolvers.PointlessTermSolver
+    Unifier = unifiers.PointlessEnumDTUnifier
 
     # One shot or unification
     ans = grammar.decompose(macro_instantiator)
@@ -124,7 +141,7 @@ def make_singlefun_solver(benchmark_tuple):
         # Have to configure solver for naivete
         raise NotImplementedError
     else:
-        term_grammar, pred_grammar = ans
+        term_grammar, pred_grammar, reverse_mapping = ans
         # print("Original grammar:\n", grammar)
         # print("Term grammar:\n", term_grammar)
         # print("Pred grammar:\n", pred_grammar)
@@ -132,7 +149,9 @@ def make_singlefun_solver(benchmark_tuple):
         term_generator = term_grammar.to_generator(generator_factory)
         pred_generator = pred_grammar.to_generator(generator_factory)
         solver = solvers.Solver(syn_ctx)
-        solvers._do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, False)
+        solution = solvers._do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, False)
+        rewritten_solution = rewrite_solution(solution, reverse_mapping)
+        print(exprs.expression_to_string(rewritten_solution))
 
 
 def make_solver(file_sexp):
@@ -159,7 +178,9 @@ def make_solver(file_sexp):
 def test_make_solver():
     import parser
 
-    for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
+    # for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
+    # for benchmark_file in [ "../benchmarks/SyGuS-COMP15/GENERAL-Track/qm_max3.sl" ]:
+    for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
         print("Doing", benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
@@ -177,16 +198,6 @@ def find_grammar_anamolies():
                 benchmark_tuple = parser.extract_benchmark(file_sexp)
             except Exception:
                 print('Failed', benchmark_file)
-
-            # (
-            #         theory,
-            #         syn_ctx,
-            #         synth_fun,
-            #         macro_instantiator,
-            #         uf_instantiator,
-            #         constraints,
-            #         grammar
-            #         ) = benchmark_tuple
 
 
 if __name__ == "__main__":

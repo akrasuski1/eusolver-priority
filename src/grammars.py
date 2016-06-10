@@ -196,13 +196,14 @@ class Grammar(object):
     # Quick and dirty for now
     def decompose(self, macro_instantiator):
         start_nt = self.start
+        reverse_mapping = []
 
         term_productions = []
         pred_productions = []
         for rewrite in self.rules[start_nt]:
-            ph_vars, nts, expr_template = rewrite._to_template_expr()
+            ph_vars, nts, orig_expr_template = rewrite._to_template_expr()
             ph_var_nt_map = dict(zip(ph_vars, nts))
-            expr_template = macro_instantiator.instantiate_all(expr_template)
+            expr_template = macro_instantiator.instantiate_all(orig_expr_template)
             ifs = exprs.find_all_applications(expr_template, 'ite')
 
             # Either there are no ifs or it is an concrete expression
@@ -229,6 +230,8 @@ class Grammar(object):
                     exprtypes.BoolType(), arg_var, [arg_var])
             pred_production = FunctionRewrite(dummy_macro_func, cond_rewrite)
             pred_productions.append(pred_production)
+            
+            reverse_mapping.append((dummy_macro_func, cond, orig_expr_template, expr_template))
 
         # Non-terminals
         [ term_start, pred_start ] = [ x + start_nt for x in  [ 'Term', 'Pred' ] ]
@@ -263,6 +266,6 @@ class Grammar(object):
 
         term_grammar = Grammar(term_nts, term_nt_type, term_rules, term_start)
         pred_grammar = Grammar(pred_nts, pred_nt_type, pred_rules, pred_start)
-        return term_grammar, pred_grammar
+        return term_grammar, pred_grammar, reverse_mapping
 
 # Tests:
