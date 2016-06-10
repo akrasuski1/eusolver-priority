@@ -127,6 +127,7 @@ class SynthesisContext(object):
 
     def make_function_expr(self, function_name_or_info, *child_exps):
         """Makes a typed function expression applied to the given child expressions."""
+
         if (isinstance(function_name_or_info, str)):
             function_info = self.make_function(function_name_or_info, *child_exps)
             function_name = function_name_or_info

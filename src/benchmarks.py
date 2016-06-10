@@ -44,6 +44,7 @@ import expr_transforms
 import random
 import verifiers
 import termsolvers
+import termsolvers_lia
 import specifications
 import unifiers
 import unifiers_lia
@@ -84,23 +85,20 @@ def massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraint
             for c in constraints ]
 
     constraints = expr_transforms.AckermannReduction.apply(constraints, uf_instantiator, syn_ctx)
+    constraints = expr_transforms.RewriteITE.apply(constraints, syn_ctx)
 
     # Rewrite ITE?
     return constraints
 
-def make_solver(file_sexp):
-    benchmark_tuple = parser.extract_benchmark(file_sexp)
-    (
-            theory,
-            syn_ctx,
-            synth_fun,
-            macro_instantiator,
-            uf_instantiator,
-            constraints,
-            grammar
-            ) = benchmark_tuple
+def make_multifun_solver(benchmark_tuple):
+    raise NotImplementedError
 
-    constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraints)
+def make_singlefun_solver(benchmark_tuple):
+    (theories, syn_ctx, synth_instantiator, macro_instantiator, \
+            uf_instantiator, constraints, grammars) = benchmark_tuple
+    synth_funs = list(synth_instantiator.get_functions().items())
+    [ (synth_fun_name, synth_fun) ] = synth_funs
+    grammar = grammars[synth_fun]
 
     # Spec type (and verifier)
     valuations = get_pbe_valuations(constraints, synth_fun)
@@ -117,7 +115,7 @@ def make_solver(file_sexp):
     if grammar == 'Default grammar':
         raise NotImplementedError
 
-    TermSolver = termsolvers.PointlessTermSolver
+    TermSolver = termsolvers_lia.SpecAwareLIATermSolver
     Unifier = unifiers_lia.SpecAwareLIAUnifier
 
     # One shot or unification
@@ -130,7 +128,6 @@ def make_solver(file_sexp):
         # print("Original grammar:\n", grammar)
         # print("Term grammar:\n", term_grammar)
         # print("Pred grammar:\n", pred_grammar)
-        # generator_factory = enumerators.RecursiveGeneratorFactory()
         generator_factory = enumerators.RecursiveGeneratorFactory()
         term_generator = term_grammar.to_generator(generator_factory)
         pred_generator = pred_grammar.to_generator(generator_factory)
@@ -138,20 +135,60 @@ def make_solver(file_sexp):
         solvers._do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, False)
 
 
+def make_solver(file_sexp):
+    benchmark_tuple = parser.extract_benchmark(file_sexp)
+    (
+            theories,
+            syn_ctx,
+            synth_instantiator,
+            macro_instantiator,
+            uf_instantiator,
+            constraints,
+            grammars
+            ) = benchmark_tuple
+    constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraints)
+
+    # Multi-function
+    if len(synth_instantiator.get_functions()) > 1:
+        return make_multifun_solver(benchmark_tuple)
+    else:
+        return make_singlefun_solver(benchmark_tuple)
+
 # Tests:
 
 def test_make_solver():
     import parser
 
-    # for benchmark_file in [ "../benchmarks/one_off/invertD.sl", "../benchmarks/one_off/str.sl" ]:
-    # for benchmark_file in [ "../benchmarks/max/max_15.sl" ]:
-    # for benchmark_file in [ '../benchmarks/SyGuS-COMP15/LIA-Track/All/fg_mpg_example1.sl' ]:
-    # for benchmark_file in [ "../benchmarks/icfp/icfp_103_10.sl" ]:
-    # for benchmark_file in [ "../benchmarks/one_off/uf.sl" ]:
     for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
         print("Doing", benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
 
+def find_grammar_anamolies():
+    import os
+    for folder, subs, files in os.walk('../benchmarks/SyGuS-COMP15/'):
+        for filename in files:
+            if not filename.endswith('.sl'):
+                continue
+            benchmark_file = os.path.join(folder, filename)
+            # print("Doing", benchmark_file)
+            try:
+                file_sexp = parser.sexpFromFile(benchmark_file)
+                benchmark_tuple = parser.extract_benchmark(file_sexp)
+            except Exception:
+                print('Failed', benchmark_file)
+
+            # (
+            #         theory,
+            #         syn_ctx,
+            #         synth_fun,
+            #         macro_instantiator,
+            #         uf_instantiator,
+            #         constraints,
+            #         grammar
+            #         ) = benchmark_tuple
+
+
 if __name__ == "__main__":
     test_make_solver()
+    # find_grammar_anamolies()

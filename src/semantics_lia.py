@@ -60,6 +60,12 @@ class SubFunction(InterpretedFunctionBase):
         self.eval_children = lambda a, b : a - b
         self.smt_function = lambda a, b : a - b
 
+class ModFunction(InterpretedFunctionBase):
+    def __init__(self):
+        super().__init__('mod', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.IntType())
+        self.eval_children = lambda a, b : a % b if b > 0 else (-a) % (-b)
+        self.smt_function = lambda a, b : a % b
+
 class MinusFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('sub', 1, (exprtypes.IntType(),), exprtypes.IntType())
@@ -68,7 +74,7 @@ class MinusFunction(InterpretedFunctionBase):
 
 class MulFunction(InterpretedFunctionBase):
     def __init__(self):
-        super().__init__('mul', -1 (exprtypes.IntType(), ), exprtypes.IntType())
+        super().__init__('mul', -1, (exprtypes.IntType(), ), exprtypes.IntType())
         self.eval_children = lambda cs: functools.reduce(lambda x,y: x*y, cs, 1)
         self.smt_function = z3.Product
 
@@ -150,18 +156,22 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
             else:
                 return self._get_mul_instance()
 
-        elif (function_name == 'div' or function_name == 'sub'):
+        elif function_name in [ 'div', 'sub', 'mod' ]:
             if (len(arg_types) != 2 or
                 (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):
                 self._raise_failure(function_name, arg_types)
 
             if (function_name == 'div'):
                 return DivFunction()
-            else:
+            elif function_name == 'sub':
                 return SubFunction()
+            elif function_name == 'mod':
+                return ModFunction()
+            else:
+                raise NotImplementedError
 
         elif (function_name == 'minus'):
-            if (len(arg_types != 1) or arg_types[0].type_code != exprtypes.TypeCodes.integer_type):
+            if (len(arg_types) != 1 or arg_types[0].type_code != exprtypes.TypeCodes.integer_type):
                 self._raise_failure(function_name, arg_types)
             return MinusFunction()
 

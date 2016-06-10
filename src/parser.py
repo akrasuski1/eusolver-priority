@@ -119,19 +119,19 @@ def sexp_to_type(sexp):
     else:
         raise Exception("Unknown type: %s" % str(sexp))
 
-def sexp_to_expr(sexp, syn_ctx, arg_var_map, synth_fun=None):
+def sexp_to_expr(sexp, syn_ctx, arg_var_map):
     # Must be a value
     if type(sexp) == tuple:
         value = sexp_to_value(sexp)
         return exprs.ConstantExpression(value)
     elif type(sexp) == str:
-        assert sexp in arg_var_map
-        return arg_var_map[sexp]
+        if sexp in arg_var_map:
+            return arg_var_map[sexp]
+        else: # Could be a zero-argument function
+            return syn_ctx.make_function_expr(sexp)
     elif type(sexp) == list:
-        function_name_or_info = synth_fun \
-                if synth_fun != None and sexp[0] == synth_fun.function_name else sexp[0]
-        children = [ sexp_to_expr(child, syn_ctx, arg_var_map, synth_fun) for child in sexp[1:] ]
-        return syn_ctx.make_function_expr(function_name_or_info, *children)
+        children = [ sexp_to_expr(child, syn_ctx, arg_var_map) for child in sexp[1:] ]
+        return syn_ctx.make_function_expr(sexp[0], *children)
     else:
         raise Exception('Unknown sexp type: %s', str(sexp))
 
@@ -158,18 +158,20 @@ def process_definitions(defs, syn_ctx, macro_instantiator):
         macro_func = semantics_types.MacroFunction(name, len(arg_vars), tuple(arg_types), return_type, expr, arg_vars)
         macro_instantiator.add_function(name, macro_func)
 
-def process_synth_func(synth_fun_data, syn_ctx):
-    if len(synth_fun_data) == 4:
-        [name, args_data, ret_type_data, grammar_data] = synth_fun_data
-    else:
-        [name, args_data, ret_type_data] = synth_fun_data
-        grammar_data = 'Default grammar'
-    ((arg_vars, arg_types, arg_var_map), return_type) = _process_function_defintion(args_data, ret_type_data)
+def process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx):
+    ret = []
+    for synth_fun_data in synth_funs_data:
+        if len(synth_fun_data) == 4:
+            [name, args_data, ret_type_data, grammar_data] = synth_fun_data
+        else:
+            [name, args_data, ret_type_data] = synth_fun_data
+            grammar_data = 'Default grammar'
+        ((arg_vars, arg_types, arg_var_map), return_type) = _process_function_defintion(args_data, ret_type_data)
 
-    synth_fun = syn_ctx.make_synth_function(name, arg_types, return_type)
-
-    return synth_fun, arg_var_map, grammar_data
-
+        synth_fun = syn_ctx.make_synth_function(name, tuple(arg_types), return_type)
+        synth_instantiator.add_function(name, synth_fun)
+        ret.append((synth_fun, arg_var_map, grammar_data))
+    return ret
 
 def _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, rule_data):
     if type(rule_data) == tuple:
@@ -202,10 +204,10 @@ def _process_forall_vars(forall_vars_data, syn_ctx):
         forall_var_map[variable_name] = variable
     return forall_var_map
 
-def process_constraints(constraints_data, syn_ctx, forall_var_map, synth_fun):
+def process_constraints(constraints_data, syn_ctx, forall_var_map):
     constraints = []
     for [constraint_data] in constraints_data:
-        constraint = sexp_to_expr(constraint_data, syn_ctx, forall_var_map, synth_fun)
+        constraint = sexp_to_expr(constraint_data, syn_ctx, forall_var_map)
         constraints.append(constraint)
     return constraints
 
@@ -235,19 +237,23 @@ def extract_benchmark(file_sexp):
     core_instantiator = semantics_core.CoreInstantiator()
 
     theories, file_sexp = filter_sexp_for('set-logic', file_sexp)
-    assert len(theories) == 1
-    [theory] = theories[0]
-    assert theory in _known_theories
-    theory_instantiator = get_theory_instantiator(theory)
+    theories = [ x[0] for x in theories ]
+    assert all([theory in _known_theories for theory in theories])
+
+    if len(theories) == 0:
+        theories = _known_theories
+    theory_instantiators = [ get_theory_instantiator(theory) for theory in theories ]
 
     macro_instantiator = semantics_core.MacroInstantiator()
     uf_instantiator = semantics_core.UninterpretedFunctionInstantiator()
+    synth_instantiator = semantics_core.SynthFunctionInstantiator()
 
     syn_ctx = synthesis_context.SynthesisContext(
             core_instantiator,
-            theory_instantiator,
+            *theory_instantiators,
             macro_instantiator,
-            uf_instantiator)
+            uf_instantiator,
+            synth_instantiator)
 
     defs, file_sexp = filter_sexp_for('define-fun', file_sexp)
     process_definitions(defs, syn_ctx, macro_instantiator)
@@ -256,24 +262,28 @@ def extract_benchmark(file_sexp):
     _process_uninterpreted_funcs(ufuncs_data, syn_ctx, uf_instantiator)
 
     synth_funs_data, file_sexp = filter_sexp_for('synth-fun', file_sexp)
-    assert len(synth_funs_data) == 1
-    synth_fun, arg_var_map, grammar_data = process_synth_func(synth_funs_data[0], syn_ctx)
-    if grammar_data == 'Default grammar':
-        grammar = grammar_data
-    else:
-        grammar = sexp_to_grammar(arg_var_map, grammar_data, synth_fun, syn_ctx)
+    synth_funs_grammar_data = process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx)
+    grammars = {}
+    for synth_fun, arg_var_map, grammar_data in synth_funs_grammar_data:
+        if grammar_data == 'Default grammar':
+            grammars[synth_fun] = grammar_data
+        else:
+            grammars[synth_fun] = sexp_to_grammar(arg_var_map, grammar_data, synth_fun, syn_ctx)
 
     forall_vars_data, file_sexp = filter_sexp_for('declare-var', file_sexp)
     forall_vars_map = _process_forall_vars(forall_vars_data, syn_ctx)
 
     constraints_data, file_sexp = filter_sexp_for('constraint', file_sexp)
-    constraints = process_constraints(constraints_data, syn_ctx, forall_vars_map, synth_fun)
+    constraints = process_constraints(constraints_data, syn_ctx, forall_vars_map)
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
+
+    options_data, file_sexp = filter_sexp_for('set-options', file_sexp)
+
     assert check_sats == [[]]
     assert file_sexp == []
 
-    return theory, syn_ctx, synth_fun, macro_instantiator, uf_instantiator, constraints, grammar
+    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammars
 
 def get_theory_instantiator(theory):
     if theory == "LIA":

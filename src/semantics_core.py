@@ -136,6 +136,8 @@ class CoreInstantiator(semantics_types.InstantiatorBase):
             return 'eq'
         elif (function_name == '!=' or function_name == 'ne'):
             return 'ne'
+        elif (function_name == '=>' or function_name == 'implies'):
+            return 'implies'
         else:
             return function_name
 
@@ -225,6 +227,31 @@ class UninterpretedFunctionInstantiator(semantics_types.InstantiatorBase):
     def __init__(self, functions={}):
         super().__init__('uf')
         self.functions = functions
+
+    def add_function(self, function_name, function_info):
+        self.functions[function_name] = function_info
+
+    def _get_canonical_function_name(self, function_name):
+        return function_name
+
+    def _do_instantiation(self, function_name, mangled_name, arg_types):
+        if function_name not in self.functions:
+            return None
+
+        function_info = self.functions[function_name]
+        assert function_name == function_info.function_name
+        assert len(arg_types) == function_info.function_arity
+        assert arg_types == function_info.domain_types
+
+        return function_info
+
+    def get_functions(self):
+        return self.functions
+
+class SynthFunctionInstantiator(semantics_types.InstantiatorBase):
+    def __init__(self):
+        super().__init__('synth')
+        self.functions = {}
 
     def add_function(self, function_name, function_info):
         self.functions[function_name] = function_info

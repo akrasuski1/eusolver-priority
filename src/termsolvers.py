@@ -62,11 +62,49 @@ def check_one_term_sufficiency(sig_to_term, num_points):
     return False
 
 class TermSolverInterface(object):
+    def __init__(self):
+        self.points = []
+        self.current_largest_term_size = 0
+        self.signature_to_term = {}
+
     def get_signature_to_term(self):
         raise basetypes.AbstractMethodError('TermSolverInterface.get_signature_to_term()')
 
     def add_points(self):
-        raise basetypes.AbstractMethodError('TermSolverInterface.add_points()')
+        points = self.points
+        points.extend(new_points)
+        self.signature_factory = BitSet.make_factory(len(points))
+        self._do_complete_sig_to_term()
+
+    def _do_complete_sig_to_term(self):
+        old_sig_to_term = self.signature_to_term
+        new_sig_to_term = {}
+
+        for sig, term in old_sig_to_term.items():
+            new_sig = self._compute_term_signature(term)
+            if not new_sig.is_empty():
+                new_sig_to_term[new_sig] = term
+
+        self.signature_to_term = new_sig_to_term
+
+
+    def _default_compute_term_signature(self, term, old_signature=None):
+        points = self.points
+        num_points = len(points)
+        retval = self.signature_factory()
+
+        if old_signature is not None:
+            retval.copy_in(old_signature)
+            start_index = old_signature.size_of_universe()
+        else:
+            start_index = 0
+
+        num_new_points = retval.size_of_universe()
+        new_points = points[start_index:]
+        for i, v in enumerate(self.term_signature(term, new_points), start_index):
+            if v:
+                retval.add(i)
+        return retval
 
     def solve(self):
         raise basetypes.AbstractMethodError('TermSolverInterface.solve()')
@@ -76,12 +114,9 @@ class TermSolverInterface(object):
 
 class EnumerativeTermSolverBase(TermSolverInterface):
     def __init__(self, term_signature, synth_fun):
+        super().__init__()
         self.synth_fun = synth_fun
         self.term_signature = term_signature
-
-        self.points = []
-        self.current_largest_term_size = 0
-        self.signature_to_term = {}
 
         self.bunch_generator = None
         self.max_term_size = 1024
@@ -101,12 +136,6 @@ class EnumerativeTermSolverBase(TermSolverInterface):
                 return True
             term_size += 1
         return False
-
-    def _default_add_points(self, new_points):
-        points = self.points
-        points.extend(new_points)
-        self.signature_factory = BitSet.make_factory(len(points))
-        self._do_complete_sig_to_term()
 
     def get_largest_term_size_enumerated(self):
         if self.bunch_generator is None:
@@ -146,35 +175,6 @@ class EnumerativeTermSolverBase(TermSolverInterface):
                 return False
         return True
 
-    def _default_compute_term_signature(self, term, old_signature=None):
-        points = self.points
-        num_points = len(points)
-        retval = self.signature_factory()
-
-        if old_signature is not None:
-            retval.copy_in(old_signature)
-            start_index = old_signature.size_of_universe()
-        else:
-            start_index = 0
-
-        num_new_points = retval.size_of_universe()
-        new_points = points[start_index:]
-        for i, v in enumerate(self.term_signature(term, new_points), start_index):
-            if v:
-                retval.add(i)
-        return retval
-
-    def _do_complete_sig_to_term(self):
-        old_sig_to_term = self.signature_to_term
-        new_sig_to_term = {}
-
-        for sig, term in old_sig_to_term.items():
-            new_sig = self._compute_term_signature(term)
-            if not new_sig.is_empty():
-                new_sig_to_term[new_sig] = term
-
-        self.signature_to_term = new_sig_to_term
-
     def get_num_distinct_terms(self):
         return len(self.signature_to_term)
 
@@ -205,9 +205,6 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
         self.eval_cache = {}
         self.monotonic_expr_id = 0
 
-    def add_points(self, new_points):
-        return self._default_add_points(new_points)
-
     def _compute_term_signature(self, term):
         eval_cache = self.eval_cache
         old_signature = eval_cache.get(term.expr_id)
@@ -232,9 +229,6 @@ class PointDistinctTermSolver(EnumerativeTermSolverBase):
         super().__init__(term_signature, synth_fun)
         assert type(term_generator.factory) is enumerators.PointDistinctGeneratorFactory
         self.term_generator = term_generator
-
-    def add_points(self, new_points):
-        return self._default_add_points(new_points)
 
     def _compute_term_signature(self, term):
         return self._default_compute_term_signature(term)

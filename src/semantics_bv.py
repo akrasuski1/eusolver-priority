@@ -157,6 +157,19 @@ class BVUDiv(InterpretedFunctionBase):
         self.smt_function = z3.UDiv
         self.eval_children = lambda a,b: a.udiv(b)
 
+class BVSDiv(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvsdiv', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+
+class BVSRem(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvsrem', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
+
+
 class BVURem(InterpretedFunctionBase):
     def __init__(self, bv_size):
         super().__init__('bvurem', 2, (exprtypes.BitVectorType(bv_size),
@@ -180,6 +193,12 @@ class BVLShR(InterpretedFunctionBase):
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = z3.LShR
         self.eval_children = lambda a, b : a.lshr(b)
+
+class BVAShR(InterpretedFunctionBase):
+    def __init__(self, bv_size):
+        super().__init__('bvashr', 2, (exprtypes.BitVectorType(bv_size),
+                                     exprtypes.BitVectorType(bv_size)),
+                         exprtypes.BitVectorType(bv_size))
 
 class BVUlt(InterpretedFunctionBase):
     def __init__(self, bv_size):
@@ -311,6 +330,20 @@ class BVInstantiator(semantics_types.InstantiatorBase):
                 self.instances[(function_name, bv_size)] = BVShl(bv_size)
             elif function_name == 'bvule':
                 self.instances[(function_name, bv_size)] = BVUle(bv_size)
+            elif function_name == 'bvneg':
+                self.instances[(function_name, bv_size)] = BVNeg(bv_size)
+            elif function_name == 'bvmul':
+                self.instances[(function_name, bv_size)] = BVMul(bv_size)
+            elif function_name == 'bvudiv':
+                self.instances[(function_name, bv_size)] = BVUDiv(bv_size)
+            elif function_name == 'bvurem':
+                self.instances[(function_name, bv_size)] = BVURem(bv_size)
+            elif function_name == 'bvashr':
+                self.instances[(function_name, bv_size)] = BVAShR(bv_size)
+            elif function_name == 'bvsdiv':
+                self.instances[(function_name, bv_size)] = BVSDiv(bv_size)
+            elif function_name == 'bvsrem':
+                self.instances[(function_name, bv_size)] = BVSRem(bv_size)
             else:
                 self._raise_failure(function_name, [])
         return self.instances[(function_name, bv_size)]
@@ -319,10 +352,23 @@ class BVInstantiator(semantics_types.InstantiatorBase):
         return function_name
 
     def is_unary(self, function_name):
-        return function_name in [ 'bvnot' ]
+        return function_name in [ 'bvnot', 'bvneg' ]
 
     def is_binary_of_identical_lengths(self, function_name):
-        return function_name in [ 'bvand', 'bvor', 'bvxor', 'bvadd', 'bvsub', 'bvlshr', 'bvshl', 'bvule' ]
+        return function_name in [ 'bvand',
+                'bvor',
+                'bvxor',
+                'bvadd',
+                'bvmul',
+                'bvudiv',
+                'bvsdiv',
+                'bvsrem',
+                'bvurem',
+                'bvashr',
+                'bvsub',
+                'bvlshr',
+                'bvshl',
+                'bvule' ]
 
     def _do_instantiation(self, function_name, mangled_name, arg_types):
         if self.is_unary(function_name):

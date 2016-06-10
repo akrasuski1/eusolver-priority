@@ -127,7 +127,7 @@ class FunctionBase(object):
     """
     def __init__(self, function_kind, function_name, function_arity,
                  domain_types, range_type, synthesis_ctx = None):
-        assert function_arity != 0, "Arity of functions cannot be zero!"
+        # assert function_arity != 0, "Arity of functions cannot be zero!"
 
         self.function_kind = function_kind
         self.function_name = function_name
@@ -136,7 +136,7 @@ class FunctionBase(object):
         self.range_type = range_type
         self.synthesis_ctx = synthesis_ctx
 
-        if (function_arity > 0):
+        if (function_arity >= 0):
             assert (len(domain_types) == function_arity), "Size of domain must be equal to arity!"
         else:
             assert len(domain_types) == 1, ("Only one domain type is allowed for " +
@@ -278,10 +278,12 @@ class InstantiatorBase(object):
 
     def instantiate(self, function_name, child_exps):
         canonical_function_name = self._get_canonical_function_name(function_name)
-        if (not isinstance(child_exps[0], exprtypes.TypeBase)):
+        if len(child_exps) == 0:
+            arg_types = tuple()
+        elif (not isinstance(child_exps[0], exprtypes.TypeBase)):
             arg_types = tuple([exprs.get_expression_type(x) for x in child_exps])
         else:
-            arg_types = child_exps
+            arg_types = tuple(child_exps)
 
         mangled_name = mangle_function_name(canonical_function_name, arg_types)
         cached = self.find_cached(mangled_name)

@@ -98,6 +98,27 @@ class AckermannReduction(ExprTransformerBase):
                     for constraint in constraints ]
         return constraints
 
+class RewriteITE(ExprTransformerBase):
+    def apply(constraints, syn_ctx):
+        new_constraints = []
+        found_one = False
+        for constraint in constraints:
+            ite = exprs.find_application(constraint, 'ite')
+            if ite is None:
+                new_constraints.append(constraint)
+                continue
+            else:
+                found_one = True
+                cond, tt, ff = ite.children
+                tc = syn_ctx.make_function_expr('and', exprs.substitute(constraint, ite, tt), cond)
+                fc = syn_ctx.make_function_expr('and', exprs.substitute(constraint, ite, ff), 
+                        syn_ctx.make_function_expr('not', cond))
+                new_constraints.append(tc)
+                new_constraints.append(fc)
+        if found_one:
+            return RewriteITE.apply(new_constraints, syn_ctx)
+        else:
+            return new_constraints
 
 
 class NNFConverter(ExprTransformerBase):
