@@ -120,7 +120,7 @@ def rewrite_solution(synth_fun, solution, reverse_mapping):
 
 def make_singlefun_solver(benchmark_tuple):
     (theories, syn_ctx, synth_instantiator, macro_instantiator, \
-            uf_instantiator, constraints, grammars) = benchmark_tuple
+            uf_instantiator, constraints, grammars, forall_vars_map) = benchmark_tuple
     synth_funs = list(synth_instantiator.get_functions().items())
     [ (synth_fun_name, synth_fun) ] = synth_funs
     grammar = grammars[synth_fun]
@@ -140,10 +140,10 @@ def make_singlefun_solver(benchmark_tuple):
     if grammar == 'Default grammar':
         raise NotImplementedError
 
-    # TermSolver = termsolvers_lia.SpecAwareLIATermSolver
-    # Unifier = unifiers_lia.SpecAwareLIAUnifier
-    TermSolver = termsolvers.PointlessTermSolver
-    Unifier = unifiers.PointlessEnumDTUnifier
+    TermSolver = termsolvers_lia.SpecAwareLIATermSolver
+    Unifier = unifiers_lia.SpecAwareLIAUnifier
+    # TermSolver = termsolvers.PointlessTermSolver
+    # Unifier = unifiers.PointlessEnumDTUnifier
 
     # One shot or unification
     ans = grammar.decompose(macro_instantiator)
@@ -173,7 +173,8 @@ def make_solver(file_sexp):
             macro_instantiator,
             uf_instantiator,
             constraints,
-            grammars
+            grammars,
+            forall_vars_map
             ) = benchmark_tuple
     constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraints)
 
@@ -185,13 +186,15 @@ def make_solver(file_sexp):
 
 # Tests:
 
-def test_make_solver():
+def test_make_solver(benchmark_files):
     import parser
 
     # for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
     # for benchmark_file in [ "../benchmarks/SyGuS-COMP15/GENERAL-Track/qm_max3.sl" ]:
     # for benchmark_file in [ "../benchmarks/SyGuS-COMP15/INV-Track/inv-benchmarks-temp/sum1.sl" ]:
-    for benchmark_file in [ "../benchmarks/icfp/icfp_105_1000.sl" ]:
+    # for benchmark_file in [ "../benchmarks/icfp/icfp_105_1000.sl" ]:
+    # for benchmark_file in [ "../benchmarks/one_off/max_plus_1.sl" ]:
+    for benchmark_file in benchmark_files:
         print("Doing", benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
@@ -205,6 +208,7 @@ def find_grammar_anamolies():
             benchmark_file = os.path.join(folder, filename)
             # print("Doing", benchmark_file)
             try:
+            # if True:
                 file_sexp = parser.sexpFromFile(benchmark_file)
                 benchmark_tuple = parser.extract_benchmark(file_sexp)
             except Exception:
@@ -212,5 +216,7 @@ def find_grammar_anamolies():
 
 
 if __name__ == "__main__":
-    test_make_solver()
+    import sys
+    benchmark_files = sys.argv[1:]
+    test_make_solver(benchmark_files)
     # find_grammar_anamolies()

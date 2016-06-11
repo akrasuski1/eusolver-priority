@@ -68,7 +68,13 @@ class TermSolverInterface(object):
         self.signature_to_term = {}
 
     def get_signature_to_term(self):
-        raise basetypes.AbstractMethodError('TermSolverInterface.get_signature_to_term()')
+        return self.signature_to_term
+
+    def get_num_distinct_terms(self):
+        return len(self.signature_to_term)
+
+    def get_largest_term_size_enumerated(self):
+        return 0
 
     def add_points(self, new_points):
         points = self.points
@@ -124,9 +130,6 @@ class EnumerativeTermSolverBase(TermSolverInterface):
     def set_max_term_size(self, size):
         self.max_term_size = size
 
-    def get_signature_to_term(self):
-        return self.signature_to_term
-
     def _trivial_solve(self):
         term_size = 1
         while (term_size <= self.max_term_size):
@@ -174,9 +177,6 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             if not success:
                 return False
         return True
-
-    def get_num_distinct_terms(self):
-        return len(self.signature_to_term)
 
     def _default_generate_more_terms(self, transform_term=None):
         signature_to_term = self.signature_to_term

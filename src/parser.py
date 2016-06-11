@@ -350,7 +350,7 @@ def extract_benchmark(file_sexp):
     assert check_sats == [[]]
     assert file_sexp == []
 
-    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammars
+    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammars, forall_vars_map
 
 def get_theory_instantiator(theory):
     if theory == "LIA":

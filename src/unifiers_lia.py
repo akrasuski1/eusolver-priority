@@ -93,6 +93,8 @@ class SpecAwareLIAUnifier(UnifierInterface):
         self.eval_ctx = evaluation.EvaluationContext()
         self.clauses = spec.get_canon_clauses()
         self.intro_vars = spec.get_intro_vars()
+        self.formal_params = [ exprs.FormalParameterExpression(self.synth_fun, exprtypes.IntType(), i) 
+                for i in range(len(self.intro_vars)) ]
 
     def add_points(self, points):
         self.points.extend(points)
@@ -217,5 +219,7 @@ class SpecAwareLIAUnifier(UnifierInterface):
 
         # for pred, term in pred_terms:
         #     print(_expr_to_str(pred), ' ====> ', _expr_to_str(term))
-        yield ('TERM', self._pred_term_list_to_expr(pred_terms))
+        e = self._pred_term_list_to_expr(pred_terms)
+        e = exprs.substitute_all(e, list(zip(self.intro_vars, self.formal_params)))
+        yield ('TERM', e)
 

@@ -3,9 +3,9 @@ Grammar decomposer - sort of
 	Generally, problem expanding macro functions in grammars
 
 LIA specific unifier -- first version done
-LIA specific termsolver
+LIA specific termsolver -- first version done
 
-Grammar pruning
+Grammar pruning - done for commutativity
 
 let's
 multi-function synthesis
