@@ -294,6 +294,13 @@ class GeneratorFactoryBase(object):
     def _instantiate_placeholder(self, placeholder):
         raise basetypes.AbstractMethodError('GeneratorFactoryBase._instantiate_placeholder()')
 
+class NullGeneratorFactory(GeneratorFactoryBase):
+    def __init__(self):
+        super().__init__()
+
+    def add_points(self, points):
+        pass
+
 class RecursiveGeneratorFactory(GeneratorFactoryBase):
     def __init__(self):
         super().__init__() 

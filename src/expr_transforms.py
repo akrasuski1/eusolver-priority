@@ -64,6 +64,45 @@ class ExprTransformerBase(object):
             return False
         return (expr_object.function_info.function_name in fun_name_set)
 
+# Assumes NNF
+class LIAFlattener(ExprTransformerBase):
+    def __init__(self):
+        super().__init__('LIAFlattening')
+
+    def _do_transform(self, expr_object, syn_ctx):
+        neg = {
+                '<=':'>',
+                '<':'>=',
+                '>=':'<',
+                '>':'<=',
+                '=':'ne',
+                'ne':'=',
+                }
+        if not exprs.is_function_expression(expr_object):
+            return expr_object
+
+        function_info = expr_object.function_info
+        function_name = function_info.function_name
+
+        if function_name in [ 'and', 'or' ]:
+            children = [ self._do_transform(child, syn_ctx) for child in expr_object.children ]
+            return exprs.FunctionExpression(function_info, tuple(children))
+        elif function_name in [ '<=', '>=', '<', '>', '=', 'eq', 'ne' ]:
+            return expr_object
+        elif function_name in [ 'not' ]:
+            child = expr_object.children[0]
+            child_func_name = child.function_info.function_name
+            ret_func_name = neg[child_func_name]
+            return syn_ctx.make_function_expr(ret_func_name, *child.children)
+        else:
+            raise NotImplementedError
+
+    def apply(self, *args):
+        if (len(args) != 2):
+            raise basetypes.ArgumentError('LIAFlattener.apply() must be called with an ' +
+                                          'expression object and a synthesis context object')
+        return self._do_transform(args[0], args[1])
+
 class AckermannReduction(ExprTransformerBase):
     def __init__(self):
         super().__init__('AckermannReduction')
@@ -180,7 +219,7 @@ class NNFConverter(ExprTransformerBase):
             else:
                 child_polarity = polarity
 
-            transformed_children = [self._eliminate_complex(x, syn_ctx)
+            transformed_children = [self._do_transform(x, syn_ctx, child_polarity)
                                     for x in expr_object.children]
 
             if (function_name == 'and'):
@@ -376,7 +415,7 @@ def _intro_new_universal_vars(clauses, syn_ctx, uf_info):
         retval.append(syn_ctx.make_ac_function_expr('or', *eq_constraints))
     return (retval, intro_vars)
 
-def canonicalize_specification(expr, syn_ctx):
+def canonicalize_specification(expr, syn_ctx, theory):
     """Performs a bunch of operations:
     1. Checks that the expr is "well-bound" to the syn_ctx object.
     2. Checks that the specification has the single-invocation property.
@@ -406,6 +445,11 @@ def canonicalize_specification(expr, syn_ctx):
 
     cnf_converter = CNFConverter()
     clauses, cnf_expr = cnf_converter.apply(expr, syn_ctx)
+
+    if theory == 'LIA': 
+        lia_flattener = LIAFlattener()
+        cnf_expr = lia_flattener.apply(cnf_expr, syn_ctx)
+        clauses = [ lia_flattener.apply(c, syn_ctx) for c in clauses ]
 
     # check single invocation/separability properties
     if (not check_single_invocation_property(clauses, syn_ctx)):

@@ -111,6 +111,7 @@ def ConstantExpression(value_object):
 
 def FunctionExpression(function_info, children):
     assert function_info is not None
+    assert type(children) is tuple
     return _FunctionExpression(_function_expression,
                                function_info, children, None)
 

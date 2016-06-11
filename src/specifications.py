@@ -48,11 +48,12 @@ class SpecInterface(object):
         raise basetypes.AbstractMethodError('SpecInterface.check_on_point()')
 
 class StandardSpec(SpecInterface):
-    def __init__(self, specification, syn_ctx, synth_fun):
+    def __init__(self, specification, syn_ctx, synth_fun, theory):
         self.syn_ctx = syn_ctx
         self.specification = specification
         self.eval_ctx = evaluation.EvaluationContext()
         self.synth_fun = synth_fun
+        self.theory = theory
 
         self.init_spec_tuple()
 
@@ -60,7 +61,7 @@ class StandardSpec(SpecInterface):
         syn_ctx = self.syn_ctx
         actual_spec = self.specification
         variables_list, functions_list, canon_spec, clauses, canon_clauses, neg_clauses, intro_vars = \
-                expr_transforms.canonicalize_specification(actual_spec, syn_ctx)
+                expr_transforms.canonicalize_specification(actual_spec, syn_ctx, self.theory)
         self.spec_tuple = (actual_spec, variables_list, functions_list, clauses,
                 neg_clauses, canon_spec, intro_vars)
         self.canon_spec = canon_spec
@@ -95,7 +96,7 @@ class StandardSpec(SpecInterface):
         return retval
 
 class PBESpec(SpecInterface):
-    def __init__(self, expr_valuations, synth_fun):
+    def __init__(self, expr_valuations, synth_fun, theory):
         self.synth_fun = synth_fun
         self.eval_ctx = evaluation.EvaluationContext()
         

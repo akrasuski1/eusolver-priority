@@ -103,8 +103,8 @@ class Solver(object):
             if not success:
                 return None
             # we now have a sufficient set of terms
-            # print('Term solve complete!')
-            # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
+            print('Term solve complete!')
+            print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
 
             # Check term solver for completeness
             cexs = verifier.verify_term_solve(list(term_solver.get_signature_to_term().values()))
@@ -114,7 +114,8 @@ class Solver(object):
                 unification = next(unifier_state)
                 sol_or_cex = verifier.verify(unification)
             else:
-                # print('Term solve incomplete!')
+                print('Term solve incomplete!')
+                print(cexs)
                 sol_or_cex = cexs
 
             if _is_expr(sol_or_cex):

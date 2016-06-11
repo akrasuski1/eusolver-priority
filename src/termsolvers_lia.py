@@ -74,7 +74,7 @@ def collect_terms(expr):
     if exprs.is_variable_expression(expr) or exprs.is_formal_parameter_expression(expr):
         return {expr:1}
     elif exprs.is_constant_expression(expr):
-        return {1:expr.value_object.value}
+        return {1:expr.value_object.value_object}
 
     func_name = exprs.func_name
     if func_name == 'add':
@@ -107,7 +107,7 @@ def solve_inequalities(model, outvar, inequalities, syn_ctx):
         d = d.copy()
         ret = d.pop(1, 0)
         for v, i in d.items():
-            ret += model[v.variable_info.variable_eval_offset].value_object
+            ret += model[v.variable_info.variable_eval_offset].value_object.value_object
         return ret
 
     flip = { '>=':'<=', '>':'<', '<=':'>=', '<':'>', 'eq':'eq', '=':'=' }

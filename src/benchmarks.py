@@ -95,18 +95,19 @@ def make_multifun_solver(benchmark_tuple):
 
 def rewrite_solution(synth_fun, solution, reverse_mapping):
     # Rewrite any predicates introduced in grammar decomposition
-    for function_info, cond, orig_expr_template, expr_template in reverse_mapping:
-        while True:
-            app = exprs.find_application(solution, function_info.function_name)
-            if app is None:
-                break
-            assert exprs.is_application_of(expr_template, 'ite')
+    if reverse_mapping is not None:
+        for function_info, cond, orig_expr_template, expr_template in reverse_mapping:
+            while True:
+                app = exprs.find_application(solution, function_info.function_name)
+                if app is None:
+                    break
+                assert exprs.is_application_of(expr_template, 'ite')
 
-            ite = exprs.parent_of(solution, app)
-            ite_without_dummy = exprs.FunctionExpression(ite.function_info, (app.children[0], ite.children[1], ite.children[2]))
-            var_mapping = exprs.match(expr_template, ite_without_dummy)
-            new_ite = exprs.substitute_all(orig_expr_template, var_mapping.items())
-            solution = exprs.substitute(solution, ite, new_ite)
+                ite = exprs.parent_of(solution, app)
+                ite_without_dummy = exprs.FunctionExpression(ite.function_info, (app.children[0], ite.children[1], ite.children[2]))
+                var_mapping = exprs.match(expr_template, ite_without_dummy)
+                new_ite = exprs.substitute_all(orig_expr_template, var_mapping.items())
+                solution = exprs.substitute(solution, ite, new_ite)
 
     # Rewrite back into formal parameters
     variables = exprs.get_all_formal_parameters(solution)
@@ -125,43 +126,52 @@ def make_singlefun_solver(benchmark_tuple):
     [ (synth_fun_name, synth_fun) ] = synth_funs
     grammar = grammars[synth_fun]
 
+    assert len(theories) == 1
+    theory = theories[0]
+
     # Spec type (and verifier)
     valuations = get_pbe_valuations(constraints, synth_fun)
     if valuations is not None:
-        specification = specifications.PBESpec(valuations, synth_fun)
+        specification = specifications.PBESpec(valuations, synth_fun, theory)
         Verifier = verifiers.PBEVerifier
     else:
         spec_expr = constraints[0] if len(constraints) == 1 \
                 else syn_ctx.make_function_expr('and', *constraints)
-        specification = specifications.StandardSpec(spec_expr, syn_ctx, synth_fun)
+        specification = specifications.StandardSpec(spec_expr, syn_ctx, synth_fun, theory)
         Verifier = verifiers.StdVerifier
     syn_ctx.assert_spec(specification, synth_fun)
 
     if grammar == 'Default grammar':
-        raise NotImplementedError
-
-    TermSolver = termsolvers_lia.SpecAwareLIATermSolver
-    Unifier = unifiers_lia.SpecAwareLIAUnifier
-    # TermSolver = termsolvers.PointlessTermSolver
-    # Unifier = unifiers.PointlessEnumDTUnifier
-
-    # One shot or unification
-    ans = grammar.decompose(macro_instantiator)
-    if ans == None:
-        # Have to configure solver for naivete
-        raise NotImplementedError
+        if theory == 'LIA':
+            TermSolver = termsolvers_lia.SpecAwareLIATermSolver
+            Unifier = unifiers_lia.SpecAwareLIAUnifier
+            solver = solvers.Solver(syn_ctx)
+            solution = solvers._do_solve(solver, enumerators.NullGeneratorFactory(), None, None, TermSolver, Unifier, Verifier, False)
+            rewritten_solution = rewrite_solution(synth_fun, solution, reverse_mapping=None)
+            print(exprs.expression_to_string(rewritten_solution))
+        else:
+            raise NotImplementedError
     else:
-        term_grammar, pred_grammar, reverse_mapping = ans
-        # print("Original grammar:\n", grammar)
-        # print("Term grammar:\n", term_grammar)
-        # print("Pred grammar:\n", pred_grammar)
-        generator_factory = enumerators.RecursiveGeneratorFactory()
-        term_generator = term_grammar.to_generator(generator_factory)
-        pred_generator = pred_grammar.to_generator(generator_factory)
-        solver = solvers.Solver(syn_ctx)
-        solution = solvers._do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, False)
-        rewritten_solution = rewrite_solution(synth_fun, solution, reverse_mapping)
-        print(exprs.expression_to_string(rewritten_solution))
+        TermSolver = termsolvers.PointlessTermSolver
+        Unifier = unifiers.PointlessEnumDTUnifier
+
+        # One shot or unification
+        ans = grammar.decompose(macro_instantiator)
+        if ans == None:
+            # Have to configure solver for naivete
+            raise NotImplementedError
+        else:
+            term_grammar, pred_grammar, reverse_mapping = ans
+            # print("Original grammar:\n", grammar)
+            # print("Term grammar:\n", term_grammar)
+            # print("Pred grammar:\n", pred_grammar)
+            generator_factory = enumerators.RecursiveGeneratorFactory()
+            term_generator = term_grammar.to_generator(generator_factory)
+            pred_generator = pred_grammar.to_generator(generator_factory)
+            solver = solvers.Solver(syn_ctx)
+            solution = solvers._do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, False)
+            rewritten_solution = rewrite_solution(synth_fun, solution, reverse_mapping)
+            print(exprs.expression_to_string(rewritten_solution))
 
 
 def make_solver(file_sexp):
