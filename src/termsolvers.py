@@ -83,13 +83,23 @@ class TermSolverInterface(object):
         self._do_complete_sig_to_term()
 
     def _do_complete_sig_to_term(self):
+        # print("Completing sig to term")
+        # for point in self.points:
+        #     print("POINT:", [ p.value_object for p in point])
+
         old_sig_to_term = self.signature_to_term
         new_sig_to_term = {}
+
+        # for sig, term in old_sig_to_term.items():
+        #     print("OLD SIG TO TERM:", str(sig), _expr_to_str(term))
 
         for sig, term in old_sig_to_term.items():
             new_sig = self._compute_term_signature(term)
             if not new_sig.is_empty():
                 new_sig_to_term[new_sig] = term
+
+        # for sig, term in new_sig_to_term.items():
+        #     print("NEW SIG TO TERM:", str(sig), _expr_to_str(term))
 
         self.signature_to_term = new_sig_to_term
 

@@ -98,13 +98,14 @@ class Solver(object):
         time_origin = time.clock()
 
         while (True):
+            # print('________________')
             # iterate until we have terms that are "sufficient"
             success = term_solver.solve(one_term_coverage=not divide_and_conquer)
             if not success:
                 return None
             # we now have a sufficient set of terms
-            print('Term solve complete!')
-            print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
+            # print('Term solve complete!')
+            # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
 
             # Check term solver for completeness
             cexs = verifier.verify_term_solve(list(term_solver.get_signature_to_term().values()))
@@ -114,8 +115,9 @@ class Solver(object):
                 unification = next(unifier_state)
                 sol_or_cex = verifier.verify(unification)
             else:
-                print('Term solve incomplete!')
-                print(cexs)
+                # print('Term solve incomplete!')
+                # for cex in cexs:
+                #     print('ADDING POINT:', [p.value_object for p in cex])
                 sol_or_cex = cexs
 
             if _is_expr(sol_or_cex):
@@ -134,6 +136,7 @@ class Solver(object):
             unifier.add_points(sol_or_cex)
             self.add_points(sol_or_cex)
             generator_factory.add_points(sol_or_cex)
+            # print('________________')
 
 
 ########################################################################

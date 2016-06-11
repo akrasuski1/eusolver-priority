@@ -278,7 +278,13 @@ class SpecAwareLIATermSolver(TermSolverInterface):
         assert one_term_coverage == False
 
         if len(self.points) == 0:
+            # print("Trivial solve!")
             return self._trivial_solve()
+
+        # for point in self.points:
+        #     print("POINT:", [ p.value_object for p in point])
+        # for sig, term in self.signature_to_term.items():
+        #     print('SIGTOTERM:', str(sig), _expr_to_str(term))
 
         intro_var_signature = []
         for point in self.points:
@@ -302,7 +308,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
             term = self._single_solve(ivs, points)
             term = exprs.substitute_all(term, list(zip(self.intro_vars, self.formal_params)))
             sig = self.signature_factory()
-            for i, t in enumerate(self.term_signature(term, points)):
+            for i, t in enumerate(self.term_signature(term, self.points)):
                 if t:
                     sig.add(i)
             self.signature_to_term[sig] = term
