@@ -49,7 +49,7 @@ import z3smt
 import z3
 
 # if __name__ == '__main__':
-#     utils.print_module_misuse_and_exit()
+#     utils.arint_module_misuse_and_exit()
 
 _expr_to_str = exprs.expression_to_string
 
@@ -88,14 +88,28 @@ class LIAFlattener(ExprTransformerBase):
             children = [ self._do_transform(child, syn_ctx) for child in expr_object.children ]
             return exprs.FunctionExpression(function_info, tuple(children))
         elif function_name in [ '<=', '>=', '<', '>', '=', 'eq', 'ne' ]:
-            return expr_object
+            children = [ self._do_transform(child, syn_ctx) for child in expr_object.children ]
+            return syn_ctx.make_function_expr(function_name, *children)
         elif function_name in [ 'not' ]:
             child = expr_object.children[0]
             child_func_name = child.function_info.function_name
             ret_func_name = neg[child_func_name]
             return syn_ctx.make_function_expr(ret_func_name, *child.children)
+        elif function_name in [ 'add' ]:
+            children = [ self._do_transform(child, syn_ctx) for child in expr_object.children ]
+            new_children = []
+            for child in children:
+                if exprs.is_function_expression(child) and child.function_info.function_name == 'add':
+                    new_children.extend(child.children)
+                else:
+                    new_children.append(child)
+            return syn_ctx.make_function_expr('add', *new_children)
+        elif function_name in [ 'sub', 'mul', '-' ]:
+            children = [ self._do_transform(child, syn_ctx) for child in expr_object.children ]
+            return syn_ctx.make_function_expr(function_name, *children)
         else:
-            raise NotImplementedError
+            return expr_object
+            # raise NotImplementedError("Function %s" % function_name)
 
     def apply(self, *args):
         if (len(args) != 2):
@@ -149,9 +163,8 @@ class RewriteITE(ExprTransformerBase):
             else:
                 found_one = True
                 cond, tt, ff = ite.children
-                tc = syn_ctx.make_function_expr('and', exprs.substitute(constraint, ite, tt), cond)
-                fc = syn_ctx.make_function_expr('and', exprs.substitute(constraint, ite, ff), 
-                        syn_ctx.make_function_expr('not', cond))
+                tc = syn_ctx.make_function_expr('or', exprs.substitute(constraint, ite, tt), syn_ctx.make_function_expr('not', cond))
+                fc = syn_ctx.make_function_expr('or', exprs.substitute(constraint, ite, ff), cond)
                 new_constraints.append(tc)
                 new_constraints.append(fc)
         if found_one:
@@ -203,13 +216,13 @@ class NNFConverter(ExprTransformerBase):
     def _do_transform(self, expr_object, syn_ctx, polarity):
         kind = expr_object.expr_kind
         if (kind != exprs.ExpressionKinds.function_expression):
-            return expr_object
+            ret = expr_object
 
         elif (not self._matches_expression_any(expr_object, 'and', 'or', 'not')):
             if (polarity):
-                return expr_object
+                ret = expr_object
             else:
-                return syn_ctx.make_function_expr('not', expr_object)
+                ret = syn_ctx.make_function_expr('not', expr_object)
 
         else:
             function_info = expr_object.function_info
@@ -224,18 +237,19 @@ class NNFConverter(ExprTransformerBase):
 
             if (function_name == 'and'):
                 if (polarity):
-                    return syn_ctx.make_ac_function_expr('and', *transformed_children)
+                    ret = syn_ctx.make_ac_function_expr('and', *transformed_children)
                 else:
-                    return syn_ctx.make_ac_function_expr('or', *transformed_children)
+                    ret = syn_ctx.make_ac_function_expr('or', *transformed_children)
             elif (function_name == 'or'):
                 if (polarity):
-                    return syn_ctx.make_ac_function_expr('or', *transformed_children)
+                    ret = syn_ctx.make_ac_function_expr('or', *transformed_children)
                 else:
-                    return syn_ctx.make_ac_function_expr('and', *transformed_children)
+                    ret = syn_ctx.make_ac_function_expr('and', *transformed_children)
             elif (function_name == 'not'):
-                return transformed_children[0]
+                ret = transformed_children[0]
             else:
                 assert False
+        return ret
 
 
     def apply(self, *args):
@@ -291,7 +305,9 @@ class CNFConverter(ExprTransformerBase):
 
                 clauses = []
                 for prod_tuple in itertools.product(*transformed_children):
-                    clauses.append(syn_ctx.make_ac_function_expr('or', *prod_tuple))
+                    clause = syn_ctx.make_ac_function_expr('or', *prod_tuple)
+                    clause = self._flatten_and_or(clause, syn_ctx)
+                    clauses.append(clause)
                 return clauses
 
     def apply(self, *args):

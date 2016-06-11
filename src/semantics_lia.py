@@ -70,14 +70,14 @@ class ModFunction(InterpretedFunctionBase):
 
 class MinusFunction(InterpretedFunctionBase):
     def __init__(self):
-        super().__init__('sub', 1, (exprtypes.IntType(),), exprtypes.IntType())
+        super().__init__('-', 1, (exprtypes.IntType(),), exprtypes.IntType())
         self.eval_children = lambda x: -x
         self.smt_function = lambda x: -x
 
 class MulFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('mul', -1, (exprtypes.IntType(), ), exprtypes.IntType())
-        self.eval_children = lambda cs: functools.reduce(lambda x,y: x*y, cs, 1)
+        self.eval_children = lambda *cs: functools.reduce(lambda x,y: x*y, cs, 1)
         self.smt_function = z3.Product
         self.commutative = True
         self.associative = True
@@ -132,7 +132,7 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
         if (function_name == '+' or function_name == 'add'):
             return 'add'
         elif (function_name == '-' or function_name == 'sub'):
-            return 'sub'
+            return function_name
         elif (function_name == '*' or function_name == 'mul'):
             return 'mul'
         elif (function_name == '/' or function_name == 'div'):
@@ -160,21 +160,22 @@ class LIAInstantiator(semantics_types.InstantiatorBase):
             else:
                 return self._get_mul_instance()
 
-        elif function_name in [ 'div', 'sub', 'mod' ]:
+        elif function_name in [ 'div', 'sub', 'mod' ] or \
+                (function_name == '-' and len(arg_types) == 2):
             if (len(arg_types) != 2 or
                 (not self._is_all_of_type(arg_types, exprtypes.TypeCodes.integer_type))):
                 self._raise_failure(function_name, arg_types)
 
             if (function_name == 'div'):
                 return DivFunction()
-            elif function_name == 'sub':
+            elif function_name == 'sub' or function_name == '-':
                 return SubFunction()
             elif function_name == 'mod':
                 return ModFunction()
             else:
                 raise NotImplementedError
 
-        elif (function_name == 'minus'):
+        elif (function_name == '-'):
             if (len(arg_types) != 1 or arg_types[0].type_code != exprtypes.TypeCodes.integer_type):
                 self._raise_failure(function_name, arg_types)
             return MinusFunction()

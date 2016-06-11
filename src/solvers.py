@@ -117,7 +117,7 @@ class Solver(object):
             else:
                 # print('Term solve incomplete!')
                 # for cex in cexs:
-                #     print('ADDING POINT:', [p.value_object for p in cex])
+                    # print('ADDING POINT:', [p.value_object for p in cex])
                 sol_or_cex = cexs
 
             if _is_expr(sol_or_cex):

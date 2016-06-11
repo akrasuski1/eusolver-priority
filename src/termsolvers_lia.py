@@ -76,7 +76,7 @@ def collect_terms(expr):
     elif exprs.is_constant_expression(expr):
         return {1:expr.value_object.value_object}
 
-    func_name = exprs.func_name
+    func_name = expr.function_info.function_name
     if func_name == 'add':
         ret = {}
         ds = [ collect_terms(c) for c in expr.children ]
@@ -97,7 +97,15 @@ def collect_terms(expr):
         ret = {}
         for v, i in t.items():
             ret[v] = i * c
+        return ret
+    elif func_name == '-':
+        d = collect_terms(expr.children[0])
+        ret = {}
+        for v, i in d.items():
+            ret[v] = - i
+        return ret
     else:
+        print(_expr_to_str(expr))
         raise NotImplementedError
 
 def solve_inequalities(model, outvar, inequalities, syn_ctx):
@@ -196,6 +204,11 @@ class SpecAwareLIATermSolver(TermSolverInterface):
         self.clauses = spec.get_canon_clauses()
         self.smt_ctx = z3smt.Z3SMTContext()
         self.eval_ctx = evaluation.EvaluationContext()
+
+        # for c in self.clauses:
+        #     print("CANON CLAUSE:")
+        #     for d in c:
+        #         print("\t", _expr_to_str(d))
 
         self.intro_var_positions = []
         for p in self.point_var_exprs:

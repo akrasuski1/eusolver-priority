@@ -55,6 +55,20 @@ def simplify_inequality(variables, inequality):
             return _true_expr
     return inequality
 
+def _filter_to_intro_vars(clauses, intro_vars):
+    only_intro_var_clauses = []
+    for clause in clauses:
+        new_clause = []
+        for disjunct in clause:
+            variables = exprs.get_all_variables(disjunct)
+            for v in variables:
+                if v not in intro_vars:
+                    break
+            else:
+                new_clause.append(simplify_inequality(intro_vars, disjunct))
+        only_intro_var_clauses.append(new_clause)
+    return only_intro_var_clauses
+
 def _clauses_to_expr(syn_ctx, clauses):
     clause_exprs = []
     for clause in clauses:
@@ -100,16 +114,7 @@ class SpecAwareLIAUnifier(UnifierInterface):
         self.points.extend(points)
 
     def _eliminate_forall_vars(self, clauses):
-        only_intro_var_clauses = []
-        for clause in clauses:
-            new_clause = []
-            for disjunct in clause:
-                variables = exprs.get_all_variables(disjunct)
-                for v in variables:
-                    if v not in self.intro_vars:
-                        continue
-                new_clause.append(simplify_inequality(self.intro_vars, disjunct))
-            only_intro_var_clauses.append(new_clause)
+        only_intro_var_clauses = _filter_to_intro_vars(clauses, self.intro_vars)
 
         if all([len(c) > 0 for c in only_intro_var_clauses ]):
             ret = _clauses_to_expr(self.syn_ctx, only_intro_var_clauses)
@@ -122,7 +127,7 @@ class SpecAwareLIAUnifier(UnifierInterface):
     # Coverable points is the set of points that term covers
     # Uncovered points is the subset of coverable points that haven't been covered yet
     def _compute_pre_condition(self, coverable_sig, uncovered_sig, term):
-        relevent_points = [ p for (i,p) in enumerate(self.points) if i in uncovered_sig ]
+        relevent_points = [ p for (i,p) in enumerate(self.points) if (i in uncovered_sig) and (i in coverable_sig) ]
         eval_ctx = self.eval_ctx
 
         app = exprs.find_application(self.spec.get_canonical_specification(), self.synth_fun.function_name)
@@ -131,39 +136,46 @@ class SpecAwareLIAUnifier(UnifierInterface):
         substitute_pairs = [ (f, actual_parameters[f.parameter_position]) for f in formal_parameters ]
         term_sub = exprs.substitute_all(term, substitute_pairs)
 
-        def eval_on_uncovered_points(pred):
+        def eval_on_relevent_points(pred):
             ret = []
             for p in relevent_points:
                 eval_ctx.set_valuation_map(p)
                 ret.append(evaluation.evaluate_expression_raw(pred, eval_ctx))
             return ret
 
+        # Rewrite clauses with current term instead of synth_fun application
         curr_clauses = []
-        always_true_clauses = []
-        sometimes_true_clauses = []
         for clause in self.clauses:
             curr_clause = []
-            always_true_clause = []
-            sometimes_true_clause = []
             for disjunct in clause:
                 curr_disjunct = exprs.substitute(disjunct, app, term_sub)
                 curr_clause.append(curr_disjunct)
-                disjunct_sig_on_relevent_points = eval_on_uncovered_points(curr_disjunct)
-                if all(disjunct_sig_on_relevent_points):
-                    always_true_clause.append(curr_disjunct)
-                if any(disjunct_sig_on_relevent_points):
-                    sometimes_true_clause.append(curr_disjunct)
             curr_clauses.append(curr_clause)
-            always_true_clauses.append(always_true_clause)
-            sometimes_true_clauses.append(sometimes_true_clause)
 
-        if all([ len(x) > 0 for x in always_true_clauses]):
-            pre_cond = self._eliminate_forall_vars(always_true_clauses)
-        else:
+        only_intro_var_clauses = _filter_to_intro_vars(curr_clauses, self.intro_vars)
+        if not all([ len(oivc) > 0 for oivc in only_intro_var_clauses ]):
             raise NotImplementedError
+        else:
+            # Do the only_intro_var_clauses cover all relevent points?
+            some_point_uncovered = False
+            for oivc in only_intro_var_clauses:
+                sig = set()
+                for d in oivc:
+                    for i, t in enumerate(eval_on_relevent_points(d)):
+                        if t:
+                            sig.add(i)
+                if len(sig) != len(relevent_points):
+                    some_point_uncovered = True
+                    break
+            if some_point_uncovered:
+                raise NotImplementedError
+            else:
+                pre_cond = _clauses_to_expr(self.syn_ctx, only_intro_var_clauses)
 
         if pre_cond is not None:
             return pre_cond
+        else:
+            raise NotImplementedError
 
     def _pred_term_list_to_expr(self, pred_terms):
         if len(pred_terms) == 1:

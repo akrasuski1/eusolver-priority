@@ -187,6 +187,16 @@ def make_solver(file_sexp):
             forall_vars_map
             ) = benchmark_tuple
     constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraints)
+    benchmark_tuple = (
+            theories,
+            syn_ctx,
+            synth_instantiator,
+            macro_instantiator,
+            uf_instantiator,
+            constraints,
+            grammars,
+            forall_vars_map
+            )
 
     # Multi-function
     if len(synth_instantiator.get_functions()) > 1:
