@@ -252,17 +252,14 @@ class InterpretedFunctionBase(FunctionBase):
 class MacroFunction(UnknownFunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type, interpretation_expression, arg_vars):
         super().__init__(FunctionKinds.macro_function, function_name, function_arity, domain_types, range_type)
-        substitute_pairs = []
-        formal_params = {}
+        self.formal_parameters = []
         for i, arg_var in enumerate(arg_vars):
             fp = exprs.FormalParameterExpression(self,
-                    arg_var.variable_info.variable_type,
-                    arg_var.variable_info.variable_eval_offset)
-            substitute_pairs.append((arg_var, fp))
-            formal_params[arg_var.variable_info.variable_eval_offset] = i
+                    arg_var.variable_info.variable_type, i)
+            self.formal_parameters.append(fp)
         self.interpretation_expression = \
-                exprs.substitute_all(interpretation_expression, substitute_pairs)
-        self.formal_parameters = [ formal_params[i] for i in range(len(substitute_pairs)) ]
+                exprs.substitute_all(interpretation_expression,
+                        list(zip(arg_vars, self.formal_parameters)))
 
     def evaluate(self, expr_object, eval_context_object):
         eval_context_object.interpretation_map[self.unknown_function_id] = self.interpretation_expression

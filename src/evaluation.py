@@ -57,6 +57,7 @@ def evaluate_pred_raw(expr_object, eval_context):
     return evaluate_expression_raw(expr_object, eval_context)
 
 def evaluate_expression_on_stack(expr_object, eval_context):
+    # print('Evaluating:', exprs.expression_to_string(expr_object))
     kind = expr_object.expr_kind
     if (kind == _variable_expression):
         o = expr_object.variable_info.variable_eval_offset

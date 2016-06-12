@@ -200,9 +200,11 @@ def make_singlefun_solver(benchmark_tuple):
     # Spec type (and verifier)
     valuations = get_pbe_valuations(constraints, synth_fun)
     if valuations is not None:
+        print("Using PBE specifications")
         specification = specifications.PBESpec(valuations, synth_fun, theory)
         Verifier = verifiers.PBEVerifier
     else:
+        print("Using standard specifications")
         spec_expr = constraints[0] if len(constraints) == 1 \
                 else syn_ctx.make_function_expr('and', *constraints)
         specification = specifications.StandardSpec(spec_expr, syn_ctx, [synth_fun], theory)
@@ -224,9 +226,11 @@ def make_singlefun_solver(benchmark_tuple):
         # One shot or unification
         ans = grammar.decompose(macro_instantiator)
         if ans == None:
+            print("Not using divide and conquer")
             # Have to configure solver for naivete
             raise NotImplementedError
         else:
+            print("Using divide and conquer")
             term_grammar, pred_grammar, reverse_mapping = ans
             generator_factory = enumerators.RecursiveGeneratorFactory()
             term_generator = term_grammar.to_generator(generator_factory)
@@ -300,16 +304,16 @@ def make_solver(file_sexp):
             )
 
     # Multi-function
-    try:
-        if len(synth_instantiator.get_functions()) > 1:
-            return make_multifun_solver(benchmark_tuple)
-        else:
-            return make_singlefun_solver(benchmark_tuple)
-    except Exception:
-        print("Using classic esolver")
-        spec_expr = syn_ctx.make_function_expr('and', *constraints)
-        synth_funs = list(synth_instantiator.get_functions().values())
-        classic_esolver(syn_ctx, synth_funs, grammars, spec_expr)
+    # try:
+    if len(synth_instantiator.get_functions()) > 1:
+        return make_multifun_solver(benchmark_tuple)
+    else:
+        return make_singlefun_solver(benchmark_tuple)
+    # except Exception:
+    #     print("Using classic esolver")
+    #     spec_expr = syn_ctx.make_function_expr('and', *constraints)
+    #     synth_funs = list(synth_instantiator.get_functions().values())
+    #     classic_esolver(syn_ctx, synth_funs, grammars, spec_expr)
 
 # Tests:
 

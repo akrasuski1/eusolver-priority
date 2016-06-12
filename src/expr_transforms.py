@@ -162,8 +162,9 @@ class AckermannReduction(ExprTransformerBase):
                     cond = syn_ctx.make_function_expr('and', output_neq_expr, *args_eq_expr)
                     conds.append(cond)
 
-        constraints = [ syn_ctx.make_function_expr('or', *conds, constraint)
-                for constraint in constraints ]
+        if len(conds) > 0:
+            constraints = [ syn_ctx.make_function_expr('or', *conds, constraint)
+                    for constraint in constraints ]
         for app in sorted(all_apps, key=exprs.get_expression_size):
             var = syn_ctx.make_variable_expr(app.function_info.range_type,
                     'ufcall_' + app.function_info.function_name + '_' + str(random.randint(1, 1000000)))

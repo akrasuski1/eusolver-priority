@@ -1,12 +1,11 @@
-Fix termsolver_lia and unifier_lia w.r.t to points and canonical synthfun invocations
+All grammar features
+	Constant, Variable, InputVariable, LocalVariable
+
+Check binding in terms
 
 Default grammars
 
 Change single point invocation meaning
-
-All grammar features
-	Other weird things?
-	Constant, Variable, InputVariable
 
 BV theory - add all functions
 
@@ -14,15 +13,13 @@ Grammar decomposer - sort of
 	Bug in grammar decomposer - qm_* benchmarks exhibit bug
 	Generally, problem expanding macro functions in grammars
 
+Fix termsolver_lia and unifier_lia w.r.t to points and canonical synthfun invocations
 LIA subgrammars?
 LIA specific unifier -- first version done
 	Fix weird bugs with formal parameters
 LIA specific termsolver -- first version done
 	Fix weird bugs with formal parameters
 LIA multifunction single invcation
-
-multi-function synthesis -- first version done
-	LIA multi-function
 
 Test all semantics
 
