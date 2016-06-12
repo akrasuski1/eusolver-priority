@@ -119,7 +119,7 @@ def sexp_to_type(sexp):
     else:
         raise Exception("Unknown type: %s" % str(sexp))
 
-def sexp_to_let_expr(sexp, syn_ctx, arg_var_map):
+def sexp_to_let(sexp, syn_ctx, child_processing_func, get_return_type, arg_var_map):
     assert sexp[0] == 'let'
     bindings_data = sexp[1]
     in_data = sexp[2]
@@ -135,20 +135,19 @@ def sexp_to_let_expr(sexp, syn_ctx, arg_var_map):
         binding_types.append(var_type)
         binding_var_map[binding_data[0]] = binding_var
 
-        expr = sexp_to_expr(binding_data[2], syn_ctx, arg_var_map)
+        expr = child_processing_func(binding_data[2], syn_ctx, arg_var_map)
         bound_exprs.append(expr)
 
     new_arg_var_map = {}
     new_arg_var_map.update(arg_var_map)
     new_arg_var_map.update(binding_var_map) 
 
-    in_expr = sexp_to_expr(sexp[2], syn_ctx, new_arg_var_map)
-    in_expr_type = exprs.get_expression_type(in_expr)
+    in_expr = child_processing_func(in_data, syn_ctx, new_arg_var_map)
+    in_expr_type = get_return_type(in_expr) # exprs.get_expression_type(in_expr)
 
     let_function = semantics_core.LetFunction(binding_names, binding_vars, binding_types, in_expr_type)
     children = bound_exprs + [ in_expr ]
-    ret = syn_ctx.make_function_expr(let_function, *children)
-    return ret
+    return let_function, children
 
 def sexp_to_expr(sexp, syn_ctx, arg_var_map):
     # Must be a value
@@ -162,10 +161,11 @@ def sexp_to_expr(sexp, syn_ctx, arg_var_map):
             return syn_ctx.make_function_expr(sexp)
     elif type(sexp) == list:
         if sexp[0] != 'let':
+            func = sexp[0]
             children = [ sexp_to_expr(child, syn_ctx, arg_var_map) for child in sexp[1:] ]
-            return syn_ctx.make_function_expr(sexp[0], *children)
         else:
-            return sexp_to_let_expr(sexp, syn_ctx, arg_var_map)
+            func, children = sexp_to_let(sexp, syn_ctx, sexp_to_expr, exprs.get_expression_type, arg_var_map)
+        return syn_ctx.make_function_expr(func, *children)
     else:
         raise Exception('Unknown sexp type: %s', str(sexp))
 
@@ -228,24 +228,39 @@ def process_synth_invs(synth_invs_data, synth_instantiator, syn_ctx):
     return ret
 
 
-def _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, synth_fun, rule_data):
+def _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, var_map, synth_fun, rule_data):
     if type(rule_data) == tuple:
         value = sexp_to_value(rule_data)
         return grammars.ExpressionRewrite(exprs.ConstantExpression(value))
-    elif type(rule_data) == str and rule_data in [ a.variable_info.variable_name for a in arg_vars ]:
-        (parameter_position, variable) = next((i, x) for (i, x) in enumerate(arg_vars)
-                if x.variable_info.variable_name == rule_data)
-        expr = exprs.FormalParameterExpression(synth_fun,
-                variable.variable_info.variable_type,
-                parameter_position)
-        return grammars.ExpressionRewrite(expr)
-    elif type(rule_data) == str and rule_data in non_terminals:
-        return grammars.NTRewrite(rule_data, nt_type[rule_data])
+    elif type(rule_data) == str:
+        if rule_data in [ a.variable_info.variable_name for a in arg_vars ]:
+            (parameter_position, variable) = next((i, x) for (i, x) in enumerate(arg_vars)
+                    if x.variable_info.variable_name == rule_data)
+            expr = exprs.FormalParameterExpression(synth_fun,
+                    variable.variable_info.variable_type,
+                    parameter_position)
+            return grammars.ExpressionRewrite(expr)
+        elif rule_data in non_terminals:
+            return grammars.NTRewrite(rule_data, nt_type[rule_data])
+        elif rule_data in var_map:
+            return grammars.ExpressionRewrite(var_map[rule_data])
+        else:
+            # Could be a 0 arity function
+            return syn_ctx.make_function_expr(rule_data)
     elif type(rule_data) == list:
         function_name = rule_data[0]
-        function_args = [ _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, synth_fun, child) for child in rule_data[1:] ]
-        function_arg_types = tuple([ x.type for x in function_args ])
-        function = syn_ctx.make_function(function_name, *function_arg_types)
+        if function_name != 'let':
+            function_args = [ 
+                    _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, var_map, synth_fun, child)
+                    for child in rule_data[1:] ]
+            function_arg_types = tuple([ x.type for x in function_args ])
+            function = syn_ctx.make_function(function_name, *function_arg_types)
+        else:
+            def child_processing_func(rd, syn_ctx, new_var_map):
+                return _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, new_var_map, synth_fun, rd)
+            def get_return_type(r):
+                return r.type
+            function, function_args = sexp_to_let(rule_data, syn_ctx, child_processing_func, get_return_type, var_map)
         assert function is not None
         return grammars.FunctionRewrite(function, *function_args)
     else:
@@ -305,7 +320,7 @@ def sexp_to_grammar(arg_vars, grammar_sexp, synth_fun, syn_ctx):
     for nt, nt_type_data, rules_data in grammar_sexp:
         rewrites = []
         for rule_data in rules_data:
-            rewrite = _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, synth_fun, rule_data)
+            rewrite = _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, {}, synth_fun, rule_data)
             rewrites.append(rewrite)
         rules[nt] = rewrites
     return grammars.Grammar(non_terminals, nt_type, rules)

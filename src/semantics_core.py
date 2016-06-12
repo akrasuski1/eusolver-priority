@@ -64,7 +64,9 @@ class LetFunction(InterpretedFunctionBase):
         ret = "(let ("
         for bn, bt, e in zip(self.binding_names, self.binding_types, expr_object.children[:-1]):
             ret += "(%s %s %s) " % (bn, str(bt), exprs.expression_to_string(e))
+        ret += ') in'
         ret += exprs.expression_to_string(expr_object.children[-1])
+        ret += ')'
         return ret
 
     def evaluate(self, expr_object, eval_context_object):
@@ -82,10 +84,11 @@ class LetFunction(InterpretedFunctionBase):
         # eval_context_object.pop()
 
     def to_smt(self, expr_object, smt_context_object, var_subst_map):
-        in_expr = expr_object.children[-1]
-        flattened_expr = exprs.substitute_all(in_expr, 
-                list(zip(self.binding_vars, expr_object.children[:-1])))
-        return semantics_types.expression_to_smt(flattened_expr, smt_context_object)
+        smt_binding_var = [ semantics_types.expression_to_smt(bv, smt_context_object, var_subst_map)
+                for bv in self.binding_vars ]
+        smt_children = [ semantics_types.expression_to_smt(child, smt_context_object, var_subst_map)
+                for child in expr_object.children ]
+        return z3.substitute(smt_children[-1], list(zip(smt_binding_var, smt_children[:-1])))
 
 class CommaFunction(InterpretedFunctionBase):
     def __init__(self, domain_types):

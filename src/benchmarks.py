@@ -164,11 +164,11 @@ def make_multifun_solver(benchmark_tuple):
     generator_factory = enumerators.PointDistinctGeneratorFactory()
     term_generator = full_grammar.to_generator(generator_factory)
 
-    term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator, specification, synth_fun_objs)
+    term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator)
     term_solver.one_term_coverage = True
     unifier = unifiers.NullUnifier(None, term_solver, synth_fun_objs, syn_ctx, specification)
     solver = solvers.Solver(syn_ctx)
-    verifier = verifiers.StdVerifier(syn_ctx, solver.smt_ctx)
+    verifier = verifiers.StdVerifier(syn_ctx)
     solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
     rewritten_solutions = rewrite_solution(synth_fun_objs, solution, reverse_mapping=None)
     
@@ -220,7 +220,7 @@ def make_singlefun_solver(benchmark_tuple):
             term_generator = term_grammar.to_generator(generator_factory)
             pred_generator = pred_grammar.to_generator(generator_factory)
             solver = solvers.Solver(syn_ctx)
-            term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator, specification)
+            term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
             unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx, specification)
             solver = solvers.Solver(syn_ctx)
             verifier = Verifier(syn_ctx)
@@ -275,11 +275,11 @@ def make_solver(file_sexp):
             grammars,
             forall_vars_map
             ) = benchmark_tuple
-    for constraint in constraints:
-        print(exprs.expression_to_string(constraint))
+    # for constraint in constraints:
+    #     print(exprs.expression_to_string(constraint))
     constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraints)
-    for constraint in constraints:
-        print(exprs.expression_to_string(constraint))
+    # for constraint in constraints:
+    #     print(exprs.expression_to_string(constraint))
     benchmark_tuple = (
             theories,
             syn_ctx,

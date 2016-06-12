@@ -210,7 +210,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
 
 class PointlessTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, term_signature, term_generator, spec):
+    def __init__(self, term_signature, term_generator):
         super().__init__(term_signature)
         self.term_generator = term_generator
         self.eval_cache = {}
@@ -236,7 +236,7 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
 
 
 class PointDistinctTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, term_signature, term_generator, spec):
+    def __init__(self, term_signature, term_generator):
         super().__init__(term_signature)
         assert type(term_generator.factory) is enumerators.PointDistinctGeneratorFactory
         self.term_generator = term_generator
