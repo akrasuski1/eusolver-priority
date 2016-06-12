@@ -1,15 +1,19 @@
 let's
 	Lets and if's interact very weirdly
-
-BV theory - add all functions
-
+	Careful while rewriting constraints
 Rewrite lets in constraints
 
+Fix termsolver_lia and unifier_lia w.r.t to points and canonical synthfun invocations
+
 Default grammars
+
+Change single point invocation meaning
 
 All grammar features
 	Other weird things?
 	Constant, Variable, InputVariable
+
+BV theory - add all functions
 
 Grammar decomposer - sort of
 	Bug in grammar decomposer - qm_* benchmarks exhibit bug
@@ -20,11 +24,11 @@ LIA specific unifier -- first version done
 	Fix weird bugs with formal parameters
 LIA specific termsolver -- first version done
 	Fix weird bugs with formal parameters
+LIA multifunction single invcation
 
 multi-function synthesis -- first version done
 	LIA multi-function
 
-Change single point invocation meaning
 Test all semantics
 
 Test strings

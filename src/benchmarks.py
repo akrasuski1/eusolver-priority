@@ -241,11 +241,11 @@ def classic_esolver(syn_ctx, synth_funs, grammars, spec_expr):
         grammar = _merge_grammars(sf_list)
     else:
         grammar = grammars[synth_funs[0]]
-    generator_factory = enumerators.RecursiveGeneratorFactory()
+    generator_factory = enumerators.PointDistinctGeneratorFactory()
     term_generator = grammar.to_generator(generator_factory)
 
     # Term solver, unifier, and verifiers
-    term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator, specification)
+    term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator)
     term_solver.one_term_coverage = True
     unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
     verifier = verifiers.MultiPointVerifier(syn_ctx)
