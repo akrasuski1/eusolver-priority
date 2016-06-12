@@ -137,7 +137,7 @@ class StdVerifier(VerifierBase):
         self.syn_ctx = syn_ctx
         spec_tuple = syn_ctx.get_specification().get_spec_tuple()
         spec = syn_ctx.get_specification()
-        self.synth_fun = syn_ctx.get_synth_fun()
+        self.synth_funs = syn_ctx.get_synth_funs()
 
         self.smt_ctx = smt_ctx
         self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
@@ -150,11 +150,12 @@ class StdVerifier(VerifierBase):
         self.intro_vars = spec.get_intro_vars()
         self.smt_intro_vars = [_expr_to_smt(x, self.smt_ctx) for x in self.intro_vars]
 
-        fun_app = syn_ctx.make_function_expr(self.synth_fun, *self.intro_vars)
-        fun_app_subst_var = syn_ctx.make_variable_expr(self.synth_fun.range_type, '__output__')
-        self.outvar_cnstr = syn_ctx.make_function_expr('eq', fun_app_subst_var, fun_app)
+        fun_apps = [ syn_ctx.make_function_expr(f, *self.intro_vars) for f in self.synth_funs ]
+        fun_app_subst_vars = [ syn_ctx.make_variable_expr(f.range_type, '__output__' + f.function_name) for f in self.synth_funs ]
+        self.outvar_cnstr = syn_ctx.make_function_expr('and', *[ 
+            syn_ctx.make_function_expr('eq', v, a) for (v, a) in zip(fun_app_subst_vars, fun_apps) ])
         self.canon_spec = spec.get_canonical_specification()
-        canon_spec_with_outvar = exprs.substitute(self.canon_spec, fun_app, fun_app_subst_var)
+        canon_spec_with_outvar = exprs.substitute_all(self.canon_spec, list(zip(fun_apps, fun_app_subst_vars)))
         neg_canon_spec_with_outvar = syn_ctx.make_function_expr('not', canon_spec_with_outvar)
         self.frozen_smt_cnstr = _expr_to_smt(neg_canon_spec_with_outvar, self.smt_ctx)
         self.smt_solver.push()
@@ -164,7 +165,12 @@ class StdVerifier(VerifierBase):
         smt_ctx = self.smt_ctx
         smt_solver = self.smt_solver
 
-        smt_ctx.set_interpretation(self.synth_fun, term)
+        if len(self.synth_funs) == 1:
+            smt_ctx.set_interpretation(self.synth_funs[0], term)
+        else:
+            assert exprs.is_application_of(term, ',')
+            for f, t in zip(self.synth_funs, term.children):
+                smt_ctx.set_interpretation(f, t)
         eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx)
         smt_solver.push()
         smt_solver.add(eq_cnstr)
@@ -199,7 +205,12 @@ class StdVerifier(VerifierBase):
                 # print(_expr_to_str(term))
                 # print('with guard')
                 # print(_expr_to_str(pred))
-                smt_ctx.set_interpretation(self.synth_fun, term)
+                if len(self.synth_funs) == 1:
+                    smt_ctx.set_interpretation(self.synth_funs[0], term)
+                else:
+                    assert exprs.is_application_of(term, ',')
+                    for f, t in zip(self.synth_funs, term.children):
+                        smt_ctx.set_interpretation(f, t)
                 eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx);
                 # print('SMT constraint')
                 # print(eq_cnstr)
@@ -239,7 +250,12 @@ class StdVerifier(VerifierBase):
 
         eq_cnstrs = []
         for term in terms:
-            smt_ctx.set_interpretation(self.synth_fun, term)
+            if len(self.synth_funs) == 1:
+                smt_ctx.set_interpretation(self.synth_funs[0], term)
+            else:
+                assert exprs.is_application_of(term, ',')
+                for f, t in zip(self.synth_funs, term.children):
+                    smt_ctx.set_interpretation(f, t)
             eq_cnstrs.append(_expr_to_smt(self.canon_spec, smt_ctx))
         eq_cnstr = z3.And(*[ z3.Not(ec) for ec in eq_cnstrs ], eq_cnstrs[0].ctx)
 

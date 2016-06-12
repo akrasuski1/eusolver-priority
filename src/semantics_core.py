@@ -51,6 +51,12 @@ from semantics_types import FunctionBase, InterpretedFunctionBase
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
+class CommaFunction(InterpretedFunctionBase):
+    def __init__(self, domain_types):
+        super().__init__(',', len(domain_types), domain_types, None)
+        self.eval_children = lambda *a: a
+    # Should not be converted to SMT
+    # Nor should it be evaluated
 
 class EqFunction(InterpretedFunctionBase):
     """A function object for equality. Parametrized by the domain type."""

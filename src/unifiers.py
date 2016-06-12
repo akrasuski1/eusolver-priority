@@ -201,3 +201,25 @@ class PointDistinctDTUnifier(EnumerativeDTUnifierBase):
                 indicator_fun,
                 synth_fun)
 
+
+class NullUnifier(UnifierInterface):
+    def __init__(self, pred_generator, term_solver, synth_fun, syn_ctx, spec):
+        self.term_solver = term_solver
+        self.last_dt_size = 0
+
+    def get_num_distinct_preds(self):
+        return 0
+
+    def get_largest_pred_size_enumerated(self):
+        return 0
+
+    def add_points(self, points):
+        pass
+
+    def unify(self):
+        triv = self._try_trivial_unification()
+        if triv is not None:
+            yield ("TERM", triv)
+            return
+        raise Exception
+

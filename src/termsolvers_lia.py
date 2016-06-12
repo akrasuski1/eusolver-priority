@@ -287,9 +287,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
         else:
             raise NotImplementedError
 
-    def solve(self, one_term_coverage):
-        assert one_term_coverage == False
-
+    def solve(self):
         if len(self.points) == 0:
             # print("Trivial solve!")
             return self._trivial_solve()

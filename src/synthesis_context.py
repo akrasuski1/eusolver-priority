@@ -60,7 +60,7 @@ class SynthesisContext(object):
         self.variables_map = {}
         self.unknown_function_map = {}
         self.spec = None
-        self.synth_fun = None
+        self.synth_funs = None
 
     def make_variable(self, var_type, var_name,
                       var_eval_offset = exprs.VariableInfo._undefined_offset):
@@ -175,10 +175,10 @@ class SynthesisContext(object):
             return False
         return (self.variables_map.get(variable_info.variable_name, None) != None)
 
-    def assert_spec(self, spec, synth_fun):
+    def assert_spec(self, spec, synth_funs):
         assert self.spec is None
-        assert self.synth_fun is None
-        self.synth_fun = synth_fun
+        assert self.synth_funs is None
+        self.synth_funs = synth_funs
         self.spec = spec
 
     def get_specification(self):
@@ -187,8 +187,8 @@ class SynthesisContext(object):
     def clear_assertions(self):
         self.spec = None
 
-    def get_synth_fun(self):
-        return self.synth_fun
+    def get_synth_funs(self):
+        return self.synth_funs
 
 #
 # synthesis_context.py ends here

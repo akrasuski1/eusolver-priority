@@ -48,11 +48,11 @@ class SpecInterface(object):
         raise basetypes.AbstractMethodError('SpecInterface.check_on_point()')
 
 class StandardSpec(SpecInterface):
-    def __init__(self, specification, syn_ctx, synth_fun, theory):
+    def __init__(self, specification, syn_ctx, synth_funs, theory):
         self.syn_ctx = syn_ctx
         self.specification = specification
         self.eval_ctx = evaluation.EvaluationContext()
-        self.synth_fun = synth_fun
+        self.synth_funs = synth_funs
         self.theory = theory
 
         self.init_spec_tuple()
@@ -86,7 +86,13 @@ class StandardSpec(SpecInterface):
 
     def term_signature(self, term, points):
         eval_ctx = self.eval_ctx
-        eval_ctx.set_interpretation(self.synth_fun, term)
+        if len(self.synth_funs) > 1:
+            assert exprs.is_application_of(term, ',')
+            interpretations = term.children
+            for func, interpretation in zip(self.synth_funs, interpretations):
+                eval_ctx.set_interpretation(func, interpretation)
+        else:
+            eval_ctx.set_interpretation(self.synth_funs[0], term)
 
         retval = []
         for point in points:

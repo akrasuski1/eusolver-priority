@@ -362,7 +362,9 @@ def check_single_invocation_property(expr, syn_ctx):
             synth_function_set = synth_function_set | gather_synth_functions(clause)
 
     if (len(synth_function_set) > 1):
-        return False
+        domain_types_set = set([ sf.domain_types for sf in synth_function_set ])
+        if len(domain_types_set) > 1:
+            return False
 
     if (not isinstance(expr, list)):
         cnf_converter = CNFConverter()

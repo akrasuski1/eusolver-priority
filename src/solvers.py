@@ -86,26 +86,22 @@ class Solver(object):
             self.point_set.add(point)
             self.points.append(point)
 
-    def solve(self, term_generator, pred_generator, generator_factory, TermSolver, Unifier, Verifier, divide_and_conquer=True):
+    def solve(self, term_generator, pred_generator, generator_factory, term_solver, unifier, verifier, divide_and_conquer=True):
         import time
         syn_ctx = self.syn_ctx
-        synth_fun = syn_ctx.synth_fun
         spec = syn_ctx.get_specification()
 
-        term_solver = TermSolver(spec.term_signature, term_generator, spec, synth_fun)
-        unifier = Unifier(pred_generator, term_solver, synth_fun, syn_ctx, spec)
-        verifier = Verifier(syn_ctx, self.smt_ctx)
         time_origin = time.clock()
 
         while (True):
-            # print('________________')
+            print('________________')
             # iterate until we have terms that are "sufficient"
-            success = term_solver.solve(one_term_coverage=not divide_and_conquer)
+            success = term_solver.solve()
             if not success:
                 return None
             # we now have a sufficient set of terms
-            # print('Term solve complete!')
-            # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
+            print('Term solve complete!')
+            print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
 
             # Check term solver for completeness
             cexs = verifier.verify_term_solve(list(term_solver.get_signature_to_term().values()))
@@ -115,9 +111,9 @@ class Solver(object):
                 unification = next(unifier_state)
                 sol_or_cex = verifier.verify(unification)
             else:
-                # print('Term solve incomplete!')
-                # for cex in cexs:
-                    # print('ADDING POINT:', [p.value_object for p in cex])
+                print('Term solve incomplete!')
+                for cex in cexs:
+                    print('ADDING POINT:', [p.value_object for p in cex])
                 sol_or_cex = cexs
 
             if _is_expr(sol_or_cex):
@@ -136,21 +132,21 @@ class Solver(object):
             unifier.add_points(sol_or_cex)
             self.add_points(sol_or_cex)
             generator_factory.add_points(sol_or_cex)
-            # print('________________')
+            print('________________')
 
 
 ########################################################################
 # TEST CASES
 ########################################################################
-def _do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, run_anytime_version):
+def _do_solve(solver, generator_factory, term_generator, pred_generator, term_solver, unifier, verifier, run_anytime_version):
     reported_expr_string_set = set()
     sol_tuples = solver.solve(
             term_generator,
             pred_generator,
             generator_factory,
-            TermSolver,
-            Unifier,
-            Verifier)
+            term_solver,
+            unifier,
+            verifier)
             # unifiers_lia.SpecAwareLIAUnifier)
     for sol_tuple in sol_tuples:
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple

@@ -174,6 +174,23 @@ class Grammar(object):
                 ret = ret + "\t" + exprs.expression_to_string(expr_template) + "\n"
         return ret
 
+
+    def add_prefix(self, prefix):
+        def transform_rewrite(r):
+            for nt in self.non_terminals:
+                r = r.rename_nt(nt, prefix + nt)
+            return r
+        new_nts = [ prefix + nt for nt in self.non_terminals ]
+        new_rules = {}
+        for nt, rewrites in self.rules.items():
+            new_rewrites = [ transform_rewrite(r) for r in rewrites ]
+            new_rules[prefix + nt] = new_rewrites
+        new_nt_type = {}
+        for nt, typ in self.nt_type.items():
+            new_nt_type[prefix + nt] = typ
+        new_start = prefix + self.start
+        return Grammar(new_nts, new_nt_type, new_rules, new_start)
+
     def to_generator(self, generator_factory=None):
         if generator_factory == None:
             generator_factory = enumerators.RecursiveGeneratorFactory()

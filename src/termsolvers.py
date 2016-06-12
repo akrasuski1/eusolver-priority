@@ -129,13 +129,14 @@ class TermSolverInterface(object):
         raise basetypes.AbstractMethodError('TermSolverInterface.generate_more_terms()')
 
 class EnumerativeTermSolverBase(TermSolverInterface):
-    def __init__(self, term_signature, synth_fun):
+    def __init__(self, term_signature, synth_funs):
         super().__init__()
-        self.synth_fun = synth_fun
+        self.synth_funs = synth_funs
         self.term_signature = term_signature
 
         self.bunch_generator = None
         self.max_term_size = 1024
+        self.one_term_coverage = False
 
     def set_max_term_size(self, size):
         self.max_term_size = size
@@ -171,13 +172,13 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         self.bunch_generator_state = self.bunch_generator.generate()
 
 
-    def _default_solve(self, one_term_coverage=False):
+    def _default_solve(self):
         num_points = len(self.points)
         if (num_points == 0): # No points, any term will do
             return self._trivial_solve()
 
         stopping_condition = \
-                check_term_sufficiency if not one_term_coverage \
+                check_term_sufficiency if not self.one_term_coverage \
                 else check_one_term_sufficiency
 
         signature_to_term = self.signature_to_term
@@ -200,6 +201,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             if transform_term is not None:
                 term = transform_term(term)
             sig = self._compute_term_signature(term)
+            # print(_expr_to_str(term))
             if (sig in signature_to_term or sig.is_empty()):
                 continue
             signature_to_term[sig] = term
@@ -209,8 +211,8 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
 
 class PointlessTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, term_signature, term_generator, spec, synth_fun):
-        super().__init__(term_signature, synth_fun)
+    def __init__(self, term_signature, term_generator, spec, synth_funs):
+        super().__init__(term_signature, synth_funs)
         self.term_generator = term_generator
         self.eval_cache = {}
         self.monotonic_expr_id = 0
@@ -229,14 +231,14 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
             return term
         return self._default_generate_more_terms(transform_term=add_expr_id)
 
-    def solve(self, one_term_coverage=False):
+    def solve(self):
         self.monotonic_expr_id = 0
-        return self._default_solve(one_term_coverage)
+        return self._default_solve()
 
 
 class PointDistinctTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, term_signature, term_generator, spec, synth_fun):
-        super().__init__(term_signature, synth_fun)
+    def __init__(self, term_signature, term_generator, spec, synth_funs):
+        super().__init__(term_signature, synth_funs)
         assert type(term_generator.factory) is enumerators.PointDistinctGeneratorFactory
         self.term_generator = term_generator
 
@@ -246,8 +248,8 @@ class PointDistinctTermSolver(EnumerativeTermSolverBase):
     def generate_more_terms(self):
         return self._default_generate_more_terms(transform_term=None)
 
-    def solve(self, one_term_coverage=False):
-        return self._default_solve(one_term_coverage)
+    def solve(self):
+        return self._default_solve()
 
 # TermSolver = PointlessTermSolver
 # TermSolver = PointDistinctTermSolver

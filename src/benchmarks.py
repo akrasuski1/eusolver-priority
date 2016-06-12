@@ -90,10 +90,7 @@ def massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraint
     # Rewrite ITE?
     return constraints
 
-def make_multifun_solver(benchmark_tuple):
-    raise NotImplementedError
-
-def rewrite_solution(synth_fun, solution, reverse_mapping):
+def rewrite_solution(synth_funs, solution, reverse_mapping):
     # Rewrite any predicates introduced in grammar decomposition
     if reverse_mapping is not None:
         for function_info, cond, orig_expr_template, expr_template in reverse_mapping:
@@ -110,14 +107,73 @@ def rewrite_solution(synth_fun, solution, reverse_mapping):
                 solution = exprs.substitute(solution, ite, new_ite)
 
     # Rewrite back into formal parameters
-    variables = exprs.get_all_formal_parameters(solution)
-    substitute_pairs = []
-    orig_vars = synth_fun.get_named_vars()
-    for v in variables:
-        substitute_pairs.append((v, orig_vars[v.parameter_position]))
-    solution = exprs.substitute_all(solution, substitute_pairs)
+    if len(synth_funs) == 1:
+        sols = [solution]
+    else:
+        sols = solution.children
 
-    return solution
+    rewritten_solutions = []
+    for sol, synth_fun in zip(sols, synth_funs):
+        variables = exprs.get_all_formal_parameters(sol)
+        substitute_pairs = []
+        orig_vars = synth_fun.get_named_vars()
+        for v in variables:
+            substitute_pairs.append((v, orig_vars[v.parameter_position]))
+        sol = exprs.substitute_all(sol, substitute_pairs)
+        rewritten_solutions.append(sol)
+
+    return rewritten_solutions
+
+def _merge_grammars(sf_grammar_list):
+    start = "MergedStart"
+    nts = [start]
+    nt_type = {}
+    rules = {}
+    starts = []
+    for sf_name, sf_obj, grammar in sf_grammar_list:
+        prefix = sf_name
+        renamed_grammar = grammar.add_prefix(sf_name)
+        nts.extend(renamed_grammar.non_terminals)
+        nt_type.update(renamed_grammar.nt_type)
+        rules.update(renamed_grammar.rules)
+        starts.append(renamed_grammar.start)
+    comma_function = semantics_core.CommaFunction([ nt_type[s] for s in starts ])
+    rules[start] = [ grammars.FunctionRewrite(comma_function,
+            *tuple([ grammars.NTRewrite(s, nt_type[s]) for s in starts ])) ]
+    nt_type[start] = None
+    merged_grammar = grammars.Grammar(nts, nt_type, rules, start)
+
+    return merged_grammar
+
+
+def make_multifun_solver(benchmark_tuple):
+    (theories, syn_ctx, synth_instantiator, macro_instantiator, \
+            uf_instantiator, constraints, grammars, forall_vars_map) = benchmark_tuple
+    synth_funs = list(synth_instantiator.get_functions().items())
+    full_grammar = _merge_grammars([ (sf[0], sf[1], grammars[sf[1]]) for sf in synth_funs ])
+
+    assert len(theories) == 1
+    theory = theories[0]
+
+    spec_expr = constraints[0] if len(constraints) == 1 \
+            else syn_ctx.make_function_expr('and', *constraints)
+    synth_fun_objs = [ sf[1] for sf in synth_funs ]
+    specification = specifications.StandardSpec(spec_expr, syn_ctx, synth_fun_objs, theory)
+    syn_ctx.assert_spec(specification, synth_fun_objs)
+
+    generator_factory = enumerators.PointDistinctGeneratorFactory()
+    term_generator = full_grammar.to_generator(generator_factory)
+
+    term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator, specification, synth_fun_objs)
+    term_solver.one_term_coverage = True
+    unifier = unifiers.NullUnifier(None, term_solver, synth_fun_objs, syn_ctx, specification)
+    solver = solvers.Solver(syn_ctx)
+    verifier = verifiers.StdVerifier(syn_ctx, solver.smt_ctx)
+    solution = solvers._do_solve(solver, generator_factory, term_generator, None, term_solver, unifier, verifier, False)
+    rewritten_solutions = rewrite_solution(synth_fun_objs, solution, reverse_mapping=None)
+    
+    for sol in rewritten_solutions:
+        print(exprs.expression_to_string(sol))
 
 def make_singlefun_solver(benchmark_tuple):
     (theories, syn_ctx, synth_instantiator, macro_instantiator, \
@@ -137,24 +193,22 @@ def make_singlefun_solver(benchmark_tuple):
     else:
         spec_expr = constraints[0] if len(constraints) == 1 \
                 else syn_ctx.make_function_expr('and', *constraints)
-        specification = specifications.StandardSpec(spec_expr, syn_ctx, synth_fun, theory)
+        specification = specifications.StandardSpec(spec_expr, syn_ctx, [synth_fun], theory)
         Verifier = verifiers.StdVerifier
-    syn_ctx.assert_spec(specification, synth_fun)
+    syn_ctx.assert_spec(specification, [synth_fun])
 
     if grammar == 'Default grammar':
         if theory == 'LIA':
-            TermSolver = termsolvers_lia.SpecAwareLIATermSolver
-            Unifier = unifiers_lia.SpecAwareLIAUnifier
+            term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, None, specification, synth_fun)
+            unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_fun, syn_ctx, specification)
             solver = solvers.Solver(syn_ctx)
-            solution = solvers._do_solve(solver, enumerators.NullGeneratorFactory(), None, None, TermSolver, Unifier, Verifier, False)
-            rewritten_solution = rewrite_solution(synth_fun, solution, reverse_mapping=None)
+            verifier = Verifier(syn_ctx, solver.smt_ctx)
+            solution = solvers._do_solve(solver, enumerators.NullGeneratorFactory(), None, None, term_solver, unifier, verifier, False)
+            [rewritten_solution] = rewrite_solution([synth_fun], solution, reverse_mapping=None)
             print(exprs.expression_to_string(rewritten_solution))
         else:
             raise NotImplementedError
     else:
-        TermSolver = termsolvers.PointlessTermSolver
-        Unifier = unifiers.PointlessEnumDTUnifier
-
         # One shot or unification
         ans = grammar.decompose(macro_instantiator)
         if ans == None:
@@ -162,15 +216,16 @@ def make_singlefun_solver(benchmark_tuple):
             raise NotImplementedError
         else:
             term_grammar, pred_grammar, reverse_mapping = ans
-            # print("Original grammar:\n", grammar)
-            # print("Term grammar:\n", term_grammar)
-            # print("Pred grammar:\n", pred_grammar)
             generator_factory = enumerators.RecursiveGeneratorFactory()
             term_generator = term_grammar.to_generator(generator_factory)
             pred_generator = pred_grammar.to_generator(generator_factory)
             solver = solvers.Solver(syn_ctx)
-            solution = solvers._do_solve(solver, generator_factory, term_generator, pred_generator, TermSolver, Unifier, Verifier, False)
-            rewritten_solution = rewrite_solution(synth_fun, solution, reverse_mapping)
+            term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator, specification, synth_fun)
+            unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx, specification)
+            solver = solvers.Solver(syn_ctx)
+            verifier = Verifier(syn_ctx, solver.smt_ctx)
+            solution = solvers._do_solve(solver, generator_factory, term_generator, pred_generator, term_solver, unifier, verifier, False)
+            [rewritten_solution] = rewrite_solution(synth_fun, solution, reverse_mapping)
             print(exprs.expression_to_string(rewritten_solution))
 
 
