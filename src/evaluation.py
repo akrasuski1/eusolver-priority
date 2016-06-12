@@ -60,7 +60,10 @@ def evaluate_expression_on_stack(expr_object, eval_context):
     kind = expr_object.expr_kind
     if (kind == _variable_expression):
         o = expr_object.variable_info.variable_eval_offset
-        eval_context.push(eval_context.valuation_map[o].value_object)
+        if o == exprs.VariableInfo._undefined_offset:
+            eval_context.push(eval_context.peek_let_variables()[expr_object])
+        else:
+            eval_context.push(eval_context.valuation_map[o].value_object)
     elif (kind == _formal_parameter_expression):
         o = expr_object.parameter_position
         eval_context.push(eval_context.valuation_map[o].value_object)
@@ -95,6 +98,16 @@ class EvaluationContext(object):
         self.eval_stack_top = 0
         self.valuation_map = None
         self.interpretation_map = {}
+        self.let_variable_stack = []
+
+    def push_let_variables(self, bindings):
+        self.let_variable_stack.append(bindings)
+
+    def pop_let_variables(self):
+        self.let_variable_stack.pop()
+
+    def peek_let_variables(self):
+        return self.let_variable_stack[-1]
 
     def peek(self, peek_depth = 0):
         return self.eval_stack[self.eval_stack_top - 1 - peek_depth]

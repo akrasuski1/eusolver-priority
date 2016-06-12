@@ -84,7 +84,7 @@ class Solver(object):
             self.point_set.add(point)
             self.points.append(point)
 
-    def solve(self, generator_factory, term_solver, unifier, verifier, divide_and_conquer=True, verify_term_solve=True):
+    def solve(self, generator_factory, term_solver, unifier, verifier, verify_term_solve=True):
         import time
         syn_ctx = self.syn_ctx
         spec = syn_ctx.get_specification()
@@ -92,14 +92,14 @@ class Solver(object):
         time_origin = time.clock()
 
         while (True):
-            # print('________________')
+            print('________________')
             # iterate until we have terms that are "sufficient"
             success = term_solver.solve()
             if not success:
                 return None
             # we now have a sufficient set of terms
-            # print('Term solve complete!')
-            # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
+            print('Term solve complete!')
+            print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
 
             # Check term solver for completeness
             if verify_term_solve:
@@ -113,8 +113,6 @@ class Solver(object):
                 sol_or_cex = verifier.verify(unification)
             else:
                 # print('Term solve incomplete!')
-                # for cex in cexs:
-                #     print('ADDING POINT:', [p.value_object for p in cex])
                 sol_or_cex = cexs
 
             if _is_expr(sol_or_cex):
@@ -132,11 +130,13 @@ class Solver(object):
                     yield sol_or_cex
                 return
 
+            for cex in sol_or_cex:
+                print('ADDING POINT:', [p.value_object for p in cex])
             term_solver.add_points(sol_or_cex) # Term solver can add all points at once
             unifier.add_points(sol_or_cex)
             self.add_points(sol_or_cex)
             generator_factory.add_points(sol_or_cex)
-            # print('________________')
+            print('________________')
 
 
 ########################################################################
@@ -150,7 +150,6 @@ def _do_solve(solver, generator_factory, term_solver, unifier, verifier, run_any
             term_solver,
             unifier,
             verifier)
-            # unifiers_lia.SpecAwareLIAUnifier)
     for sol_tuple in sol_tuples:
         (sol, dt_size, num_t, num_p, max_t, max_p, card_p, sol_time) = sol_tuple
         sol_str = _expr_to_str(sol)

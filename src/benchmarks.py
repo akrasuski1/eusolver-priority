@@ -85,7 +85,7 @@ def massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraint
             for c in constraints ]
 
     constraints = expr_transforms.AckermannReduction.apply(constraints, uf_instantiator, syn_ctx)
-    constraints = expr_transforms.RewriteITE.apply(constraints, syn_ctx)
+    # constraints = expr_transforms.RewriteITE.apply(constraints, syn_ctx)
 
     # Rewrite ITE?
     return constraints
@@ -220,7 +220,7 @@ def make_singlefun_solver(benchmark_tuple):
             term_generator = term_grammar.to_generator(generator_factory)
             pred_generator = pred_grammar.to_generator(generator_factory)
             solver = solvers.Solver(syn_ctx)
-            term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator, specification, synth_fun)
+            term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator, specification)
             unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx, specification)
             solver = solvers.Solver(syn_ctx)
             verifier = Verifier(syn_ctx)
@@ -245,7 +245,8 @@ def classic_esolver(syn_ctx, synth_funs, grammars, spec_expr):
     term_generator = grammar.to_generator(generator_factory)
 
     # Term solver, unifier, and verifiers
-    term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator, specification)
+    term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator, specification)
+    term_solver.one_term_coverage = True
     unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
     verifier = verifiers.MultiPointVerifier(syn_ctx)
 
@@ -255,7 +256,6 @@ def classic_esolver(syn_ctx, synth_funs, grammars, spec_expr):
             term_solver,
             unifier,
             verifier,
-            divide_and_conquer=False,
             verify_term_solve=False
             )
     solution = next(solutions)
@@ -275,7 +275,11 @@ def make_solver(file_sexp):
             grammars,
             forall_vars_map
             ) = benchmark_tuple
+    for constraint in constraints:
+        print(exprs.expression_to_string(constraint))
     constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraints)
+    for constraint in constraints:
+        print(exprs.expression_to_string(constraint))
     benchmark_tuple = (
             theories,
             syn_ctx,

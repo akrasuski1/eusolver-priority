@@ -1,20 +1,5 @@
-Grammar decomposer - sort of
-	Bug in grammar decomposer - qm_* benchmarks exhibit bug
-	Generally, problem expanding macro functions in grammars
-
-LIA subgrammars?
-LIA specific unifier -- first version done
-LIA specific termsolver -- first version done
-
-multi-function synthesis -- first version done
-	LIA multi-function
-
-Multiple invocations
-	Shouldn't be too hard
-
-Change single point invocation meaning
-
 let's
+	Lets and if's interact very weirdly
 
 BV theory - add all functions
 
@@ -26,6 +11,20 @@ All grammar features
 	Other weird things?
 	Constant, Variable, InputVariable
 
+Grammar decomposer - sort of
+	Bug in grammar decomposer - qm_* benchmarks exhibit bug
+	Generally, problem expanding macro functions in grammars
+
+LIA subgrammars?
+LIA specific unifier -- first version done
+	Fix weird bugs with formal parameters
+LIA specific termsolver -- first version done
+	Fix weird bugs with formal parameters
+
+multi-function synthesis -- first version done
+	LIA multi-function
+
+Change single point invocation meaning
 Test all semantics
 
 Test strings

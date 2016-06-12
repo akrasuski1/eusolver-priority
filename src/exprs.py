@@ -172,12 +172,15 @@ def expression_to_string(expr):
         return _constant_to_string(expr.value_object.value_type,
                                    expr.value_object.value_object)
     else:
-        retval = '(' + expr.function_info.function_name
-        for child in expr.children:
-            retval += ' '
-            retval += expression_to_string(child)
-        retval += ')'
-        return retval
+        if expr.function_info.function_name != 'let':
+            retval = '(' + expr.function_info.function_name
+            for child in expr.children:
+                retval += ' '
+                retval += expression_to_string(child)
+            retval += ')'
+            return retval
+        else:
+            return expr.function_info.to_string(expr)
 
 
 def get_expression_type(expr):

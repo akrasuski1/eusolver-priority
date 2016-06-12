@@ -187,8 +187,7 @@ class PointlessEnumDTUnifier(EnumerativeDTUnifierBase):
         self.pred_solver = termsolvers.PointlessTermSolver(
                 compute_indicator,
                 pred_generator,
-                indicator_fun,
-                synth_fun)
+                indicator_fun)
 
 class PointDistinctDTUnifier(EnumerativeDTUnifierBase):
     def __init__(self, pred_generator, term_solver, synth_fun, syn_ctx, spec):

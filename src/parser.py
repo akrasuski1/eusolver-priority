@@ -119,6 +119,37 @@ def sexp_to_type(sexp):
     else:
         raise Exception("Unknown type: %s" % str(sexp))
 
+def sexp_to_let_expr(sexp, syn_ctx, arg_var_map):
+    assert sexp[0] == 'let'
+    bindings_data = sexp[1]
+    in_data = sexp[2]
+
+    binding_vars, binding_names, binding_types, bound_exprs = [], [], [], []
+    binding_var_map = {}
+    for binding_data in bindings_data:
+        var_name = "_let_bound_" + binding_data[0]
+        var_type = sexp_to_type(binding_data[1])
+        binding_names.append(binding_data[0])
+        binding_var = syn_ctx.make_variable_expr(var_type, var_name)
+        binding_vars.append(binding_var)
+        binding_types.append(var_type)
+        binding_var_map[binding_data[0]] = binding_var
+
+        expr = sexp_to_expr(binding_data[2], syn_ctx, arg_var_map)
+        bound_exprs.append(expr)
+
+    new_arg_var_map = {}
+    new_arg_var_map.update(arg_var_map)
+    new_arg_var_map.update(binding_var_map) 
+
+    in_expr = sexp_to_expr(sexp[2], syn_ctx, new_arg_var_map)
+    in_expr_type = exprs.get_expression_type(in_expr)
+
+    let_function = semantics_core.LetFunction(binding_names, binding_vars, binding_types, in_expr_type)
+    children = bound_exprs + [ in_expr ]
+    ret = syn_ctx.make_function_expr(let_function, *children)
+    return ret
+
 def sexp_to_expr(sexp, syn_ctx, arg_var_map):
     # Must be a value
     if type(sexp) == tuple:
@@ -130,8 +161,11 @@ def sexp_to_expr(sexp, syn_ctx, arg_var_map):
         else: # Could be a zero-argument function
             return syn_ctx.make_function_expr(sexp)
     elif type(sexp) == list:
-        children = [ sexp_to_expr(child, syn_ctx, arg_var_map) for child in sexp[1:] ]
-        return syn_ctx.make_function_expr(sexp[0], *children)
+        if sexp[0] != 'let':
+            children = [ sexp_to_expr(child, syn_ctx, arg_var_map) for child in sexp[1:] ]
+            return syn_ctx.make_function_expr(sexp[0], *children)
+        else:
+            return sexp_to_let_expr(sexp, syn_ctx, arg_var_map)
     else:
         raise Exception('Unknown sexp type: %s', str(sexp))
 

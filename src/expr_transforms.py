@@ -379,18 +379,21 @@ def check_single_invocation_property(expr, syn_ctx):
 
     return True
 
-def _gather_variables(expr, accumulator):
+def _gather_variables(expr, accumulator, bound_vars):
     kind = expr.expr_kind
     if (kind == exprs.ExpressionKinds.variable_expression):
-        accumulator.add(expr)
+        if expr not in bound_vars:
+            accumulator.add(expr)
     elif (kind == exprs.ExpressionKinds.function_expression):
+        if expr.function_info.function_name == 'let':
+            bound_vars = bound_vars | set(expr.function_info.binding_vars)
         for child in expr.children:
-            _gather_variables(child, accumulator)
+            _gather_variables(child, accumulator, bound_vars)
 
 def gather_variables(expr):
     """Gets the set of variable expressions present in the expr."""
     var_set = set()
-    _gather_variables(expr, var_set)
+    _gather_variables(expr, var_set, set())
     return var_set
 
 def _gather_synth_functions(expr, fun_set):

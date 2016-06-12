@@ -162,6 +162,8 @@ class SynthesisContext(object):
         return exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
 
     def validate_function(self, function_info):
+        if function_info.function_name == 'let':
+            return True
         if (function_info.synthesis_ctx is not self):
             return False
         for instantiator in self.function_instantiators:

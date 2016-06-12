@@ -41,6 +41,7 @@
 i.e., equality, conditionals and basic boolean operations."""
 
 import basetypes
+import evaluation
 import exprs
 import exprtypes
 import utils
@@ -52,17 +53,39 @@ if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
 class LetFunction(InterpretedFunctionBase):
-    def __init__(self, binding_vars, binding_types, domain_types):
-        super().__init__(',', len(domain_types), domain_types, None)
-        # Should make a fresh copy of binding variables
+    def __init__(self, binding_names, binding_vars, binding_types, ret_type):
+        domain_types = binding_types + [ret_type]
+        super().__init__('let', len(domain_types), domain_types, ret_type)
+        self.binding_names = binding_names
         self.binding_vars = binding_vars
+        self.binding_types = binding_types
+
+    def to_string(self, expr_object):
+        ret = "(let ("
+        for bn, bt, e in zip(self.binding_names, self.binding_types, expr_object.children[:-1]):
+            ret += "(%s %s %s) " % (bn, str(bt), exprs.expression_to_string(e))
+        ret += exprs.expression_to_string(expr_object.children[-1])
+        return ret
 
     def evaluate(self, expr_object, eval_context_object):
-        num_children = len(expr_object.children)
-        self._evaluate_children(expr_object, eval_context_object)
-        res = self.eval_children(*eval_context_object.peek_items(num_children))
-        eval_context_object.pop(num_children)
-        eval_context_object.push(res)
+        bindings = {}
+        for bv, child in zip(self.binding_vars, expr_object.children[:-1]):
+            evaluation.evaluate_expression_on_stack(child, eval_context_object)
+            bindings[bv] = eval_context_object.peek()
+            eval_context_object.pop()
+
+        eval_context_object.push_let_variables(bindings)
+        in_expr = expr_object.children[-1]
+        evaluation.evaluate_expression_on_stack(in_expr, eval_context_object)
+        eval_context_object.pop_let_variables()
+        # res = eval_context_object.peek()
+        # eval_context_object.pop()
+
+    def to_smt(self, expr_object, smt_context_object, var_subst_map):
+        in_expr = expr_object.children[-1]
+        flattened_expr = exprs.substitute_all(in_expr, 
+                list(zip(self.binding_vars, expr_object.children[:-1])))
+        return semantics_types.expression_to_smt(flattened_expr, smt_context_object)
 
 class CommaFunction(InterpretedFunctionBase):
     def __init__(self, domain_types):
