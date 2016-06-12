@@ -129,9 +129,8 @@ class TermSolverInterface(object):
         raise basetypes.AbstractMethodError('TermSolverInterface.generate_more_terms()')
 
 class EnumerativeTermSolverBase(TermSolverInterface):
-    def __init__(self, term_signature, synth_funs):
+    def __init__(self, term_signature):
         super().__init__()
-        self.synth_funs = synth_funs
         self.term_signature = term_signature
 
         self.bunch_generator = None
@@ -211,8 +210,8 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
 
 class PointlessTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, term_signature, term_generator, spec, synth_funs):
-        super().__init__(term_signature, synth_funs)
+    def __init__(self, term_signature, term_generator, spec):
+        super().__init__(term_signature)
         self.term_generator = term_generator
         self.eval_cache = {}
         self.monotonic_expr_id = 0
@@ -237,8 +236,8 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
 
 
 class PointDistinctTermSolver(EnumerativeTermSolverBase):
-    def __init__(self, term_signature, term_generator, spec, synth_funs):
-        super().__init__(term_signature, synth_funs)
+    def __init__(self, term_signature, term_generator, spec):
+        super().__init__(term_signature)
         assert type(term_generator.factory) is enumerators.PointDistinctGeneratorFactory
         self.term_generator = term_generator
 

@@ -44,7 +44,6 @@ import exprs
 import termsolvers
 import unifiers
 import verifiers
-import z3smt
 import semantics_types
 from enum import IntEnum
 
@@ -54,7 +53,6 @@ import resource
 EUSOLVER_MEMORY_LIMIT = (1 << 31)
 
 _expr_to_str = exprs.expression_to_string
-_expr_to_smt = semantics_types.expression_to_smt
 _is_expr = exprs.is_expression
 _get_expr_with_id = exprs.get_expr_with_id
 
@@ -72,10 +70,10 @@ class Solver(object):
         self.reset()
         self.term_solver_time = 0
         self.unifier_time = 0
+        self.report_additional_info = False
 
     def reset(self):
         self.eval_ctx = evaluation.EvaluationContext()
-        self.smt_ctx = z3smt.Z3SMTContext()
         self.points = []
         self.point_set = set()
 
@@ -86,7 +84,7 @@ class Solver(object):
             self.point_set.add(point)
             self.points.append(point)
 
-    def solve(self, term_generator, pred_generator, generator_factory, term_solver, unifier, verifier, divide_and_conquer=True):
+    def solve(self, generator_factory, term_solver, unifier, verifier, divide_and_conquer=True, verify_term_solve=True):
         import time
         syn_ctx = self.syn_ctx
         spec = syn_ctx.get_specification()
@@ -94,55 +92,60 @@ class Solver(object):
         time_origin = time.clock()
 
         while (True):
-            print('________________')
+            # print('________________')
             # iterate until we have terms that are "sufficient"
             success = term_solver.solve()
             if not success:
                 return None
             # we now have a sufficient set of terms
-            print('Term solve complete!')
-            print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
+            # print('Term solve complete!')
+            # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
 
             # Check term solver for completeness
-            cexs = verifier.verify_term_solve(list(term_solver.get_signature_to_term().values()))
+            if verify_term_solve:
+                cexs = verifier.verify_term_solve(list(term_solver.get_signature_to_term().values()))
+            else:
+                cexs = None
 
             if cexs is None:
                 unifier_state = unifier.unify()
                 unification = next(unifier_state)
                 sol_or_cex = verifier.verify(unification)
             else:
-                print('Term solve incomplete!')
-                for cex in cexs:
-                    print('ADDING POINT:', [p.value_object for p in cex])
+                # print('Term solve incomplete!')
+                # for cex in cexs:
+                #     print('ADDING POINT:', [p.value_object for p in cex])
                 sol_or_cex = cexs
 
             if _is_expr(sol_or_cex):
                 solution_found_at = time.clock() - time_origin
-                yield (sol_or_cex,
-                        unifier.last_dt_size,
-                        term_solver.get_num_distinct_terms(),
-                        unifier.get_num_distinct_preds(),
-                        term_solver.get_largest_term_size_enumerated(),
-                        unifier.get_largest_pred_size_enumerated(),
-                        len(self.points),
-                        solution_found_at)
+                if self.report_additional_info:
+                    yield (sol_or_cex,
+                            unifier.last_dt_size,
+                            term_solver.get_num_distinct_terms(),
+                            unifier.get_num_distinct_preds(),
+                            term_solver.get_largest_term_size_enumerated(),
+                            unifier.get_largest_pred_size_enumerated(),
+                            len(self.points),
+                            solution_found_at)
+                else:
+                    yield sol_or_cex
                 return
 
             term_solver.add_points(sol_or_cex) # Term solver can add all points at once
             unifier.add_points(sol_or_cex)
             self.add_points(sol_or_cex)
             generator_factory.add_points(sol_or_cex)
-            print('________________')
+            # print('________________')
 
 
 ########################################################################
 # TEST CASES
 ########################################################################
-def _do_solve(solver, generator_factory, term_generator, pred_generator, term_solver, unifier, verifier, run_anytime_version):
+def _do_solve(solver, generator_factory, term_solver, unifier, verifier, run_anytime_version):
+    solver.report_additional_info = True
     reported_expr_string_set = set()
     sol_tuples = solver.solve(
-            term_generator,
-            pred_generator,
             generator_factory,
             term_solver,
             unifier,

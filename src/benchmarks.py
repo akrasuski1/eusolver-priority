@@ -169,7 +169,7 @@ def make_multifun_solver(benchmark_tuple):
     unifier = unifiers.NullUnifier(None, term_solver, synth_fun_objs, syn_ctx, specification)
     solver = solvers.Solver(syn_ctx)
     verifier = verifiers.StdVerifier(syn_ctx, solver.smt_ctx)
-    solution = solvers._do_solve(solver, generator_factory, term_generator, None, term_solver, unifier, verifier, False)
+    solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
     rewritten_solutions = rewrite_solution(synth_fun_objs, solution, reverse_mapping=None)
     
     for sol in rewritten_solutions:
@@ -203,7 +203,7 @@ def make_singlefun_solver(benchmark_tuple):
             unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_fun, syn_ctx, specification)
             solver = solvers.Solver(syn_ctx)
             verifier = Verifier(syn_ctx, solver.smt_ctx)
-            solution = solvers._do_solve(solver, enumerators.NullGeneratorFactory(), None, None, term_solver, unifier, verifier, False)
+            solution = solvers._do_solve(solver, enumerators.NullGeneratorFactory(), None, term_solver, unifier, verifier, False)
             [rewritten_solution] = rewrite_solution([synth_fun], solution, reverse_mapping=None)
             print(exprs.expression_to_string(rewritten_solution))
         else:
@@ -223,11 +223,45 @@ def make_singlefun_solver(benchmark_tuple):
             term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator, specification, synth_fun)
             unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx, specification)
             solver = solvers.Solver(syn_ctx)
-            verifier = Verifier(syn_ctx, solver.smt_ctx)
-            solution = solvers._do_solve(solver, generator_factory, term_generator, pred_generator, term_solver, unifier, verifier, False)
-            [rewritten_solution] = rewrite_solution(synth_fun, solution, reverse_mapping)
+            verifier = Verifier(syn_ctx)
+            solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
+            [rewritten_solution] = rewrite_solution([synth_fun], solution, reverse_mapping)
             print(exprs.expression_to_string(rewritten_solution))
 
+def classic_esolver(syn_ctx, synth_funs, grammars, spec_expr):
+
+    # Specifications
+    specification = specifications.MultiPointSpec(spec_expr, syn_ctx, synth_funs)
+    syn_ctx.assert_spec(specification, synth_funs)
+
+    # Grammars and generators
+    if len(synth_funs) > 1:
+        sf_list = [ (synth_fun.function_name, synth_fun, grammars[synth_fun])
+            for synth_fun in  synth_funs ]
+        grammar = _merge_grammars(sf_list)
+    else:
+        grammar = grammars[synth_funs[0]]
+    generator_factory = enumerators.RecursiveGeneratorFactory()
+    term_generator = grammar.to_generator(generator_factory)
+
+    # Term solver, unifier, and verifiers
+    term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator, specification)
+    unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
+    verifier = verifiers.MultiPointVerifier(syn_ctx)
+
+    solver = solvers.Solver(syn_ctx)
+    solutions = solver.solve(
+            generator_factory,
+            term_solver,
+            unifier,
+            verifier,
+            divide_and_conquer=False,
+            verify_term_solve=False
+            )
+    solution = next(solutions)
+    [rewritten_solution] = rewrite_solution(synth_funs, solution, reverse_mapping=None)
+
+    print(exprs.expression_to_string(rewritten_solution))
 
 def make_solver(file_sexp):
     benchmark_tuple = parser.extract_benchmark(file_sexp)
@@ -254,10 +288,16 @@ def make_solver(file_sexp):
             )
 
     # Multi-function
-    if len(synth_instantiator.get_functions()) > 1:
-        return make_multifun_solver(benchmark_tuple)
-    else:
-        return make_singlefun_solver(benchmark_tuple)
+    try:
+        if len(synth_instantiator.get_functions()) > 1:
+            return make_multifun_solver(benchmark_tuple)
+        else:
+            return make_singlefun_solver(benchmark_tuple)
+    except Exception:
+        print("Using classic esolver")
+        spec_expr = syn_ctx.make_function_expr('and', *constraints)
+        synth_funs = list(synth_instantiator.get_functions().values())
+        classic_esolver(syn_ctx, synth_funs, grammars, spec_expr)
 
 # Tests:
 

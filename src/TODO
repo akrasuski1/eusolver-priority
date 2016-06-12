@@ -2,24 +2,37 @@ Grammar decomposer - sort of
 	Bug in grammar decomposer - qm_* benchmarks exhibit bug
 	Generally, problem expanding macro functions in grammars
 
+LIA subgrammars?
 LIA specific unifier -- first version done
 LIA specific termsolver -- first version done
 
-Grammar pruning - done for commutativity
+multi-function synthesis -- first version done
+	LIA multi-function
+
+Multiple invocations
+	Shouldn't be too hard
+
+Change single point invocation meaning
 
 let's
-multi-function synthesis
 
 BV theory - add all functions
+
+Rewrite lets in constraints
 
 Default grammars
 
 All grammar features
 	Other weird things?
+	Constant, Variable, InputVariable
 
 Test all semantics
 
+Test strings
+
 --- Probably not for competition
+
+Grammar pruning - done for commutativity, probably not associativity till after competition
 
 CAV 15 strategy
 	Grammar unroller

@@ -254,12 +254,12 @@ class MacroFunction(UnknownFunctionBase):
         super().__init__(FunctionKinds.macro_function, function_name, function_arity, domain_types, range_type)
         substitute_pairs = []
         formal_params = {}
-        for arg_var in arg_vars:
+        for i, arg_var in enumerate(arg_vars):
             fp = exprs.FormalParameterExpression(self,
                     arg_var.variable_info.variable_type,
                     arg_var.variable_info.variable_eval_offset)
             substitute_pairs.append((arg_var, fp))
-            formal_params[arg_var.variable_info.variable_eval_offset] = fp
+            formal_params[arg_var.variable_info.variable_eval_offset] = i
         self.interpretation_expression = \
                 exprs.substitute_all(interpretation_expression, substitute_pairs)
         self.formal_parameters = [ formal_params[i] for i in range(len(substitute_pairs)) ]

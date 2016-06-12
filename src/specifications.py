@@ -47,42 +47,12 @@ class SpecInterface(object):
     def term_signature(self, term, points):
         raise basetypes.AbstractMethodError('SpecInterface.check_on_point()')
 
-class StandardSpec(SpecInterface):
-    def __init__(self, specification, syn_ctx, synth_funs, theory):
+class FormulaSpec(SpecInterface):
+    def __init__(self, spec_expr, syn_ctx, synth_funs):
         self.syn_ctx = syn_ctx
-        self.specification = specification
         self.eval_ctx = evaluation.EvaluationContext()
         self.synth_funs = synth_funs
-        self.theory = theory
-
-        self.init_spec_tuple()
-
-    def init_spec_tuple(self):
-        syn_ctx = self.syn_ctx
-        actual_spec = self.specification
-        variables_list, functions_list, canon_spec, clauses, canon_clauses, neg_clauses, intro_vars = \
-                expr_transforms.canonicalize_specification(actual_spec, syn_ctx, self.theory)
-        self.spec_tuple = (actual_spec, variables_list, functions_list, clauses,
-                neg_clauses, canon_spec, intro_vars)
-        self.canon_spec = canon_spec
-        self.intro_vars = intro_vars
-        self.point_vars = variables_list
-        self.canon_clauses = canon_clauses
-
-    def get_spec_tuple(self):
-        return self.spec_tuple
-
-    def get_point_variables(self):
-        return self.point_vars
-
-    def get_intro_vars(self):
-        return self.intro_vars
-    
-    def get_canonical_specification(self):
-        return self.canon_spec
-
-    def get_canon_clauses(self):
-        return self.canon_clauses
+        self.spec_expr = spec_expr
 
     def term_signature(self, term, points):
         eval_ctx = self.eval_ctx
@@ -100,6 +70,50 @@ class StandardSpec(SpecInterface):
             retval.append(evaluation.evaluate_expression_raw(self.canon_spec, eval_ctx))
 
         return retval
+
+    def get_canonical_specification(self):
+        return self.canon_spec
+
+
+# Just the base class. Separated because I might want to add random stuff here
+class MultiPointSpec(FormulaSpec):
+    def __init__(self, spec_expr, syn_ctx, synth_funs):
+        super().__init__(spec_expr, syn_ctx, synth_funs)
+        self.point_vars, self.canon_spec = \
+                expr_transforms.canonicalize_multipoint_specification(spec_expr, syn_ctx)
+
+    def get_point_variables(self):
+        return self.point_vars
+
+class StandardSpec(FormulaSpec):
+    def __init__(self, spec_expr, syn_ctx, synth_funs, theory):
+        super().__init__(spec_expr, syn_ctx, synth_funs)
+        self.theory = theory
+        self.init_spec_tuple()
+
+    def init_spec_tuple(self):
+        syn_ctx = self.syn_ctx
+        actual_spec = self.spec_expr
+        variables_list, functions_list, canon_spec, clauses, canon_clauses, neg_clauses, intro_vars = \
+                expr_transforms.canonicalize_specification(actual_spec, syn_ctx, self.theory)
+        self.spec_tuple = (actual_spec, variables_list, functions_list, clauses,
+                neg_clauses, canon_spec, intro_vars)
+        self.canon_spec = canon_spec
+        self.intro_vars = intro_vars
+        self.point_vars = variables_list
+        self.canon_clauses = canon_clauses
+
+    def get_spec_tuple(self):
+        return self.spec_tuple
+
+    def get_point_variables(self):
+        return self.point_vars
+
+    def get_intro_vars(self):
+        return self.intro_vars
+
+    def get_canon_clauses(self):
+        return self.canon_clauses
 
 class PBESpec(SpecInterface):
     def __init__(self, expr_valuations, synth_fun, theory):

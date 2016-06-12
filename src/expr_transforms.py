@@ -433,6 +433,17 @@ def _intro_new_universal_vars(clauses, syn_ctx, uf_info):
         retval.append(syn_ctx.make_ac_function_expr('or', *eq_constraints))
     return (retval, intro_vars)
 
+def canonicalize_multipoint_specification(expr, syn_ctx):
+    orig_variable_set = gather_variables(expr)
+    orig_variable_list = [x.variable_info for x in orig_variable_set]
+
+    variable_list = orig_variable_list
+    for i, v in enumerate(variable_list):
+        v.variable_eval_offset = i
+    canon_spec = expr
+
+    return (variable_list, expr)
+
 def canonicalize_specification(expr, syn_ctx, theory):
     """Performs a bunch of operations:
     1. Checks that the expr is "well-bound" to the syn_ctx object.
@@ -478,6 +489,7 @@ def canonicalize_specification(expr, syn_ctx, theory):
                                                             synth_function_list[0])
 
     # ensure that the intro_vars at the head of the list
+    # Arjun: Why? Most likely not necessary
     variable_list = [x.variable_info for x in intro_vars] + orig_variable_list
     num_vars = len(variable_list)
     for i in range(num_vars):

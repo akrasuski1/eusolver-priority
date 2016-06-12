@@ -145,7 +145,7 @@ def _process_function_defintion(args_data, ret_type_data):
         arg_type = sexp_to_type(arg_type_sexp)
         arg_types.append(arg_type)
         arg_var = exprs.VariableExpression(
-                exprs.VariableInfo(arg_type, arg_name, offset))
+                exprs.VariableInfo(arg_type, arg_name))
         arg_vars.append(arg_var)
         arg_var_map[arg_name] = arg_var
     return ((arg_vars, arg_types, arg_var_map), return_type)
@@ -172,7 +172,7 @@ def process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx):
         synth_fun.set_named_vars(arg_vars)
 
         synth_instantiator.add_function(name, synth_fun)
-        ret.append((synth_fun, arg_var_map, grammar_data))
+        ret.append((synth_fun, arg_vars, grammar_data))
     return ret
 
 def process_synth_invs(synth_invs_data, synth_instantiator, syn_ctx):
@@ -194,22 +194,22 @@ def process_synth_invs(synth_invs_data, synth_instantiator, syn_ctx):
     return ret
 
 
-def _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, rule_data):
+def _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, synth_fun, rule_data):
     if type(rule_data) == tuple:
         value = sexp_to_value(rule_data)
         return grammars.ExpressionRewrite(exprs.ConstantExpression(value))
-    elif type(rule_data) == str and rule_data in arg_var_map:
-        variable = arg_var_map[rule_data]
-        parameter_position = variable.variable_info.variable_eval_offset
+    elif type(rule_data) == str and rule_data in [ a.variable_info.variable_name for a in arg_vars ]:
+        (parameter_position, variable) = next((i, x) for (i, x) in enumerate(arg_vars)
+                if x.variable_info.variable_name == rule_data)
         expr = exprs.FormalParameterExpression(synth_fun,
                 variable.variable_info.variable_type,
-                variable.variable_info.variable_eval_offset)
+                parameter_position)
         return grammars.ExpressionRewrite(expr)
     elif type(rule_data) == str and rule_data in non_terminals:
         return grammars.NTRewrite(rule_data, nt_type[rule_data])
     elif type(rule_data) == list:
         function_name = rule_data[0]
-        function_args = [ _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, child) for child in rule_data[1:] ]
+        function_args = [ _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, synth_fun, child) for child in rule_data[1:] ]
         function_arg_types = tuple([ x.type for x in function_args ])
         function = syn_ctx.make_function(function_name, *function_arg_types)
         assert function is not None
@@ -264,14 +264,14 @@ def process_inv_constraints(inv_constraints_data, synth_instantiator, syn_ctx, f
     return constraints
 
 
-def sexp_to_grammar(arg_var_map, grammar_sexp, synth_fun, syn_ctx):
+def sexp_to_grammar(arg_vars, grammar_sexp, synth_fun, syn_ctx):
     non_terminals = [ t[0] for t in grammar_sexp ]
     nt_type = { nt:sexp_to_type(nt_type_data) for nt, nt_type_data, rules_data in grammar_sexp }
     rules = {}
     for nt, nt_type_data, rules_data in grammar_sexp:
         rewrites = []
         for rule_data in rules_data:
-            rewrite = _process_rule(non_terminals, nt_type, syn_ctx, arg_var_map, synth_fun, rule_data)
+            rewrite = _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, synth_fun, rule_data)
             rewrites.append(rewrite)
         rules[nt] = rewrites
     return grammars.Grammar(non_terminals, nt_type, rules)
@@ -321,11 +321,11 @@ def extract_benchmark(file_sexp):
     else:
         synth_funs_grammar_data = process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx)
     grammars = {}
-    for synth_fun, arg_var_map, grammar_data in synth_funs_grammar_data:
+    for synth_fun, arg_vars, grammar_data in synth_funs_grammar_data:
         if grammar_data == 'Default grammar':
             grammars[synth_fun] = grammar_data
         else:
-            grammars[synth_fun] = sexp_to_grammar(arg_var_map, grammar_data, synth_fun, syn_ctx)
+            grammars[synth_fun] = sexp_to_grammar(arg_vars, grammar_data, synth_fun, syn_ctx)
 
     # Universally quantified variables
     forall_vars_data, file_sexp = filter_sexp_for('declare-var', file_sexp)

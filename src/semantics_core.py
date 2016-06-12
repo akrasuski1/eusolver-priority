@@ -51,6 +51,19 @@ from semantics_types import FunctionBase, InterpretedFunctionBase
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
+class LetFunction(InterpretedFunctionBase):
+    def __init__(self, binding_vars, binding_types, domain_types):
+        super().__init__(',', len(domain_types), domain_types, None)
+        # Should make a fresh copy of binding variables
+        self.binding_vars = binding_vars
+
+    def evaluate(self, expr_object, eval_context_object):
+        num_children = len(expr_object.children)
+        self._evaluate_children(expr_object, eval_context_object)
+        res = self.eval_children(*eval_context_object.peek_items(num_children))
+        eval_context_object.pop(num_children)
+        eval_context_object.push(res)
+
 class CommaFunction(InterpretedFunctionBase):
     def __init__(self, domain_types):
         super().__init__(',', len(domain_types), domain_types, None)

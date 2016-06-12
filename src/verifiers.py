@@ -37,6 +37,7 @@
 #
 
 import exprs
+import z3smt
 import exprtypes
 import z3
 import semantics_types
@@ -115,7 +116,7 @@ class VerifierBase(object):
         raise basetypes.AbstractMethodError('VerifierBase.verify()')
 
     def verify_term_solve(self, terms):
-        raise basetypes.AbstractMethodError('VerifierBase.verify()')
+        raise basetypes.AbstractMethodError('VerifierBase.verify_term_solve()')
 
     def _default_verify(self, unification):
         type, expr_object = unification
@@ -131,15 +132,64 @@ class VerifierBase(object):
             raise Exception('Unexpected unification type: %s', type)
         return sol_or_cexs
 
+class MultiPointVerifier(VerifierBase):
+    def __init__(self, syn_ctx):
+        self.syn_ctx = syn_ctx
+        spec = syn_ctx.get_specification()
+
+        self.canon_spec = spec.get_canonical_specification()
+        self.neg_canon_spec = syn_ctx.make_function_expr('not', self.canon_spec)
+        self.synth_funs = syn_ctx.get_synth_funs()
+
+        self.smt_ctx = z3smt.Z3SMTContext()
+        self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
+        self.var_info_list = spec.get_point_variables()
+
+        var_expr_list = [exprs.VariableExpression(x) for x in self.var_info_list]
+        self.var_smt_expr_list = [_expr_to_smt(x, self.smt_ctx) 
+                for x in var_expr_list]
+
+    def _verify_expr(self, term):
+        smt_ctx = self.smt_ctx
+        smt_solver = self.smt_solver
+
+        if len(self.synth_funs) == 1:
+            smt_ctx.set_interpretation(self.synth_funs[0], term)
+        else:
+            assert exprs.is_application_of(term, ',')
+            for f, t in zip(self.synth_funs, term.children):
+                smt_ctx.set_interpretation(f, t)
+        full_constraint = _expr_to_smt(self.neg_canon_spec, smt_ctx)
+
+        smt_solver.push()
+        smt_solver.add(full_constraint)
+        r = smt_solver.check()
+        smt_solver.pop()
+
+        if (r == z3.sat):
+            cex_point = model_to_point(smt_solver.model(),
+                                       self.var_smt_expr_list,
+                                       self.var_info_list)
+            return [cex_point]
+        else:
+            return term
+
+    def verify(self, unification):
+        type, expr_object = unification
+        if type == "TERM":
+            sol_or_cexs = self._verify_expr(expr_object)
+        else:
+            raise Exception('Unexpected unification type: %s', type)
+        return sol_or_cexs
 
 class StdVerifier(VerifierBase):
-    def __init__(self, syn_ctx, smt_ctx):
+    def __init__(self, syn_ctx):
         self.syn_ctx = syn_ctx
         spec_tuple = syn_ctx.get_specification().get_spec_tuple()
         spec = syn_ctx.get_specification()
         self.synth_funs = syn_ctx.get_synth_funs()
 
-        self.smt_ctx = smt_ctx
+        self.smt_ctx = z3smt.Z3SMTContext()
         self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
 
         # This var_info_list is the order of variables in cex points
@@ -284,7 +334,7 @@ class StdVerifier(VerifierBase):
 
 
 class PBEVerifier(VerifierBase):
-    def __init__(self, syn_ctx, smt_ctx):
+    def __init__(self, syn_ctx):
         self.spec = syn_ctx.get_specification()
         self.valuations = self.spec.valuations
         self.syn_ctx = syn_ctx

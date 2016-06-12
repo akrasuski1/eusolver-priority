@@ -245,6 +245,16 @@ def find_application(expr, function_name):
                     return ret
     return None
 
+def find_all_synth_fun_apps(expr):
+    if not is_function_expression(expr):
+        return set()
+    ret = set()
+    for child in expr.children:
+        ret = ret | find_all_synth_fun_apps(child)
+    if expr.function_info.function_kind == semantics_types.FunctionKinds.synth_function:
+        ret.add(expr)
+    return ret
+
 def parent_of(expr, sub_expr):
     if not is_function_expression(expr):
         return None
