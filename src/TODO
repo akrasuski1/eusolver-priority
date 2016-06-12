@@ -1,8 +1,3 @@
-let's
-	Lets and if's interact very weirdly
-	Careful while rewriting constraints
-Rewrite lets in constraints
-
 Fix termsolver_lia and unifier_lia w.r.t to points and canonical synthfun invocations
 
 Default grammars

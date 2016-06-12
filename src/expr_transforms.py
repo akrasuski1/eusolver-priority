@@ -64,6 +64,26 @@ class ExprTransformerBase(object):
             return False
         return (expr_object.function_info.function_name in fun_name_set)
 
+class LetFlattener(ExprTransformerBase):
+    def __init__(self):
+        super().__init__('LetFlattener')
+
+    def _do_transform(expr, syn_ctx):
+        if not exprs.is_function_expression(expr):
+            return expr
+
+        new_children = [ LetFlattener._do_transform(child, syn_ctx) 
+                for child in expr.children ]
+        if exprs.is_application_of(expr, 'let'):
+            in_expr = new_children[-1]
+            sub_pairs = list(zip(expr.function_info.binding_vars, new_children[:-1]))
+            return exprs.substitute_all(in_expr, sub_pairs)
+        else:
+            return exprs.FunctionExpression(expr.function_info, tuple(new_children))
+
+    def apply(constraints, syn_ctx):
+        return [ LetFlattener._do_transform(constraint, syn_ctx) for constraint in constraints ]
+
 # Assumes NNF
 class LIAFlattener(ExprTransformerBase):
     def __init__(self):
