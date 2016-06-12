@@ -55,21 +55,24 @@ class FormulaSpec(SpecInterface):
         self.spec_expr = spec_expr
 
     def term_signature(self, term, points):
-        eval_ctx = self.eval_ctx
-        if len(self.synth_funs) > 1:
-            assert exprs.is_application_of(term, ',')
-            interpretations = term.children
-            for func, interpretation in zip(self.synth_funs, interpretations):
-                eval_ctx.set_interpretation(func, interpretation)
-        else:
-            eval_ctx.set_interpretation(self.synth_funs[0], term)
+        # try:
+            eval_ctx = self.eval_ctx
+            if len(self.synth_funs) > 1:
+                assert exprs.is_application_of(term, ',')
+                interpretations = term.children
+                for func, interpretation in zip(self.synth_funs, interpretations):
+                    eval_ctx.set_interpretation(func, interpretation)
+            else:
+                eval_ctx.set_interpretation(self.synth_funs[0], term)
 
-        retval = []
-        for point in points:
-            eval_ctx.set_valuation_map(point)
-            retval.append(evaluation.evaluate_expression_raw(self.canon_spec, eval_ctx))
+            retval = []
+            for point in points:
+                eval_ctx.set_valuation_map(point)
+                retval.append(evaluation.evaluate_expression_raw(self.canon_spec, eval_ctx))
 
-        return retval
+            return retval
+        # except:
+        #     return [False] * len(points)
 
     def get_canonical_specification(self):
         return self.canon_spec
@@ -138,19 +141,22 @@ class PBESpec(SpecInterface):
 
 
     def term_signature(self, term, points):
-        eval_ctx = self.eval_ctx
-        eval_ctx.set_interpretation(self.synth_fun, term)
-        synth_fun_expr = self.synth_fun_expr
+        # try:
+            eval_ctx = self.eval_ctx
+            eval_ctx.set_interpretation(self.synth_fun, term)
+            synth_fun_expr = self.synth_fun_expr
 
-        retval = []
-        for point in points:
-            if point not in self.valuations:
-                print("Something is almost certainly wrong!")
-                retval.append(True)
-                continue
-            eval_ctx.set_valuation_map(point)
-            retval.append(self.valuations[point] == evaluation.evaluate_expression_raw(synth_fun_expr, eval_ctx))
+            retval = []
+            for point in points:
+                if point not in self.valuations:
+                    print("Something is almost certainly wrong!")
+                    retval.append(True)
+                    continue
+                eval_ctx.set_valuation_map(point)
+                retval.append(self.valuations[point] == evaluation.evaluate_expression_raw(synth_fun_expr, eval_ctx))
 
-        return retval
+            return retval
+        # except:
+        #     return [False] * len(points)
 
 

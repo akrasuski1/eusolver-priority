@@ -117,9 +117,12 @@ class TermSolverInterface(object):
 
         num_new_points = retval.size_of_universe()
         new_points = points[start_index:]
-        for i, v in enumerate(self.term_signature(term, new_points), start_index):
-            if v:
-                retval.add(i)
+        try:
+            for i, v in enumerate(self.term_signature(term, new_points), start_index):
+                if v:
+                    retval.add(i)
+        except:
+            retval = self.signature_factory()
         return retval
 
     def solve(self):
@@ -200,7 +203,6 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             if transform_term is not None:
                 term = transform_term(term)
             sig = self._compute_term_signature(term)
-            # print(_expr_to_str(term))
             if (sig in signature_to_term or sig.is_empty()):
                 continue
             signature_to_term[sig] = term

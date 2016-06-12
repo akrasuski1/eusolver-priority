@@ -1,13 +1,16 @@
-All grammar features
-	Constant, Variable, InputVariable, LocalVariable
+Testing -- 
+	partial functions (div, mod, etc throw errors)
+	Check binding in terms, should throw exceptions and die
+	all semantics (especially bv)
+	strings benchmarks
 
-Check binding in terms
+Bug in point distinct enumerator:
+	Which parts of the point should be used for the signature
 
-Default grammars
+Should be easy:
+	Default grammars
 
 Change single point invocation meaning
-
-BV theory - add all functions
 
 Grammar decomposer - sort of
 	Bug in grammar decomposer - qm_* benchmarks exhibit bug
@@ -21,9 +24,6 @@ LIA specific termsolver -- first version done
 	Fix weird bugs with formal parameters
 LIA multifunction single invcation
 
-Test all semantics
-
-Test strings
 
 --- Probably not for competition
 
@@ -36,3 +36,10 @@ LIA optimizations
 	pairwise unification
 	Linear classifier unification
 	Geometric unification? Some evidence that it is slow
+
+All grammar features
+	Variable, InputVariable, LocalVariable
+
+_--- SYGUS 2015 errors
+
+../benchmarks/SyGuS-COMP15/GENERAL-Track/seven_three_d1.sl has spurious variables

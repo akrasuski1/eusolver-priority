@@ -269,6 +269,22 @@ def parent_of(expr, sub_expr):
             return sub
     return None
 
+def get_all_constants(expr):
+    if is_function_expression(expr):
+        ret = set()
+        for child in expr.children:
+            ret = ret.union(get_all_constants(child))
+        return ret
+    elif is_constant_expression(expr):
+        return set([expr])
+    elif is_formal_parameter_expression(expr):
+        return set()
+    elif is_variable_expression(expr):
+        return set()
+    else:
+        raise Exception
+
+
 def get_all_variables(expr):
     if is_function_expression(expr):
         ret = set()

@@ -232,6 +232,11 @@ def _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, var_map, synth_fun,
     if type(rule_data) == tuple:
         value = sexp_to_value(rule_data)
         return grammars.ExpressionRewrite(exprs.ConstantExpression(value))
+    elif rule_data[0] == 'Constant':
+        typ = sexp_to_type(rule_data[1])
+        return grammars.NTRewrite('Constant' + str(typ), typ)
+    elif rule_data[0] in [ 'Variable', 'InputVariable', 'LocalVariable' ]:
+        raise NotImplementedError('Variable rules in grammars')
     elif type(rule_data) == str:
         if rule_data in [ a.variable_info.variable_name for a in arg_vars ]:
             (parameter_position, variable) = next((i, x) for (i, x) in enumerate(arg_vars)
@@ -334,6 +339,30 @@ def _process_uninterpreted_funcs(uninterpreted_funcs_data, syn_ctx, uf_instantia
         func = semantics_types.UninterpretedFunction(name, len(arg_types), arg_types, ret_type) 
         uf_instantiator.add_function(name, func)
 
+def make_constant_rules(constraints):
+    constants = set()
+    for constraint in constraints:
+        constants |= exprs.get_all_constants(constraint)
+
+    constants.add(exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType())))
+    constants.add(exprs.ConstantExpression(exprs.Value(0, exprtypes.IntType())))
+
+    const_templates = []
+    for const in constants:
+        const_template = grammars.ExpressionRewrite(const)
+        const_templates.append(const_template)
+    return const_templates
+
+def make_default_grammar(arg_vars, theory):
+    if theory == 'LIA':
+        raise NotImplementedError
+    elif theory == 'SLIA':
+        raise NotImplementedError
+    elif theory == 'BV':
+        raise NotImplementedError
+    else:
+        raise NotImplementedError
+
 def extract_benchmark(file_sexp):
     core_instantiator = semantics_core.CoreInstantiator()
 
@@ -369,13 +398,15 @@ def extract_benchmark(file_sexp):
         synth_funs_grammar_data = process_synth_invs(synth_funs_data, synth_instantiator, syn_ctx)
     else:
         synth_funs_grammar_data = process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx)
+
+    # Grammars
     grammars = {}
     for synth_fun, arg_vars, grammar_data in synth_funs_grammar_data:
         if grammar_data == 'Default grammar':
             grammars[synth_fun] = grammar_data
         else:
             grammars[synth_fun] = sexp_to_grammar(arg_vars, grammar_data, synth_fun, syn_ctx)
-
+        
     # Universally quantified variables
     forall_vars_data, file_sexp = filter_sexp_for('declare-var', file_sexp)
     forall_vars_map = _process_forall_vars(forall_vars_data, syn_ctx)
@@ -387,10 +418,13 @@ def extract_benchmark(file_sexp):
     # Constraints
     constraints_data, file_sexp = filter_sexp_for('constraint', file_sexp)
     constraints = process_constraints(constraints_data, syn_ctx, forall_vars_map)
-
     inv_constraints_data, file_sexp = filter_sexp_for('inv-constraint', file_sexp)
     inv_constraints = process_inv_constraints(inv_constraints_data, synth_instantiator, syn_ctx, forall_vars_map)
     constraints.extend(inv_constraints)
+
+    for sf, grammar in grammars.items():
+        grammar.add_constant_rules(make_constant_rules(constraints))
+        print(grammar)
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
 

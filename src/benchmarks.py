@@ -244,8 +244,41 @@ def make_singlefun_solver(benchmark_tuple):
             [rewritten_solution] = rewrite_solution([synth_fun], solution, reverse_mapping)
             print(exprs.expression_to_string(rewritten_solution))
 
-def classic_esolver(syn_ctx, synth_funs, grammars, spec_expr):
+def memoryless_esolver(syn_ctx, synth_funs, grammars, spec_expr):
+    # Specifications
+    specification = specifications.MultiPointSpec(spec_expr, syn_ctx, synth_funs)
+    syn_ctx.assert_spec(specification, synth_funs)
 
+    # Grammars and generators
+    if len(synth_funs) > 1:
+        sf_list = [ (synth_fun.function_name, synth_fun, grammars[synth_fun])
+            for synth_fun in  synth_funs ]
+        grammar = _merge_grammars(sf_list)
+    else:
+        grammar = grammars[synth_funs[0]]
+    generator_factory = enumerators.RecursiveGeneratorFactory()
+    term_generator = grammar.to_generator(generator_factory)
+
+    # Term solver, unifier, and verifiers
+    term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
+    term_solver.one_term_coverage = True
+    unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
+    verifier = verifiers.MultiPointVerifier(syn_ctx)
+
+    solver = solvers.Solver(syn_ctx)
+    solutions = solver.solve(
+            generator_factory,
+            term_solver,
+            unifier,
+            verifier,
+            verify_term_solve=False
+            )
+    solution = next(solutions)
+    [rewritten_solution] = rewrite_solution(synth_funs, solution, reverse_mapping=None)
+
+    print(exprs.expression_to_string(rewritten_solution))
+
+def classic_esolver(syn_ctx, synth_funs, grammars, spec_expr):
     # Specifications
     specification = specifications.MultiPointSpec(spec_expr, syn_ctx, synth_funs)
     syn_ctx.assert_spec(specification, synth_funs)
@@ -304,16 +337,16 @@ def make_solver(file_sexp):
             )
 
     # Multi-function
-    # try:
-    if len(synth_instantiator.get_functions()) > 1:
-        return make_multifun_solver(benchmark_tuple)
-    else:
-        return make_singlefun_solver(benchmark_tuple)
-    # except Exception:
-    #     print("Using classic esolver")
-    #     spec_expr = syn_ctx.make_function_expr('and', *constraints)
-    #     synth_funs = list(synth_instantiator.get_functions().values())
-    #     classic_esolver(syn_ctx, synth_funs, grammars, spec_expr)
+    try:
+        if len(synth_instantiator.get_functions()) > 1:
+            return make_multifun_solver(benchmark_tuple)
+        else:
+            return make_singlefun_solver(benchmark_tuple)
+    except Exception:
+        print("Using memory less esolver")
+        spec_expr = syn_ctx.make_function_expr('and', *constraints)
+        synth_funs = list(synth_instantiator.get_functions().values())
+        memoryless_esolver(syn_ctx, synth_funs, grammars, spec_expr)
 
 # Tests:
 

@@ -92,6 +92,29 @@ class BitVector(object):
     def __add__(self, other):
         return BitVector(self.value + other.value, self.size)
 
+    def __mul__(self, other):
+        val = self.value * other.value
+        val = val % (1 << self.size)
+        return BitVector(val, self.size)
+
+    def udiv(self, other):
+        val = self.value // other.value
+        val = val % (1 << self.size)
+        return BitVector(val, self.size)
+
+    def urem(self, other):
+        val = self.value % other.value
+        val = val % (1 << self.size)
+        return BitVector(val, self.size)
+
+    def sdiv(self, other):
+        val = self._signed_value() // other._signed_value()
+        return BitVector(val, self.size)
+
+    def srem(self, other):
+        val = self._signed_value() % other._signed_value()
+        return BitVector(val, self.size)
+
     def __sub__(self, other):
         return BitVector(self._to_unsigned(self.value - other.value), self.size)
 
@@ -106,6 +129,9 @@ class BitVector(object):
 
     def _to_unsigned(self, x):
         return x if x >= 0 else (self.mask + 1 + x)
+
+    def negate(self):
+        return (~self) + BitVector(1, self.size)
 
     def ule(self, other):
         return self.value <= other.value
@@ -136,7 +162,7 @@ class BitVector(object):
 
     def ashr(self, other):
         sans = self._signed_value() >> other.value
-        return _to_unsigned(sans)
+        return BitVector(_to_unsigned(sans), self.size)
 
     def __eq__(self, other):
         return (self.value == other.value and self.size == other.size)

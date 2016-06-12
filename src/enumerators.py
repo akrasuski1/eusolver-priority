@@ -415,16 +415,15 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
                 if signature not in self.signatures[placeholder]:
                     cached_exprs.append(next_expr)
                     self.signatures[placeholder].append(signature)
-                    # print('Generated', placeholder, size, ':', exprs.expression_to_string(next_expr),
-                    #         'with signature', signature)
+                    print('Generated', placeholder, size, ':', exprs.expression_to_string(next_expr),
+                            'with signature', signature)
                     return next_expr 
                 else:
                     pass
-                    # print('Eliminated', placeholder, size, ':', exprs.expression_to_string(next_expr),
-                    #         'with signature', signature)
-            except basetypes.PartialFunctionError:
-                # print('Undefined', placeholder, size, ':', exprs.expression_to_string(next_expr),
-                #         'with signature', signature)
+                    print('Eliminated', placeholder, size, ':', exprs.expression_to_string(next_expr),
+                            'with signature', signature)
+            except:
+                print('Undefined', placeholder, size, ':', exprs.expression_to_string(next_expr))
                 pass
 
     def _instantiate_placeholder(self, placeholder):

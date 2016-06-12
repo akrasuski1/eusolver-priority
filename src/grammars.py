@@ -162,6 +162,17 @@ class Grammar(object):
         self.rules = rules
         self.start = start
 
+    def add_constant_rules(self, constant_rewrites):
+        for const_rewrite in constant_rewrites:
+            typ = const_rewrite.type
+            nt = 'Constant' + str(typ)
+            if nt not in self.non_terminals:
+                self.non_terminals.append(nt)
+                self.nt_type[nt] = typ
+                self.rules[nt] = [ const_rewrite ]
+            else:
+                self.rules[nt].append(const_rewrite)
+
     def __str__(self):
         return self.str()
 

@@ -62,6 +62,7 @@ File header:
  :last-updated "2015-04-25"
 '''
 
+'''
 class BVConcat(InterpretedFunctionBase):
     def __init__(self, size1, size2):
         super().__init__('concat', 2, (exprtypes.BitVectorType(size1),
@@ -70,7 +71,6 @@ class BVConcat(InterpretedFunctionBase):
         self.smt_function = z3.Concat
         self.eval_children = lambda a, b: a.concat(b)
 
-'''
 class BVExtract(InterpretedFunctionBase):
     def __init__(self, start_offset, end_offset, bv_size):
         super().__init__('extract', 1, (exprtypes.BitVectorType(bv_size),),
@@ -207,6 +207,8 @@ class BVAShR(InterpretedFunctionBase):
         super().__init__('bvashr', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
+        self.smt_function = lambda a, b: a >> b
+        self.eval_children = lambda a, b : a.ashr(b)
 
 class BVUlt(InterpretedFunctionBase):
     def __init__(self, bv_size):
