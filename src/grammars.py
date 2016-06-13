@@ -155,12 +155,91 @@ def expr_template_to_rewrite(expr_template, ph_var_nt_map, grammar):
     else:
         return ExpressionRewrite(expr_template)
 
+def make_default_grammar(syn_ctx, theory, args):
+    int_type = exprtypes.IntType()
+    bool_type = exprtypes.BoolType()
+    if theory == 'LIA':
+        [ start, start_bool, const ] = [ 'Start', 'StartBool', 'ConstantIntegerType' ]
+        nts = [ start, start_bool, const ]
+        nt_type = { start:int_type, start_bool:bool_type,
+                const:int_type }
+        rules = { start:[], start_bool:[], const:[] }
+
+        ntr_start = NTRewrite(start, int_type)
+        ntr_startbool = NTRewrite(start_bool, bool_type)
+        ntr_const = NTRewrite(const, int_type)
+
+        [ add_func, sub_func, mul_func, div_func, mod_func ] = \
+                [ syn_ctx.make_function(name, int_type, int_type)
+                        for name in [ 'add', 'sub', 'mul', 'div', 'mod' ] ]
+        ite_func = syn_ctx.make_function('ite', bool_type, int_type, int_type)
+
+        [ and_func, or_func ] = \
+                [ syn_ctx.make_function(name, bool_type, bool_type)
+                        for name in [ 'and', 'or' ] ]
+        not_func = syn_ctx.make_function('not', bool_type) 
+
+        [ eq_func, ne_func, le_func, lt_func, ge_func, gt_func ] = \
+                [ syn_ctx.make_function(name, int_type, int_type)
+                        for name in [ '=', 'ne', '<=', '<', '>=', '>' ] ]
+
+        # Start rules:
+        # Args 
+        for arg in args:
+            if exprs.get_expression_type(arg) == int_type:
+                rules['Start'].append(ExpressionRewrite(arg))
+        # Constants
+        rules[start].append(ExpressionRewrite(exprs.ConstantExpression(exprs.Value(1, int_type))))
+        rules[start].append(ExpressionRewrite(exprs.ConstantExpression(exprs.Value(0, int_type))))
+        rules[start].append(ntr_const)
+        # Start + Start, Start - Start,
+        rules[start].append(FunctionRewrite(add_func, ntr_start, ntr_start))
+        rules[start].append(FunctionRewrite(sub_func, ntr_start, ntr_start))
+        # Start * Constant, Start / Constant, Start mod Constant
+        rules[start].append(FunctionRewrite(mul_func, ntr_start, ntr_start))
+        rules[start].append(FunctionRewrite(div_func, ntr_start, ntr_start))
+        rules[start].append(FunctionRewrite(mod_func, ntr_start, ntr_start))
+        # ITE
+        rules[start].append(FunctionRewrite(ite_func, ntr_startbool, ntr_start, ntr_start))
+
+        # Start bool rules
+        # And, or, not
+        rules[start_bool].append(FunctionRewrite(and_func, ntr_startbool, ntr_startbool))
+        rules[start_bool].append(FunctionRewrite(or_func, ntr_startbool, ntr_startbool))
+        rules[start_bool].append(FunctionRewrite(not_func, ntr_startbool))
+        # comparison ops
+        rules[start_bool].append(FunctionRewrite(eq_func, ntr_start, ntr_start))
+        rules[start_bool].append(FunctionRewrite(ne_func, ntr_start, ntr_start))
+        rules[start_bool].append(FunctionRewrite(le_func, ntr_start, ntr_start))
+        rules[start_bool].append(FunctionRewrite(lt_func, ntr_start, ntr_start))
+        rules[start_bool].append(FunctionRewrite(ge_func, ntr_start, ntr_start))
+        rules[start_bool].append(FunctionRewrite(gt_func, ntr_start, ntr_start))
+
+        # Constant rules 
+        rules[const].append(ExpressionRewrite(exprs.ConstantExpression(exprs.Value(1, int_type))))
+        rules[const].append(ExpressionRewrite(exprs.ConstantExpression(exprs.Value(0, int_type))))
+        rules[const].append(FunctionRewrite(add_func, ntr_const, ntr_const))
+        rules[const].append(FunctionRewrite(add_func, ntr_const, ntr_const))
+        rules[const].append(FunctionRewrite(sub_func, ntr_const, ntr_const))
+
+        ret = Grammar(nts, nt_type, rules)
+        ret.from_default = True
+        return ret
+    elif theory == 'SLIA':
+        raise NotImplementedError
+    elif theory == 'BV':
+        raise NotImplementedError
+    else:
+        raise NotImplementedError
+
+
 class Grammar(object):
     def __init__(self, non_terminals, nt_type, rules, start='Start'):
         self.non_terminals = non_terminals
         self.nt_type = nt_type
         self.rules = rules
         self.start = start
+        self.from_default = False
 
     def add_constant_rules(self, constant_rewrites):
         for const_rewrite in constant_rewrites:

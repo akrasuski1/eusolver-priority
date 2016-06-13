@@ -24,6 +24,7 @@ LIA specific termsolver -- first version done
 	Fix weird bugs with formal parameters
 LIA multifunction single invcation
 
+Add constant +, - 
 
 --- Probably not for competition
 

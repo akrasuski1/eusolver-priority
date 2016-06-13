@@ -65,7 +65,12 @@ class SubFunction(InterpretedFunctionBase):
 class ModFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('mod', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.IntType())
-        self.eval_children = lambda a, b : a % b if b > 0 else (-a) % (-b)
+        def eval_c(a, b):
+            if b != 0:
+                return a % b if b > 0 else (-a) % (-b)
+            else:
+                raise basetypes.PartialFunctionError
+        self.eval_children = eval_c
         self.smt_function = lambda a, b : a % b
 
 class MinusFunction(InterpretedFunctionBase):
@@ -85,7 +90,12 @@ class MulFunction(InterpretedFunctionBase):
 class DivFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('div', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.IntType())
-        self.eval_children = lambda a, b : a // b
+        def eval_c(a, b):
+            if b != 0:
+                return a // b
+            else:
+                raise basetypes.PartialFunctionError
+        self.eval_children = eval_c
         self.smt_function = lambda a, b : a / b
 
 class LEFunction(InterpretedFunctionBase):

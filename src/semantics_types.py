@@ -156,9 +156,6 @@ class FunctionBase(object):
     def evaluate(self, expr_object, eval_context_object):
         raise basetypes.AbstractMethodError('FunctionBase.evaluate()')
 
-    def _evaluate_expr(self, expr_object, eval_context_object):
-        evaluate_expression_on_stack(expr_object, eval_context_object)
-
     def _evaluate_children(self, expr_object, eval_context_object):
         for child in expr_object.children:
             evaluate_expression_on_stack(child, eval_context_object)
@@ -244,7 +241,11 @@ class InterpretedFunctionBase(FunctionBase):
     def evaluate(self, expr_object, eval_context_object):
         num_children = len(expr_object.children)
         self._evaluate_children(expr_object, eval_context_object)
-        res = self.eval_children(*eval_context_object.peek_items(num_children))
+        try:
+            res = self.eval_children(*eval_context_object.peek_items(num_children))
+        except:
+            eval_context_object.pop(num_children)
+            raise
         eval_context_object.pop(num_children)
         eval_context_object.push(res)
 

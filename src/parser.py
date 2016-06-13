@@ -353,16 +353,6 @@ def make_constant_rules(constraints):
         const_templates.append(const_template)
     return const_templates
 
-def make_default_grammar(arg_vars, theory):
-    if theory == 'LIA':
-        raise NotImplementedError
-    elif theory == 'SLIA':
-        raise NotImplementedError
-    elif theory == 'BV':
-        raise NotImplementedError
-    else:
-        raise NotImplementedError
-
 def extract_benchmark(file_sexp):
     core_instantiator = semantics_core.CoreInstantiator()
 
@@ -400,12 +390,12 @@ def extract_benchmark(file_sexp):
         synth_funs_grammar_data = process_synth_funcs(synth_funs_data, synth_instantiator, syn_ctx)
 
     # Grammars
-    grammars = {}
+    grammar_map = {}
     for synth_fun, arg_vars, grammar_data in synth_funs_grammar_data:
         if grammar_data == 'Default grammar':
-            grammars[synth_fun] = grammar_data
+            grammar_map[synth_fun] = grammar_data
         else:
-            grammars[synth_fun] = sexp_to_grammar(arg_vars, grammar_data, synth_fun, syn_ctx)
+            grammar_map[synth_fun] = sexp_to_grammar(arg_vars, grammar_data, synth_fun, syn_ctx)
         
     # Universally quantified variables
     forall_vars_data, file_sexp = filter_sexp_for('declare-var', file_sexp)
@@ -422,9 +412,10 @@ def extract_benchmark(file_sexp):
     inv_constraints = process_inv_constraints(inv_constraints_data, synth_instantiator, syn_ctx, forall_vars_map)
     constraints.extend(inv_constraints)
 
-    for sf, grammar in grammars.items():
-        grammar.add_constant_rules(make_constant_rules(constraints))
-        print(grammar)
+    for sf, grammar in grammar_map.items():
+        if grammar != 'Default grammar':
+            grammar.add_constant_rules(make_constant_rules(constraints))
+            print(grammar)
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
 
@@ -433,7 +424,7 @@ def extract_benchmark(file_sexp):
     assert check_sats == [[]]
     assert file_sexp == []
 
-    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammars, forall_vars_map
+    return theories, syn_ctx, synth_instantiator, macro_instantiator, uf_instantiator, constraints, grammar_map, forall_vars_map
 
 def get_theory_instantiator(theory):
     if theory == "LIA":

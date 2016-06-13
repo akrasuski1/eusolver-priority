@@ -58,6 +58,7 @@ def evaluate_pred_raw(expr_object, eval_context):
 
 def evaluate_expression_on_stack(expr_object, eval_context):
     # print('Evaluating:', exprs.expression_to_string(expr_object))
+    old_stack_size = eval_context.eval_stack_top
     kind = expr_object.expr_kind
     if (kind == _variable_expression):
         o = expr_object.variable_info.variable_eval_offset
@@ -75,17 +76,24 @@ def evaluate_expression_on_stack(expr_object, eval_context):
         fun_info.evaluate(expr_object, eval_context)
     else:
         raise basetypes.UnhandledCaseError('Odd expression kind: %s' % kind)
+    assert old_stack_size == eval_context.eval_stack_top - 1
     # print(exprs.expression_to_string(expr_object), 'evaluated to', eval_context.peek())
 
 def evaluate_expression_raw(expr_object, eval_context):
     # print('Trying to evaluate', exprs.expression_to_string(expr_object))
     # for f, i in eval_context.interpretation_map.items():
     #     print('\t', exprs.expression_to_string(i))
-    evaluate_expression_on_stack(expr_object, eval_context)
-    retval = eval_context.peek()
-    eval_context.pop()
-    # print(exprs.expression_to_string(expr_object), 'evaluated to', retval)
-    return retval
+    try:
+        evaluate_expression_on_stack(expr_object, eval_context)
+        retval = eval_context.peek()
+        eval_context.pop()
+        # print(exprs.expression_to_string(expr_object), 'evaluated to', retval)
+        ret = retval
+    except:
+        # reset the stack
+        eval_context.eval_stack_top = 0
+        raise
+    return ret
 
 def evaluate_expression(expr_object, eval_context):
     retval = evaluate_expression_raw(expr_object, eval_context)
@@ -120,8 +128,14 @@ class EvaluationContext(object):
         self.eval_stack_top -= num_elems
 
     def push(self, value_object):
-        self.eval_stack[self.eval_stack_top] = value_object
-        self.eval_stack_top += 1
+        try:
+            self.eval_stack[self.eval_stack_top] = value_object
+            self.eval_stack_top += 1
+        except:
+            print("EVAL STACK TOP:", self.eval_stack_top)
+            for func_id, interpretation in self.interpretation_map.items():
+                print(func_id, ": ", exprs.expression_to_string(interpretation))
+            raise
 
     def set_valuation_map(self, valuation_map):
         if type(valuation_map[0]) != exprs.Value:

@@ -468,6 +468,17 @@ def canonicalize_multipoint_specification(expr, syn_ctx):
 
     return (variable_list, expr)
 
+def to_cnf(expr, theory, syn_ctx):
+    cnf_converter = CNFConverter()
+    clauses, cnf_expr = cnf_converter.apply(expr, syn_ctx)
+
+    if theory == 'LIA': 
+        lia_flattener = LIAFlattener()
+        cnf_expr = lia_flattener.apply(cnf_expr, syn_ctx)
+        clauses = [ lia_flattener.apply(c, syn_ctx) for c in clauses ]
+
+    return clauses, cnf_expr
+
 def canonicalize_specification(expr, syn_ctx, theory):
     """Performs a bunch of operations:
     1. Checks that the expr is "well-bound" to the syn_ctx object.
@@ -488,6 +499,8 @@ def canonicalize_specification(expr, syn_ctx, theory):
        functions are invoked with.
     """
     check_expr_binding_to_context(expr, syn_ctx)
+    clauses, cnf_expr = to_cnf(expr, theory, syn_ctx)
+
     synth_function_set = gather_synth_functions(expr)
     synth_function_list = list(synth_function_set)
     num_funs = len(synth_function_list)
@@ -495,14 +508,6 @@ def canonicalize_specification(expr, syn_ctx, theory):
     orig_variable_set = gather_variables(expr)
     orig_variable_list = [x.variable_info for x in orig_variable_set]
     orig_variable_list.sort(key=lambda x: x.variable_name)
-
-    cnf_converter = CNFConverter()
-    clauses, cnf_expr = cnf_converter.apply(expr, syn_ctx)
-
-    if theory == 'LIA': 
-        lia_flattener = LIAFlattener()
-        cnf_expr = lia_flattener.apply(cnf_expr, syn_ctx)
-        clauses = [ lia_flattener.apply(c, syn_ctx) for c in clauses ]
 
     # check single invocation/separability properties
     if (not check_single_invocation_property(clauses, syn_ctx)):
@@ -518,14 +523,14 @@ def canonicalize_specification(expr, syn_ctx, theory):
     num_vars = len(variable_list)
     for i in range(num_vars):
         variable_list[i].variable_eval_offset = i
+    num_funs = len(synth_function_list)
     for i in range(num_funs):
         synth_function_list[i].synth_function_id = i
 
-    neg_clauses = [syn_ctx.make_function_expr('not', clause) for clause in intro_clauses]
     if len(intro_clauses) == 1:
         canon_spec = intro_clauses[0]
     else:
-        canon_spec = syn_ctx.make_function_expr('and', *intro_clauses);
+        canon_spec = syn_ctx.make_function_expr('and', *intro_clauses)
 
     canon_clauses = []
     for ic in intro_clauses:
@@ -536,7 +541,7 @@ def canonicalize_specification(expr, syn_ctx, theory):
         canon_clauses.append(disjuncts)
 
     return (variable_list, synth_function_list, canon_spec,
-            clauses, canon_clauses, neg_clauses, intro_vars)
+            canon_clauses, intro_vars)
 
 #######################################################################
 # TEST CASES

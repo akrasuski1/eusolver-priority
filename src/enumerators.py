@@ -422,7 +422,7 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
                     pass
                     print('Eliminated', placeholder, size, ':', exprs.expression_to_string(next_expr),
                             'with signature', signature)
-            except:
+            except basetypes.PartialFunctionError:
                 print('Undefined', placeholder, size, ':', exprs.expression_to_string(next_expr))
                 pass
 
@@ -477,18 +477,22 @@ class BunchedGenerator(GeneratorBase):
                     # can be bump up the subgenerator size?
                     if (current_size < max_size):
                         current_size += 1
-                        # print(current_size)
+                        print(current_size)
                         sub_generator_object.set_size(current_size)
                         sub_generator_state = sub_generator_object.generate()
                         continue
                     elif (not finished):
                         finished = True
                         self.current_object_size = current_size
+                        if current_size == 8:
+                            print([ exprs.expression_to_string(r) for r in retval])
                         yield retval[:current_index]
                     else:
                         return
                 current_index += 1
             self.current_object_size = current_size
+            if current_size == 8:
+                print([ exprs.expression_to_string(r) for r in retval])
             yield retval
 
 

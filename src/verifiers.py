@@ -185,7 +185,6 @@ class MultiPointVerifier(VerifierBase):
 class StdVerifier(VerifierBase):
     def __init__(self, syn_ctx):
         self.syn_ctx = syn_ctx
-        spec_tuple = syn_ctx.get_specification().get_spec_tuple()
         spec = syn_ctx.get_specification()
         self.synth_funs = syn_ctx.get_synth_funs()
 

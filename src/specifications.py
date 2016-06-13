@@ -55,24 +55,28 @@ class FormulaSpec(SpecInterface):
         self.spec_expr = spec_expr
 
     def term_signature(self, term, points):
-        # try:
-            eval_ctx = self.eval_ctx
-            if len(self.synth_funs) > 1:
-                assert exprs.is_application_of(term, ',')
-                interpretations = term.children
-                for func, interpretation in zip(self.synth_funs, interpretations):
-                    eval_ctx.set_interpretation(func, interpretation)
-            else:
-                eval_ctx.set_interpretation(self.synth_funs[0], term)
+        eval_ctx = self.eval_ctx
+        if len(self.synth_funs) > 1:
+            assert exprs.is_application_of(term, ',')
+            interpretations = term.children
+            for func, interpretation in zip(self.synth_funs, interpretations):
+                eval_ctx.set_interpretation(func, interpretation)
+        else:
+            eval_ctx.set_interpretation(self.synth_funs[0], term)
 
-            retval = []
-            for point in points:
-                eval_ctx.set_valuation_map(point)
-                retval.append(evaluation.evaluate_expression_raw(self.canon_spec, eval_ctx))
+        retval = []
+        for point in points:
+            eval_ctx.set_valuation_map(point)
+            try:
+                r = evaluation.evaluate_expression_raw(self.canon_spec, eval_ctx)
+                # print(exprs.expression_to_string(term), "is", r, "on", [ p.value for p in point ])
+                # print(eval_ctx.eval_stack_top)
+                retval.append(r)
+            except basetypes.PartialFunctionError:
+                # Exceptions may be raised when applying partial functions like div, mod, etc 
+                retval.append(False)
 
-            return retval
-        # except:
-        #     return [False] * len(points)
+        return retval
 
     def get_canonical_specification(self):
         return self.canon_spec
@@ -97,17 +101,12 @@ class StandardSpec(FormulaSpec):
     def init_spec_tuple(self):
         syn_ctx = self.syn_ctx
         actual_spec = self.spec_expr
-        variables_list, functions_list, canon_spec, clauses, canon_clauses, neg_clauses, intro_vars = \
+        variables_list, functions_list, canon_spec, canon_clauses, intro_vars = \
                 expr_transforms.canonicalize_specification(actual_spec, syn_ctx, self.theory)
-        self.spec_tuple = (actual_spec, variables_list, functions_list, clauses,
-                neg_clauses, canon_spec, intro_vars)
         self.canon_spec = canon_spec
         self.intro_vars = intro_vars
         self.point_vars = variables_list
         self.canon_clauses = canon_clauses
-
-    def get_spec_tuple(self):
-        return self.spec_tuple
 
     def get_point_variables(self):
         return self.point_vars
@@ -149,11 +148,14 @@ class PBESpec(SpecInterface):
             retval = []
             for point in points:
                 if point not in self.valuations:
-                    print("Something is almost certainly wrong!")
+                    # print("Something is almost certainly wrong!")
                     retval.append(True)
                     continue
                 eval_ctx.set_valuation_map(point)
-                retval.append(self.valuations[point] == evaluation.evaluate_expression_raw(synth_fun_expr, eval_ctx))
+                try:
+                    retval.append(self.valuations[point] == evaluation.evaluate_expression_raw(synth_fun_expr, eval_ctx))
+                except basetypes.PartialFunctionError:
+                    retval.append(False)
 
             return retval
         # except:
