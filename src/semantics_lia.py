@@ -86,7 +86,7 @@ class DivFunction(InterpretedFunctionBase):
     def __init__(self):
         super().__init__('div', 2, (exprtypes.IntType(), exprtypes.IntType()), exprtypes.IntType())
         self.eval_children = lambda a, b : a // b
-        self.smt_function = lambda a, b : a // b
+        self.smt_function = lambda a, b : a / b
 
 class LEFunction(InterpretedFunctionBase):
     def __init__(self):
