@@ -60,6 +60,9 @@ class RewriteBase(object):
     def rename_nt(self, old_name, new_name):
         raise basetypes.AbstractMethodError('RewriteBase.rename_nt()')
 
+    def substitute(self, old_var, new_var):
+        raise basetypes.AbstractMethodError('RewriteBase.substitute()')
+
 class ExpressionRewrite(RewriteBase):
     def __init__(self, expr):
         super().__init__(exprs.get_expression_type(expr))
@@ -75,6 +78,9 @@ class ExpressionRewrite(RewriteBase):
         if isinstance(other, ExpressionRewrite):
             return other.expr == self.expr
         return False
+
+    def substitute(self, old_var, new_var):
+        self.expr = exprs.substitute(self.expr, old_var, new_var)
 
 class NTRewrite(RewriteBase):
     def __init__(self, non_terminal, nt_type):
@@ -97,6 +103,9 @@ class NTRewrite(RewriteBase):
         if isinstance(other, NTRewrite):
             return other.non_terminal == self.non_terminal
         return False
+
+    def substitute(self, old_var, new_var):
+        pass
 
 
 class FunctionRewrite(RewriteBase):
@@ -122,6 +131,10 @@ class FunctionRewrite(RewriteBase):
             return (other.function_info == self.function_info and
                     all(c1 == c2 for (c1, c2) in zip(self.children, other.children)))
         return False
+
+    def substitute(self, old_var, new_var):
+        for child in self.children:
+            child.substitute(old_var, new_var)
 
     def to_generator(self, place_holders):
         ph_vars, nts, expr_template = self._to_template_expr()
@@ -346,13 +359,13 @@ class Grammar(object):
                 return None
 
             [cond, thent, elset] = ifs[0].children
-            cond_ph_vars = exprs.get_all_variables(cond) | set(ph_vars)
-            then_ph_vars = exprs.get_all_variables(thent) | set(ph_vars)
-            else_ph_vars = exprs.get_all_variables(elset) | set(ph_vars)
+            cond_ph_vars = exprs.get_all_variables(cond) & set(ph_vars)
+            then_ph_vars = exprs.get_all_variables(thent) & set(ph_vars)
+            else_ph_vars = exprs.get_all_variables(elset) & set(ph_vars)
             if (
-                    len(cond_ph_vars | then_ph_vars) > 0 or
-                    len(cond_ph_vars | else_ph_vars) > 0 or
-                    len(else_ph_vars | then_ph_vars) > 0):
+                    len(cond_ph_vars & then_ph_vars) > 0 or
+                    len(cond_ph_vars & else_ph_vars) > 0 or
+                    len(else_ph_vars & then_ph_vars) > 0):
                 return None
 
             if (

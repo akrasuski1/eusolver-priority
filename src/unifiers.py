@@ -48,6 +48,7 @@ import evaluation
 import enumerators
 from eusolver import BitSet
 import eusolver
+import basetypes
 
 _expr_to_str = exprs.expression_to_string
 _is_expr = exprs.is_expression
@@ -173,7 +174,11 @@ class EnumerativeDTUnifierBase(UnifierInterface):
             retval = []
             for point in points:
                 eval_ctx.set_valuation_map(point)
-                retval.append(evaluation.evaluate_expression_raw(indicator_expr, eval_ctx))
+                try:
+                    retval.append(evaluation.evaluate_expression_raw(indicator_expr, eval_ctx))
+                except (basetypes.UnboundLetVariableError, basetypes.PartialFunctionError):
+                    # Can't mess up on predicates
+                    return [False] * len(points)
             return retval
 
         return func, compute_indicator

@@ -120,6 +120,8 @@ class EvaluationContext(object):
         self.let_variable_stack.pop()
 
     def peek_let_variables(self):
+        if len(self.let_variable_stack) == 0:
+            return {}
         return self.let_variable_stack[-1]
 
     def peek(self, peek_depth = 0):

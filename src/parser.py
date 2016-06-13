@@ -230,12 +230,13 @@ def process_synth_invs(synth_invs_data, synth_instantiator, syn_ctx):
 
 
 def _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, var_map, synth_fun, rule_data):
+    ph_let_bound_vars, let_bound_vars = [], []
     if type(rule_data) == tuple:
         value = sexp_to_value(rule_data)
-        return grammars.ExpressionRewrite(exprs.ConstantExpression(value))
+        ret = grammars.ExpressionRewrite(exprs.ConstantExpression(value))
     elif rule_data[0] == 'Constant':
         typ = sexp_to_type(rule_data[1])
-        return grammars.NTRewrite('Constant' + str(typ), typ)
+        ret = grammars.NTRewrite('Constant' + str(typ), typ)
     elif rule_data[0] in [ 'Variable', 'InputVariable', 'LocalVariable' ]:
         raise NotImplementedError('Variable rules in grammars')
     elif type(rule_data) == str:
@@ -245,32 +246,47 @@ def _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, var_map, synth_fun,
             expr = exprs.FormalParameterExpression(synth_fun,
                     variable.variable_info.variable_type,
                     parameter_position)
-            return grammars.ExpressionRewrite(expr)
+            ret = grammars.ExpressionRewrite(expr)
         elif rule_data in non_terminals:
-            return grammars.NTRewrite(rule_data, nt_type[rule_data])
+            ret = grammars.NTRewrite(rule_data, nt_type[rule_data])
         elif rule_data in var_map:
-            return grammars.ExpressionRewrite(var_map[rule_data])
+            ret = grammars.ExpressionRewrite(var_map[rule_data])
         else:
             # Could be a 0 arity function
-            return syn_ctx.make_function_expr(rule_data)
+            func = syn_ctx.make_function(rule_data)
+            if func != None:
+                ret = grammars.ExpressionRewrite(syn_ctx.make_function_expr(rule_data))
+            else:
+                # Could be a let bound variable
+                bound_var_ph = exprs.VariableExpression(exprs.VariableInfo(exprtypes.BoolType(), 'ph_' + rule_data))
+                ph_let_bound_vars.append(bound_var_ph)
+                ret = grammars.ExpressionRewrite(bound_var_ph)
     elif type(rule_data) == list:
         function_name = rule_data[0]
         if function_name != 'let':
-            function_args = [ 
-                    _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, var_map, synth_fun, child)
-                    for child in rule_data[1:] ]
+            function_args = []
+            for child in rule_data[1:]:
+                ph_lbv, lbv, arg = _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, var_map, synth_fun, child)
+                ph_let_bound_vars.extend(ph_lbv)
+                let_bound_vars.extend(lbv)
+                function_args.append(arg)
             function_arg_types = tuple([ x.type for x in function_args ])
             function = syn_ctx.make_function(function_name, *function_arg_types)
         else:
             def child_processing_func(rd, syn_ctx, new_var_map):
-                return _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, new_var_map, synth_fun, rd)
+                ph_lbv, lbv, a = _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, new_var_map, synth_fun, rd)
+                ph_let_bound_vars.extend(ph_lbv)
+                let_bound_vars.extend(lbv)
+                return a
             def get_return_type(r):
                 return r.type
             function, function_args = sexp_to_let(rule_data, syn_ctx, child_processing_func, get_return_type, var_map)
+            let_bound_vars.extend(function.binding_vars)
         assert function is not None
-        return grammars.FunctionRewrite(function, *function_args)
+        ret =  grammars.FunctionRewrite(function, *function_args)
     else:
         raise Exception('Unknown right hand side: %s' % rule_data)
+    return ph_let_bound_vars, let_bound_vars, ret
 
 def _process_forall_vars(forall_vars_data, syn_ctx):
     forall_var_map = {}
@@ -324,10 +340,20 @@ def sexp_to_grammar(arg_vars, grammar_sexp, synth_fun, syn_ctx):
     nt_type = { nt:sexp_to_type(nt_type_data) for nt, nt_type_data, rules_data in grammar_sexp }
     rules = {}
     for nt, nt_type_data, rules_data in grammar_sexp:
+        ph_let_bound_vars, let_bound_vars = [], []
         rewrites = []
         for rule_data in rules_data:
-            rewrite = _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, {}, synth_fun, rule_data)
+            ph_lbvs, lbvs, rewrite =\
+                    _process_rule(non_terminals, nt_type, syn_ctx, arg_vars, {}, synth_fun, rule_data)
             rewrites.append(rewrite)
+            ph_let_bound_vars.extend(ph_lbvs)
+            let_bound_vars.extend(lbvs)
+
+        for phlb in ph_let_bound_vars:
+            lvs = [ v for v in let_bound_vars if 'ph_' + v.variable_info.variable_name == phlb.variable_info.variable_name ]
+            assert len(lvs) > 0
+            for rewrite in rewrites:
+                rewrite.substitute(phlb, lvs[0])
         rules[nt] = rewrites
     return grammars.Grammar(non_terminals, nt_type, rules)
 
@@ -400,6 +426,7 @@ def extract_benchmark(file_sexp):
             grammar_map[synth_fun] = grammar_data
         else:
             grammar_map[synth_fun] = sexp_to_grammar(arg_vars, grammar_data, synth_fun, syn_ctx)
+            print(grammar_map[synth_fun])
         
     # Universally quantified variables
     forall_vars_data, file_sexp = filter_sexp_for('declare-var', file_sexp)
