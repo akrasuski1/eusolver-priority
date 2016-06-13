@@ -479,6 +479,11 @@ def to_cnf(expr, theory, syn_ctx):
 
     return clauses, cnf_expr
 
+def is_single_invocation(constraints, theory, syn_ctx):
+    expr = syn_ctx.make_function_expr('and', *constraints)
+    clauses, _ = to_cnf(expr, theory, syn_ctx)
+    return check_single_invocation_property(clauses, syn_ctx) 
+
 def canonicalize_specification(expr, syn_ctx, theory):
     """Performs a bunch of operations:
     1. Checks that the expr is "well-bound" to the syn_ctx object.

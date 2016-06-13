@@ -172,7 +172,8 @@ def expression_to_string(expr):
         return _constant_to_string(expr.value_object.value_type,
                                    expr.value_object.value_object)
     else:
-        if expr.function_info.function_name != 'let':
+        if expr.function_info.function_name != 'let' \
+                and expr.function_info.function_name != 'ne':
             retval = '(' + expr.function_info.function_name
             for child in expr.children:
                 retval += ' '

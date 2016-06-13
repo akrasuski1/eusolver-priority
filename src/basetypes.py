@@ -90,5 +90,9 @@ class PartialFunctionError(Exception):
     def __init__(self):
         pass
 
+class UnboundLetVariableError(Exception):
+    def __init__(self):
+        pass
+
 #
 # basetypes.py ends here

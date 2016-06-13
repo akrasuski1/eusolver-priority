@@ -98,6 +98,9 @@ class _BoolType(TypeBase):
     def get_smt_type(self, smt_context_object):
         return smt_context_object.make_bool_sort()
 
+    def print_string(self):
+        return 'Bool'
+
 _boolean_type_instance = _BoolType()
 
 def BoolType():
@@ -144,6 +147,9 @@ class _IntType(TypeBase):
     def get_smt_type(self, smt_context_object):
         return smt_context_object.make_int_sort()
 
+    def print_string(self):
+        return 'Int'
+
 _integer_type_instance = _IntType()
 
 def IntType():
@@ -181,6 +187,9 @@ class _BitVectorType(TypeBase):
 
     def get_size(self):
         return size
+
+    def print_string(self):
+        return '(BitVec %d)' % self.size
 
 _bitvector_type_intern_dict = {}
 

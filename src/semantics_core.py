@@ -62,9 +62,10 @@ class LetFunction(InterpretedFunctionBase):
 
     def to_string(self, expr_object):
         ret = "(let ("
-        for bn, bt, e in zip(self.binding_names, self.binding_types, expr_object.children[:-1]):
-            ret += "(%s %s %s) " % (bn, str(bt), exprs.expression_to_string(e))
-        ret += ') in'
+        ret += ' '.join([
+            "(%s %s %s)" % (bn, bt.print_string(), exprs.expression_to_string(e))
+            for bn, bt, e in zip(self.binding_names, self.binding_types, expr_object.children[:-1]) ])
+        ret += ') '
         ret += exprs.expression_to_string(expr_object.children[-1])
         ret += ')'
         return ret
@@ -112,6 +113,9 @@ class NeFunction(InterpretedFunctionBase):
         self.eval_children = lambda a, b: a != b
         self.commutative = True
 
+    def to_string(self, expr_object):
+        return "(not (= %s %s))" % tuple([exprs.expression_to_string(c) for c in expr_object.children])
+
 class AndFunction(InterpretedFunctionBase):
     """A function object for conjunctions. Allows arbitrary number of arguments."""
     def __init__(self):
@@ -139,7 +143,7 @@ class NotFunction(InterpretedFunctionBase):
 
 class ImpliesFunction(InterpretedFunctionBase):
     def __init__(self):
-        super().__init__('implies', 2, (exprtypes.BoolType(), exprtypes.BoolType()),
+        super().__init__('=>', 2, (exprtypes.BoolType(), exprtypes.BoolType()),
                          exprtypes.BoolType())
         self.smt_function = z3.Implies
         self.eval_children = lambda a, b: (not a) or b

@@ -79,7 +79,7 @@ def get_pbe_valuations(constraints, synth_fun):
         valuations.append((arg_func.children, arg_other))
     return valuations
 
-def massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraints):
+def massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, theory, constraints):
     # Instantiate all macro functions
     constraints = [ macro_instantiator.instantiate_all(c)
             for c in constraints ]
@@ -98,6 +98,7 @@ def massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraint
     constraints = expr_transforms.RewriteITE.apply(constraints, syn_ctx)
     # for c in constraints:
     #     print(exprs.expression_to_string(c))
+    # constraints, full_constraint_expr = expr_transforms.to_cnf(constraints, theory, syn_ctx)
 
     # Rewrite ITE?
     return constraints
@@ -157,95 +158,64 @@ def _merge_grammars(sf_grammar_list):
 
     return merged_grammar
 
-
-def make_multifun_solver(benchmark_tuple):
-    (theories, syn_ctx, synth_instantiator, macro_instantiator, \
-            uf_instantiator, constraints, grammar_map, forall_vars_map) = benchmark_tuple
-    synth_funs = list(synth_instantiator.get_functions().items())
-    full_grammar = _merge_grammars([ (sf[0], sf[1], grammar_map[sf[1]]) for sf in synth_funs ])
-
-    assert len(theories) == 1
-    theory = theories[0]
-
-    spec_expr = constraints[0] if len(constraints) == 1 \
-            else syn_ctx.make_function_expr('and', *constraints)
-    synth_fun_objs = [ sf[1] for sf in synth_funs ]
-    print([ sf.function_name for sf in  synth_fun_objs ])
-    specification = specifications.StandardSpec(spec_expr, syn_ctx, synth_fun_objs, theory)
-    syn_ctx.assert_spec(specification, synth_fun_objs)
-
-    generator_factory = enumerators.RecursiveGeneratorFactory()
-    term_generator = full_grammar.to_generator(generator_factory)
-
-    term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
-    term_solver.one_term_coverage = True
-    unifier = unifiers.NullUnifier(None, term_solver, synth_fun_objs, syn_ctx, specification)
-    solver = solvers.Solver(syn_ctx)
-    verifier = verifiers.StdVerifier(syn_ctx)
-    solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
-    rewritten_solutions = rewrite_solution(synth_fun_objs, solution, reverse_mapping=None)
-    
-    for sol in rewritten_solutions:
-        print(exprs.expression_to_string(sol))
-
-def make_singlefun_solver(benchmark_tuple):
-    (theories, syn_ctx, synth_instantiator, macro_instantiator, \
-            uf_instantiator, constraints, grammar_map, forall_vars_map) = benchmark_tuple
-    synth_funs = list(synth_instantiator.get_functions().items())
-    [ (synth_fun_name, synth_fun) ] = synth_funs
-    grammar = grammar_map[synth_fun]
-
-    assert len(theories) == 1
-    theory = theories[0]
-
-    # Spec type (and verifier)
-    valuations = get_pbe_valuations(constraints, synth_fun)
-    if valuations is not None:
-        print("Using PBE specifications")
-        specification = specifications.PBESpec(valuations, synth_fun, theory)
-        Verifier = verifiers.PBEVerifier
+def make_specification(synth_funs, theory, syn_ctx, constraints):
+    if (
+            len(synth_funs) > 1 or
+            not expr_transforms.is_single_invocation(constraints, theory, syn_ctx)
+            ):
+        specification = specifications.MultiPointSpec(syn_ctx.make_function_expr('and', *constraints),
+                syn_ctx, synth_funs)
+        syn_ctx.assert_spec(specification, synth_funs)
+        verifier = verifiers.MultiPointVerifier(syn_ctx)
     else:
-        print("Using standard specifications")
-        spec_expr = constraints[0] if len(constraints) == 1 \
-                else syn_ctx.make_function_expr('and', *constraints)
-        specification = specifications.StandardSpec(spec_expr, syn_ctx, [synth_fun], theory)
-        Verifier = verifiers.StdVerifier
-    syn_ctx.assert_spec(specification, [synth_fun])
-
-    if grammar == 'Default grammar':
-        if theory == 'LIA':
-            term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, None, specification, synth_fun)
-            unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_fun, syn_ctx, specification)
-            solver = solvers.Solver(syn_ctx)
-            verifier = Verifier(syn_ctx, solver.smt_ctx)
-            solution = solvers._do_solve(solver, enumerators.NullGeneratorFactory(), None, term_solver, unifier, verifier, False)
-            [rewritten_solution] = rewrite_solution([synth_fun], solution, reverse_mapping=None)
-            print(exprs.expression_to_string(rewritten_solution))
+        synth_fun = synth_funs[0]
+        valuations = get_pbe_valuations(constraints, synth_fun)
+        if valuations is not None:
+            # print("Using PBE specifications")
+            specification = specifications.PBESpec(valuations, synth_fun, theory)
+            syn_ctx.assert_spec(specification, synth_funs)
+            verifier = verifiers.PBEVerifier(syn_ctx)
         else:
-            raise NotImplementedError
+            # print("Using standard specifications")
+            spec_expr = constraints[0] if len(constraints) == 1 \
+                    else syn_ctx.make_function_expr('and', *constraints)
+            specification = specifications.StandardSpec(spec_expr, syn_ctx, [synth_fun], theory)
+            syn_ctx.assert_spec(specification, synth_funs)
+            verifier = verifiers.StdVerifier(syn_ctx)
+    return specification, verifier
+
+def full_lia_grammar(grammar):
+    if grammar.from_default:
+        return True
     else:
-        # One shot or unification
-        ans = grammar.decompose(macro_instantiator)
+        return False
+
+def make_singlefun_unification_solver(theory, syn_ctx, synth_fun, grammar, specification, verifier):
+    if theory == 'LIA' and full_lia_grammar(grammar):
+        term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, None, specification, synth_fun)
+        unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_fun, syn_ctx, specification)
+        solver = solvers.Solver(syn_ctx)
+        solution = solvers._do_solve(solver, enumerators.NullGeneratorFactory(), None, term_solver, unifier, verifier, False)
+        final_solution = rewrite_solution([synth_fun], solution, reverse_mapping=None)
+    else:
+        ans = grammar.decompose(syn_ctx.macro_instantiator)
         if ans == None:
-            print("Not using divide and conquer")
-            # Have to configure solver for naivete
-            raise NotImplementedError
-        else:
-            print("Using divide and conquer")
-            term_grammar, pred_grammar, reverse_mapping = ans
-            generator_factory = enumerators.RecursiveGeneratorFactory()
-            term_generator = term_grammar.to_generator(generator_factory)
-            pred_generator = pred_grammar.to_generator(generator_factory)
-            solver = solvers.Solver(syn_ctx)
-            term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
-            unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
-            solver = solvers.Solver(syn_ctx)
-            verifier = Verifier(syn_ctx)
-            solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
-            [rewritten_solution] = rewrite_solution([synth_fun], solution, reverse_mapping)
-            print(exprs.expression_to_string(rewritten_solution))
+            print("Using memoryless esolver: Grammar not decomposable")
+            return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Memoryless')
 
-def esolver(syn_ctx, synth_funs, grammars, spec_expr, mode):
+        term_grammar, pred_grammar, reverse_mapping = ans
+        generator_factory = enumerators.RecursiveGeneratorFactory()
+        term_generator = term_grammar.to_generator(generator_factory)
+        pred_generator = pred_grammar.to_generator(generator_factory)
+        solver = solvers.Solver(syn_ctx)
+        term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
+        unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
+        solver = solvers.Solver(syn_ctx)
+        solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
+        final_solution = rewrite_solution([synth_fun], solution, reverse_mapping)
+    return final_solution
+
+def esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode):
     assert mode in [ 'Classic', 'Memoryless' ]
 
     if mode == 'Classic':
@@ -255,24 +225,19 @@ def esolver(syn_ctx, synth_funs, grammars, spec_expr, mode):
         generator_factory = enumerators.RecursiveGeneratorFactory()
         TermSolver = termsolvers.PointlessTermSolver
 
-    # Specifications
-    specification = specifications.MultiPointSpec(spec_expr, syn_ctx, synth_funs)
-    syn_ctx.assert_spec(specification, synth_funs)
-
     # Grammars and generators
     if len(synth_funs) > 1:
-        sf_list = [ (synth_fun.function_name, synth_fun, grammars[synth_fun])
+        sf_list = [ (synth_fun.function_name, synth_fun, grammar_map[synth_fun])
             for synth_fun in synth_funs ]
         grammar = _merge_grammars(sf_list)
     else:
-        grammar = grammars[synth_funs[0]]
+        grammar = grammar_map[synth_funs[0]]
     term_generator = grammar.to_generator(generator_factory)
 
     # Term solver, unifier, and verifiers
     term_solver = TermSolver(specification.term_signature, term_generator)
     term_solver.one_term_coverage = True
     unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
-    verifier = verifiers.MultiPointVerifier(syn_ctx)
 
     solver = solvers.Solver(syn_ctx)
     solutions = solver.solve(
@@ -284,9 +249,7 @@ def esolver(syn_ctx, synth_funs, grammars, spec_expr, mode):
             )
     solution = next(solutions)
     rewritten_solutions = rewrite_solution(synth_funs, solution, reverse_mapping=None)
-
-    for rewritten_solution in rewritten_solutions:
-        print(exprs.expression_to_string(rewritten_solution))
+    return rewritten_solutions
 
 def make_solver(file_sexp):
     benchmark_tuple = parser.extract_benchmark(file_sexp)
@@ -303,40 +266,28 @@ def make_solver(file_sexp):
 
     assert len(theories) == 1
     theory = theories[0]
-    constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, constraints)
 
-    new_grammars = {}
-    for sf, grammar in grammar_map.items():
-        if grammar == 'Default grammar':
-            args = [ exprs.FormalParameterExpression(sf, exprs.get_expression_type(a), i)
-                    for (i, a) in enumerate(sf.get_named_vars()) ]
-            grammar = grammars.make_default_grammar(syn_ctx, theory, args)
-        # print(grammar)
-        new_grammars[sf] = grammar
-    grammar_map = new_grammars
+    constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, theory, constraints)
+    synth_funs = list(synth_instantiator.get_functions().values())
 
-    benchmark_tuple = (
-            theories,
-            syn_ctx,
-            synth_instantiator,
-            macro_instantiator,
-            uf_instantiator,
-            constraints,
-            grammar_map,
-            forall_vars_map
-            )
+    specification, verifier = make_specification(synth_funs, theory, syn_ctx, constraints)
 
-    # Multi-function
-    try:
-        if len(synth_instantiator.get_functions()) > 1:
-            return make_multifun_solver(benchmark_tuple)
+    if (expr_transforms.is_single_invocation(constraints, theory, syn_ctx)
+            and len(synth_funs) == 1):
+        final_solutions = make_singlefun_unification_solver(theory, syn_ctx, synth_funs[0], grammar_map[synth_funs[0]], specification, verifier)
+    else:
+        if len(synth_funs) > 1:
+            print("Using memoryless esolver: Not single function")
         else:
-            return make_singlefun_solver(benchmark_tuple)
-    except Exception:
-        print("Using memory less esolver")
+            print("Using memoryless esolver: Not single invocation")
         spec_expr = syn_ctx.make_function_expr('and', *constraints)
         synth_funs = list(synth_instantiator.get_functions().values())
-        esolver(syn_ctx, synth_funs, grammar_map, spec_expr, mode='Memoryless')
+        final_solutions = esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Memoryless')
+    for sf, sol in zip(synth_funs, final_solutions):
+        fp_string = ' '.join([ '(%s %s)' % 
+            (v.variable_info.variable_name, v.variable_info.variable_type.print_string()) 
+            for v in sf.get_named_vars() ])
+        print('(define-fun %s (%s) %s\n     %s)' % (sf.function_name, fp_string, sf.range_type.print_string(), exprs.expression_to_string(sol)))
 
 # Tests:
 

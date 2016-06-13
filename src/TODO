@@ -1,20 +1,16 @@
 Testing -- 
-	partial functions (div, mod, etc throw errors)
 	Check binding in terms, should throw exceptions and die
 	all semantics (especially bv)
 	strings benchmarks
+	test driver
 
 Bug in point distinct enumerator:
 	Which parts of the point should be used for the signature
 
 Should be easy:
 	Default grammars
-
-Change single point invocation meaning
-
-Grammar decomposer - sort of
-	Bug in grammar decomposer - qm_* benchmarks exhibit bug
-	Generally, problem expanding macro functions in grammars
+		BV
+		SLIA
 
 Fix termsolver_lia and unifier_lia w.r.t to points and canonical synthfun invocations
 LIA subgrammars?
@@ -22,7 +18,8 @@ LIA specific unifier -- first version done
 	Fix weird bugs with formal parameters
 LIA specific termsolver -- first version done
 	Fix weird bugs with formal parameters
-LIA multifunction single invcation
+
+LIA multifunction single invocation : How much do we care?
 
 Add constant +, - 
 
@@ -44,3 +41,8 @@ All grammar features
 _--- SYGUS 2015 errors
 
 ../benchmarks/SyGuS-COMP15/GENERAL-Track/seven_three_d1.sl has spurious variables
+
+Separate multiple function synthesis if constraints are disjoint
+
+Change single point invocation meaning
+

@@ -192,5 +192,8 @@ class SynthesisContext(object):
     def get_synth_funs(self):
         return self.synth_funs
 
+    def set_macro_instantiator(self, instantiator):
+        assert instantiator in self.function_instantiators
+        self.macro_instantiator = instantiator
 #
 # synthesis_context.py ends here

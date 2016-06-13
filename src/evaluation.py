@@ -63,7 +63,11 @@ def evaluate_expression_on_stack(expr_object, eval_context):
     if (kind == _variable_expression):
         o = expr_object.variable_info.variable_eval_offset
         if o == exprs.VariableInfo._undefined_offset:
-            eval_context.push(eval_context.peek_let_variables()[expr_object])
+            let_variables = eval_context.peek_let_variables()
+            if expr_object in let_variables:
+                eval_context.push(let_variables[expr_object])
+            else:
+                raise basetypes.UnboundLetVariableError()
         else:
             eval_context.push(eval_context.valuation_map[o].value_object)
     elif (kind == _formal_parameter_expression):
@@ -132,13 +136,10 @@ class EvaluationContext(object):
             self.eval_stack[self.eval_stack_top] = value_object
             self.eval_stack_top += 1
         except:
-            print("EVAL STACK TOP:", self.eval_stack_top)
-            for func_id, interpretation in self.interpretation_map.items():
-                print(func_id, ": ", exprs.expression_to_string(interpretation))
             raise
 
     def set_valuation_map(self, valuation_map):
-        if type(valuation_map[0]) != exprs.Value:
+        if len(valuation_map) > 0 and type(valuation_map[0]) != exprs.Value:
             raise Exception
         self.valuation_map = valuation_map
 

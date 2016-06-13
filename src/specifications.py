@@ -72,7 +72,7 @@ class FormulaSpec(SpecInterface):
                 # print(exprs.expression_to_string(term), "is", r, "on", [ p.value for p in point ])
                 # print(eval_ctx.eval_stack_top)
                 retval.append(r)
-            except basetypes.PartialFunctionError:
+            except (basetypes.PartialFunctionError, basetypes.UnboundLetVariableError):
                 # Exceptions may be raised when applying partial functions like div, mod, etc 
                 retval.append(False)
 
@@ -154,7 +154,7 @@ class PBESpec(SpecInterface):
                 eval_ctx.set_valuation_map(point)
                 try:
                     retval.append(self.valuations[point] == evaluation.evaluate_expression_raw(synth_fun_expr, eval_ctx))
-                except basetypes.PartialFunctionError:
+                except (basetypes.PartialFunctionError, basetypes.UnboundLetVariableError):
                     retval.append(False)
 
             return retval

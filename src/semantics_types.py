@@ -217,6 +217,8 @@ class UnknownFunctionBase(FunctionBase):
 class SynthFunction(UnknownFunctionBase):
     def __init__(self, function_name, function_arity, domain_types, range_type):
         super().__init__(FunctionKinds.synth_function, function_name, function_arity, domain_types, range_type)
+        self.formal_parameters = [ exprs.FormalParameterExpression(self, t, i)
+                    for (i,t) in enumerate(domain_types) ]
 
     def set_named_vars(self, named_vars):
         self.named_vars = named_vars
@@ -244,7 +246,6 @@ class InterpretedFunctionBase(FunctionBase):
         try:
             res = self.eval_children(*eval_context_object.peek_items(num_children))
         except:
-            eval_context_object.pop(num_children)
             raise
         eval_context_object.pop(num_children)
         eval_context_object.push(res)

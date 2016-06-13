@@ -127,7 +127,8 @@ def sexp_to_let(sexp, syn_ctx, child_processing_func, get_return_type, arg_var_m
     binding_vars, binding_names, binding_types, bound_exprs = [], [], [], []
     binding_var_map = {}
     for binding_data in bindings_data:
-        var_name = "_let_bound_" + binding_data[0]
+        # var_name = "_let_bound_" + binding_data[0]
+        var_name = binding_data[0]
         var_type = sexp_to_type(binding_data[1])
         binding_names.append(binding_data[0])
         binding_var = syn_ctx.make_variable_expr(var_type, var_name)
@@ -359,6 +360,8 @@ def extract_benchmark(file_sexp):
     theories, file_sexp = filter_sexp_for('set-logic', file_sexp)
     theories = [ x[0] for x in theories ]
     assert all([theory in _known_theories for theory in theories])
+    assert len(theories) == 1
+    theory = theories[0]
 
     if len(theories) == 0:
         theories = _known_theories
@@ -374,6 +377,7 @@ def extract_benchmark(file_sexp):
             macro_instantiator,
             uf_instantiator,
             synth_instantiator)
+    syn_ctx.set_macro_instantiator(macro_instantiator)
 
     defs, file_sexp = filter_sexp_for('define-fun', file_sexp)
     process_definitions(defs, syn_ctx, macro_instantiator)
@@ -412,10 +416,10 @@ def extract_benchmark(file_sexp):
     inv_constraints = process_inv_constraints(inv_constraints_data, synth_instantiator, syn_ctx, forall_vars_map)
     constraints.extend(inv_constraints)
 
-    for sf, grammar in grammar_map.items():
-        if grammar != 'Default grammar':
-            grammar.add_constant_rules(make_constant_rules(constraints))
-            print(grammar)
+    for sf in grammar_map.keys():
+        if grammar_map[sf] == 'Default grammar':
+            grammar_map[sf] = grammars.make_default_grammar(syn_ctx, theory, sf.formal_parameters)
+        grammar_map[sf].add_constant_rules(make_constant_rules(constraints))
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)
 

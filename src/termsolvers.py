@@ -120,7 +120,7 @@ class TermSolverInterface(object):
         for i, v in enumerate(self.term_signature(term, new_points), start_index):
             if v:
                 retval.add(i)
-        print(_expr_to_str(term), ': ', str(retval))
+        # print(_expr_to_str(term), ': ', str(retval))
         return retval
 
     def solve(self):

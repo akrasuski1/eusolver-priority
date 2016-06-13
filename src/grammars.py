@@ -225,9 +225,9 @@ def make_default_grammar(syn_ctx, theory, args):
         ret = Grammar(nts, nt_type, rules)
         ret.from_default = True
         return ret
-    elif theory == 'SLIA':
-        raise NotImplementedError
     elif theory == 'BV':
+        raise NotImplementedError
+    elif theory == 'SLIA':
         raise NotImplementedError
     else:
         raise NotImplementedError
@@ -346,6 +346,15 @@ class Grammar(object):
                 return None
 
             [cond, thent, elset] = ifs[0].children
+            cond_ph_vars = exprs.get_all_variables(cond) | set(ph_vars)
+            then_ph_vars = exprs.get_all_variables(thent) | set(ph_vars)
+            else_ph_vars = exprs.get_all_variables(elset) | set(ph_vars)
+            if (
+                    len(cond_ph_vars | then_ph_vars) > 0 or
+                    len(cond_ph_vars | else_ph_vars) > 0 or
+                    len(else_ph_vars | then_ph_vars) > 0):
+                return None
+
             if (
                     thent not in ph_vars or \
                     elset not in ph_vars or \
