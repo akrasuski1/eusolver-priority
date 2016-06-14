@@ -107,10 +107,13 @@ class Solver(object):
             else:
                 cexs = None
 
+            # print('Term solve checked!')
             if cexs is None:
                 unifier_state = unifier.unify()
                 unification = next(unifier_state)
+                # print('Unification done!')
                 sol_or_cex = verifier.verify(unification)
+                # print('Verification done!')
             else:
                 # print('Term solve incomplete!')
                 sol_or_cex = cexs

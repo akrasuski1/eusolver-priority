@@ -3,11 +3,7 @@ Testing --
 	test driver
 
 Important stuff
-	Bug in point distinct enumerator:
-		Which parts of the point should be used for the signature
-	
-	LIA subgrammars
-		Targetting array_sum and max
+	Point distinct enumerator for multiple function multiple invocations?
 
 --- Probably not for competition
 

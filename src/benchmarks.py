@@ -199,31 +199,35 @@ def full_lia_grammars(grammar_map):
     return True, massaging
 
 def unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
-    if theory != 'LIA' and any([sf.range_type != exprtypes.IntType() for sf in synth_funs ]):
-        return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
+    try:
+        if theory != 'LIA' and any([sf.range_type != exprtypes.IntType() for sf in synth_funs ]):
+            return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
-    okay, massaging = full_lia_grammars(grammar_map)
-    if not okay:
-        return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
+        okay, massaging = full_lia_grammars(grammar_map)
+        if not okay:
+            return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
-    term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, specification)
-    unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_funs, syn_ctx, specification)
-    solver = solvers.Solver(syn_ctx)
-    solutions = solver.solve(
-            enumerators.NullGeneratorFactory(),
-            term_solver,
-            unifier,
-            verifier,
-            verify_term_solve=True
-            )
-    solution = next(solutions)
-    final_solution = rewrite_solution(synth_funs, solution, reverse_mapping=None)
-    final_solution = lia_massager.massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging)
-    if final_solution is None:
-        print("Using standard solver")
-        return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
+        term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, specification)
+        unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_funs, syn_ctx, specification)
+        solver = solvers.Solver(syn_ctx)
+        solutions = solver.solve(
+                enumerators.NullGeneratorFactory(),
+                term_solver,
+                unifier,
+                verifier,
+                verify_term_solve=False
+                )
+        solution = next(solutions)
+        final_solution = rewrite_solution(synth_funs, solution, reverse_mapping=None)
+        final_solution = lia_massager.massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging)
+        if final_solution is None:
+            print("Using standard solver 1")
+            return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
-    return final_solution
+        return final_solution
+    except:
+        print("Using standard solver 2")
+        return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
 def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
     if len(synth_funs) > 1:
@@ -238,12 +242,12 @@ def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specificati
         return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Classic')
 
     term_grammar, pred_grammar, reverse_mapping = ans
-    generator_factory = enumerators.RecursiveGeneratorFactory()
+    generator_factory = enumerators.PointDistinctGeneratorFactory(specification)
     term_generator = term_grammar.to_generator(generator_factory)
     pred_generator = pred_grammar.to_generator(generator_factory)
     solver = solvers.Solver(syn_ctx)
-    term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
-    unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
+    term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator)
+    unifier = unifiers.PointDistinctDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
     solver = solvers.Solver(syn_ctx)
     # solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
     solutions = solver.solve(
@@ -261,7 +265,8 @@ def esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode):
     assert mode in [ 'Classic', 'Memoryless' ]
 
     if mode == 'Classic':
-        generator_factory = enumerators.PointDistinctGeneratorFactory()
+        assert len(synth_funs) == 1
+        generator_factory = enumerators.PointDistinctGeneratorFactory(specification)
         TermSolver = termsolvers.PointDistinctTermSolver
     else:
         generator_factory = enumerators.RecursiveGeneratorFactory()
@@ -319,11 +324,13 @@ def make_solver(file_sexp):
     else:
         if len(synth_funs) > 1:
             print("Using memoryless esolver: Multi fun Multi invocation")
+            mode = 'Memoryless'
         else:
-            print("Using memoryless esolver: Not single invocation")
+            print("Using class esolver: Single function Multi invocation")
+            mode = 'Classic'
         spec_expr = syn_ctx.make_function_expr('and', *constraints)
         synth_funs = list(synth_instantiator.get_functions().values())
-        final_solutions = esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Memoryless')
+        final_solutions = esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode=mode)
     for sf, sol in zip(synth_funs, final_solutions):
         fp_string = ' '.join([ '(%s %s)' % 
             (v.variable_info.variable_name, v.variable_info.variable_type.print_string()) 

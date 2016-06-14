@@ -124,6 +124,9 @@ class _StringType(TypeBase):
     def get_smt_type(self, smt_context_object):
         return smt_context_object.make_string_sort()
 
+    def print_string(self):
+        return 'StringType'
+
 _string_type_instance = _StringType()
 
 def StringType():

@@ -327,6 +327,18 @@ class SpecAwareLIATermSolver(TermSolverInterface):
         return solve_inequalities(model, self.outvars, relevent_disjuncts, syn_ctx)
 
     def _single_solve(self, ivs, points):
+        s = self.signature_factory()
+        for point in points:
+            pt_index = self.points.index(point)
+            s.add(pt_index)
+
+        for sig, term in self.signature_to_term.items():
+            if (sig | s) == s:
+                if len(self.synth_funs) == 1:
+                    return [ term ]
+                else:
+                    return term.children
+
         if len(points) == 1:
             return self._single_solve_single_point(ivs, points[0])
         else:

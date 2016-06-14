@@ -185,6 +185,7 @@ class SLIAInstantiator(semantics_types.InstantiatorBase):
         if function_name not in self.function_types:
             return None
 
+        # print(function_name)
         assert arg_types == self.function_types[function_name]
         return self.function_instances[function_name]
 

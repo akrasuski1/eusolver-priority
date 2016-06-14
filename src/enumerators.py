@@ -340,7 +340,7 @@ class PointDistinctGenerator(GeneratorBase):
 
 
 class PointDistinctGeneratorFactory(GeneratorFactoryBase):
-    def __init__(self):
+    def __init__(self, spec):
         super().__init__()
         self.points = []
         self.signatures = {}
@@ -348,6 +348,14 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
         self.base_generators = {}
         self.finished_generators = {}
         self.eval_ctx = evaluation.EvaluationContext()
+
+        if spec.is_multipoint:
+            assert len(spec.synth_funs) == 1
+            self.applications = spec.get_applications()[spec.synth_funs[0]]
+            self.point_profiles = []
+        else:
+            self.applications = None
+            self.point_profiles = None
 
     def clear_caches(self):
         # self.print_caches()
@@ -366,6 +374,14 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
 
     def add_points(self, points):
         self.points.extend(points)
+        if self.applications is not None:
+            for point in points:
+                self.eval_ctx.set_valuation_map(point)
+                point_profile = []
+                for app in self.applications:
+                    profile = tuple([ evaluation.evaluate_expression(c, self.eval_ctx) for c in app.children ])
+                    point_profile.append(profile)
+                self.point_profiles.append(point_profile)
         self.clear_caches()
 
     def _initialize_base_generator(self, placeholder, size):
@@ -379,12 +395,25 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
         self.finished_generators[(placeholder, size)] = False
 
     def _compute_signature(self, expr):
-        points = self.points
-        res = [ None ] * len(points)
-        for i in range(len(points)):
-            self.eval_ctx.set_valuation_map(points[i])
-            res[i] = evaluation.evaluate_expression_raw(expr, self.eval_ctx)
-        return res
+        if self.applications is None:
+            # Single invocation (not multifunction)
+            points = self.points
+            res = [ None ] * len(points)
+            for i in range(len(points)):
+                # Assumes introvars are at the beginning of the point
+                self.eval_ctx.set_valuation_map(points[i])
+                res[i] = evaluation.evaluate_expression_raw(expr, self.eval_ctx)
+            return res
+        else:
+            points = self.points
+            res = [ None ] * len(points)
+            for i in range(len(points)):
+                sig = []
+                for profile in self.point_profiles[i]:
+                    self.eval_ctx.set_valuation_map(profile)
+                    sig.append(evaluation.evaluate_expression_raw(expr, self.eval_ctx))
+                res[i] = sig
+            return res
 
     def get_from(self, placeholder, size, position):
         placeholder = placeholder.identifier
@@ -477,7 +506,7 @@ class BunchedGenerator(GeneratorBase):
                     # can be bump up the subgenerator size?
                     if (current_size < max_size):
                         current_size += 1
-                        # print(current_size)
+                        print(current_size)
                         sub_generator_object.set_size(current_size)
                         sub_generator_state = sub_generator_object.generate()
                         continue

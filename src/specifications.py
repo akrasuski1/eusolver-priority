@@ -88,9 +88,19 @@ class MultiPointSpec(FormulaSpec):
         super().__init__(spec_expr, syn_ctx, synth_funs)
         self.point_vars, self.canon_spec = \
                 expr_transforms.canonicalize_multipoint_specification(spec_expr, syn_ctx)
+        self.is_multipoint = True
 
     def get_point_variables(self):
         return self.point_vars
+
+    def get_applications(self):
+        applications = {}
+        for sf in self.synth_funs:
+            sf_name = sf.function_name
+            apps = exprs.find_all_applications(self.spec_expr, sf_name)
+            applications[sf] = apps
+        return applications
+
 
 class StandardSpec(FormulaSpec):
     def __init__(self, spec_expr, syn_ctx, synth_funs, theory):
@@ -103,6 +113,7 @@ class StandardSpec(FormulaSpec):
             self.formal_params[fn] = [ 
                     exprs.FormalParameterExpression(fn, argtype, i)
                     for (i, argtype) in enumerate(fn.domain_types) ]
+        self.is_multipoint = False
 
     def init_spec_tuple(self):
         syn_ctx = self.syn_ctx
@@ -138,6 +149,7 @@ class PBESpec(SpecInterface):
         args = [ exprs.FormalParameterExpression(synth_fun, argtype, i) 
                 for i, argtype in enumerate(synth_fun.domain_types)] 
         self.synth_fun_expr = exprs.FunctionExpression(synth_fun, tuple(args))
+        self.is_multipoint = False
 
     def _initialize_valuations(self, expr_valuations):
         eval_ctx = self.eval_ctx
