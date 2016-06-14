@@ -163,19 +163,36 @@ class BVUDiv(InterpretedFunctionBase):
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = z3.UDiv
-        self.eval_children = lambda a,b: a.udiv(b)
+        def eval_c(a, b):
+            if b.value == 0:
+                raise basetypes.PartialFunctionError()
+            return a.udiv(b)
+        self.eval_children = eval_c
 
 class BVSDiv(InterpretedFunctionBase):
     def __init__(self, bv_size):
         super().__init__('bvsdiv', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
+        self.smt_function = lambda a,b : a / b
+        def eval_c(a, b):
+            if b.value == 0:
+                raise basetypes.PartialFunctionError()
+            return a.sdiv(b)
+        self.eval_children = eval_c
 
 class BVSRem(InterpretedFunctionBase):
     def __init__(self, bv_size):
         super().__init__('bvsrem', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
+        self.smt_function = z3.SRem
+        def eval_c(a, b):
+            if b.value == 0:
+                raise basetypes.PartialFunctionError()
+            return a.srem(b)
+        self.eval_children = eval_c
+
 
 
 class BVURem(InterpretedFunctionBase):
@@ -184,7 +201,11 @@ class BVURem(InterpretedFunctionBase):
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BitVectorType(bv_size))
         self.smt_function = z3.URem
-        self.eval_children = lambda a,b: a.urem(b)
+        def eval_c(a, b):
+            if b.value == 0:
+                raise basetypes.PartialFunctionError()
+            return a.urem(b)
+        self.eval_children = eval_c
 
 class BVShl(InterpretedFunctionBase):
     def __init__(self, bv_size):

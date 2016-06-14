@@ -98,7 +98,7 @@ class SynthesisContext(object):
     def make_constant_expr(self, const_type, const_value):
         """Makes a typed constant expression with the given value."""
         assert(isinstance(const_type, exprtypes.TypeBase))
-        return exprs.ConstantExpression(const_type, const_value)
+        return exprs.ConstantExpression(exprs.Value(const_type, const_value))
 
     def make_function(self, function_name, *arg_types):
         function_info = None

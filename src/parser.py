@@ -445,7 +445,7 @@ def extract_benchmark(file_sexp):
 
     for sf in grammar_map.keys():
         if grammar_map[sf] == 'Default grammar':
-            grammar_map[sf] = grammars.make_default_grammar(syn_ctx, theory, sf.formal_parameters)
+            grammar_map[sf] = grammars.make_default_grammar(syn_ctx, theory, sf.range_type, sf.formal_parameters)
         grammar_map[sf].add_constant_rules(make_constant_rules(constraints))
 
     check_sats, file_sexp = filter_sexp_for('check-synth', file_sexp)

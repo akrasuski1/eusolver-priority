@@ -43,6 +43,7 @@ import exprs
 import exprtypes
 import itertools
 import semantics_types
+import semantics_core
 import z3smt
 import evaluation
 
@@ -77,26 +78,26 @@ def collect_terms(expr):
         return {1:expr.value_object.value_object}
 
     func_name = expr.function_info.function_name
-    if func_name == 'add':
+    if func_name in [ '+', 'add' ]:
         ret = {}
         ds = [ collect_terms(c) for c in expr.children ]
         for d in ds:
             for v, i in d.items():
                 ret[v] = ret.get(v, 0) + i
         return ret
-    elif func_name == 'sub':
+    elif func_name == 'sub' or (func_name == '-' and len(expr.children) == 2):
         [ d1, d2 ] = [ collect_terms(c) for c in expr.children ]
         ret = d1.copy()
         for v, i in d2.items():
             ret[v] = ret.get(v, 0) - i
         return ret
-    elif func_name == 'mul':
+    elif func_name in [ '*', 'mul' ]:
         [ d1, d2 ] = [ collect_terms(c) for c in expr.children ]
         (c, t) = (d1, d2) if _is_constant(d1) else (d2, d1)
         constant = c[1]
         ret = {}
         for v, i in t.items():
-            ret[v] = i * c
+            ret[v] = i * constant
         return ret
     elif func_name == '-':
         d = collect_terms(expr.children[0])
@@ -105,10 +106,41 @@ def collect_terms(expr):
             ret[v] = - i
         return ret
     else:
-        print(_expr_to_str(expr))
+        # print(_expr_to_str(expr))
         raise NotImplementedError
 
-def solve_inequalities(model, outvar, inequalities, syn_ctx):
+def solve_inequalities(model, outvars, inequalities, syn_ctx):
+    if len(outvars) == 1:
+        return solve_inequalities_one_outvar(model, outvars[0], inequalities, syn_ctx)
+
+    # Check if we can get away with factoring out one outvar
+    for ineq in inequalities:
+        if not ineq.function_info.function_name == '=' and not ineq.function_info.function_name == 'eq':
+            continue
+        l, r = collect_terms(ineq.children[0]), collect_terms(ineq.children[1])
+        for outvar in outvars:
+            coeff = l.get(outvar, 0) - r.get(outvar, 0)
+            if abs(coeff) == 1:
+                [t] = solve_inequalities_one_outvar(model, outvar, [ineq], syn_ctx)
+                rest_ineqs = [ exprs.substitute(e, outvar, t) for e in inequalities if e != ineq ]
+                rest_outvars = [ o for o in outvars if o != outvar ]
+                rest_sol = solve_inequalities(model, rest_outvars, rest_ineqs, syn_ctx)
+                sols = list(zip(rest_outvars, rest_sol))
+                while True:
+                    tp = exprs.substitute_all(t, sols)
+                    if tp == t:
+                        break
+                    t = tp
+                sols_dict = dict(sols)
+                sols_dict[outvar] = t
+                return [ sols_dict[o] for o in outvars ]
+
+    # Otherwise, need to do some complicated stuff
+    raise NotImplementedError
+
+def solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx):
+    if len(inequalities) == 0:
+        return [ exprs.ConstantExpression(exprs.Value(0, exprtypes.IntType())) ]
     # print(model)
     # print([ _expr_to_str(i) for i in inequalities ])
     def evaluate(d):
@@ -154,9 +186,10 @@ def solve_inequalities(model, outvar, inequalities, syn_ctx):
         (coeff, _, rhs) = eqs[0]
         rhs = _dict_to_expr(rhs, syn_ctx)
         if coeff == 1:
-            return rhs
-        return syn_ctx.make_function_expr('div', rhs,
-                exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType())))
+            return [ rhs ]
+        else:
+            return [ syn_ctx.make_function_expr('div', rhs,
+                    exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType()))) ]
 
     # Upper bounds
     uppers = [ ineq for ineq in  normalized_ineqs if ineq[1] == '<=' ]
@@ -177,63 +210,63 @@ def solve_inequalities(model, outvar, inequalities, syn_ctx):
         coeff = tighest_upper[0]
         rhs = _dict_to_expr(tighest_upper[2], syn_ctx)
         if coeff == 1:
-            return rhs
-        return syn_ctx.make_function_expr('div', rhs,
-                exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType())))
+            return [ rhs ]
+        return [ syn_ctx.make_function_expr('div', rhs,
+                exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType()))) ]
     elif tighest_lower is not None:
         coeff = tighest_lower[0]
         rhs = _dict_to_expr(tighest_lower[2], syn_ctx)
         if coeff == 1:
-            return rhs
-        return syn_ctx.make_function_expr('div',
+            return [ rhs ]
+        return [ syn_ctx.make_function_expr('div',
                 syn_ctx.make_function_expr('add', rhs, exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType()))),
-                exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType())))
+                exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType()))) ]
+    else:
+        return exprs.ConstantExpression(exprs.Value(0, exprtypes.IntType()))
 
 class SpecAwareLIATermSolver(TermSolverInterface):
-    def __init__(self, term_signature, term_generator, spec, synth_fun):
+    def __init__(self, term_signature, spec):
         super().__init__()
         self.term_signature = term_signature
-        self.term_generator = term_generator
-        self.synth_fun = synth_fun
+        self.synth_funs = spec.synth_funs
         self.spec = spec
         self.syn_ctx = self.spec.syn_ctx
         self.point_var_exprs =  [ exprs.VariableExpression(v) for v in spec.point_vars ]
-        self.intro_vars = spec.intro_vars
-        self.formal_params = [ exprs.FormalParameterExpression(self.synth_fun, exprtypes.IntType(), i) 
-                for i in range(len(self.intro_vars)) ]
         self.clauses = spec.get_canon_clauses()
         self.smt_ctx = z3smt.Z3SMTContext()
         self.eval_ctx = evaluation.EvaluationContext()
 
-        # for c in self.clauses:
-        #     print("CANON CLAUSE:")
-        #     for d in c:
-        #         print("\t", _expr_to_str(d))
+        self.canon_apps = [ self.spec.canon_application[sf] for sf in self.synth_funs ]
 
-        self.intro_var_positions = []
-        for p in self.point_var_exprs:
-            self.intro_var_positions.append(p in self.intro_vars)
-
-        self.outvar = exprs.VariableExpression(exprs.VariableInfo(exprtypes.IntType(), 'outvar', len(self.point_var_exprs)))
+        self.outvars = []
+        for fn in self.synth_funs:
+            self.outvars.append(
+                    exprs.VariableExpression(exprs.VariableInfo(
+                        exprtypes.IntType(), 'outvar_' + fn.function_name,
+                        len(self.point_var_exprs) + len(self.outvars))))
+        all_vars = self.point_var_exprs + self.outvars
+        self.all_vars_z3 = [ _expr_to_smt(v, self.smt_ctx) for v in all_vars ]
 
     def generate_more_terms(self):
-        raise NotImplementedError
+        pass
 
     def _compute_term_signature(self, term):
         return self._default_compute_term_signature(term)
 
     def _trivial_solve(self):
         ret = exprs.ConstantExpression(exprs.Value(0, exprtypes.IntType()))
+        if len(self.synth_funs) > 1:
+            domain_types = tuple([exprtypes.IntType()] * len(self.synth_funs))
+            ret = exprs.FunctionExpression(semantics_core.CommaFunction(domain_types),
+                    tuple([ret] * len(self.synth_funs)))
         self.signature_to_term = {None:ret}
         return True
-
 
     def _single_solve_single_point(self, ivs, point):
         syn_ctx = self.syn_ctx
         smt_ctx = self.smt_ctx
         eval_ctx = self.eval_ctx
         canon_spec = self.spec.get_canonical_specification()
-        app = exprs.find_application(canon_spec, self.synth_fun.function_name)
 
         # Find one value of output
         eq_constrs = []
@@ -244,20 +277,19 @@ class SpecAwareLIATermSolver(TermSolverInterface):
         full_constr = self.syn_ctx.make_function_expr('and',
                 canon_spec, *eq_constrs)
 
-        smt_ctx.set_interpretation(self.synth_fun, self.outvar)
-        eval_ctx.set_interpretation(self.synth_fun, self.outvar)
-        all_vars = self.point_var_exprs + [self.outvar]
-        all_vars_z3 = [ _expr_to_smt(v, smt_ctx) for v in all_vars ]
-        raw_z3_model = exprs.sample(full_constr, smt_ctx, all_vars_z3)
+        for synth_fun, outvar in zip(self.synth_funs, self.outvars):
+            smt_ctx.set_interpretation(synth_fun, outvar)
+            eval_ctx.set_interpretation(synth_fun, outvar)
+
+        raw_z3_model = exprs.sample(full_constr, smt_ctx, self.all_vars_z3)
         model = [ exprs.Value(z3_value.as_long(), exprtypes.IntType()) for z3_value in raw_z3_model ]
 
         # Filter to disjuncts that are true in this model
-        smt_ctx.set_interpretation(self.synth_fun, self.outvar)
         model_clauses = []
         for clause in self.clauses:
             new_clause = []
             for disjunct in clause:
-                d = exprs.substitute(disjunct, app, self.outvar)
+                d = exprs.substitute_all(disjunct, list(zip(self.canon_apps, self.outvars)))
                 eval_ctx.set_valuation_map(model)
                 if evaluation.evaluate_expression_raw(d, eval_ctx):
                     new_clause.append(d)
@@ -266,10 +298,11 @@ class SpecAwareLIATermSolver(TermSolverInterface):
 
         # Filter to disjuncts that have outvar occurring in them
         outvar_clauses = []
+        outvar_set = set(self.outvars)
         for clause in model_clauses:
             new_clause = []
             for disjunct in clause:
-                if self.outvar in exprs.get_all_variables(disjunct):
+                if len(outvar_set & exprs.get_all_variables(disjunct)) > 0:
                     new_clause.append(disjunct)
             outvar_clauses.append(new_clause)
 
@@ -279,7 +312,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
             if len(outvar_clause) > 0:
                 relevent_disjuncts.append(outvar_clause[0])
 
-        return solve_inequalities(model, self.outvar, relevent_disjuncts, syn_ctx)
+        return solve_inequalities(model, self.outvars, relevent_disjuncts, syn_ctx)
 
     def _single_solve(self, ivs, points):
         if len(points) == 1:
@@ -299,7 +332,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
 
         intro_var_signature = []
         for point in self.points:
-            ivs = [ v for (v, s) in zip(point, self.intro_var_positions) if s ]
+            ivs = point[:len(self.spec.intro_vars)]
             intro_var_signature.append((ivs, point))
 
         # Nobody can understand what python groupby returns!!!
@@ -316,13 +349,26 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                 curr_ivs = ivs
 
         for ivs, points in ivs_groups:
-            term = self._single_solve(ivs, points)
-            term = exprs.substitute_all(term, list(zip(self.intro_vars, self.formal_params)))
+            terms = self._single_solve(ivs, points)
+            new_terms = []
+            for term, sf in zip(terms, self.synth_funs):
+                new_terms.append(exprs.substitute_all(term, 
+                    list(zip(self.spec.intro_vars, self.spec.formal_params[sf]))))
+            terms = new_terms
+            print([ _expr_to_str(t) for t in terms ])
+
             sig = self.signature_factory()
-            for i, t in enumerate(self.term_signature(term, self.points)):
+            if len(self.synth_funs) > 1:
+                domain_types = tuple([exprtypes.IntType()] * len(self.synth_funs))
+                single_term = exprs.FunctionExpression(semantics_core.CommaFunction(domain_types),
+                        tuple(terms))
+            else:
+                single_term = terms[0]
+
+            for i, t in enumerate(self.term_signature(single_term, self.points)):
                 if t:
                     sig.add(i)
-            self.signature_to_term[sig] = term
+            self.signature_to_term[sig] = single_term
 
         return True
 

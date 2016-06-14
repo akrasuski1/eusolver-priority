@@ -159,49 +159,58 @@ def _merge_grammars(sf_grammar_list):
     return merged_grammar
 
 def make_specification(synth_funs, theory, syn_ctx, constraints):
-    if (
-            len(synth_funs) > 1 or
-            not expr_transforms.is_single_invocation(constraints, theory, syn_ctx)
-            ):
+    if not expr_transforms.is_single_invocation(constraints, theory, syn_ctx):
         specification = specifications.MultiPointSpec(syn_ctx.make_function_expr('and', *constraints),
                 syn_ctx, synth_funs)
         syn_ctx.assert_spec(specification, synth_funs)
         verifier = verifiers.MultiPointVerifier(syn_ctx)
-    else:
+    elif len(synth_funs) == 1 and get_pbe_valuations(constraints, synth_funs[0]) is not None:
         synth_fun = synth_funs[0]
         valuations = get_pbe_valuations(constraints, synth_fun)
-        if valuations is not None:
             # print("Using PBE specifications")
-            specification = specifications.PBESpec(valuations, synth_fun, theory)
-            syn_ctx.assert_spec(specification, synth_funs)
-            verifier = verifiers.PBEVerifier(syn_ctx)
-        else:
-            # print("Using standard specifications")
-            spec_expr = constraints[0] if len(constraints) == 1 \
-                    else syn_ctx.make_function_expr('and', *constraints)
-            specification = specifications.StandardSpec(spec_expr, syn_ctx, [synth_fun], theory)
-            syn_ctx.assert_spec(specification, synth_funs)
-            verifier = verifiers.StdVerifier(syn_ctx)
+        specification = specifications.PBESpec(valuations, synth_fun, theory)
+        syn_ctx.assert_spec(specification, synth_funs)
+        verifier = verifiers.PBEVerifier(syn_ctx)
+    else:
+        # print("Using standard specifications")
+        spec_expr = constraints[0] if len(constraints) == 1 \
+                else syn_ctx.make_function_expr('and', *constraints)
+        specification = specifications.StandardSpec(spec_expr, syn_ctx, synth_funs, theory)
+        syn_ctx.assert_spec(specification, synth_funs)
+        verifier = verifiers.StdVerifier(syn_ctx)
     return specification, verifier
 
-def full_lia_grammar(grammar):
-    if grammar.from_default:
-        return True
-    else:
-        return False
+def full_lia_grammars(grammar_map):
+    for grammar in grammar_map.values():
+        if not grammar.from_default:
+            return False
+    return True
 
-def make_singlefun_unification_solver(theory, syn_ctx, synth_fun, grammar, specification, verifier):
-    if theory == 'LIA' and full_lia_grammar(grammar):
-        term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, None, specification, synth_fun)
-        unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_fun, syn_ctx, specification)
+def make_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
+    if theory == 'LIA' and full_lia_grammars(grammar_map) and all([sf.range_type == exprtypes.IntType() for sf in synth_funs ]):
+        term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, specification)
+        unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_funs, syn_ctx, specification)
         solver = solvers.Solver(syn_ctx)
-        solution = solvers._do_solve(solver, enumerators.NullGeneratorFactory(), None, term_solver, unifier, verifier, False)
-        final_solution = rewrite_solution([synth_fun], solution, reverse_mapping=None)
+        solutions = solver.solve(
+                enumerators.NullGeneratorFactory(),
+                term_solver,
+                unifier,
+                verifier,
+                verify_term_solve=True
+                )
+        solution = next(solutions)
+        final_solution = rewrite_solution(synth_funs, solution, reverse_mapping=None)
     else:
+        if len(synth_funs) > 1:
+            print("Using memoryless esolver: Multi fun Single invocation")
+            return esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Classic')
+        synth_fun = synth_funs[0]
+        grammar = grammar_map[synth_fun]
+
         ans = grammar.decompose(syn_ctx.macro_instantiator)
         if ans == None:
-            print("Using memoryless esolver: Grammar not decomposable")
-            return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Memoryless')
+            print("Using classic esolver: Grammar not decomposable")
+            return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Classic')
 
         term_grammar, pred_grammar, reverse_mapping = ans
         generator_factory = enumerators.RecursiveGeneratorFactory()
@@ -211,7 +220,15 @@ def make_singlefun_unification_solver(theory, syn_ctx, synth_fun, grammar, speci
         term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
         unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
         solver = solvers.Solver(syn_ctx)
-        solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
+        # solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
+        solutions = solver.solve(
+                generator_factory,
+                term_solver,
+                unifier,
+                verifier,
+                verify_term_solve=True
+                )
+        solution = next(solutions)
         final_solution = rewrite_solution([synth_fun], solution, reverse_mapping)
     return final_solution
 
@@ -272,12 +289,11 @@ def make_solver(file_sexp):
 
     specification, verifier = make_specification(synth_funs, theory, syn_ctx, constraints)
 
-    if (expr_transforms.is_single_invocation(constraints, theory, syn_ctx)
-            and len(synth_funs) == 1):
-        final_solutions = make_singlefun_unification_solver(theory, syn_ctx, synth_funs[0], grammar_map[synth_funs[0]], specification, verifier)
+    if expr_transforms.is_single_invocation(constraints, theory, syn_ctx):
+        final_solutions = make_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
     else:
         if len(synth_funs) > 1:
-            print("Using memoryless esolver: Not single function")
+            print("Using memoryless esolver: Multi fun Multi invocation")
         else:
             print("Using memoryless esolver: Not single invocation")
         spec_expr = syn_ctx.make_function_expr('and', *constraints)

@@ -415,15 +415,15 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
                 if signature not in self.signatures[placeholder]:
                     cached_exprs.append(next_expr)
                     self.signatures[placeholder].append(signature)
-                    print('Generated', placeholder, size, ':', exprs.expression_to_string(next_expr),
-                            'with signature', signature)
+                    # print('Generated', placeholder, size, ':', exprs.expression_to_string(next_expr),
+                    #         'with signature', signature)
                     return next_expr 
                 else:
                     pass
-                    print('Eliminated', placeholder, size, ':', exprs.expression_to_string(next_expr),
-                            'with signature', signature)
+                    # print('Eliminated', placeholder, size, ':', exprs.expression_to_string(next_expr),
+                    #         'with signature', signature)
             except (basetypes.PartialFunctionError, basetypes.UnboundLetVariableError):
-                print('Undefined', placeholder, size, ':', exprs.expression_to_string(next_expr))
+                # print('Undefined', placeholder, size, ':', exprs.expression_to_string(next_expr))
                 pass
 
     def _instantiate_placeholder(self, placeholder):
@@ -477,7 +477,7 @@ class BunchedGenerator(GeneratorBase):
                     # can be bump up the subgenerator size?
                     if (current_size < max_size):
                         current_size += 1
-                        # print(current_size)
+                        print(current_size)
                         sub_generator_object.set_size(current_size)
                         sub_generator_state = sub_generator_object.generate()
                         continue

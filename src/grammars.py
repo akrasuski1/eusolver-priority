@@ -168,7 +168,7 @@ def expr_template_to_rewrite(expr_template, ph_var_nt_map, grammar):
     else:
         return ExpressionRewrite(expr_template)
 
-def make_default_grammar(syn_ctx, theory, args):
+def make_default_grammar(syn_ctx, theory, return_type, args):
     int_type = exprtypes.IntType()
     bool_type = exprtypes.BoolType()
     if theory == 'LIA':
@@ -200,7 +200,10 @@ def make_default_grammar(syn_ctx, theory, args):
         # Args 
         for arg in args:
             if exprs.get_expression_type(arg) == int_type:
-                rules['Start'].append(ExpressionRewrite(arg))
+                rules[start].append(ExpressionRewrite(arg))
+            elif exprs.get_expression_type(arg) == bool_type:
+                rules[start_bool].append(ExpressionRewrite(arg))
+
         # Constants
         rules[start].append(ExpressionRewrite(exprs.ConstantExpression(exprs.Value(1, int_type))))
         rules[start].append(ExpressionRewrite(exprs.ConstantExpression(exprs.Value(0, int_type))))
@@ -235,7 +238,12 @@ def make_default_grammar(syn_ctx, theory, args):
         rules[const].append(FunctionRewrite(add_func, ntr_const, ntr_const))
         rules[const].append(FunctionRewrite(sub_func, ntr_const, ntr_const))
 
-        ret = Grammar(nts, nt_type, rules)
+        if return_type == int_type:
+            ret = Grammar(nts, nt_type, rules, start)
+        elif return_type == bool_type:
+            ret = Grammar(nts, nt_type, rules, start_bool)
+        else:
+            raise NotImplementedError
         ret.from_default = True
         return ret
     elif theory == 'BV':
@@ -386,6 +394,9 @@ class Grammar(object):
             pred_productions.append(pred_production)
             
             reverse_mapping.append((dummy_macro_func, cond, orig_expr_template, expr_template))
+
+        if len(pred_productions) == 0:
+            return None
 
         # Non-terminals
         [ term_start, pred_start ] = [ x + start_nt for x in  [ 'Term', 'Pred' ] ]

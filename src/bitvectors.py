@@ -162,7 +162,7 @@ class BitVector(object):
 
     def ashr(self, other):
         sans = self._signed_value() >> other.value
-        return BitVector(_to_unsigned(sans), self.size)
+        return BitVector(self._to_unsigned(sans), self.size)
 
     def __eq__(self, other):
         return (self.value == other.value and self.size == other.size)

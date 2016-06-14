@@ -98,6 +98,12 @@ class StandardSpec(FormulaSpec):
         self.theory = theory
         self.init_spec_tuple()
 
+        self.formal_params = {}
+        for fn in self.synth_funs:
+            self.formal_params[fn] = [ 
+                    exprs.FormalParameterExpression(fn, argtype, i)
+                    for (i, argtype) in enumerate(fn.domain_types) ]
+
     def init_spec_tuple(self):
         syn_ctx = self.syn_ctx
         actual_spec = self.spec_expr
@@ -107,6 +113,11 @@ class StandardSpec(FormulaSpec):
         self.intro_vars = intro_vars
         self.point_vars = variables_list
         self.canon_clauses = canon_clauses
+
+        self.canon_application = {}
+        for fun in self.synth_funs:
+            self.canon_application[fun] = \
+                    syn_ctx.make_function_expr(fun, *self.intro_vars)
 
     def get_point_variables(self):
         return self.point_vars

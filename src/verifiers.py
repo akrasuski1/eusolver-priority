@@ -159,6 +159,7 @@ class MultiPointVerifier(VerifierBase):
             assert exprs.is_application_of(term, ',')
             for f, t in zip(self.synth_funs, term.children):
                 smt_ctx.set_interpretation(f, t)
+        # print(_expr_to_str(self.neg_canon_spec))
         full_constraint = _expr_to_smt(self.neg_canon_spec, smt_ctx)
 
         smt_solver.push()
