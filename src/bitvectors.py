@@ -190,9 +190,9 @@ class BitVector(object):
 def _test_repr_str():
     a = BitVector(1, 8)
     b = BitVector(255, 8)
-    print(a)
-    print(a.__repr__())
-    print(b._signed_value())
+    # print(a)
+    # print(a.__repr__())
+    # print(b._signed_value())
 
 if __name__ == '__main__':
     _test_repr_str()

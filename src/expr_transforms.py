@@ -571,21 +571,21 @@ def test_cnf_conversion():
 
     cnf_converter = CNFConverter()
     cnf_clauses, cnf_expr = cnf_converter.apply(formula, syn_ctx)
-    print(exprs.expression_to_string(cnf_expr))
-    print([exprs.expression_to_string(cnf_clause) for cnf_clause in cnf_clauses])
+    # print(exprs.expression_to_string(cnf_expr))
+    # print([exprs.expression_to_string(cnf_clause) for cnf_clause in cnf_clauses])
 
-    print(check_single_invocation_property(formula, syn_ctx))
+    # print(check_single_invocation_property(formula, syn_ctx))
     binary_max = syn_ctx.make_synth_function('max2', [exprtypes.IntType(),
                                                         exprtypes.IntType()],
                                                exprtypes.IntType())
     binary_max_app = syn_ctx.make_function_expr(binary_max, var_exprs[0], var_exprs[1])
     binary_max_app_rev = syn_ctx.make_function_expr(binary_max, var_exprs[1], var_exprs[0])
     non_separable = syn_ctx.make_function_expr('eq', binary_max_app, binary_max_app_rev)
-    print(check_single_invocation_property(non_separable, syn_ctx))
+    # print(check_single_invocation_property(non_separable, syn_ctx))
 
     max_rec = syn_ctx.make_function_expr(binary_max, binary_max_app, binary_max_app)
     non_separable2 = syn_ctx.make_function_expr('eq', max_rec, binary_max_app)
-    print(check_single_invocation_property(non_separable2, syn_ctx))
+    # print(check_single_invocation_property(non_separable2, syn_ctx))
 
     canonicalize_specification(formula, syn_ctx)
 
@@ -599,7 +599,7 @@ def test_cnf_conversion():
                                                                           binary_max_app,
                                                                           var_exprs[1]))
     separable = syn_ctx.make_ac_function_expr('and', separable1, separable2, separable3)
-    print(check_single_invocation_property(separable, syn_ctx))
+    # print(check_single_invocation_property(separable, syn_ctx))
     canonicalize_specification(separable, syn_ctx)
 
 if __name__ == '__main__':

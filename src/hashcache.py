@@ -47,8 +47,8 @@ import basetypes
 import utils
 import random
 
-if __name__ == '__main__':
-    print_module_misuse_and_exit()
+# if __name__ == '__main__':
+#     print_module_misuse_and_exit()
 
 def default_hash_function(obj):
     return hash(obj)

@@ -24,7 +24,7 @@ def sexpFromFile(benchmarkFileName):
     try:
         benchmarkFile = open(benchmarkFileName)
     except:
-        print('File not found: %s' % benchmarkFileName)
+        # print('File not found: %s' % benchmarkFileName)
         return None
 
     bm = stripComments(benchmarkFile)
@@ -65,16 +65,17 @@ def get_icfp_points(exp):
     constraints = [ c for c in exp if c[0] == 'constraint' ]
     rest = [ c for c in exp if c[0] != 'constraint' ]
     if rest != icfp_rest:
-        print("Not an icfp benchmark")
+        # print("Not an icfp benchmark")
         return None
 
     points = []
     for constraint in constraints:
         if len(constraint) != 2:
-            print("Could not parse icfp constraint: %s" % constraint)
+            pass
+            # print("Could not parse icfp constraint: %s" % constraint)
         point = parse_icfp_constraint(constraint[1])
         if point == None:
-            print("Could not parse icfp constraint: %s" % constraint)
+            # print("Could not parse icfp constraint: %s" % constraint)
             return None
         points.append(point)
     return points
@@ -426,7 +427,7 @@ def extract_benchmark(file_sexp):
             grammar_map[synth_fun] = grammar_data
         else:
             grammar_map[synth_fun] = sexp_to_grammar(arg_vars, grammar_data, synth_fun, syn_ctx)
-            print(grammar_map[synth_fun])
+            # print(grammar_map[synth_fun])
         
     # Universally quantified variables
     forall_vars_data, file_sexp = filter_sexp_for('declare-var', file_sexp)

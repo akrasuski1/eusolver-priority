@@ -228,7 +228,7 @@ def get_pred_sufficient_samples(generator, initial_valuations, random):
     for current_pred in atomic_preds:
         current += 1
         # print('\x1b[2K\x1b[G', end="", flush=True)
-        print("Doing pred", current, "of", total, '[ size =', exprs.get_expression_size(current_pred), ']', _expr_to_str(current_pred))
+        # print("Doing pred", current, "of", total, '[ size =', exprs.get_expression_size(current_pred), ']', _expr_to_str(current_pred))
         other_preds = atomic_preds - { current_pred }
         subsets = itertools.chain.from_iterable(
                 itertools.combinations(other_preds, r) for r in range(len(other_preds) + 1)
@@ -283,7 +283,7 @@ def get_term_sufficient_samples(generator, initial_valuations, random):
     current = 0
     for pred_list, term in pred_term_mapping:
         current += 1
-        print("Doing conditional term", current, "of", total, '[ size =', exprs.get_expression_size(term), ']', _expr_to_str(term))
+        # print("Doing conditional term", current, "of", total, '[ size =', exprs.get_expression_size(term), ']', _expr_to_str(term))
         # print([ (_expr_to_str(p[0]), p[1]) for p in pred_list ], "====>", _expr_to_str(term))
         relevant_valuations = [ (point, output) 
                 for point, output in valuations
@@ -304,14 +304,14 @@ def get_term_sufficient_samples(generator, initial_valuations, random):
 
 def get_icfp_sufficient_samples(generator, initial_valuations):
     syn_ctx = generator.syn_ctx
-    print('Solution:', _expr_to_str(generator.solution))
+    # print('Solution:', _expr_to_str(generator.solution))
     valuations = initial_valuations.copy()
     valuations.extend(get_term_sufficient_samples(generator, valuations, random=True))
-    print('Term sufficient: ', len(valuations) - len(initial_valuations))
+    # print('Term sufficient: ', len(valuations) - len(initial_valuations))
     valuations.extend(get_pred_sufficient_samples(generator, valuations, random=True))
-    print('Pred sufficient: ', len(valuations) - len(initial_valuations))
+    # print('Pred sufficient: ', len(valuations) - len(initial_valuations))
     valuations.extend(generator.do_complete_benchmark(valuations, random_samples=True))
-    print('Full sufficient: ', len(valuations) - len(initial_valuations))
+    # print('Full sufficient: ', len(valuations) - len(initial_valuations))
     # return [ x for x in valuations if x not in initial_valuations ]
     return valuations
 
@@ -325,11 +325,11 @@ def get_icfp_samples(json_id):
         initial_points = [ [ BitVector(random.getrandbits(64), 64) ] for k in range(10) ]
         initial_valuations = [ (p, generator.intended_solution_at_point(p)) 
                 for p in initial_points ]
-    print("Max term size:", generator.get_max_term_size())
-    print("Max pred size:", generator.get_max_atomic_pred_size())
+    # print("Max term size:", generator.get_max_term_size())
+    # print("Max pred size:", generator.get_max_atomic_pred_size())
     all_valuations = get_icfp_sufficient_samples(generator, initial_valuations)
-    for v in all_valuations:
-        print(v)
+    # for v in all_valuations:
+    #     print(v)
     return all_valuations
 
 
@@ -350,8 +350,8 @@ def get_blind_icfp_samples(json_id):
 
     valuations = [ (p, generator.intended_solution_at_point(p))
             for p in sampled_points ]
-    for v in valuations:
-        print(v)
+    # for v in valuations:
+    #     print(v)
     return valuations
 
 
@@ -362,7 +362,7 @@ Testing methods
 def test_benchmark_completeness(debug=True):
     import evaluation
     for bench_id in benchmark_generator_mapping.keys():
-        print("Starting", bench_id)
+        # print("Starting", bench_id)
         points = get_icfp_valuations(benchmark_file(bench_id))
         generator = get_generator(benchmark_generator_mapping[bench_id])
 
@@ -371,39 +371,39 @@ def test_benchmark_completeness(debug=True):
             assert value == generator.intended_solution_at_point(args)
 
         new_points = generator.do_complete_benchmark(points, random_samples=True)
-        print("Completed", bench_id, "with", len(new_points), "additional points")
+        # print("Completed", bench_id, "with", len(new_points), "additional points")
 
 def test_get_term_sufficient_samples():
     for bench_id in benchmark_generator_mapping.keys():
         if bench_id not in [ 'icfp_96_1000', 'icfp_9_1000' ]:
-            print("Starting", bench_id)
+            # print("Starting", bench_id)
             valuations = get_icfp_valuations(benchmark_file(bench_id))
             generator = get_generator(benchmark_generator_mapping[bench_id])
             get_term_sufficient_samples(generator, valuations)
 
 def test_get_pred_sufficient_samples():
     for bench_id in benchmark_generator_mapping.keys():
-        print("Starting", bench_id)
+        # print("Starting", bench_id)
         valuations = get_icfp_valuations(benchmark_file(bench_id))
         generator = get_generator(benchmark_generator_mapping[bench_id])
         get_pred_sufficient_samples(generator, valuations)
 
 def test_get_icfp_sufficient_samples():
     for bench_id in benchmark_generator_mapping.keys():
-        print("Starting", bench_id)
+        # print("Starting", bench_id)
         valuations = get_icfp_valuations(benchmark_file(bench_id))
         generator = get_generator(benchmark_generator_mapping[bench_id])
-        print("Max term size:", generator.get_max_term_size())
-        print("Max pred size:", generator.get_max_atomic_pred_size())
+        # print("Max term size:", generator.get_max_term_size())
+        # print("Max pred size:", generator.get_max_atomic_pred_size())
         new_valuations = get_icfp_sufficient_samples(generator, valuations)
-        print('Added', len(new_valuations), 'points to complete benchmark')
+        # print('Added', len(new_valuations), 'points to complete benchmark')
 
 def test_get_blind_icfp_sufficient_samples():
     for file_no in range(1, 16):
         for bench_no in range(1, 21):
             json_id = str(file_no) + '.' + str(bench_no)
             valuations = get_blind_icfp_samples(json_id)
-            print('Sampled', len(valuations), 'for', json_id)
+            # print('Sampled', len(valuations), 'for', json_id)
             generator = get_generator(json_id)
             # new_valuations = generator.do_complete_benchmark(valuations, random_samples=True)
             # print('Completed benchmark with', len(new_valuations), 'additional samples')
@@ -416,16 +416,16 @@ def test_get_blind_icfp_sufficient_samples():
     # test_get_icfp_sufficient_samples()
 
 def die():
-    print('Usage: %s <timeout in seconds> icfp_gen <json id>' % sys.argv[0])
+    # print('Usage: %s <timeout in seconds> icfp_gen <json id>' % sys.argv[0])
     exit(1)
 
 def _timeout_handler(signum, frame):
     if (signum != -1):
-        print('[sample_sufficiency.main]: Timed out!')
-        print('[sample_sufficiency.main]: Trying to exit gracefully...')
+        # print('[sample_sufficiency.main]: Timed out!')
+        # print('[sample_sufficiency.main]: Trying to exit gracefully...')
         sys.exit(1)
     else:
-        print('[sample_sufficiency.main]: Exiting gracefully...')
+        # print('[sample_sufficiency.main]: Exiting gracefully...')
         sys.exit(1)
 
 if __name__ == '__main__':
@@ -443,8 +443,8 @@ if __name__ == '__main__':
         die()
 
     start_time = time.clock()
-    print('[sample_sufficiency.main]: Started %s %s' % (benchmark_type, json_id))
-    print('[sample_sufficiency.main]: Setting time limit to %d seconds' % time_limit)
+    # print('[sample_sufficiency.main]: Started %s %s' % (benchmark_type, json_id))
+    # print('[sample_sufficiency.main]: Setting time limit to %d seconds' % time_limit)
     signal.signal(signal.SIGVTALRM, _timeout_handler)
     signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
 

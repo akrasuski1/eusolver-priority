@@ -116,7 +116,7 @@ class IcfpInstanceGenerator(object):
                 value = exprs.Value(BitVector(parse[1], 64), exprtypes.BitVectorType(64))
                 return exprs.ConstantExpression(value)
             else:
-                print(type(parse), '\n', parse)
+                # print(type(parse), '\n', parse)
                 raise NotImplementedError
 
         return to_expr(full_expr_parse)
@@ -247,11 +247,11 @@ def test_parsing(debug=False):
         for file_name in files:
             if file_name.endswith('.json'):
                 icfp_generator_instances.extend(parse_generator_json_file(os.path.join(root, file_name)))
-    print("Parsed", len(icfp_generator_instances), "generators")
+    # print("Parsed", len(icfp_generator_instances), "generators")
 
-    if debug:
-        for igi in icfp_generator_instances:
-            print(str(igi))
+    # if debug:
+    #     for igi in icfp_generator_instances:
+    #         # print(str(igi))
 
     return icfp_generator_instances
 
@@ -259,36 +259,37 @@ def test_max_sizes(generators):
     for generator in generators:
         term_size = generator.get_max_term_size()
         pred_size = generator.get_max_atomic_pred_size()
-        print(generator.id, '->', term_size, ',', pred_size)
+        # print(generator.id, '->', term_size, ',', pred_size)
 
 def test_get_all_terms(generators):
     for generator in generators:
         terms = generator.get_all_terms()
-        print(generator.id, '->')
-        for t in terms:
-            print('\t',  _expr_to_str(t))
+        # print(generator.id, '->')
+        # for t in terms:
+            # print('\t',  _expr_to_str(t))
 
 def test_get_pred_term_mapping(generators):
     for generator in generators:
         solution = generator.solution
         pred_term_mapping = generator.get_pred_term_mapping()
-        print(generator.id, '->')
-        for preds, term in pred_term_mapping:
-            print('\t', [ (_expr_to_str(p[0]), p[1]) for p in preds ], "====>", _expr_to_str(term))
+        # print(generator.id, '->')
+        # for preds, term in pred_term_mapping:
+        #     print('\t', [ (_expr_to_str(p[0]), p[1]) for p in preds ], "====>", _expr_to_str(term))
 
 def test_get_atomic_predicates(generators):
     for generator in generators:
-        print(generator.id, '->')
-        for ap in generator.get_atomic_predicates():
-            print('\t', _expr_to_str(ap))
+        # print(generator.id, '->')
+        # for ap in generator.get_atomic_predicates():
+        #     print('\t', _expr_to_str(ap))
 
 def test_get_atomic_pred_term_mapping(generators):
-    for generator in generators:
-        print(generator.id, '->')
-        for ap,term in generator.get_atomic_pred_term_mapping():
-            for p,tv in ap:
-                print('\t', _expr_to_str(p), tv)
-            print('\t\t', '====>', _expr_to_str(term))
+    pass
+    # for generator in generators:
+    #     print(generator.id, '->')
+    #     for ap,term in generator.get_atomic_pred_term_mapping():
+    #         for p,tv in ap:
+    #             print('\t', _expr_to_str(p), tv)
+    #         print('\t\t', '====>', _expr_to_str(term))
 
 
 if __name__ == '__main__':

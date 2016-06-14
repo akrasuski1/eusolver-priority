@@ -365,12 +365,13 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
         self.finished_generators = {}
 
     def print_caches(self):
-        print('++++++++++++')
+        # print('++++++++++++')
         for placeholder, size in self.cache:
-            print(placeholder, size, '->')
-            for term in self.cache[(placeholder, size)]:
-                print(exprs.expression_to_string(term))
-        print('++++++++++++')
+            # print(placeholder, size, '->')
+            pass
+            # for term in self.cache[(placeholder, size)]:
+                # print(exprs.expression_to_string(term))
+        # print('++++++++++++')
 
     def add_points(self, points):
         self.points.extend(points)
@@ -675,12 +676,12 @@ def test_generators():
     #     print(exprs.expression_to_string(exp))
 
     # tests for bunched generators
-    print('Testing bunched generators....')
+    # print('Testing bunched generators....')
     bunch_generator = BunchedGenerator(start_generator, 10, 5)
-    for bunch in bunch_generator.generate():
-        print('Bunch:')
-        for exp in bunch:
-            print('    %s' % exprs.expression_to_string(exp))
+    # for bunch in bunch_generator.generate():
+    #     # print('Bunch:')
+    #     for exp in bunch:
+    #         # print('    %s' % exprs.expression_to_string(exp))
 
 if __name__ == '__main__':
     test_generators()

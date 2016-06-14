@@ -45,13 +45,14 @@ import math
 import sys
 
 def print_module_misuse_and_exit():
-    print('This module is intented for use as a library, and not as a ' +
-          'standalone program!')
+    # print('This module is intented for use as a library, and not as a ' +
+    #       'standalone program!')
     sys.exit(1)
 
 
 if __name__ == '__main__':
-    print_module_misuse_and_exit()
+    pass
+    # print_module_misuse_and_exit()
 
 
 def is_number_prime(number):

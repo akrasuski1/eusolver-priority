@@ -219,29 +219,26 @@ def unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, 
                 )
         solution = next(solutions)
         final_solution = rewrite_solution(synth_funs, solution, reverse_mapping=None)
-        for sol in final_solution:
-            print(exprs.expression_to_string(sol))
         final_solution = lia_massager.massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging)
         if final_solution is None:
-            print("Using standard solver 1")
+            # print("Using standard solver 1")
             return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
         return final_solution
     except:
-        raise
-        print("Using standard solver 2")
+        # print("Using standard solver 2")
         return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
 def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
     if len(synth_funs) > 1:
-        print("Using memoryless esolver: Multi fun Single invocation")
+        # print("Using memoryless esolver: Multi fun Single invocation")
         return esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Classic')
     synth_fun = synth_funs[0]
     grammar = grammar_map[synth_fun]
 
     ans = grammar.decompose(syn_ctx.macro_instantiator)
     if ans == None:
-        print("Using classic esolver: Grammar not decomposable")
+        # print("Using classic esolver: Grammar not decomposable")
         return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Classic')
 
     term_grammar, pred_grammar, reverse_mapping = ans
@@ -326,10 +323,10 @@ def make_solver(file_sexp):
         final_solutions = unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
     else:
         if len(synth_funs) > 1:
-            print("Using memoryless esolver: Multi fun Multi invocation")
+            # print("Using memoryless esolver: Multi fun Multi invocation")
             mode = 'Memoryless'
         else:
-            print("Using class esolver: Single function Multi invocation")
+            # print("Using class esolver: Single function Multi invocation")
             mode = 'Classic'
         spec_expr = syn_ctx.make_function_expr('and', *constraints)
         synth_funs = list(synth_instantiator.get_functions().values())
@@ -352,7 +349,7 @@ def test_make_solver(benchmark_files):
     # for benchmark_file in [ "../benchmarks/icfp/icfp_105_1000.sl" ]:
     # for benchmark_file in [ "../benchmarks/one_off/max_plus_1.sl" ]:
     for benchmark_file in benchmark_files:
-        print("Doing", benchmark_file)
+        # print("Doing", benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
 
@@ -369,7 +366,8 @@ def find_grammar_anamolies():
                 file_sexp = parser.sexpFromFile(benchmark_file)
                 benchmark_tuple = parser.extract_benchmark(file_sexp)
             except Exception:
-                print('Failed', benchmark_file)
+                pass
+                # print('Failed', benchmark_file)
 
 
 if __name__ == "__main__":

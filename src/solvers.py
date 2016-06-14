@@ -161,40 +161,40 @@ def _do_solve(solver, generator_factory, term_solver, unifier, verifier, run_any
 
         reported_expr_string_set.add(sol_str)
 
-        print('----------------------------------------------')
-        print('Solution Size                : %d' % exprs.get_expression_size(sol))
-        print('Solution Time from start (s) : %f' % sol_time)
-        print('DT Size                      : %d' % dt_size)
-        print('Num Dist. Terms Enumerated   : %d' % num_t)
-        print('Num Dist. Preds Enumerated   : %d' % num_p)
-        print('Max Term Size Enumerated     : %d' % max_t)
-        print('Max Pred Size Enumerated     : %d' % max_p)
-        print('Num Points                   : %d' % card_p)
-        print('Solution                     : %s' % _expr_to_str(sol), flush=True)
-        print('----------------------------------------------')
+        # print('----------------------------------------------')
+        # print('Solution Size                : %d' % exprs.get_expression_size(sol))
+        # print('Solution Time from start (s) : %f' % sol_time)
+        # print('DT Size                      : %d' % dt_size)
+        # print('Num Dist. Terms Enumerated   : %d' % num_t)
+        # print('Num Dist. Preds Enumerated   : %d' % num_p)
+        # print('Max Term Size Enumerated     : %d' % max_t)
+        # print('Max Pred Size Enumerated     : %d' % max_p)
+        # print('Num Points                   : %d' % card_p)
+        # print('Solution                     : %s' % _expr_to_str(sol), flush=True)
+        # print('----------------------------------------------')
         if (not run_anytime_version):
             return sol
 
 
 def die():
-    print('Usage: %s [--anytime] <timeout in seconds> max <num args to max function>' % sys.argv[0])
-    print('Usage: %s [--anytime] <timeout in seconds> icfp <benchmark file>' % sys.argv[0])
+    # print('Usage: %s [--anytime] <timeout in seconds> max <num args to max function>' % sys.argv[0])
+    # print('Usage: %s [--anytime] <timeout in seconds> icfp <benchmark file>' % sys.argv[0])
     exit(1)
 
 def _timeout_handler(signum, frame):
     if (signum != -1):
-        print('[solvers.main]: Timed out!')
-        print('[solvers.main]: Trying to exit gracefully...')
+        # print('[solvers.main]: Timed out!')
+        # print('[solvers.main]: Trying to exit gracefully...')
         sys.exit(1)
     else:
-        print('[solvers.main]: Exiting gracefully...')
+        # print('[solvers.main]: Exiting gracefully...')
         sys.exit(1)
 
 def _memout_checker(signum, frame):
     rusage = resource.getrusage(resource.RUSAGE_SELF)
     if ((rusage[2] * 1024) > EUSOLVER_MEMORY_LIMIT):
-        print('[solvers.main: Memory out!')
-        print('[solvers.main: Trying to exit gracefully...')
+        # print('[solvers.main: Memory out!')
+        # print('[solvers.main: Trying to exit gracefully...')
         sys.exit(1)
 
 if __name__ == '__main__':
@@ -217,12 +217,12 @@ if __name__ == '__main__':
         die()
 
     start_time = time.clock()
-    print('[solvers.main]: Started %s %s %s' % (benchmark_type, benchmark_subtype,
-                                                ', running anytime version.' if run_anytime_version else ', running one solution version.'))
-    print('[solvers.main]: Setting time limit to %d seconds' % time_limit)
+    # print('[solvers.main]: Started %s %s %s' % (benchmark_type, benchmark_subtype,
+    #                                             ', running anytime version.' if run_anytime_version else ', running one solution version.'))
+    # print('[solvers.main]: Setting time limit to %d seconds' % time_limit)
     signal.signal(signal.SIGVTALRM, _timeout_handler)
     signal.setitimer(signal.ITIMER_VIRTUAL, time_limit)
-    print('[solvers.main]: Memory limit is %d bytes.' % EUSOLVER_MEMORY_LIMIT)
+    # print('[solvers.main]: Memory limit is %d bytes.' % EUSOLVER_MEMORY_LIMIT)
     signal.signal(signal.SIGPROF, _memout_checker)
     signal.setitimer(signal.ITIMER_PROF, 15, 15)
 

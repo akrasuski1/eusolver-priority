@@ -167,7 +167,7 @@ def test_evaluation():
         for i in range(len(points)):
             eval_context.set_valuation_map(points[i])
             cur_sig[i] = evaluate_expression_raw(expr, eval_context)
-        print((exprs.expression_to_string(expr), tuple(cur_sig)))
+        # print((exprs.expression_to_string(expr), tuple(cur_sig)))
 
 if __name__ == '__main__':
     test_evaluation()

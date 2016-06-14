@@ -106,7 +106,7 @@ def collect_terms(expr):
             ret[v] = - i
         return ret
     else:
-        print(_expr_to_str(expr))
+        # print(_expr_to_str(expr))
         raise NotImplementedError
 
 def solve_inequalities(model, outvars, inequalities, syn_ctx):
