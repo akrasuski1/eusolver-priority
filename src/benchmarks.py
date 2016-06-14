@@ -230,126 +230,131 @@ def unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, 
         return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
 def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
-    if len(synth_funs) > 1:
-        # print("Using memoryless esolver: Multi fun Single invocation")
-        return esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Classic')
-    synth_fun = synth_funs[0]
-    grammar = grammar_map[synth_fun]
+    try:
+        if len(synth_funs) > 1:
+            # print("Using memoryless esolver: Multi fun Single invocation")
+            return esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Classic')
+        synth_fun = synth_funs[0]
+        grammar = grammar_map[synth_fun]
 
-    ans = grammar.decompose(syn_ctx.macro_instantiator)
-    if ans == None:
-        # print("Using classic esolver: Grammar not decomposable")
-        return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Classic')
+        ans = grammar.decompose(syn_ctx.macro_instantiator)
+        if ans == None:
+            # print("Using classic esolver: Grammar not decomposable")
+            return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Classic')
 
-    term_grammar, pred_grammar, reverse_mapping = ans
-    generator_factory = enumerators.PointDistinctGeneratorFactory(specification)
-    term_generator = term_grammar.to_generator(generator_factory)
-    pred_generator = pred_grammar.to_generator(generator_factory)
-    solver = solvers.Solver(syn_ctx)
-    term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator)
-    unifier = unifiers.PointDistinctDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
-    solver = solvers.Solver(syn_ctx)
-    # solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
-    solutions = solver.solve(
-            generator_factory,
-            term_solver,
-            unifier,
-            verifier,
-            verify_term_solve=True
-            )
-    solution = next(solutions)
-    final_solution = rewrite_solution([synth_fun], solution, reverse_mapping)
-    return final_solution
+        term_grammar, pred_grammar, reverse_mapping = ans
+        generator_factory = enumerators.PointDistinctGeneratorFactory(specification)
+        term_generator = term_grammar.to_generator(generator_factory)
+        pred_generator = pred_grammar.to_generator(generator_factory)
+        solver = solvers.Solver(syn_ctx)
+        term_solver = termsolvers.PointDistinctTermSolver(specification.term_signature, term_generator)
+        unifier = unifiers.PointDistinctDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
+        solver = solvers.Solver(syn_ctx)
+        # solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
+        solutions = solver.solve(
+                generator_factory,
+                term_solver,
+                unifier,
+                verifier,
+                verify_term_solve=True
+                )
+        solution = next(solutions)
+        final_solution = rewrite_solution([synth_fun], solution, reverse_mapping)
+        return final_solution
+    except:
+        return esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Classic')
 
 def esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode):
     assert mode in [ 'Classic', 'Memoryless' ]
+    
+    try:
+        if mode == 'Classic':
+            assert len(synth_funs) == 1
+            generator_factory = enumerators.PointDistinctGeneratorFactory(specification)
+            TermSolver = termsolvers.PointDistinctTermSolver
+        else:
+            generator_factory = enumerators.RecursiveGeneratorFactory()
+            TermSolver = termsolvers.PointlessTermSolver
 
-    if mode == 'Classic':
-        assert len(synth_funs) == 1
-        generator_factory = enumerators.PointDistinctGeneratorFactory(specification)
-        TermSolver = termsolvers.PointDistinctTermSolver
-    else:
-        generator_factory = enumerators.RecursiveGeneratorFactory()
-        TermSolver = termsolvers.PointlessTermSolver
+        # Grammars and generators
+        if len(synth_funs) > 1:
+            sf_list = [ (synth_fun.function_name, synth_fun, grammar_map[synth_fun])
+                for synth_fun in synth_funs ]
+            grammar = _merge_grammars(sf_list)
+        else:
+            grammar = grammar_map[synth_funs[0]]
+        term_generator = grammar.to_generator(generator_factory)
 
-    # Grammars and generators
-    if len(synth_funs) > 1:
-        sf_list = [ (synth_fun.function_name, synth_fun, grammar_map[synth_fun])
-            for synth_fun in synth_funs ]
-        grammar = _merge_grammars(sf_list)
-    else:
-        grammar = grammar_map[synth_funs[0]]
-    term_generator = grammar.to_generator(generator_factory)
+        # Term solver, unifier, and verifiers
+        term_solver = TermSolver(specification.term_signature, term_generator)
+        term_solver.one_term_coverage = True
+        unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
 
-    # Term solver, unifier, and verifiers
-    term_solver = TermSolver(specification.term_signature, term_generator)
-    term_solver.one_term_coverage = True
-    unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
-
-    solver = solvers.Solver(syn_ctx)
-    solutions = solver.solve(
-            generator_factory,
-            term_solver,
-            unifier,
-            verifier,
-            verify_term_solve=False
-            )
-    solution = next(solutions)
-    rewritten_solutions = rewrite_solution(synth_funs, solution, reverse_mapping=None)
-    return rewritten_solutions
+        solver = solvers.Solver(syn_ctx)
+        solutions = solver.solve(
+                generator_factory,
+                term_solver,
+                unifier,
+                verifier,
+                verify_term_solve=False
+                )
+        solution = next(solutions)
+        rewritten_solutions = rewrite_solution(synth_funs, solution, reverse_mapping=None)
+        return rewritten_solutions
+    except:
+        if mode == 'Classic':
+            return esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Memoryless')
 
 def make_solver(file_sexp):
-    benchmark_tuple = parser.extract_benchmark(file_sexp)
-    (
-            theories,
-            syn_ctx,
-            synth_instantiator,
-            macro_instantiator,
-            uf_instantiator,
-            constraints,
-            grammar_map,
-            forall_vars_map
-            ) = benchmark_tuple
+    try:
+        benchmark_tuple = parser.extract_benchmark(file_sexp)
+        (
+                theories,
+                syn_ctx,
+                synth_instantiator,
+                macro_instantiator,
+                uf_instantiator,
+                constraints,
+                grammar_map,
+                forall_vars_map
+                ) = benchmark_tuple
 
-    assert len(theories) == 1
-    theory = theories[0]
+        assert len(theories) == 1
+        theory = theories[0]
 
-    constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, theory, constraints)
-    synth_funs = list(synth_instantiator.get_functions().values())
-
-    specification, verifier = make_specification(synth_funs, theory, syn_ctx, constraints)
-
-    if expr_transforms.is_single_invocation(constraints, theory, syn_ctx):
-        final_solutions = unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
-    else:
-        if len(synth_funs) > 1:
-            # print("Using memoryless esolver: Multi fun Multi invocation")
-            mode = 'Memoryless'
-        else:
-            # print("Using class esolver: Single function Multi invocation")
-            mode = 'Classic'
-        spec_expr = syn_ctx.make_function_expr('and', *constraints)
+        constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, theory, constraints)
         synth_funs = list(synth_instantiator.get_functions().values())
-        final_solutions = esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode=mode)
-    for sf, sol in zip(synth_funs, final_solutions):
-        fp_string = ' '.join([ '(%s %s)' % 
-            (v.variable_info.variable_name, v.variable_info.variable_type.print_string()) 
-            for v in sf.get_named_vars() ])
-        print('(define-fun %s (%s) %s\n     %s)' % (sf.function_name, fp_string, sf.range_type.print_string(), exprs.expression_to_string(sol)),
-                flush=True)
+
+        specification, verifier = make_specification(synth_funs, theory, syn_ctx, constraints)
+
+        if expr_transforms.is_single_invocation(constraints, theory, syn_ctx):
+            final_solutions = unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
+        else:
+            if len(synth_funs) > 1:
+                # print("Using memoryless esolver: Multi fun Multi invocation")
+                mode = 'Memoryless'
+            else:
+                # print("Using class esolver: Single function Multi invocation")
+                mode = 'Classic'
+            spec_expr = syn_ctx.make_function_expr('and', *constraints)
+            synth_funs = list(synth_instantiator.get_functions().values())
+            final_solutions = esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode=mode)
+        for sf, sol in zip(synth_funs, final_solutions):
+            fp_string = ' '.join([ '(%s %s)' % 
+                (v.variable_info.variable_name, v.variable_info.variable_type.print_string()) 
+                for v in sf.get_named_vars() ])
+            print('(define-fun %s (%s) %s\n     %s)' % (sf.function_name, fp_string, sf.range_type.print_string(), exprs.expression_to_string(sol)),
+                    flush=True)
+    except:
+        # Fail quietly
+        pass
 
 # Tests:
 
 def test_make_solver(benchmark_files):
     import parser
 
-    # for benchmark_file in [ "../benchmarks/max/max_2.sl", "../benchmarks/max/max_3.sl" ]:
-    # for benchmark_file in [ "../benchmarks/SyGuS-COMP15/GENERAL-Track/qm_max3.sl" ]:
-    # for benchmark_file in [ "../benchmarks/SyGuS-COMP15/INV-Track/inv-benchmarks-temp/sum1.sl" ]:
-    # for benchmark_file in [ "../benchmarks/icfp/icfp_105_1000.sl" ]:
-    # for benchmark_file in [ "../benchmarks/one_off/max_plus_1.sl" ]:
     for benchmark_file in benchmark_files:
-        # print("Doing", benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
 
