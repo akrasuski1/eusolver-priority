@@ -266,6 +266,7 @@ def rewrite_boolean_combs(syn_ctx, sol):
 
     if not exprs.is_application_of(sol, 'ite'):
         return sol
+
     cond = sol.children[0]
     child1 = rewrite_boolean_combs(syn_ctx, sol.children[1])
     child2 = rewrite_boolean_combs(syn_ctx, sol.children[2])
@@ -284,12 +285,21 @@ def rewrite_boolean_combs(syn_ctx, sol):
     if fun == 'or':
         init = child2
         combine = lambda a, b: syn_ctx.make_function_expr('ite', b, child1, a)
-        ret = rewrite_boolean_combs(syn_ctx, functools.reduce(combine, cond.children, init))
+        cond_children = cond.children
+        if any([ exprs.find_application(c, 'and') is not None or exprs.find_application(c, 'or') is not None for c in cond_children ]):
+            ret = rewrite_boolean_combs(syn_ctx, functools.reduce(combine, cond.children, init))
+        else:
+            ret = functools.reduce(combine, cond.children, init)
         return ret
     else:
         init = child1
         combine = lambda a, b: syn_ctx.make_function_expr('ite', b, a, child2)
-        return rewrite_boolean_combs(syn_ctx, functools.reduce(combine, cond.children, init))
+        cond_children = cond.children
+        if any([ exprs.find_application(c, 'and') is not None or exprs.find_application(c, 'or') is not None for c in cond_children ]):
+            ret = rewrite_boolean_combs(syn_ctx, functools.reduce(combine, cond.children, init))
+        else:
+            ret = functools.reduce(combine, cond.children, init)
+        return ret
 
 def rewrite_arbitrary_arity_and_or(syn_ctx, sol):
     import functools

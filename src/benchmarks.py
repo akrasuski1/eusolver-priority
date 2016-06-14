@@ -304,6 +304,7 @@ def esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode):
     except:
         if mode == 'Classic':
             return esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Memoryless')
+        raise
 
 def make_solver(file_sexp):
     try:
@@ -334,7 +335,7 @@ def make_solver(file_sexp):
                 # print("Using memoryless esolver: Multi fun Multi invocation")
                 mode = 'Memoryless'
             else:
-                # print("Using class esolver: Single function Multi invocation")
+                # print("Using classic esolver: Single function Multi invocation")
                 mode = 'Classic'
             spec_expr = syn_ctx.make_function_expr('and', *constraints)
             synth_funs = list(synth_instantiator.get_functions().values())

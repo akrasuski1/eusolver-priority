@@ -134,7 +134,7 @@ class Solver(object):
                 return
 
             # for cex in sol_or_cex:
-            #     print('ADDING POINT:', [p.value_object for p in cex])
+                # print('ADDING POINT:', [p.value_object for p in cex])
             term_solver.add_points(sol_or_cex) # Term solver can add all points at once
             unifier.add_points(sol_or_cex)
             self.add_points(sol_or_cex)

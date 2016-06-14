@@ -354,7 +354,7 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
             self.applications = spec.get_applications()[spec.synth_funs[0]]
             for app in self.applications:
                 for child in app.children:
-                    if exprs.find_application(app, spec.synth_funs[0].function_name):
+                    if exprs.find_application(child, spec.synth_funs[0].function_name) is not None:
                         raise NotImplementedError
             self.point_profiles = []
         else:
