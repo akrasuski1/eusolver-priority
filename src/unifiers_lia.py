@@ -42,6 +42,7 @@ from unifiers import *
 from eusolver import BitSet
 import semantics_core
 import evaluation
+from termsolvers_lia import collect_terms
 
 _expr_to_str = exprs.expression_to_string
 
@@ -52,7 +53,7 @@ def simplify_inequality(inequality):
     op = inequality.function_info.function_name
     arg1, arg2 = inequality.children
     if op in [ 'eq', '=', '<=', 'le', '>=', 'ge' ]:
-        if arg1 == arg2:
+        if collect_terms(arg1) == collect_terms(arg2):
             return _true_expr
     return inequality
 
@@ -108,6 +109,8 @@ class SpecAwareLIAUnifier(UnifierInterface):
         self.eval_ctx = evaluation.EvaluationContext()
         self.clauses = spec.get_canon_clauses()
         self.intro_vars = spec.get_intro_vars()
+
+        self.term_to_signature = {}
 
     def add_points(self, points):
         self.points.extend(points)
@@ -239,17 +242,35 @@ class SpecAwareLIAUnifier(UnifierInterface):
                 break
 
             term = sig_to_term[full_sig]
-            pred = self._compute_pre_condition(full_sig, curr_sig, term)
-            pred_terms.append((pred, term))
+            recompute = False
+            if term not in self.term_to_signature:
+                recompute = True
+            else:
+                old_signature = self.term_to_signature[term]
+                old_num_points = len(old_signature)
+                for i in range(len(old_signature), len(self.points)):
+                    if i in full_sig:
+                        # Have to compute pred-condition
+                        recompute = True
 
-            pred_sig = BitSet(len(self.points))
-            for i in curr_sig:
-                eval_ctx.set_valuation_map(self.points[i])
-                if evaluation.evaluate_expression_raw(pred, eval_ctx):
-                    pred_sig.add(i)
-            assert not pred_sig.is_empty()
+            if recompute:
+                pred = self._compute_pre_condition(full_sig, curr_sig, term)
+                pred_terms.append((pred, term))
+
+                pred_sig = BitSet(len(self.points))
+                for i in curr_sig:
+                    eval_ctx.set_valuation_map(self.points[i])
+                    if evaluation.evaluate_expression_raw(pred, eval_ctx):
+                        pred_sig.add(i)
+                assert not pred_sig.is_empty()
+            else:
+                pred_sig = BitSet(len(self.points))
+                for i in range(len(old_signature)):
+                    if i in old_signature:
+                        pred_sig.add(i)
 
             # Remove newly covered points from all signatures
+            self.term_to_signature[term] = pred_sig
             sigs = [ (f, c.difference(pred_sig)) for (f,c) in sigs ]
 
         # for pred, term in pred_terms:

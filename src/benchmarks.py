@@ -219,6 +219,8 @@ def unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, 
                 )
         solution = next(solutions)
         final_solution = rewrite_solution(synth_funs, solution, reverse_mapping=None)
+        for sol in final_solution:
+            print(exprs.expression_to_string(sol))
         final_solution = lia_massager.massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging)
         if final_solution is None:
             print("Using standard solver 1")
@@ -226,6 +228,7 @@ def unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, 
 
         return final_solution
     except:
+        raise
         print("Using standard solver 2")
         return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
