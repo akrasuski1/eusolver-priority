@@ -110,8 +110,6 @@ class SpecAwareLIAUnifier(UnifierInterface):
         self.clauses = spec.get_canon_clauses()
         self.intro_vars = spec.get_intro_vars()
 
-        self.term_to_signature = {}
-
     def add_points(self, points):
         self.points.extend(points)
 
@@ -242,35 +240,17 @@ class SpecAwareLIAUnifier(UnifierInterface):
                 break
 
             term = sig_to_term[full_sig]
-            recompute = False
-            if term not in self.term_to_signature:
-                recompute = True
-            else:
-                old_signature = self.term_to_signature[term]
-                old_num_points = len(old_signature)
-                for i in range(len(old_signature), len(self.points)):
-                    if i in full_sig:
-                        # Have to compute pred-condition
-                        recompute = True
+            pred = self._compute_pre_condition(full_sig, curr_sig, term)
+            pred_terms.append((pred, term))
 
-            if recompute:
-                pred = self._compute_pre_condition(full_sig, curr_sig, term)
-                pred_terms.append((pred, term))
-
-                pred_sig = BitSet(len(self.points))
-                for i in curr_sig:
-                    eval_ctx.set_valuation_map(self.points[i])
-                    if evaluation.evaluate_expression_raw(pred, eval_ctx):
-                        pred_sig.add(i)
-                assert not pred_sig.is_empty()
-            else:
-                pred_sig = BitSet(len(self.points))
-                for i in range(len(old_signature)):
-                    if i in old_signature:
-                        pred_sig.add(i)
+            pred_sig = BitSet(len(self.points))
+            for i in curr_sig:
+                eval_ctx.set_valuation_map(self.points[i])
+                if evaluation.evaluate_expression_raw(pred, eval_ctx):
+                    pred_sig.add(i)
+            assert not pred_sig.is_empty()
 
             # Remove newly covered points from all signatures
-            self.term_to_signature[term] = pred_sig
             sigs = [ (f, c.difference(pred_sig)) for (f,c) in sigs ]
 
         # for pred, term in pred_terms:
