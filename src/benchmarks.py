@@ -181,55 +181,147 @@ def make_specification(synth_funs, theory, syn_ctx, constraints):
     return specification, verifier
 
 def full_lia_grammars(grammar_map):
-    for grammar in grammar_map.values():
-        if not grammar.from_default:
-            return False
-    return True
+    massaging = {}
+    for sf, grammar in grammar_map.items():
+        full = False
+        if grammar.from_default:
+            full = True
+        else:
+            ans = grammars.identify_lia_grammars(sf, grammar)
+            if ans is None:
+                full = False
+            else:
+                massaging[sf] = ans
+                full = True
+        if not full:
+            return False, NOne
+    return True, massaging
 
-def make_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
-    if theory == 'LIA' and full_lia_grammars(grammar_map) and all([sf.range_type == exprtypes.IntType() for sf in synth_funs ]):
-        term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, specification)
-        unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_funs, syn_ctx, specification)
-        solver = solvers.Solver(syn_ctx)
-        solutions = solver.solve(
-                enumerators.NullGeneratorFactory(),
-                term_solver,
-                unifier,
-                verifier,
-                verify_term_solve=True
-                )
-        solution = next(solutions)
-        final_solution = rewrite_solution(synth_funs, solution, reverse_mapping=None)
-    else:
-        if len(synth_funs) > 1:
-            print("Using memoryless esolver: Multi fun Single invocation")
-            return esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Classic')
-        synth_fun = synth_funs[0]
-        grammar = grammar_map[synth_fun]
+def massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging):
+    def make_constant(c):
+        if c == 1:
+            return exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType()))
+        else:
+            return syn_ctx.make_function_expr('+', exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType())),
+                    make_constant(c - 1))
 
-        ans = grammar.decompose(syn_ctx.macro_instantiator)
-        if ans == None:
-            print("Using classic esolver: Grammar not decomposable")
-            return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Classic')
+    def get_terms(e):
+        if not exprs.is_application_of(e, 'ite'):
+            return [e]
+        else:
+            ret = []
+            ret.append(get_terms(e.children[1]))
+            ret.append(get_terms(e.children[2]))
+            return ret
 
-        term_grammar, pred_grammar, reverse_mapping = ans
-        generator_factory = enumerators.RecursiveGeneratorFactory()
-        term_generator = term_grammar.to_generator(generator_factory)
-        pred_generator = pred_grammar.to_generator(generator_factory)
-        solver = solvers.Solver(syn_ctx)
-        term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
-        unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
-        solver = solvers.Solver(syn_ctx)
-        # solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
-        solutions = solver.solve(
-                generator_factory,
-                term_solver,
-                unifier,
-                verifier,
-                verify_term_solve=True
-                )
-        solution = next(solutions)
-        final_solution = rewrite_solution([synth_fun], solution, reverse_mapping)
+    def correct_term(term, neg, consts, constant_multiplication):
+        term = 
+
+    try:
+        new_final_solution = []
+        for sf, sol in zip(synth_funs, final_solution):
+            if sf not in massaging:
+                new_final_solution.append(sol)
+                continue
+
+            (boolean_combs, comparators, consts, negatives, constant_multiplication, div, mod) = massaging[sf]
+
+            # Don't try to rewrite div's and mod's
+            # It is futile
+            if not div and exprs.find_application(sol, 'div') != None:
+                return None
+            if not mod and exprs.find_application(sol, 'mod') != None:
+                return None
+
+            terms = get_terms(sol)
+            for term in terms:
+                termp = correct_term(term, negatives, consts, constant_multiplication)
+                sol = exprs.substitute(sol, term, termp)
+
+            used_consts = set([ c.value_object.value_object for c in exprs.get_all_constants(sol) ])
+            consts_okay = False
+            if used_consts.issubset(consts):
+                consts_okay = True
+            mul_okay = False
+            if exprs.find_application(sol, '*') == None or constant_multiplication:
+                mul_okay = True
+
+            if negatives and mul_okay and consts_okay:
+                new_final_solution.append(sol)
+                continue
+
+            raise NotImplementedError
+            # Check terms
+            # consts, negatives, const-multiplication, 
+            for c in exprs.get_all_constants(sol):
+                if c.value_object.value_object not in consts:
+                    if c.value_object.value_object >= 0:
+                        replacement = make_constant(c.value_object.value_object)
+
+
+            # Replace constants with addition of 1's
+        return new_final_solution
+    except:
+        raise
+        # return None
+
+def unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
+    if theory != 'LIA' and any([sf.range_type != exprtypes.IntType() for sf in synth_funs ]):
+        return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
+
+    okay, massaging = full_lia_grammars(grammar_map)
+    if not okay:
+        return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
+
+    term_solver = termsolvers_lia.SpecAwareLIATermSolver(specification.term_signature, specification)
+    unifier = unifiers_lia.SpecAwareLIAUnifier(None, term_solver, synth_funs, syn_ctx, specification)
+    solver = solvers.Solver(syn_ctx)
+    solutions = solver.solve(
+            enumerators.NullGeneratorFactory(),
+            term_solver,
+            unifier,
+            verifier,
+            verify_term_solve=True
+            )
+    solution = next(solutions)
+    final_solution = rewrite_solution(synth_funs, solution, reverse_mapping=None)
+
+    final_solution = massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging)
+    if final_solution is None:
+        return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
+
+    return final_solution
+
+def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
+    if len(synth_funs) > 1:
+        print("Using memoryless esolver: Multi fun Single invocation")
+        return esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode='Classic')
+    synth_fun = synth_funs[0]
+    grammar = grammar_map[synth_fun]
+
+    ans = grammar.decompose(syn_ctx.macro_instantiator)
+    if ans == None:
+        print("Using classic esolver: Grammar not decomposable")
+        return esolver(syn_ctx, [synth_fun], {synth_fun:grammar}, specification, verifier, mode='Classic')
+
+    term_grammar, pred_grammar, reverse_mapping = ans
+    generator_factory = enumerators.RecursiveGeneratorFactory()
+    term_generator = term_grammar.to_generator(generator_factory)
+    pred_generator = pred_grammar.to_generator(generator_factory)
+    solver = solvers.Solver(syn_ctx)
+    term_solver = termsolvers.PointlessTermSolver(specification.term_signature, term_generator)
+    unifier = unifiers.PointlessEnumDTUnifier(pred_generator, term_solver, synth_fun, syn_ctx)
+    solver = solvers.Solver(syn_ctx)
+    # solution = solvers._do_solve(solver, generator_factory, term_solver, unifier, verifier, False)
+    solutions = solver.solve(
+            generator_factory,
+            term_solver,
+            unifier,
+            verifier,
+            verify_term_solve=True
+            )
+    solution = next(solutions)
+    final_solution = rewrite_solution([synth_fun], solution, reverse_mapping)
     return final_solution
 
 def esolver(syn_ctx, synth_funs, grammar_map, specification, verifier, mode):
@@ -290,7 +382,7 @@ def make_solver(file_sexp):
     specification, verifier = make_specification(synth_funs, theory, syn_ctx, constraints)
 
     if expr_transforms.is_single_invocation(constraints, theory, syn_ctx):
-        final_solutions = make_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
+        final_solutions = unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
     else:
         if len(synth_funs) > 1:
             print("Using memoryless esolver: Multi fun Multi invocation")
@@ -303,7 +395,8 @@ def make_solver(file_sexp):
         fp_string = ' '.join([ '(%s %s)' % 
             (v.variable_info.variable_name, v.variable_info.variable_type.print_string()) 
             for v in sf.get_named_vars() ])
-        print('(define-fun %s (%s) %s\n     %s)' % (sf.function_name, fp_string, sf.range_type.print_string(), exprs.expression_to_string(sol)))
+        print('(define-fun %s (%s) %s\n     %s)' % (sf.function_name, fp_string, sf.range_type.print_string(), exprs.expression_to_string(sol)),
+                flush=True)
 
 # Tests:
 

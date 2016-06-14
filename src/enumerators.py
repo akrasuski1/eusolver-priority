@@ -477,7 +477,7 @@ class BunchedGenerator(GeneratorBase):
                     # can be bump up the subgenerator size?
                     if (current_size < max_size):
                         current_size += 1
-                        print(current_size)
+                        # print(current_size)
                         sub_generator_object.set_size(current_size)
                         sub_generator_state = sub_generator_object.generate()
                         continue

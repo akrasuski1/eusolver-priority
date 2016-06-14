@@ -106,7 +106,7 @@ def collect_terms(expr):
             ret[v] = - i
         return ret
     else:
-        # print(_expr_to_str(expr))
+        print(_expr_to_str(expr))
         raise NotImplementedError
 
 def solve_inequalities(model, outvars, inequalities, syn_ctx):
@@ -135,8 +135,20 @@ def solve_inequalities(model, outvars, inequalities, syn_ctx):
                 sols_dict[outvar] = t
                 return [ sols_dict[o] for o in outvars ]
 
-    # Otherwise, need to do some complicated stuff
-    raise NotImplementedError
+    # Otherwise, just pick the first outvar
+    [t] = solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx)
+    rest_ineqs = [ exprs.substitute(e, outvar, t) for e in inequalities if e != ineq ]
+    rest_outvars = [ o for o in outvars if o != outvar ]
+    rest_sol = solve_inequalities(model, rest_outvars, rest_ineqs, syn_ctx)
+    sols = list(zip(rest_outvars, rest_sol))
+    while True:
+        tp = exprs.substitute_all(t, sols)
+        if tp == t:
+            break
+        t = tp
+    sols_dict = dict(sols)
+    sols_dict[outvar] = t
+    return [ sols_dict[o] for o in outvars ]
 
 def solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx):
     if len(inequalities) == 0:
@@ -355,7 +367,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                 new_terms.append(exprs.substitute_all(term, 
                     list(zip(self.spec.intro_vars, self.spec.formal_params[sf]))))
             terms = new_terms
-            print([ _expr_to_str(t) for t in terms ])
+            # print([ _expr_to_str(t) for t in terms ])
 
             sig = self.signature_factory()
             if len(self.synth_funs) > 1:

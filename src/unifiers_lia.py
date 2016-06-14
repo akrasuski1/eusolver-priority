@@ -40,6 +40,7 @@
 
 from unifiers import *
 from eusolver import BitSet
+import semantics_core
 import evaluation
 
 _expr_to_str = exprs.expression_to_string
@@ -47,7 +48,7 @@ _expr_to_str = exprs.expression_to_string
 _true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
 _false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
 
-def simplify_inequality(variables, inequality):
+def simplify_inequality(inequality):
     op = inequality.function_info.function_name
     arg1, arg2 = inequality.children
     if op in [ 'eq', '=', '<=', 'le', '>=', 'ge' ]:
@@ -65,7 +66,7 @@ def _filter_to_intro_vars(clauses, intro_vars):
                 if v not in intro_vars:
                     break
             else:
-                new_clause.append(simplify_inequality(intro_vars, disjunct))
+                new_clause.append(simplify_inequality(disjunct))
         only_intro_var_clauses.append(new_clause)
     return only_intro_var_clauses
 
@@ -78,7 +79,7 @@ def _clauses_to_expr(syn_ctx, clauses):
                 clause_expr_children = [_true_expr]
                 break
             elif disjunct != _false_expr:
-                clause_expr_children.append(disjunct)
+                clause_expr_children.append(simplify_inequality(disjunct))
 
         if len(clause_expr_children) > 1:
             clause_exprs.append(syn_ctx.make_function_expr('or', *clause_expr_children))
@@ -96,19 +97,17 @@ def _clauses_to_expr(syn_ctx, clauses):
 
 
 class SpecAwareLIAUnifier(UnifierInterface):
-    def __init__(self, pred_generator, term_solver, synth_fun, syn_ctx, spec):
+    def __init__(self, pred_generator, term_solver, synth_funs, syn_ctx, spec):
         self.pred_generator = pred_generator
         self.term_solver = term_solver
         self.points = []
         self.spec = spec
-        self.synth_fun = synth_fun 
+        self.synth_funs = synth_funs
         self.syn_ctx = syn_ctx
 
         self.eval_ctx = evaluation.EvaluationContext()
         self.clauses = spec.get_canon_clauses()
         self.intro_vars = spec.get_intro_vars()
-        self.formal_params = [ exprs.FormalParameterExpression(self.synth_fun, exprtypes.IntType(), i) 
-                for i in range(len(self.intro_vars)) ]
 
     def add_points(self, points):
         self.points.extend(points)
@@ -130,11 +129,11 @@ class SpecAwareLIAUnifier(UnifierInterface):
         relevent_points = [ p for (i,p) in enumerate(self.points) if (i in uncovered_sig) and (i in coverable_sig) ]
         eval_ctx = self.eval_ctx
 
-        app = exprs.find_application(self.spec.get_canonical_specification(), self.synth_fun.function_name)
-        actual_parameters = app.children
-        formal_parameters = exprs.get_all_formal_parameters(term)
-        substitute_pairs = [ (f, actual_parameters[f.parameter_position]) for f in formal_parameters ]
-        term_sub = exprs.substitute_all(term, substitute_pairs)
+        # Change term to use introvars
+        for sf in self.synth_funs:
+            act_params = self.spec.canon_application[sf].children
+            form_params = self.spec.formal_params[sf]
+            term_sub = exprs.substitute_all(term, list(zip(form_params, act_params)))
 
         def eval_on_relevent_points(pred):
             ret = []
@@ -148,7 +147,12 @@ class SpecAwareLIAUnifier(UnifierInterface):
         for clause in self.clauses:
             curr_clause = []
             for disjunct in clause:
-                curr_disjunct = exprs.substitute(disjunct, app, term_sub)
+                curr_disjunct = disjunct
+                if len(self.synth_funs) == 1:
+                    curr_disjunct = exprs.substitute(disjunct, self.spec.canon_application[self.synth_funs[0]], term_sub)
+                else:
+                    sub_pairs = list(zip( [ self.spec.canon_application[sf] for sf in self.synth_funs ], term_sub.children))
+                    curr_disjunct = exprs.substitute_all(disjunct, sub_pairs)
                 curr_clause.append(curr_disjunct)
             curr_clauses.append(curr_clause)
 
@@ -158,17 +162,25 @@ class SpecAwareLIAUnifier(UnifierInterface):
         else:
             # Do the only_intro_var_clauses cover all relevent points?
             some_point_uncovered = False
+            good_clauses = [] # If there are single disjuncts that cover everything
             for oivc in only_intro_var_clauses:
                 sig = set()
+                good_clause = []
                 for d in oivc:
-                    for i, t in enumerate(eval_on_relevent_points(d)):
+                    s = eval_on_relevent_points(d)
+                    if all(s):
+                        good_clause.append(d)
+                    for i, t in enumerate(s):
                         if t:
                             sig.add(i)
+                good_clauses.append(good_clause)
                 if len(sig) != len(relevent_points):
                     some_point_uncovered = True
                     break
             if some_point_uncovered:
                 raise NotImplementedError
+            elif all([ len(gc) > 0 for gc in good_clauses ]):
+                pre_cond = _clauses_to_expr(self.syn_ctx, good_clauses)
             else:
                 pre_cond = _clauses_to_expr(self.syn_ctx, only_intro_var_clauses)
 
@@ -179,13 +191,24 @@ class SpecAwareLIAUnifier(UnifierInterface):
 
     def _pred_term_list_to_expr(self, pred_terms):
         if len(pred_terms) == 1:
-            return pred_terms[0][1] # Just return the term
+            if len(self.synth_funs) == 1:
+                return pred_terms[0][1] # Just return the term
+            else:
+                return list(pred_terms[0][1].children)
         else:
-            return self.syn_ctx.make_function_expr(
-                    'ite',
-                    pred_terms[0][0],
-                    pred_terms[0][1],
-                    self._pred_term_list_to_expr(pred_terms[1:]))
+            if len(self.synth_funs) == 1:
+                return self.syn_ctx.make_function_expr(
+                        'ite',
+                        pred_terms[0][0],
+                        pred_terms[0][1],
+                        self._pred_term_list_to_expr(pred_terms[1:]))
+            else:
+                conds = [ pred_terms[0][0] ] * len(self.synth_funs)
+                thens = list(pred_terms[0][1].children)
+                elses = self._pred_term_list_to_expr(pred_terms[1:])
+                return [ self.syn_ctx.make_function_expr('ite', c, t, e)
+                        for (c,t,e) in zip(conds, thens, elses) ]
+
 
     def get_num_distinct_preds(self):
         return 0
@@ -232,6 +255,18 @@ class SpecAwareLIAUnifier(UnifierInterface):
         # for pred, term in pred_terms:
         #     print(_expr_to_str(pred), ' ====> ', _expr_to_str(term))
         e = self._pred_term_list_to_expr(pred_terms)
-        e = exprs.substitute_all(e, list(zip(self.intro_vars, self.formal_params)))
+        if len(self.synth_funs) == 1:
+            act_params = self.spec.canon_application[self.synth_funs[0]].children
+            form_params = self.spec.formal_params[self.synth_funs[0]]
+            e = exprs.substitute_all(e, list(zip(act_params, form_params)))
+        else:
+            es = []
+            for ep, sf in zip(e, self.synth_funs):
+                act_params = self.spec.canon_application[sf].children
+                form_params = self.spec.formal_params[sf]
+                es.append(exprs.substitute_all(ep, list(zip(act_params, form_params))))
+            domain_types = tuple([exprtypes.IntType()] * len(self.synth_funs))
+            e = exprs.FunctionExpression(semantics_core.CommaFunction(domain_types),
+                    tuple(es))
         yield ('TERM', e)
 

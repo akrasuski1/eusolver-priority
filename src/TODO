@@ -7,9 +7,7 @@ Important stuff
 		Which parts of the point should be used for the signature
 	
 	LIA subgrammars
-	LIA specific termsolver, unifiers fix and extend to multi function single invocation
-
-Add constant +, - : Only one benchmark where its important
+		Targetting array_sum and max
 
 --- Probably not for competition
 
@@ -39,3 +37,4 @@ Should be easy:
 		BV - Not many benchmarks of this sort
 		SLIA - Is it even allowed?
 
+Add constant +, - : Only one benchmark where its important

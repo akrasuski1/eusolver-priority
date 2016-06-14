@@ -172,7 +172,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         self.bunch_generator_state = self.bunch_generator.generate()
 
 
-    def _default_solve(self):
+    def _default_solve(self, restart_everytime):
         num_points = len(self.points)
         if (num_points == 0): # No points, any term will do
             return self._trivial_solve()
@@ -182,7 +182,8 @@ class EnumerativeTermSolverBase(TermSolverInterface):
                 else check_one_term_sufficiency
 
         signature_to_term = self.signature_to_term
-        self.restart_bunched_generator()
+        if restart_everytime or self.bunch_generator is None:
+            self.restart_bunched_generator()
         while (not stopping_condition(signature_to_term, num_points)):
             success = self.generate_more_terms()
             if not success:
@@ -232,7 +233,10 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
 
     def solve(self):
         self.monotonic_expr_id = 0
-        return self._default_solve()
+        if self.one_term_coverage:
+            return self._default_solve(restart_everytime=False)
+        else:
+            return self._default_solve(restart_everytime=True)
 
 
 class PointDistinctTermSolver(EnumerativeTermSolverBase):
@@ -248,7 +252,7 @@ class PointDistinctTermSolver(EnumerativeTermSolverBase):
         return self._default_generate_more_terms(transform_term=None)
 
     def solve(self):
-        return self._default_solve()
+        return self._default_solve(restart_everytime=True)
 
 # TermSolver = PointlessTermSolver
 # TermSolver = PointDistinctTermSolver

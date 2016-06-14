@@ -253,6 +253,86 @@ def make_default_grammar(syn_ctx, theory, return_type, args):
     else:
         raise NotImplementedError
 
+def identify_lia_grammars(synth_fun, grammar):
+    # We want to identify difference bounds, octogons, and full linear arithmetic
+
+    # We check the following:
+    # Start rewrites to variables, at least 0,1, Start + Start, Start - Start, ite (Cond) Start Start
+    # Cond rewrites to Start <= Start, Start < Start, etc
+    
+    start = grammar.start
+    # Can start rewrite to all arguments?
+    expr_rewrites = []
+    func_rewrites = []
+    for rewrite in grammar.rules[start]:
+        if type(rewrite) == ExpressionRewrite:
+            expr_rewrites.append(rewrite)
+        elif type(rewrite) == FunctionRewrite:
+            func_rewrites.append(rewrite)
+        else:
+            # We really should be doing this transitively
+            pass
+
+    formal_params = set()
+    consts = set()
+    for er in expr_rewrites:
+        expr = er.expr
+        if exprs.is_formal_parameter_expression(expr):
+            formal_params.add(expr)
+        elif exprs.is_constant_expression(expr):
+            consts.add(expr.value_object.value_object)
+    if len(formal_params) != len(synth_fun.domain_types):
+        return None
+    if not (0 in consts) or not (1 in consts):
+        return None
+
+    funcs = set()
+    has_ite = False
+    ite_cond_nt = False
+    for fr in func_rewrites:
+        if ( len(fr.children) == 2 and
+                all( [ type(c) == NTRewrite for c in fr.children ]) and
+                all( [ c.non_terminal == start for c in fr.children ])):
+            funcs.add(fr.function_info.function_name)
+
+        if ( fr.function_info.function_name == 'ite' and 
+                all( [ type(c) == NTRewrite for c in fr.children ]) and
+                all( [ c.non_terminal == start for c in fr.children[1:] ])):
+            has_ite = True
+            ite_cond_nt = fr.children[0].non_terminal
+
+    if ('+' not in funcs or not has_ite):
+        return None
+
+    comparators = set()
+    combination_funcs = set()
+    for r in grammar.rules[ite_cond_nt]:
+        if type(r) != FunctionRewrite:
+            continue
+        if (r.function_info.function_name in [ 'and', 'or', 'not' ] and
+                all([ type(c) == NTRewrite for c in r.children ]) and
+                all([ c.non_terminal == ite_cond_nt for c in r.children])):
+            combination_funcs.add(r.function_info.function_name)
+        if (r.function_info.function_name in [ '<=', '<', '>=', '>', '=' ] and
+                all([ type(c) == NTRewrite for c in r.children ]) and
+                all([ c.non_terminal == start for c in r.children])):
+            comparators.add(r.function_info.function_name)
+    if '<=' not in comparators and '<' not in comparators:
+        return None
+
+    # Term stuff
+    boolean_combs = ('and' in combination_funcs) and ('or' in combination_funcs) and ('not' in combination_funcs)
+    negatives = ('-' in funcs)
+    constant_multiplication = ('*' in funcs)
+    div = ('div' in funcs) 
+    mod = ('mod' in funcs)
+
+    return (boolean_combs, comparators, consts, negatives, constant_multiplication, div, mod)
+
+
+
+
+
 
 class Grammar(object):
     def __init__(self, non_terminals, nt_type, rules, start='Start'):
