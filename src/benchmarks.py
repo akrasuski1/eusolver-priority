@@ -44,6 +44,7 @@ import expr_transforms
 import random
 import verifiers
 import termsolvers
+import lia_massager
 import termsolvers_lia
 import specifications
 import unifiers
@@ -194,76 +195,8 @@ def full_lia_grammars(grammar_map):
                 massaging[sf] = ans
                 full = True
         if not full:
-            return False, NOne
+            return False, None
     return True, massaging
-
-def massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging):
-    def make_constant(c):
-        if c == 1:
-            return exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType()))
-        else:
-            return syn_ctx.make_function_expr('+', exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType())),
-                    make_constant(c - 1))
-
-    def get_terms(e):
-        if not exprs.is_application_of(e, 'ite'):
-            return [e]
-        else:
-            ret = []
-            ret.append(get_terms(e.children[1]))
-            ret.append(get_terms(e.children[2]))
-            return ret
-
-    def correct_term(term, neg, consts, constant_multiplication):
-        term = 
-
-    try:
-        new_final_solution = []
-        for sf, sol in zip(synth_funs, final_solution):
-            if sf not in massaging:
-                new_final_solution.append(sol)
-                continue
-
-            (boolean_combs, comparators, consts, negatives, constant_multiplication, div, mod) = massaging[sf]
-
-            # Don't try to rewrite div's and mod's
-            # It is futile
-            if not div and exprs.find_application(sol, 'div') != None:
-                return None
-            if not mod and exprs.find_application(sol, 'mod') != None:
-                return None
-
-            terms = get_terms(sol)
-            for term in terms:
-                termp = correct_term(term, negatives, consts, constant_multiplication)
-                sol = exprs.substitute(sol, term, termp)
-
-            used_consts = set([ c.value_object.value_object for c in exprs.get_all_constants(sol) ])
-            consts_okay = False
-            if used_consts.issubset(consts):
-                consts_okay = True
-            mul_okay = False
-            if exprs.find_application(sol, '*') == None or constant_multiplication:
-                mul_okay = True
-
-            if negatives and mul_okay and consts_okay:
-                new_final_solution.append(sol)
-                continue
-
-            raise NotImplementedError
-            # Check terms
-            # consts, negatives, const-multiplication, 
-            for c in exprs.get_all_constants(sol):
-                if c.value_object.value_object not in consts:
-                    if c.value_object.value_object >= 0:
-                        replacement = make_constant(c.value_object.value_object)
-
-
-            # Replace constants with addition of 1's
-        return new_final_solution
-    except:
-        raise
-        # return None
 
 def unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
     if theory != 'LIA' and any([sf.range_type != exprtypes.IntType() for sf in synth_funs ]):
@@ -285,9 +218,9 @@ def unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, 
             )
     solution = next(solutions)
     final_solution = rewrite_solution(synth_funs, solution, reverse_mapping=None)
-
-    final_solution = massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging)
+    final_solution = lia_massager.massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging)
     if final_solution is None:
+        print("Using standard solver")
         return std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier)
 
     return final_solution

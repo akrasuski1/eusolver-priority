@@ -220,13 +220,16 @@ def substitute(expr, old_term, new_term):
 def substitute_all(expr, substitute_pairs):
     for old,new in substitute_pairs:
         if expr == old:
-            return new
-    if (expr.expr_kind == _function_expression):
-        subst_children = [substitute_all(x, substitute_pairs)
-                          for x in expr.children]
-        return FunctionExpression(expr.function_info, tuple(subst_children))
+            ret = new
+            break
     else:
-        return expr
+        if (expr.expr_kind == _function_expression):
+            subst_children = [substitute_all(x, substitute_pairs)
+                    for x in expr.children]
+            ret = FunctionExpression(expr.function_info, tuple(subst_children))
+        else:
+            ret = expr
+    return ret
 
 def find_all_applications(expr, function_name):
     ret = []
