@@ -20,10 +20,6 @@ LIA optimizations
 All grammar features
 	Variable, InputVariable, LocalVariable
 
-_--- SYGUS 2015 errors
-
-../benchmarks/SyGuS-COMP15/GENERAL-Track/seven_three_d1.sl has spurious variables
-
 Separate multiple function synthesis if constraints are disjoint
 
 Change single point invocation meaning
