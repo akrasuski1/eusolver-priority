@@ -47,7 +47,7 @@ fi
 
 echo "Copying test benchmark" && cp "$TESTBENCHMARK" "$STAREXECDIR"/bin
 
-cat > $STAREXECDIR/starexec_build << "EOF"
+cat > $STAREXECDIR/starexec_build << EOF
 
 #!/bin/bash
 
@@ -70,7 +70,7 @@ cd ..
 
 cd ..
 
-cd bin && ./starexec_run_default icfp_103_10.sl
+cd bin && ./starexec_run_default `basename "$TESTBENCHMARK"`
 
 EOF
 
@@ -86,7 +86,7 @@ else
 fi
 EOF
 
-cat > "$STAREXECDIR"/starexec_description.txt << "EOF"
+cat > "$STAREXECDIR"/starexec_description.txt << EOF
 Solver combining enumerative and unification synthesis strategies
 EOF
 
