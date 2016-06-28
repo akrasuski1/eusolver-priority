@@ -1,11 +1,6 @@
-Testing -- 
-	strings benchmarks
-	test driver
+Clean up all the messy LIA code from just before SyGuS competition deadline
 
-Important stuff
-	Point distinct enumerator for multiple function multiple invocations?
-
---- Probably not for competition
+Point distinct enumerator for multiple function multiple invocations?
 
 Grammar pruning - done for commutativity, probably not associativity till after competition
 
