@@ -12,7 +12,7 @@ PYTHONURL=https://www.python.org/ftp/python/3.5.1/Python-3.5.1.tgz
 TESTBENCHMARK=benchmarks/icfp/icfp_103_10.sl 
 
 echo "Removing any existing directory $STAREXECDIR" && rm -rf "$STAREXECDIR"
-echo "Creating directory structure for $STAREXECDIR" && mkdir -p "$STAREXECDIR/"{bin,lib,thirdparty}
+echo "Creating directory structure for $STAREXECDIR" && mkdir -p "$STAREXECDIR/"{bin,thirdparty}
 
 mkdir -p "$TEMPDIR"
 echo "Cloning repo git@bitbucket.org:abhishekudupa/eusolver.git" && git clone -q --recursive "$GIT_REPO" "$TEMPDIR" 2>/dev/null
