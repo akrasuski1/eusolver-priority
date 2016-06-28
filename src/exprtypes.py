@@ -125,7 +125,7 @@ class _StringType(TypeBase):
         return smt_context_object.make_string_sort()
 
     def print_string(self):
-        return 'StringType'
+        return 'String'
 
 _string_type_instance = _StringType()
 
