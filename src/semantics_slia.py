@@ -84,7 +84,7 @@ class Substr(InterpretedFunctionBase):
                 (exprtypes.StringType(), exprtypes.IntType(), exprtypes.IntType()),
                 exprtypes.StringType())
         # self.smt_function = z3.Extract
-        self.eval_children = lambda a,b,c: a[b:(c+b)] if 0 <= b and len(a) > (c+b) > b else ''
+        self.eval_children = lambda a,b,c: a[b:(c+b)] if 0 <= b and len(a) >= (c+b) >= b else ''
 
 class StrLen(InterpretedFunctionBase):
     def __init__(self):
@@ -102,8 +102,10 @@ class StrToInt(InterpretedFunctionBase):
         # self.smt_function = z3.Stoi
         def eval_c(a):
             try:
-                ret = int(a)
-                return ret if ret > 0 else -1
+                if all(map(lambda x: '0' <= x <= '9', a)):
+                    return int(a)
+                else:
+                    return -1
             except ValueError:
                 return -1
         self.eval_children = eval_c
