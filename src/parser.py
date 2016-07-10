@@ -354,7 +354,7 @@ def sexp_to_grammar(arg_vars, grammar_sexp, synth_fun, syn_ctx):
             lvs = [ v for v in let_bound_vars if 'ph_' + v.variable_info.variable_name == phlb.variable_info.variable_name ]
             assert len(lvs) > 0
             for rewrite in rewrites:
-                rewrite.substitute(phlb, lvs[0])
+                rewrite.substitute_expr(phlb, lvs[0])
         rules[nt] = rewrites
     return grammars.Grammar(non_terminals, nt_type, rules)
 

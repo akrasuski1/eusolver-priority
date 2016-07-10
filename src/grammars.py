@@ -60,7 +60,10 @@ class RewriteBase(object):
     def rename_nt(self, old_name, new_name):
         raise basetypes.AbstractMethodError('RewriteBase.rename_nt()')
 
-    def substitute(self, old_var, new_var):
+    def substitute_expr(self, old, new):
+        raise basetypes.AbstractMethodError('RewriteBase.substitute_expr()')
+
+    def expand_one(self, grammar):
         raise basetypes.AbstractMethodError('RewriteBase.substitute()')
 
 class ExpressionRewrite(RewriteBase):
@@ -79,8 +82,8 @@ class ExpressionRewrite(RewriteBase):
             return other.expr == self.expr
         return False
 
-    def substitute(self, old_var, new_var):
-        self.expr = exprs.substitute(self.expr, old_var, new_var)
+    def substitute_expr(self, old, new):
+        self.expr = exprs.substitute_expr(self.expr, old, new)
 
 class NTRewrite(RewriteBase):
     def __init__(self, non_terminal, nt_type):
@@ -104,9 +107,8 @@ class NTRewrite(RewriteBase):
             return other.non_terminal == self.non_terminal
         return False
 
-    def substitute(self, old_var, new_var):
+    def substitute_expr(self, old, new):
         pass
-
 
 class FunctionRewrite(RewriteBase):
     def __init__(self, function_info, *children):
@@ -132,9 +134,9 @@ class FunctionRewrite(RewriteBase):
                     all(c1 == c2 for (c1, c2) in zip(self.children, other.children)))
         return False
 
-    def substitute(self, old_var, new_var):
+    def substitute_expr(self, old, new):
         for child in self.children:
-            child.substitute(old_var, new_var)
+            child.substitute_expr(old, new)
 
     def to_generator(self, place_holders):
         ph_vars, nts, expr_template = self._to_template_expr()
