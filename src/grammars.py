@@ -66,10 +66,20 @@ class RewriteBase(object):
     def expand_one(self, grammar):
         raise basetypes.AbstractMethodError('RewriteBase.substitute()')
 
+    def str(self):
+        raise basetypes.AbstractMethodError('RewriteBase.str()')
+
+    def __str__(self):
+        return self.str()
+
+
 class ExpressionRewrite(RewriteBase):
     def __init__(self, expr):
         super().__init__(exprs.get_expression_type(expr))
         self.expr = expr
+
+    def str(self):
+        return exprs.expression_to_string(self.expr)
 
     def _to_template_expr(self):
         return [], [], self.expr
@@ -89,6 +99,9 @@ class NTRewrite(RewriteBase):
     def __init__(self, non_terminal, nt_type):
         super().__init__(nt_type)
         self.non_terminal = non_terminal
+
+    def str(self):
+        return self.non_terminal
 
     def _to_template_expr(self):
         import random
@@ -115,6 +128,10 @@ class FunctionRewrite(RewriteBase):
         super().__init__(function_info.range_type)
         self.function_info = function_info
         self.children = children
+
+    def str(self):
+        return '(' + self.function_info.function_name + ' ' + \
+            ' '.join([ x.str() for x in self.children ]) + ')'
 
     def _to_template_expr(self):
         ph_vars = []
@@ -249,7 +266,74 @@ def make_default_grammar(syn_ctx, theory, return_type, args):
         ret.from_default = True
         return ret
     elif theory == 'BV':
-        raise NotImplementedError
+        import semantics_bv
+        import semantics_core
+        print("ARSAYS: Default bit-vec grammar shouldn't be used!")
+        (start, start_bool) = ('Start', 'StartBool')
+        bv_size = 64
+        nts = [ start, start_bool ]
+        (bv_type, bool_type) = (exprtypes.BitVectorType(bv_size), exprtypes.BoolType())
+        nt_type = { start:bv_type, start_bool:bool_type }
+        rules = { start:[], start_bool:[] }
+
+        ntr_start = NTRewrite(start, bv_type)
+        ntr_start_bool = NTRewrite(start_bool, bool_type)
+
+        rules[start].extend(map(
+            lambda x: ExpressionRewrite(exprs.ConstantExpression(exprs.Value(x, bv_type))),
+            [0, 1]))
+
+        for func in [
+                semantics_bv.BVNot(bv_size),
+                semantics_bv.BVAdd(bv_size),
+                semantics_bv.BVAnd(bv_size),
+                semantics_bv.BVOr(bv_size),
+                semantics_bv.BVNeg(bv_size),
+                semantics_bv.BVAdd(bv_size),
+                semantics_bv.BVMul(bv_size),
+                semantics_bv.BVSub(bv_size),
+                semantics_bv.BVUDiv(bv_size),
+                semantics_bv.BVSDiv(bv_size),
+                semantics_bv.BVSRem(bv_size),
+                semantics_bv.BVURem(bv_size),
+                semantics_bv.BVShl(bv_size),
+                semantics_bv.BVLShR(bv_size),
+                semantics_bv.BVAShR(bv_size),
+                semantics_bv.BVUlt(bv_size),
+                semantics_bv.BVUle(bv_size),
+                semantics_bv.BVUge(bv_size),
+                semantics_bv.BVUgt(bv_size),
+                semantics_bv.BVSle(bv_size),
+                semantics_bv.BVSlt(bv_size),
+                semantics_bv.BVSge(bv_size),
+                semantics_bv.BVSgt(bv_size),
+                semantics_bv.BVXor(bv_size),
+                semantics_bv.BVXNor(bv_size),
+                semantics_bv.BVNand(bv_size),
+                semantics_bv.BVNor(bv_size),
+                # semantics_bv.BVComp(bv_size)
+                semantics_core.EqFunction(bv_type)
+                ]:
+            assert all([ t == bv_type for t in func.domain_types ])
+            args = [ ntr_start ] * len(func.domain_types)
+
+            if func.range_type == bv_type:
+                rules[start].append(FunctionRewrite(func, *args))
+            elif func.range_type == bool_type:
+                rules[start_bool].append(FunctionRewrite(func, *args))
+            else:
+                assert False
+        ite_func = semantics_core.IteFunction(bv_type)
+        rules[start].append(FunctionRewrite(ite_func, ntr_start_bool, ntr_start, ntr_start))
+
+        if return_type == bv_type:
+            ret = Grammar(nts, nt_type, rules, start)
+        elif return_type == bool_type:
+            ret = Grammar(nts, nt_type, rules, start_bool)
+        else:
+            raise NotImplementedError
+        ret.from_default = True
+        return ret
     elif theory == 'SLIA':
         raise NotImplementedError
     else:
