@@ -268,7 +268,7 @@ class BVSle(InterpretedFunctionBase):
         super().__init__('bvsle', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BoolType())
-        self.smt_function = z3.SLE
+        self.smt_function = lambda a, b : a <= b
         self.eval_children = lambda a, b : a.sle(b)
 
 class BVSlt(InterpretedFunctionBase):
@@ -276,7 +276,7 @@ class BVSlt(InterpretedFunctionBase):
         super().__init__('bvslt', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BoolType())
-        self.smt_function = z3.SLT
+        self.smt_function = lambda a, b : a < b
         self.eval_children = lambda a, b : a.slt(b)
 
 class BVSge(InterpretedFunctionBase):
@@ -284,7 +284,7 @@ class BVSge(InterpretedFunctionBase):
         super().__init__('bvsge', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BoolType())
-        self.smt_function = z3.SGE
+        self.smt_function = lambda a, b : a >= b
         self.eval_children = lambda a, b : a.sge(b)
 
 class BVSgt(InterpretedFunctionBase):
@@ -292,7 +292,7 @@ class BVSgt(InterpretedFunctionBase):
         super().__init__('bvsgt', 2, (exprtypes.BitVectorType(bv_size),
                                      exprtypes.BitVectorType(bv_size)),
                          exprtypes.BoolType())
-        self.smt_function = z3.SGT
+        self.smt_function = lambda a, b : a > b
         self.eval_children = lambda a, b : a.sgt(b)
 
 class BVXor(InterpretedFunctionBase):
