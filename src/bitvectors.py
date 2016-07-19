@@ -119,6 +119,8 @@ class BitVector(object):
         return BitVector(self._to_unsigned(self.value - other.value), self.size)
 
     def __lshift__(self, other):
+        if other.value >= self.size:
+            return BitVector(0, self.size)
         return BitVector(self.value << other.value, self.size)
 
     def _signed_value(self):
