@@ -56,12 +56,9 @@ class BitVector(object):
             raise ArgumentError('Size of BitVector must be greater than 1')
         self.mask = (1 << size) - 1
         self.sign_mask = (1 << (size - 1))
-        self._apply_mask()
+        self.value &= self.mask
         if self.value < 0:
             self.value = self._to_unsigned(self.value) 
-
-    def _apply_mask(self):
-        self.value &= self.mask
 
     def __hash__(self):
         return (hash(self.value) ^ hash(self.size))
@@ -71,9 +68,6 @@ class BitVector(object):
 
     def _is_negative(self):
         return ((self.value & self.sign_mask) != 0)
-
-    def _twos_complement_of_value(self):
-        return (((~self.value) + 1) & self.mask)
 
     def __repr__(self):
         return 'BitVector(0x%X, %d)' % (self.value, self.size)
@@ -94,26 +88,32 @@ class BitVector(object):
 
     def __mul__(self, other):
         val = self.value * other.value
-        val = val % (1 << self.size)
         return BitVector(val, self.size)
 
     def udiv(self, other):
         val = self.value // other.value
-        val = val % (1 << self.size)
         return BitVector(val, self.size)
 
     def urem(self, other):
         val = self.value % other.value
-        val = val % (1 << self.size)
         return BitVector(val, self.size)
 
     def sdiv(self, other):
-        val = self._signed_value() // other._signed_value()
-        return BitVector(val, self.size)
+        a = self._signed_value()
+        b = other._signed_value()
+        val = abs(a) // abs(b)
+        if (a < 0) != (b < 0):
+            return BitVector(self.mask + 1 - val, self.size)
+        else:
+            return BitVector(val, self.size)
 
     def srem(self, other):
-        val = self._signed_value() % other._signed_value()
-        return BitVector(val, self.size)
+        a = self._signed_value()
+        val = abs(a) % abs(other._signed_value())
+        if a < 0:
+            return BitVector(self.mask + 1 - val, self.size)
+        else:
+            return BitVector(val, self.size)
 
     def __sub__(self, other):
         return BitVector(self._to_unsigned(self.value - other.value), self.size)
@@ -125,7 +125,7 @@ class BitVector(object):
 
     def _signed_value(self):
         if self._is_negative():
-            return self.value - (self.mask + 1)
+            return self.value - (1 << self.size)
         else:
             return self.value
 
@@ -133,7 +133,7 @@ class BitVector(object):
         return x if x >= 0 else (self.mask + 1 + x)
 
     def negate(self):
-        return (~self) + BitVector(1, self.size)
+        return BitVector((1 << self.size) - self.value, self.size)
 
     def ule(self, other):
         return self.value <= other.value
@@ -169,9 +169,6 @@ class BitVector(object):
     def __eq__(self, other):
         return (self.value == other.value and self.size == other.size)
 
-    def is_one(self):
-        return (self.value == 1)
-
     def __and__(self, other):
         return BitVector(self.value & other.value, self.size)
 
@@ -196,8 +193,21 @@ def _test_repr_str():
     # print(a.__repr__())
     # print(b._signed_value())
 
+def _test_sdiv():
+    import random
+    size = 32
+
+    trials = 10000
+    for x in range(trials):
+        a = BitVector(random.randint(0, 1 << size), size)
+        b = BitVector(random.randint(0, 1 << size), size)
+        c = a.sdiv(b)
+        print('(assert (= (bvsdiv', a, b, ')', c, '))')
+    print('(check-sat)')
+
 if __name__ == '__main__':
-    _test_repr_str()
+    # _test_repr_str()
+    _test_sdiv()
 
 #
 # bitvectors.py ends here
