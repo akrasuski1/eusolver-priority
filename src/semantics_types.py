@@ -241,12 +241,9 @@ class InterpretedFunctionBase(FunctionBase):
         return self.smt_function(*child_terms)
 
     def evaluate(self, expr_object, eval_context_object):
-        num_children = len(expr_object.children)
         self._evaluate_children(expr_object, eval_context_object)
-        try:
-            res = self.eval_children(*eval_context_object.peek_items(num_children))
-        except:
-            raise
+        num_children = len(expr_object.children)
+        res = self.eval_children(*eval_context_object.peek_items(num_children))
         eval_context_object.pop(num_children)
         eval_context_object.push(res)
 

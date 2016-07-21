@@ -101,6 +101,8 @@ def get_expr_with_id(expr_object, expr_id):
     elif (kind == _function_expression):
         (a, b, c, d) = expr_object
         return _FunctionExpression(a, b, c, expr_id)
+    else:
+        assert False
 
 
 def VariableExpression(variable_info):

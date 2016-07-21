@@ -51,12 +51,18 @@ class Z3SMTContext(object):
     def __init__(self, *args, **kwargs):
         self.context_obj = z3.Context(*args, **kwargs)
         self.interpretation_map = {}
+        self.solvers = []
 
     def ctx(self):
         return self.context_obj
 
     def ref(self):
         return self.context_obj.ref()
+
+    def make_solver(self):
+        ret = z3.Solver(ctx=self.ctx())
+        self.solvers.append(ret)
+        return ret
 
     def interrupt(self):
         self.context_obj.interrupt()

@@ -142,7 +142,7 @@ class MultiPointVerifier(VerifierBase):
         self.synth_funs = syn_ctx.get_synth_funs()
 
         self.smt_ctx = z3smt.Z3SMTContext()
-        self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
+        self.smt_solver = self.smt_ctx.make_solver()
         self.var_info_list = spec.get_point_variables()
 
         var_expr_list = [exprs.VariableExpression(x) for x in self.var_info_list]
@@ -190,7 +190,7 @@ class StdVerifier(VerifierBase):
         self.synth_funs = syn_ctx.get_synth_funs()
 
         self.smt_ctx = z3smt.Z3SMTContext()
-        self.smt_solver = z3.Solver(ctx=self.smt_ctx.ctx())
+        self.smt_solver = self.smt_ctx.make_solver()
 
         # This var_info_list is the order of variables in cex points
         self.var_info_list = spec.get_point_variables()

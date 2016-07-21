@@ -54,17 +54,14 @@ class RewriteBase(object):
     def __init__(self, type):
         self.type = type
 
-    def _to_template_expr(self):
-        raise basetypes.AbstractMethodError('RewriteBase._to_template_expr()')
+    def to_template_expr(self):
+        raise basetypes.AbstractMethodError('RewriteBase.to_template_expr()')
 
     def rename_nt(self, old_name, new_name):
         raise basetypes.AbstractMethodError('RewriteBase.rename_nt()')
 
     def substitute_expr(self, old, new):
         raise basetypes.AbstractMethodError('RewriteBase.substitute_expr()')
-
-    def expand_one(self, grammar):
-        raise basetypes.AbstractMethodError('RewriteBase.substitute()')
 
     def str(self):
         raise basetypes.AbstractMethodError('RewriteBase.str()')
@@ -81,7 +78,7 @@ class ExpressionRewrite(RewriteBase):
     def str(self):
         return exprs.expression_to_string(self.expr)
 
-    def _to_template_expr(self):
+    def to_template_expr(self):
         return [], [], self.expr
 
     def rename_nt(self, old_name, new_name):
@@ -103,7 +100,7 @@ class NTRewrite(RewriteBase):
     def str(self):
         return self.non_terminal
 
-    def _to_template_expr(self):
+    def to_template_expr(self):
         import random
         name = self.non_terminal + '_ph_' + str(random.randint(1, 1000000))
         ph_var = exprs.VariableExpression(exprs.VariableInfo(self.type, name))
@@ -133,12 +130,12 @@ class FunctionRewrite(RewriteBase):
         return '(' + self.function_info.function_name + ' ' + \
             ' '.join([ x.str() for x in self.children ]) + ')'
 
-    def _to_template_expr(self):
+    def to_template_expr(self):
         ph_vars = []
         nts = []
         child_exprs = []
         for child in self.children:
-            curr_ph_vars, curr_nts, child_expr = child._to_template_expr()
+            curr_ph_vars, curr_nts, child_expr = child.to_template_expr()
             ph_vars.extend(curr_ph_vars)
             nts.extend(curr_nts)
             child_exprs.append(child_expr)
@@ -156,7 +153,7 @@ class FunctionRewrite(RewriteBase):
             child.substitute_expr(old, new)
 
     def to_generator(self, place_holders):
-        ph_vars, nts, expr_template = self._to_template_expr()
+        ph_vars, nts, expr_template = self.to_template_expr()
         if len(ph_vars) == 0:
             return enumerators.LeafGenerator([expr_template])
         sub_gens = [ place_holders[_nt_to_generator_name(nt)] for nt in nts ]
@@ -447,7 +444,7 @@ class Grammar(object):
         for nt in self.non_terminals:
             ret = ret + nt + "[" + str(self.nt_type[nt]) + "] ->\n"
             for rule in self.rules[nt]:
-                ph_vars, nts, expr_template = rule._to_template_expr()
+                ph_vars, nts, expr_template = rule.to_template_expr()
                 ret = ret + "\t" + exprs.expression_to_string(expr_template) + "\n"
         return ret
 
@@ -520,7 +517,7 @@ class Grammar(object):
         term_productions = []
         pred_productions = []
         for rewrite in self.rules[start_nt]:
-            ph_vars, nts, orig_expr_template = rewrite._to_template_expr()
+            ph_vars, nts, orig_expr_template = rewrite.to_template_expr()
             ph_var_nt_map = dict(zip(ph_vars, nts))
             expr_template = macro_instantiator.instantiate_all(orig_expr_template)
             ifs = exprs.find_all_applications(expr_template, 'ite')
