@@ -29,6 +29,7 @@
 \usepackage{hyperref}
 \usepackage{marginnote}
 \usepackage{pgfplotstable}
+\usepackage[nomessages]{fp}
 
 \hyphenation{enum-er-at-ive}
 
@@ -131,12 +132,19 @@
 % \newpage
 
 \pagestyle{plain}
-\title{\texorpdfstring{Scaling Enumerative Program Synthesis\\via
-    Divide and Conquer}{Scaling Enumerative Program Synthesis via Divide and Conquer}}
-% \author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
-\author{}
-% \institute{University of Pennsylvania}
-\institute{}
+\title{
+  \texorpdfstring{Scaling Enumerative Program Synthesis\\via
+    Divide and Conquer}{Scaling Enumerative Program Synthesis via Divide and Conquer}
+  \vspace{-2ex}
+  }
+\author{
+  \vspace{-1ex}
+  Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
+% \author{}
+\institute{
+  University of Pennsylvania
+}
+% \institute{}
 \maketitle
 \vspace*{-6ex}
 
@@ -157,23 +165,23 @@
 
   The key idea  is to employ a divide-and-conquer approach by
   separately enumerating (a) smaller expressions that are correct on
-  subsets of inputs, and (b) predicates on inputs that distinguish these
-  subsets.  These smaller expressions and predicates are then combined
+  subsets of inputs, and (b) predicates that distinguish these
+  subsets.  These expressions and predicates are then combined
   using decision trees to obtain an expression that is correct on all
   inputs.  We view the problem of combining expressions and predicates as
   a multi-label decision tree learning problem. We propose a novel
   technique of associating a probability distribution over the set of
   labels that a sample can be labeled with. This enables us to use
-  standard information-gain based heuristics to learn a compact decision
-  tree.
+  standard information-gain based heuristics to learn compact decision
+  trees.
 
   We report a prototype implementation \eusolver. Our tool is able to
   match the running times and the succinctness of solutions of both
-  standard enumerative solver as well as the latest white-box solvers on
+  standard enumerative solver and the latest white-box solvers on
   most benchmarks from the \sygus competition. In the 2016 edition of
   the \sygus competition, \eusolver placed first in the general track
   and the programming-by-examples track, and placed second in the linear
-  integer arithmetic track. 
+  integer arithmetic track.
 \end{abstract}
 
 \section{Introduction}
@@ -345,8 +353,7 @@ most tracks of the 2016 \sygus competition, placing first in the general
 and programming-by-example tracks, and second in the
 linear-integer-arithmetic track.
 In the general and linear-integer-arithmetic tracks, the performance of
-\eusolver is comparable to the state-of-the-art white-box solver
-(CVC4-1.5.1).
+\eusolver is comparable to the state-of-the-art white-box solver.
 However, in the programming-by-example track, \eusolver performs
 exceptionally well, solving $787$ of the $852$ benchmarks, while no
 other tool solved more than $39$.
@@ -1374,24 +1381,53 @@ seconds.
 \pgfplotstableread[row sep=\\,col sep=&]{
   solver & EUSolver & CVC4 & ESolver \\
   Gen. & 206 & 195 & 139 \\
-  LIA & 73 & 72 & 39 \\
+  LIA & 72 & 73 & 39 \\
   PBE & 787 & 39 & 1 \\
 }\solvedData
-\begin{wrapfigure}{l}{0.4\textwidth}%[!t]
+
+\begin{wrapfigure}{l}{0.37\textwidth}%[!t]
 \centering
   \begin{tikzpicture}
     \fontsize{8}{10}\selectfont
     \begin{axis}[
+      axis x line = bottom,
+      axis y line = left,
       ybar,
       ytick align=outside,
-      bar width=0.15cm,
+      enlarge x limits={0.25},
+      bar width=0.25cm,
       width=5cm,
       height=5cm,
       symbolic x coords={Gen.,LIA,PBE},
+      nodes near coords={
+        \tiny
+        \ifnum
+          \coordindex=0
+          \pgfmathparse{(\yvalue / 309) * 100}
+          \pgfmathprintnumber[precision=0]{\pgfmathresult}
+        \else
+          \ifnum
+          \coordindex=1
+          \pgfmathparse{(\yvalue / 73) * 100}
+          \pgfmathprintnumber[precision=0]{\pgfmathresult}
+          \else
+            \ifnum
+            \coordindex=2
+            \pgfmathparse{(\yvalue / 852) * 100}
+            \pgfmathprintnumber[precision=0]{\pgfmathresult}
+            \fi
+          \fi
+        \fi
+        \%
+      },
+      visualization depends on={y \as \yvalue},
+      every node near coord/.append style={rotate=90, anchor=west},
       ]
-      \addplot[color=red,fill=red] table[x=solver,y=EUSolver]{\solvedData};
-      \addplot[color=blue,fill=blue] table[x=solver,y=CVC4]{\solvedData};
-      \addplot[color=green,fill=green] table[x=solver,y=ESolver]{\solvedData};
+
+      \pgfkeys{/tikz/maxbenches/.initial=309}
+      \addplot[ybar,color=red,fill=red] table[x=solver,y=EUSolver]{\solvedData};
+      \addplot[ybar,color=blue,fill=blue] table[x=solver,y=CVC4]{\solvedData};
+      \addplot[ybar,color=black!60!green,fill=black!60!green] table[x=solver,y=ESolver]{\solvedData};
     \end{axis}
   \end{tikzpicture}
   \caption{Number of benchmarks solved per track for \eusolver (red),
@@ -1418,37 +1454,26 @@ improvement in the quality of the solutions generated
 if the algorithm is given an additional (but fixed) time budget?
 \end{inparaenum}
 
-% To compare and contrast the \dcsolve algorithm with contemporary
-% techniques along each of these dimensions,
-% We did not consider the other classes in the general-track \sygus
-% benchmarks because:
-% \begin{inparaenum}[(a)]
-% \item the solutions were not conditional expressions, or
-% \item the benchmarks were not plainly separable, or
-% \item the benchmarks were similar to the ones that we considered.
-% \end{inparaenum}
-
-
 \paragraph{Benchmarks}
 We draw benchmarks from $3$ tracks of \sygus
 competition 2016:
 \footnote{The \sygus competition 2016 included an addition track -- the
-invariant generation track. 
+invariant generation track.
 However, the specifications in this track are not simply separable, and
 \eusolver falls back to the standard enumeration algorithm instead of
 the divide-and-conquer techniques described in this paper.
-}
-\begin{compactitem}[(a)]
+}\\
+\begin{inparaenum}[(a)]
 \item {\em General track.} The general track contains $309$ benchmarks
-  drawn from a wide variety of domains and applications.
+  drawn from a wide variety of domains and applications.\\
 \item {\em Programming-by-example track.} The PBE track contains $852$
   benchmarks where, for each benchmark, the semantic specification is
-  given by a set of input-output examples.
+  given by a set of input-output examples.\\
 \item {\em Linear-integer-arithmetic track.} The LIA track contains $73$
   benchmarks, each over the linear integer arithmetic theory, where the
   grammar is fixed to a standard grammar that generates conditional
   linear arithmetic expressions.
-\end{compactitem}
+\end{inparaenum}
 
 
 \vspace*{-3mm}
@@ -1483,7 +1508,7 @@ solvers:
       ]
       \addplot[mark=.,color=red] table {plots/general_eusolver.dat};
       \addplot[mark=.,color=blue] table {plots/general_cvc4.dat};
-      \addplot[mark=.,color=green] table {plots/general_esolver.dat};
+      \addplot[mark=.,color=black!60!green] table {plots/general_esolver.dat};
     \end{axis}
     %\end{semilogyaxis}
   \end{tikzpicture}
@@ -1548,8 +1573,8 @@ solvers:
 \paragraph{Performance}
 \eusolver was able to solve $206$ of the $309$ benchmarks in the
 general track and $72$ of the $73$ benchmarks in the
-PBE track. 
-CVC4 solves $195$ and $73$ benchmarks in these categories, while 
+PBE track.
+CVC4 solves $195$ and $73$ benchmarks in these categories, while
 \esolver solves $139$ and $34$.
 As Figure~\ref{fig:results} shows, the performance is comparable to both
 CVC4 and \esolver in both tracks, being only marginally slower in
@@ -1609,7 +1634,7 @@ general track.
 possible.
 This shows that the divide-and-conquer approach
 does not significantly sacrifice solution quality for better
-performance. 
+performance.
 
 \begin{wrapfigure}{r}{0.3\textwidth}%[!t]
 \centering
@@ -1635,7 +1660,7 @@ performance.
     \end{loglogaxis}
   \end{tikzpicture}
   \caption{Scatter plot of first vs. minimum size
-    solutions with the anytime extension. Points below $x = y$ 
+    solutions with the anytime extension. Points below $x = y$
     benefit from the anytime extension.}
     \label{fig:anytime_results}
 \vspace*{-2ex}
@@ -1678,7 +1703,7 @@ The \dcsolve algorithm is able to quickly learn compact solutions,
 % for a large fraction of the ICFP benchmarks,
 and generalizes well from input-output examples.
 \item
-The anytime nature of \dcsolve often 
+The anytime nature of \dcsolve often
 reduces the size of the computed solution;
 % by allowing additional execution time.
 \item
@@ -1779,7 +1804,7 @@ algorithm overcomes the shortcomings of a basic enumerative
 algorithm by using enumeration to only learn small expressions which
 are correct on subsets of the inputs. These expressions are then used
 to form a conditional expression using Boolean combinations of
-enumerated predicates using decision trees. 
+enumerated predicates using decision trees.
 We have demonstrated the performance and scalability of the algorithm by
 evaluating it on standard benchmarks, with exceptional performance on
 programming-by-example benchmarks.
