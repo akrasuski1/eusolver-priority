@@ -1,0 +1,38 @@
+Scaling Enumerative Program Synthesis via Divide and Conquer
+============================================================
+
+Given a semantic constraint specified by a logical formula, and
+a syntactic constraint specified by a context-free grammar, the
+Syntax-Guided Synthesis (SyGuS) problem is to find an expression
+that satisfies both the syntactic and semantic constraints.
+An enumerative approach to solve this problem is to systematically
+generate all expressions from the syntactic space with some pruning,
+and has proved to be surprisingly competitive in the newly started
+competition of SyGuS solvers.  It performs well on small to medium sized
+benchmarks, produces succinct expressions, and has the ability to
+generalize from input-output examples.  However, its performance
+degrades drastically with the size of the smallest solution. To overcome
+this limitation, in this paper we propose an alternative approach to
+solve SyGuS instances.
+
+The key idea  is to employ a divide-and-conquer approach by
+separately enumerating (a) smaller expressions that are correct on
+subsets of inputs, and (b) predicates on inputs that distinguish these
+subsets.  These smaller expressions and predicates are then combined
+using decision trees to obtain an expression that is correct on all
+inputs.  We view the problem of combining expressions and predicates as
+a multi-label decision tree learning problem. We propose a novel
+technique of associating a probability distribution over the set of
+labels that a sample can be labeled with. This enables us to use
+standard information-gain based heuristics to learn a compact decision
+tree.
+
+We report a prototype implementation EUSolver. Our tool is able to
+match the running times and the succinctness of solutions of both
+standard enumerative solver as well as the latest white-box solvers on
+most benchmarks from the SyGuS competition. In the 2016 edition of
+the SyGuS competition, EUSolver placed first in the general track
+and the programming-by-examples track, and placed second in the linear
+integer arithmetic track. Further, our solver is able to solve a
+large number of instances from the ICFP class of benchmarks, which
+were previously unsolved by all existing solvers. 

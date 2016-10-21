@@ -1,0 +1,132 @@
+\newpage
+\renewcommand{\thesection}{\appendixname~\Alph{section}}
+\begin{appendices}
+\section{Detailed Experimental Results for the Anytime Extension}
+\label{section:appendix_experimental_results}
+\input{results_anytime_table}
+\input{results_anytime_table_2}
+% \input{results_one_shot_max_table}
+
+\vspace*{-1ex}
+Detailed results of running our solver on the ICFP benchmarks are
+presented in in
+Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}. For
+each benchmark,
+we report
+\begin{inparaenum}[(a)]
+\item the size of the first solution discovered, the time at which it
+was discovered, and the associated decision tree size;
+\item the same details for the minimal solution discovered; and
+\item whether the first solution discovered was itself minimal sized
+  solution.
+\end{inparaenum}
+
+\comment{
+Table~\ref{table:max_results} demonstrates how our algorithm stacks up
+against the state-of-the-art CVC4 solver, when evaluated with the
+``max'' benchmarks, which are described in Section~\ref{sec:evaluation}.
+The columns indicate the sizes of solutions generated, the time to arrive
+at the solution, as well as the number of comparisons in the solution
+obtained by each of the solvers, for different values of the parameter
+$n$, indicated in the first column.
+}
+
+\section{Description of the Enumeration Procedure}
+\label{section:appendix_esolver}
+\begin{algorithm}
+  \begin{algorithmic}[1]
+    \fontsize{8}{10}\selectfont
+    \Require Grammar $\Grammar = \tuple { \NonTerminals, \StartSymbol, \Rules }$ and a set of points $\Points$
+    \Ensure Expressions $\tuple { \Expr_1, \Expr_2, \ldots }$ s.t. $\forall i < j : \vert \Expr_i \vert \leq \vert \Expr_j
+    \vert \wedge \exists \Point \in \Points : \Expr_i[\Point] \neq \Expr_j[\Point]$
+    \ForAll {$\NonTerminal \in \NonTerminals$} $\Productions[\NonTerminals] \gets \emptyset$ \EndFor
+    \ForAll {$(\NonTerminal, \Expr) \in \Rules$}\label{line:enumerate:level_one_iter}
+    \If { $\Expr \in \Theory[\FormalParameters]$ }
+    $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \{ \Expr \}$  \label{line:enumerate:level_one}
+    \EndIf
+    \EndFor
+    \State $ \Size \gets 1 $
+    \While { $\True$ }
+    \ForAll {$(\NonTerminal, \Expr) \in \Rules$}
+    \State $(\NonTerminal_1, \ldots, \NonTerminal_n) \gets \mbox{List of non-terminals occurring in $\Expr$ }$
+    \ForAll { $(\Expr_1, \ldots, \Expr_n) \in \Productions[\NonTerminal_1] \times \cdots \times \Productions[\NonTerminal_n]$ }
+    \State $\Expr^* \gets \Expr[\Expr_1/\NonTerminal_1,\ldots,\NonTerminal_n/\Expr_n]$
+    \If { $\vert \Expr^* \vert \leq \Size \wedge \forall \Expr' \in
+      \Productions[\NonTerminal] . \exists \Point \in \Points :
+    \Expr'[\Point] \neq \Expr^*[\Point] $ }
+    \State $\Productions[\NonTerminal] \gets \Productions[\NonTerminal] \cup \Expr^*$
+    \If { $\NonTerminal = \StartSymbol$ } \textbf{yield} $\Expr^*$ \EndIf
+    \EndIf
+    \EndFor
+    \EndFor
+    \State $\Size \gets \Size + 1$
+    \EndWhile
+  \end{algorithmic}
+  \caption{Enumerating distinct expressions from a grammar}
+  \label{algo:enumerate}
+\end{algorithm}
+
+Algorithm~\ref{algo:enumerate} describes the \textsc{enumerate}
+algorithm referred to in Section~\ref{sec:enumeration}. We continue to
+use the same notation here that was introduced in Section~\ref{sec:enumeration}.
+The \textsc{enumerate} procedure maintains a map $\Productions : \NonTerminals \to
+\Powerset{\Theory[\FormalParameters]}$ from non-terminals to
+expressions they can produce.
+The invariant maintained by the procedure is that every pair of
+expressions in $\Productions[\NonTerminal]$ is distinct on $\Points$.
+
+The algorithm starts by first accumulating into
+$\Productions[\NonTerminal]$ the expressions that can be produced from
+$\NonTerminal$ in one step
+(lines~\ref{line:enumerate:level_one_iter}-\ref{line:enumerate:level_one}).
+Then, for each possible expression size $\Size$, it attempts to
+instantiate each production rule in the grammar with expressions already
+generated and stored in $\Productions$, to generate new expressions of
+size at most $\Size$.
+These newly generated expression are checked for distinctness from
+already generated ones, and if so, added to
+$\Productions[\NonTerminal]$.
+The algorithm returns all the expressions produced from the starting
+non-terminal $\StartSymbol$.
+
+\section{Algorithm~\ref{algo:main} without line~\ref{line:main:more_terms}}
+\label{sec:app:ex}
+
+Consider the conditional expression grammar given in
+Figure~\ref{fig:bad_grammar} and the specification $f(x) = x$.
+Note that the grammar can generate terms equivalent to $ax + b$ where
+$a, b \geq 0$ and predicates $ax + b < 0$.
+The solution expression is obviously $f(x) \equiv x$.
+
+
+Now, in the first round, the algorithm enumerates the first term, i.e.,
+$0$.
+Say counter-example point returned is $\Point_1 = \{ x \mapsto 1 \}$.
+In the second round, the algorithm proposes the term $1$, and the
+say counter-example point returned is $\Point_2 = \{ x \mapsto 2 \}$.
+In the third round, the algorithm enumerates the terms $1$ and $2$,
+which together cover all the previous counter-examples.
+
+Without line~\ref{line:main:more_terms}, any attempts to enumerate
+predicates and learn decision trees will fail here as no predicate that
+can be generated by the grammar can distinguish between the $\Point_1$
+and $\Point_2$.
+However, due to line~\ref{line:main:more_terms}, the algorithm will
+continue to generate more terms while also generating predicates.
+This will lead to the generation of the term $x$, and the algorithm will
+succeed.
+
+\begin{figure}[!t]
+\vspace*{3ex}
+  \begin{alltt}
+  \fontsize{9}{10}\selectfont
+                      S ::= T | if (C) then T else T
+                      T ::= 0 | 1 | 2 | x
+                      C ::= T < 0
+\end{alltt}
+\caption{Grammar for~\ref{sec:app:ex}}
+  \label{fig:bad_grammar}
+\end{figure}
+
+
+\end{appendices}

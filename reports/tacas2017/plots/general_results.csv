@@ -1,0 +1,928 @@
+benchmark,solver,"wallclock time",result,exprs-total-size
+General-Track/array_search_10.sl,EUSolver,14.9646,correct,51
+General-Track/array_search_11.sl,EUSolver,20.107,correct,56
+General-Track/array_search_12.sl,EUSolver,23.6746,correct,61
+General-Track/array_search_13.sl,EUSolver,32.9254,correct,66
+General-Track/array_search_14.sl,EUSolver,40.5905,correct,71
+General-Track/array_search_15.sl,EUSolver,61.9073,correct,76
+General-Track/array_search_2.sl,EUSolver,0.887698,correct,11
+General-Track/array_search_3.sl,EUSolver,1.26885,correct,16
+General-Track/array_search_4.sl,EUSolver,1.81306,correct,21
+General-Track/array_search_5.sl,EUSolver,2.46398,correct,26
+General-Track/array_search_6.sl,EUSolver,3.07886,correct,31
+General-Track/array_search_7.sl,EUSolver,4.6254,correct,36
+General-Track/array_search_8.sl,EUSolver,7.82694,correct,41
+General-Track/array_search_9.sl,EUSolver,10.7026,correct,46
+General-Track/array_sum_10_15.sl,EUSolver,3600.1,unsolved,0
+General-Track/array_sum_10_5.sl,EUSolver,3600.11,unsolved,0
+General-Track/array_sum_2_15.sl,EUSolver,0.612056,correct,38
+General-Track/array_sum_2_5.sl,EUSolver,0.607526,correct,18
+General-Track/array_sum_3_15.sl,EUSolver,0.673365,correct,223
+General-Track/array_sum_3_5.sl,EUSolver,0.678151,correct,103
+General-Track/array_sum_4_15.sl,EUSolver,0.912028,correct,6978
+General-Track/array_sum_4_5.sl,EUSolver,0.791062,correct,1518
+General-Track/array_sum_5_15.sl,EUSolver,54.5778,correct,6284205
+General-Track/array_sum_6_15.sl,EUSolver,3600.1,unsolved,0
+General-Track/array_sum_6_5.sl,EUSolver,3600.03,unsolved,0
+General-Track/array_sum_7_15.sl,EUSolver,3600.02,unsolved,0
+General-Track/array_sum_7_5.sl,EUSolver,3600.02,unsolved,0
+General-Track/array_sum_8_15.sl,EUSolver,3600.02,unsolved,0
+General-Track/array_sum_8_5.sl,EUSolver,3600.11,unsolved,0
+General-Track/array_sum_9_15.sl,EUSolver,3600.05,unsolved,0
+General-Track/array_sum_9_5.sl,EUSolver,3600.02,unsolved,0
+General-Track/commutative.sl,EUSolver,0.91491,correct,3
+General-Track/constant.sl,EUSolver,0.684023,correct,1
+General-Track/eightfuncs.sl,EUSolver,3600.03,unsolved,0
+General-Track/fivefuncs-copy.sl,EUSolver,3600.1,unsolved,0
+General-Track/fivefuncs.sl,EUSolver,3600.06,unsolved,0
+General-Track/General_plus10.sl,EUSolver,0.582997,smt_issues,2
+General-Track/hd-01-d1-prog.sl,EUSolver,0.603414,correct,5
+General-Track/hd-01-d5-prog.sl,EUSolver,14.5422,correct,5
+General-Track/hd-02-d0-prog.sl,EUSolver,0.575775,correct,5
+General-Track/hd-02-d1-prog.sl,EUSolver,0.613016,correct,5
+General-Track/hd-02-d5-prog.sl,EUSolver,13.9517,correct,5
+General-Track/hd-03-d0-prog.sl,EUSolver,0.566718,correct,4
+General-Track/hd-03-d1-prog.sl,EUSolver,0.600409,correct,4
+General-Track/hd-03-d5-prog.sl,EUSolver,6.49461,correct,4
+General-Track/hd-04-d0-prog.sl,EUSolver,0.578417,correct,5
+General-Track/hd-04-d1-prog.sl,EUSolver,0.636365,correct,5
+General-Track/hd-04-d5-prog.sl,EUSolver,9.82404,correct,5
+General-Track/hd-05-d0-prog.sl,EUSolver,0.585476,correct,5
+General-Track/hd-05-d1-prog.sl,EUSolver,0.647502,correct,5
+General-Track/hd-05-d5-prog.sl,EUSolver,28.4548,correct,5
+General-Track/hd-06-d0-prog.sl,EUSolver,0.590289,correct,5
+General-Track/hd-06-d1-prog.sl,EUSolver,0.72816,correct,5
+General-Track/hd-06-d5-prog.sl,EUSolver,30.8437,correct,5
+General-Track/hd-07-d0-prog.sl,EUSolver,0.601196,correct,6
+General-Track/hd-07-d1-prog.sl,EUSolver,0.84539,correct,6
+General-Track/hd-07-d5-prog.sl,EUSolver,64.8681,correct,6
+General-Track/hd-08-d0-prog.sl,EUSolver,0.617119,correct,6
+General-Track/hd-08-d1-prog.sl,EUSolver,0.693301,correct,5
+General-Track/hd-08-d5-prog.sl,EUSolver,24.8395,correct,5
+General-Track/hd-09-d0-prog.sl,EUSolver,0.872582,correct,9
+General-Track/hd-09-d1-prog.sl,EUSolver,81.566,correct,9
+General-Track/hd-09-d5-prog.sl,EUSolver,454.258,correct,7
+General-Track/hd-13-d0-prog.sl,EUSolver,1.63793,correct,8
+General-Track/hd-13-d1-prog.sl,EUSolver,180.393,correct,8
+General-Track/hd-13-d5-prog.sl,EUSolver,3600.02,unsolved,0
+General-Track/hd-14-d0-prog.sl,EUSolver,18.4411,correct,9
+General-Track/hd-14-d1-prog.sl,EUSolver,3600.11,unsolved,0
+General-Track/hd-14-d5-prog.sl,EUSolver,3600.02,unsolved,0
+General-Track/hd-15-d0-prog.sl,EUSolver,20.7453,correct,9
+General-Track/hd-15-d1-prog.sl,EUSolver,3037.3,correct,9
+General-Track/hd-15-d5-prog.sl,EUSolver,3600.11,unsolved,0
+General-Track/hd-17-d0-prog.sl,EUSolver,0.953324,correct,9
+General-Track/hd-17-d1-prog.sl,EUSolver,2.25799,correct,8
+General-Track/hd-17-d5-prog.sl,EUSolver,3600.02,unsolved,0
+General-Track/hd-19-d0-prog.sl,EUSolver,3600.02,unsolved,0
+General-Track/hd-19-d1-prog.sl,EUSolver,3600.02,unsolved,0
+General-Track/hd-19-d5-prog.sl,EUSolver,3600.12,unsolved,0
+General-Track/hd-20-d0-prog.sl,EUSolver,3600.02,unsolved,0
+General-Track/hd-20-d1-prog.sl,EUSolver,3600.03,unsolved,0
+General-Track/hd-20-d5-prog.sl,EUSolver,3600.03,unsolved,0
+General-Track/icfp_103_10.sl,EUSolver,3.42591,correct,39
+General-Track/icfp_104_10.sl,EUSolver,0.814765,correct,15
+General-Track/icfp_105_100.sl,EUSolver,1.07654,correct,13
+General-Track/icfp_105_1000.sl,EUSolver,3.64631,correct,13
+General-Track/icfp_113_1000.sl,EUSolver,3.06017,correct,10
+General-Track/icfp_114_100.sl,EUSolver,2.48186,correct,18
+General-Track/icfp_118_10.sl,EUSolver,1.91002,correct,30
+General-Track/icfp_118_100.sl,EUSolver,4.05539,correct,33
+General-Track/icfp_125_10.sl,EUSolver,3.78018,correct,18
+General-Track/icfp_134_1000.sl,EUSolver,10.2623,correct,32
+General-Track/icfp_135_100.sl,EUSolver,1.12289,correct,12
+General-Track/icfp_139_10.sl,EUSolver,0.626415,correct,9
+General-Track/icfp_143_1000.sl,EUSolver,3.92706,correct,15
+General-Track/icfp_144_100.sl,EUSolver,10.3617,correct,31
+General-Track/icfp_144_1000.sl,EUSolver,16.5605,correct,31
+General-Track/icfp_147_1000.sl,EUSolver,3.10167,correct,11
+General-Track/icfp_14_1000.sl,EUSolver,11.0041,correct,36
+General-Track/icfp_150_10.sl,EUSolver,0.994967,correct,37
+General-Track/icfp_21_1000.sl,EUSolver,3.84164,correct,18
+General-Track/MPwL_d4s7.sl,EUSolver,3600.02,unsolved,0
+General-Track/MPwL_d5s3.sl,EUSolver,3600.02,unsolved,0
+General-Track/MPwL_d5s7.sl,EUSolver,3600.02,unsolved,0
+General-Track/MPwoL_d1s3.sl,EUSolver,3600.11,unsolved,0
+General-Track/MPwoL_d1s7.sl,EUSolver,3600.02,unsolved,0
+General-Track/MPwoL_d4s3.sl,EUSolver,3600.11,unsolved,0
+General-Track/MPwoL_d4s7.sl,EUSolver,3600.02,unsolved,0
+General-Track/MPwoL_d5s3.sl,EUSolver,3600.02,unsolved,0
+General-Track/MPwoL_d5s7.sl,EUSolver,3600.03,unsolved,0
+General-Track/ninefuncs.sl,EUSolver,3600.08,unsolved,0
+General-Track/parity-AIG-d0.sl,EUSolver,0.616596,unsolved,0
+General-Track/parity-AIG-d1.sl,EUSolver,0.594199,unsolved,0
+General-Track/parity-NAND-d0.sl,EUSolver,0.62083,unsolved,0
+General-Track/parity-NAND-d1.sl,EUSolver,0.605936,unsolved,0
+General-Track/parity.sl,EUSolver,0.602707,unsolved,-
+General-Track/polynomial.sl,EUSolver,0.559977,correct,2
+General-Track/polynomial1.sl,EUSolver,0.560155,correct,2
+General-Track/polynomial2.sl,EUSolver,0.602179,correct,4
+General-Track/polynomial3.sl,EUSolver,0.592457,correct,4
+General-Track/polynomial4.sl,EUSolver,1.73218,correct,8
+General-Track/qm_area_sel_2.sl,EUSolver,3600.02,unsolved,0
+General-Track/qm_choose_01.sl,EUSolver,0.81984,correct,7
+General-Track/qm_choose_yz.sl,EUSolver,3600.02,unsolved,0
+General-Track/qm_in_range.sl,EUSolver,3600.02,unsolved,0
+General-Track/qm_loop_1.sl,EUSolver,0.602863,correct,5
+General-Track/qm_loop_2.sl,EUSolver,28.2487,correct,9
+General-Track/qm_loop_3.sl,EUSolver,971.458,correct,11
+General-Track/qm_max2.sl,EUSolver,1.57853,correct,7
+General-Track/qm_max3.sl,EUSolver,3600.02,unsolved,0
+General-Track/qm_max4.sl,EUSolver,3600.11,unsolved,0
+General-Track/qm_max5.sl,EUSolver,3600.02,unsolved,0
+General-Track/qm_neg_1.sl,EUSolver,0.688702,correct,7
+General-Track/qm_neg_2.sl,EUSolver,155.868,correct,11
+General-Track/qm_neg_3.sl,EUSolver,3600.02,unsolved,0
+General-Track/qm_neg_4.sl,EUSolver,3600.02,unsolved,0
+General-Track/qm_neg_5.sl,EUSolver,3600.03,unsolved,0
+General-Track/qm_neg_eq_1.sl,EUSolver,0.743096,correct,7
+General-Track/qm_neg_eq_2.sl,EUSolver,1214.56,correct,11
+General-Track/qm_neg_eq_3.sl,EUSolver,3600.03,unsolved,0
+General-Track/qm_neg_eq_4.sl,EUSolver,3600.08,unsolved,0
+General-Track/qm_neg_eq_5.sl,EUSolver,3600.02,unsolved,0
+General-Track/s0.sl,EUSolver,11.3884,correct,54
+General-Track/s0_d0.sl,EUSolver,619.128,correct,80
+General-Track/s0_d1.sl,EUSolver,635.659,correct,81
+General-Track/s0_d2.sl,EUSolver,606.518,correct,127
+General-Track/s1.sl,EUSolver,11.5373,correct,55
+General-Track/s10.sl,EUSolver,6.06437,correct,7
+General-Track/s11.sl,EUSolver,3600.04,unsolved,0
+General-Track/s12.sl,EUSolver,3600.05,unsolved,0
+General-Track/s2.sl,EUSolver,0.60221,correct,1
+General-Track/s3.sl,EUSolver,0.606087,correct,1
+General-Track/s4.sl,EUSolver,0.583994,correct,3
+General-Track/s5.sl,EUSolver,4.86811,correct,9
+General-Track/s6.sl,EUSolver,3600.04,unsolved,0
+General-Track/s7.sl,EUSolver,19.3459,correct,9
+General-Track/s8.sl,EUSolver,3600.06,unsolved,0
+General-Track/s9.sl,EUSolver,3.1625,correct,7
+General-Track/sevenfuncs.sl,EUSolver,3600.05,unsolved,0
+General-Track/seven_c1.sl,EUSolver,3.83624,correct,5
+General-Track/seven_c2.sl,EUSolver,638.404,syntax_errors,-
+General-Track/seven_c3.sl,EUSolver,5.60644,correct,5
+General-Track/seven_c4.sl,EUSolver,5.85664,correct,5
+General-Track/seven_three_d0.sl,EUSolver,3600.04,unsolved,0
+General-Track/seven_three_d1.sl,EUSolver,3600.05,unsolved,0
+General-Track/sixfuncs.sl,EUSolver,3600.04,unsolved,0
+General-Track/tenfunc1.sl,EUSolver,3600.03,unsolved,0
+General-Track/tenfunc2.sl,EUSolver,3600.02,unsolved,0
+General-Track/three.sl,EUSolver,0.64169,correct,5
+General-Track/three_d0.sl,EUSolver,3.77932,correct,5
+General-Track/three_d1.sl,EUSolver,3600.02,unsolved,0
+General-Track/three_d2.sl,EUSolver,3600.02,unsolved,0
+General-Track/three_d3.sl,EUSolver,3600.02,unsolved,0
+General-Track/twolets1.sl,EUSolver,0.674874,correct,16
+General-Track/twolets10.sl,EUSolver,3600.02,unsolved,0
+General-Track/twolets3.sl,EUSolver,2.32165,correct,22
+General-Track/twolets4.sl,EUSolver,154.54,correct,28
+General-Track/twolets5.sl,EUSolver,3600.05,unsolved,0
+General-Track/twolets6.sl,EUSolver,3600.05,unsolved,0
+General-Track/twolets7.sl,EUSolver,3600.03,unsolved,0
+General-Track/twolets8.sl,EUSolver,3600.06,unsolved,0
+General-Track/twolets9.sl,EUSolver,3600.04,unsolved,0
+General-Track/unbdd_inv_gen_array.sl,EUSolver,46.3616,correct,19
+General-Track/unbdd_inv_gen_cegar2.sl,EUSolver,3600.05,unsolved,0
+General-Track/unbdd_inv_gen_cgr1.sl,EUSolver,2.22347,correct,21
+General-Track/unbdd_inv_gen_ex14.sl,EUSolver,0.938328,correct,21
+General-Track/unbdd_inv_gen_ex23.sl,EUSolver,3600.04,unsolved,0
+General-Track/unbdd_inv_gen_ex7.sl,EUSolver,1.33131,correct,19
+General-Track/unbdd_inv_gen_fig1.sl,EUSolver,19.7252,correct,23
+General-Track/unbdd_inv_gen_fig3.sl,EUSolver,42.4605,correct,19
+General-Track/unbdd_inv_gen_fig6.sl,EUSolver,0.639952,correct,19
+General-Track/unbdd_inv_gen_fig8.sl,EUSolver,0.912434,correct,19
+General-Track/unbdd_inv_gen_fig9.sl,EUSolver,1.32704,correct,19
+General-Track/unbdd_inv_gen_finf1.sl,EUSolver,0.735161,correct,19
+General-Track/unbdd_inv_gen_finf2.sl,EUSolver,0.735534,correct,19
+General-Track/unbdd_inv_gen_n_c11.sl,EUSolver,3.5434,correct,19
+General-Track/unbdd_inv_gen_sum1.sl,EUSolver,3600.09,unsolved,0
+General-Track/unbdd_inv_gen_sum3.sl,EUSolver,1.08032,correct,19
+General-Track/unbdd_inv_gen_sum4.sl,EUSolver,1263.81,correct,19
+General-Track/unbdd_inv_gen_tcs.sl,EUSolver,3600.05,unsolved,0
+General-Track/unbdd_inv_gen_term2.sl,EUSolver,0.672414,correct,19
+General-Track/unbdd_inv_gen_term3.sl,EUSolver,0.657825,correct,19
+General-Track/unbdd_inv_gen_trex1.sl,EUSolver,1.00239,correct,21
+General-Track/unbdd_inv_gen_trex2.sl,EUSolver,0.651357,correct,19
+General-Track/unbdd_inv_gen_trex4.sl,EUSolver,0.665638,correct,19
+General-Track/unbdd_inv_gen_vmail.sl,EUSolver,0.682122,correct,19
+General-Track/unbdd_inv_gen_w1.sl,EUSolver,0.71568,correct,19
+General-Track/unbdd_inv_gen_w2.sl,EUSolver,5.3241,correct,21
+General-Track/unbdd_inv_gen_winf1.sl,EUSolver,3600.05,unsolved,0
+General-Track/unbdd_inv_gen_winf2.sl,EUSolver,0.672599,correct,19
+General-Track/icfp_25_1000.sl,EUSolver,7.24174,correct,28
+General-Track/icfp_28_10.sl,EUSolver,0.592033,correct,2
+General-Track/icfp_30_10.sl,EUSolver,1.07865,correct,13
+General-Track/icfp_32_10.sl,EUSolver,0.728759,correct,13
+General-Track/icfp_38_10.sl,EUSolver,0.891183,correct,17
+General-Track/icfp_39_100.sl,EUSolver,0.996198,correct,11
+General-Track/icfp_45_10.sl,EUSolver,0.612373,correct,8
+General-Track/icfp_45_1000.sl,EUSolver,2.97664,correct,8
+General-Track/icfp_51_10.sl,EUSolver,0.650699,correct,10
+General-Track/icfp_54_1000.sl,EUSolver,3.08748,correct,10
+General-Track/icfp_56_1000.sl,EUSolver,18.8533,correct,65
+General-Track/icfp_5_1000.sl,EUSolver,3.55151,correct,16
+General-Track/icfp_64_10.sl,EUSolver,0.951612,correct,19
+General-Track/icfp_68_1000.sl,EUSolver,19.6128,correct,58
+General-Track/icfp_69_10.sl,EUSolver,0.723022,correct,10
+General-Track/icfp_72_10.sl,EUSolver,0.893716,correct,12
+General-Track/icfp_73_10.sl,EUSolver,0.697331,correct,16
+General-Track/icfp_7_10.sl,EUSolver,0.789784,correct,15
+General-Track/icfp_7_1000.sl,EUSolver,10.5482,correct,23
+General-Track/icfp_81_1000.sl,EUSolver,4.05744,correct,22
+General-Track/icfp_82_10.sl,EUSolver,3.12918,correct,16
+General-Track/icfp_82_100.sl,EUSolver,2.58241,correct,16
+General-Track/icfp_87_10.sl,EUSolver,0.864506,correct,17
+General-Track/icfp_93_1000.sl,EUSolver,3.80068,correct,19
+General-Track/icfp_94_100.sl,EUSolver,1.12052,correct,16
+General-Track/icfp_94_1000.sl,EUSolver,3.33404,correct,16
+General-Track/icfp_95_100.sl,EUSolver,195.085,correct,21
+General-Track/icfp_96_10.sl,EUSolver,3.94477,correct,48
+General-Track/icfp_96_1000.sl,EUSolver,18.6007,correct,43
+General-Track/icfp_99_100.sl,EUSolver,1.39268,correct,17
+General-Track/icfp_9_1000.sl,EUSolver,10.4636,correct,14
+General-Track/inv_gen_array.sl,EUSolver,2229.59,correct,19
+General-Track/inv_gen_cegar2.sl,EUSolver,3600.07,unsolved,0
+General-Track/inv_gen_cgr1.sl,EUSolver,2.94625,correct,19
+General-Track/inv_gen_ex14.sl,EUSolver,0.69613,correct,19
+General-Track/inv_gen_ex23.sl,EUSolver,3600.02,unsolved,0
+General-Track/inv_gen_ex7.sl,EUSolver,1.30164,correct,19
+General-Track/inv_gen_fig1.sl,EUSolver,17.9457,correct,19
+General-Track/inv_gen_fig3.sl,EUSolver,8.03801,correct,19
+General-Track/inv_gen_fig6.sl,EUSolver,0.666506,correct,19
+General-Track/inv_gen_fig8.sl,EUSolver,1.0843,correct,19
+General-Track/inv_gen_fig9.sl,EUSolver,2.66623,correct,19
+General-Track/inv_gen_finf1.sl,EUSolver,1.78519,correct,19
+General-Track/inv_gen_finf2.sl,EUSolver,1.73514,correct,19
+General-Track/inv_gen_n_c11.sl,EUSolver,3.12232,correct,19
+General-Track/inv_gen_sum1.sl,EUSolver,3600.05,unsolved,0
+General-Track/inv_gen_sum3.sl,EUSolver,2.66331,correct,19
+General-Track/inv_gen_sum4.sl,EUSolver,1660.1,correct,19
+General-Track/inv_gen_tcs.sl,EUSolver,3600.09,unsolved,0
+General-Track/inv_gen_term2.sl,EUSolver,0.700842,correct,19
+General-Track/inv_gen_term3.sl,EUSolver,0.695412,correct,19
+General-Track/inv_gen_trex1.sl,EUSolver,0.684135,correct,19
+General-Track/inv_gen_trex2.sl,EUSolver,0.671619,correct,19
+General-Track/inv_gen_trex4.sl,EUSolver,0.837891,unsolved,0
+General-Track/inv_gen_vmail.sl,EUSolver,0.733403,correct,19
+General-Track/inv_gen_w1.sl,EUSolver,0.871616,correct,19
+General-Track/inv_gen_w2.sl,EUSolver,0.862578,correct,19
+General-Track/inv_gen_winf1.sl,EUSolver,3600.05,unsolved,0
+General-Track/inv_gen_winf2.sl,EUSolver,0.728218,correct,19
+General-Track/LinExpr_eq1ex.sl,EUSolver,143.532,correct,73
+General-Track/LinExpr_eq2ex.sl,EUSolver,3600.02,unsolved,0
+General-Track/LinExpr_inv1.sl,EUSolver,22.2742,correct,10
+General-Track/LinExpr_inv1_ex.sl,EUSolver,2.83506,correct,19
+General-Track/logcount-d1.sl,EUSolver,3600.05,unsolved,0
+General-Track/logcount-d5.sl,EUSolver,3600.06,unsolved,0
+General-Track/logcount.sl,EUSolver,3600.02,unsolved,0
+General-Track/logcount2-d1.sl,EUSolver,3600.02,unsolved,0
+General-Track/logcount2-d5.sl,EUSolver,3600.04,unsolved,0
+General-Track/logcount2.sl,EUSolver,3600.05,unsolved,0
+General-Track/max10.sl,EUSolver,4.05364,correct,334
+General-Track/max12.sl,EUSolver,14.0857,correct,496
+General-Track/max13.sl,EUSolver,12.4696,correct,589
+General-Track/max14.sl,EUSolver,27.4479,correct,690
+General-Track/max15.sl,EUSolver,17.6645,correct,690
+General-Track/max2.sl,EUSolver,0.644023,correct,6
+General-Track/max3.sl,EUSolver,0.740155,correct,19
+General-Track/max4.sl,EUSolver,0.924213,correct,40
+General-Track/max5.sl,EUSolver,0.87659,correct,69
+General-Track/max6.sl,EUSolver,2.14928,correct,106
+General-Track/max7.sl,EUSolver,2.5647,correct,151
+General-Track/max8.sl,EUSolver,1.75578,correct,204
+General-Track/max9.sl,EUSolver,2.98464,correct,265
+General-Track/max_11.sl,EUSolver,9.71725,correct,411
+General-Track/mpg_example1.sl,EUSolver,3600.1,unsolved,0
+General-Track/mpg_example2.sl,EUSolver,3600.03,unsolved,0
+General-Track/mpg_example3.sl,EUSolver,3600.04,unsolved,0
+General-Track/mpg_example4.sl,EUSolver,3600.03,unsolved,0
+General-Track/mpg_example5.sl,EUSolver,3600.05,unsolved,0
+General-Track/mpg_guard1.sl,EUSolver,0.724733,correct,14
+General-Track/mpg_guard2.sl,EUSolver,0.786512,wrong,30
+General-Track/mpg_guard3.sl,EUSolver,0.785461,wrong,32
+General-Track/mpg_guard4.sl,EUSolver,0.784499,wrong,34
+General-Track/mpg_ite1.sl,EUSolver,0.857777,wrong,93
+General-Track/mpg_ite2.sl,EUSolver,1.17773,wrong,207
+General-Track/mpg_plane1.sl,EUSolver,1.10278,correct,3
+General-Track/mpg_plane2.sl,EUSolver,0.679459,correct,17
+General-Track/mpg_plane3.sl,EUSolver,0.678275,correct,29
+General-Track/MPwL_d1s3.sl,EUSolver,3600.02,unsolved,0
+General-Track/MPwL_d1s7.sl,EUSolver,3600.02,unsolved,0
+General-Track/MPwL_d4s3.sl,EUSolver,3600.03,unsolved,0
+General-Track/array_search_10.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/array_search_11.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/array_search_12.sl,"Enumerative Solver",3600.04,unsolved,0
+General-Track/array_search_13.sl,"Enumerative Solver",3600.08,unsolved,0
+General-Track/array_search_14.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/array_search_15.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/array_search_2.sl,"Enumerative Solver",0.031095,correct,11
+General-Track/array_search_3.sl,"Enumerative Solver",3.03828,correct,16
+General-Track/array_search_4.sl,"Enumerative Solver",1829.75,correct,21
+General-Track/array_search_5.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/array_search_6.sl,"Enumerative Solver",3600.04,unsolved,0
+General-Track/array_search_7.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/array_search_8.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/array_search_9.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/array_sum_10_15.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/array_sum_10_5.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/array_sum_2_15.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/array_sum_2_5.sl,"Enumerative Solver",12.9041,correct,14
+General-Track/array_sum_3_15.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/array_sum_3_5.sl,"Enumerative Solver",3600.1,unsolved,0
+General-Track/array_sum_4_15.sl,"Enumerative Solver",3600.04,unsolved,0
+General-Track/array_sum_4_5.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/array_sum_5_15.sl,"Enumerative Solver",3600.08,unsolved,0
+General-Track/array_sum_6_15.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/array_sum_6_5.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/array_sum_7_15.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/array_sum_7_5.sl,"Enumerative Solver",3600.04,unsolved,0
+General-Track/array_sum_8_15.sl,"Enumerative Solver",3600.12,unsolved,0
+General-Track/array_sum_8_5.sl,"Enumerative Solver",3600.08,unsolved,0
+General-Track/array_sum_9_15.sl,"Enumerative Solver",3600.11,unsolved,0
+General-Track/array_sum_9_5.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/commutative.sl,"Enumerative Solver",0.0126501,correct,3
+General-Track/constant.sl,"Enumerative Solver",0.0123529,correct,1
+General-Track/eightfuncs.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/fivefuncs-copy.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/fivefuncs.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/General_plus10.sl,"Enumerative Solver",0.016205,unsolved,-
+General-Track/hd-01-d1-prog.sl,"Enumerative Solver",0.0179051,correct,5
+General-Track/hd-01-d5-prog.sl,"Enumerative Solver",0.037379,correct,5
+General-Track/hd-02-d0-prog.sl,"Enumerative Solver",0.0151411,correct,5
+General-Track/hd-02-d1-prog.sl,"Enumerative Solver",0.018323,correct,5
+General-Track/hd-02-d5-prog.sl,"Enumerative Solver",0.0351311,correct,5
+General-Track/hd-03-d0-prog.sl,"Enumerative Solver",0.0152229,correct,4
+General-Track/hd-03-d1-prog.sl,"Enumerative Solver",0.0161911,correct,4
+General-Track/hd-03-d5-prog.sl,"Enumerative Solver",0.0183111,correct,4
+General-Track/hd-04-d0-prog.sl,"Enumerative Solver",0.015546,correct,5
+General-Track/hd-04-d1-prog.sl,"Enumerative Solver",0.0169231,correct,5
+General-Track/hd-04-d5-prog.sl,"Enumerative Solver",0.031252,correct,5
+General-Track/hd-05-d0-prog.sl,"Enumerative Solver",0.0169081,correct,5
+General-Track/hd-05-d1-prog.sl,"Enumerative Solver",0.017414,correct,5
+General-Track/hd-05-d5-prog.sl,"Enumerative Solver",0.0565289,correct,5
+General-Track/hd-06-d0-prog.sl,"Enumerative Solver",0.0253371,correct,5
+General-Track/hd-06-d1-prog.sl,"Enumerative Solver",0.023647,correct,5
+General-Track/hd-06-d5-prog.sl,"Enumerative Solver",0.0373699,correct,5
+General-Track/hd-07-d0-prog.sl,"Enumerative Solver",0.0173431,correct,6
+General-Track/hd-07-d1-prog.sl,"Enumerative Solver",0.020043,correct,6
+General-Track/hd-07-d5-prog.sl,"Enumerative Solver",0.038634,correct,6
+General-Track/hd-08-d0-prog.sl,"Enumerative Solver",0.01685,correct,6
+General-Track/hd-08-d1-prog.sl,"Enumerative Solver",0.029613,correct,5
+General-Track/hd-08-d5-prog.sl,"Enumerative Solver",0.0294971,correct,5
+General-Track/hd-09-d0-prog.sl,"Enumerative Solver",0.0185451,correct,9
+General-Track/hd-09-d1-prog.sl,"Enumerative Solver",0.486796,correct,9
+General-Track/hd-09-d5-prog.sl,"Enumerative Solver",0.437435,correct,7
+General-Track/hd-13-d0-prog.sl,"Enumerative Solver",0.0258271,correct,8
+General-Track/hd-13-d1-prog.sl,"Enumerative Solver",0.440266,correct,8
+General-Track/hd-13-d5-prog.sl,"Enumerative Solver",4.8913,correct,8
+General-Track/hd-14-d0-prog.sl,"Enumerative Solver",0.075497,correct,9
+General-Track/hd-14-d1-prog.sl,"Enumerative Solver",10.9892,correct,9
+General-Track/hd-14-d5-prog.sl,"Enumerative Solver",77.265,correct,9
+General-Track/hd-15-d0-prog.sl,"Enumerative Solver",0.116495,correct,9
+General-Track/hd-15-d1-prog.sl,"Enumerative Solver",2.59782,correct,9
+General-Track/hd-15-d5-prog.sl,"Enumerative Solver",98.8868,correct,9
+General-Track/hd-17-d0-prog.sl,"Enumerative Solver",0.038225,correct,9
+General-Track/hd-17-d1-prog.sl,"Enumerative Solver",0.110836,correct,8
+General-Track/hd-17-d5-prog.sl,"Enumerative Solver",3.20525,correct,8
+General-Track/hd-19-d0-prog.sl,"Enumerative Solver",3600.1,unsolved,0
+General-Track/hd-19-d1-prog.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/hd-19-d5-prog.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/hd-20-d0-prog.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/hd-20-d1-prog.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/hd-20-d5-prog.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/icfp_103_10.sl,"Enumerative Solver",0.0166309,unsolved,0
+General-Track/icfp_104_10.sl,"Enumerative Solver",0.0145389,unsolved,0
+General-Track/icfp_105_100.sl,"Enumerative Solver",0.0460751,unsolved,0
+General-Track/icfp_105_1000.sl,"Enumerative Solver",1.3513,unsolved,0
+General-Track/icfp_113_1000.sl,"Enumerative Solver",1.46601,unsolved,0
+General-Track/icfp_114_100.sl,"Enumerative Solver",0.0510621,unsolved,0
+General-Track/icfp_118_10.sl,"Enumerative Solver",0.0174439,unsolved,0
+General-Track/icfp_118_100.sl,"Enumerative Solver",0.0519459,unsolved,0
+General-Track/icfp_125_10.sl,"Enumerative Solver",0.0175429,unsolved,0
+General-Track/icfp_134_1000.sl,"Enumerative Solver",1.44247,unsolved,0
+General-Track/icfp_135_100.sl,"Enumerative Solver",0.052238,unsolved,0
+General-Track/icfp_139_10.sl,"Enumerative Solver",0.0163811,unsolved,0
+General-Track/icfp_143_1000.sl,"Enumerative Solver",1.41277,unsolved,0
+General-Track/icfp_144_100.sl,"Enumerative Solver",0.056537,unsolved,0
+General-Track/icfp_144_1000.sl,"Enumerative Solver",1.37955,unsolved,0
+General-Track/icfp_147_1000.sl,"Enumerative Solver",1.52537,unsolved,0
+General-Track/icfp_14_1000.sl,"Enumerative Solver",1.46889,unsolved,0
+General-Track/icfp_150_10.sl,"Enumerative Solver",0.0172531,unsolved,0
+General-Track/icfp_21_1000.sl,"Enumerative Solver",1.40816,unsolved,0
+General-Track/MPwL_d4s7.sl,"Enumerative Solver",20.038,correct,7
+General-Track/MPwL_d5s3.sl,"Enumerative Solver",2115.85,correct,13
+General-Track/MPwL_d5s7.sl,"Enumerative Solver",3600.04,unsolved,0
+General-Track/MPwoL_d1s3.sl,"Enumerative Solver",0.0422131,correct,1
+General-Track/MPwoL_d1s7.sl,"Enumerative Solver",0.209261,correct,1
+General-Track/MPwoL_d4s3.sl,"Enumerative Solver",0.271786,correct,7
+General-Track/MPwoL_d4s7.sl,"Enumerative Solver",8.08687,correct,7
+General-Track/MPwoL_d5s3.sl,"Enumerative Solver",36.6812,correct,13
+General-Track/MPwoL_d5s7.sl,"Enumerative Solver",3600.1,unsolved,0
+General-Track/ninefuncs.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/parity-AIG-d0.sl,"Enumerative Solver",20.0609,correct,24
+General-Track/parity-AIG-d1.sl,"Enumerative Solver",3600.08,unsolved,0
+General-Track/parity-NAND-d0.sl,"Enumerative Solver",8.56517,correct,34
+General-Track/parity-NAND-d1.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/parity.sl,"Enumerative Solver",3600.04,unsolved,-
+General-Track/polynomial.sl,"Enumerative Solver",0.013012,correct,2
+General-Track/polynomial1.sl,"Enumerative Solver",0.013601,correct,2
+General-Track/polynomial2.sl,"Enumerative Solver",0.0147949,correct,4
+General-Track/polynomial3.sl,"Enumerative Solver",0.014584,correct,4
+General-Track/polynomial4.sl,"Enumerative Solver",0.0726649,correct,8
+General-Track/qm_area_sel_2.sl,"Enumerative Solver",3600.11,unsolved,0
+General-Track/qm_choose_01.sl,"Enumerative Solver",0.015893,correct,7
+General-Track/qm_choose_yz.sl,"Enumerative Solver",12.3769,correct,11
+General-Track/qm_in_range.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/qm_loop_1.sl,"Enumerative Solver",0.0141469,correct,5
+General-Track/qm_loop_2.sl,"Enumerative Solver",0.139189,correct,9
+General-Track/qm_loop_3.sl,"Enumerative Solver",3.07671,correct,11
+General-Track/qm_max2.sl,"Enumerative Solver",0.0199021,correct,7
+General-Track/qm_max3.sl,"Enumerative Solver",179.839,correct,13
+General-Track/qm_max4.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/qm_max5.sl,"Enumerative Solver",3600.12,unsolved,0
+General-Track/qm_neg_1.sl,"Enumerative Solver",0.0142389,correct,7
+General-Track/qm_neg_2.sl,"Enumerative Solver",0.259114,correct,11
+General-Track/qm_neg_3.sl,"Enumerative Solver",546.483,correct,13
+General-Track/qm_neg_4.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/qm_neg_5.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/qm_neg_eq_1.sl,"Enumerative Solver",0.014866,correct,7
+General-Track/qm_neg_eq_2.sl,"Enumerative Solver",1.46265,correct,11
+General-Track/qm_neg_eq_3.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/qm_neg_eq_4.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/qm_neg_eq_5.sl,"Enumerative Solver",3600.12,unsolved,0
+General-Track/s0.sl,"Enumerative Solver",3600.08,unsolved,0
+General-Track/s0_d0.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/s0_d1.sl,"Enumerative Solver",3600.1,unsolved,0
+General-Track/s0_d2.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/s1.sl,"Enumerative Solver",3600.09,unsolved,0
+General-Track/s10.sl,"Enumerative Solver",0.023297,correct,7
+General-Track/s11.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/s12.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/s2.sl,"Enumerative Solver",0.013002,correct,1
+General-Track/s3.sl,"Enumerative Solver",0.0134179,correct,1
+General-Track/s4.sl,"Enumerative Solver",0.0149881,correct,3
+General-Track/s5.sl,"Enumerative Solver",0.404642,correct,9
+General-Track/s6.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/s7.sl,"Enumerative Solver",0.150562,correct,9
+General-Track/s8.sl,"Enumerative Solver",3600.11,unsolved,0
+General-Track/s9.sl,"Enumerative Solver",0.0229239,correct,7
+General-Track/sevenfuncs.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/seven_c1.sl,"Enumerative Solver",0.0112161,unsolved,-
+General-Track/seven_c2.sl,"Enumerative Solver",0.0112499,unsolved,-
+General-Track/seven_c3.sl,"Enumerative Solver",0.0118939,unsolved,-
+General-Track/seven_c4.sl,"Enumerative Solver",0.0115651,unsolved,-
+General-Track/seven_three_d0.sl,"Enumerative Solver",0.0122109,unsolved,-
+General-Track/seven_three_d1.sl,"Enumerative Solver",0.01157,unsolved,-
+General-Track/sixfuncs.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/tenfunc1.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/tenfunc2.sl,"Enumerative Solver",3600.07,unsolved,0
+General-Track/three.sl,"Enumerative Solver",0.0127409,unsolved,0
+General-Track/three_d0.sl,"Enumerative Solver",0.011394,unsolved,-
+General-Track/three_d1.sl,"Enumerative Solver",0.011255,unsolved,-
+General-Track/three_d2.sl,"Enumerative Solver",0.0112251,unsolved,-
+General-Track/three_d3.sl,"Enumerative Solver",0.012231,unsolved,-
+General-Track/twolets1.sl,"Enumerative Solver",3601.61,unsolved,0
+General-Track/twolets10.sl,"Enumerative Solver",137.284,unsolved,0
+General-Track/twolets3.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/twolets4.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/twolets5.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/twolets6.sl,"Enumerative Solver",634.744,unsolved,0
+General-Track/twolets7.sl,"Enumerative Solver",103.417,unsolved,0
+General-Track/twolets8.sl,"Enumerative Solver",778.368,unsolved,0
+General-Track/twolets9.sl,"Enumerative Solver",88.4938,unsolved,0
+General-Track/unbdd_inv_gen_array.sl,"Enumerative Solver",0.0512459,correct,19
+General-Track/unbdd_inv_gen_cegar2.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/unbdd_inv_gen_cgr1.sl,"Enumerative Solver",0.0290701,correct,21
+General-Track/unbdd_inv_gen_ex14.sl,"Enumerative Solver",0.018278,correct,21
+General-Track/unbdd_inv_gen_ex23.sl,"Enumerative Solver",3.26345,correct,19
+General-Track/unbdd_inv_gen_ex7.sl,"Enumerative Solver",0.0208949,correct,19
+General-Track/unbdd_inv_gen_fig1.sl,"Enumerative Solver",0.126041,correct,23
+General-Track/unbdd_inv_gen_fig3.sl,"Enumerative Solver",0.141081,correct,19
+General-Track/unbdd_inv_gen_fig6.sl,"Enumerative Solver",0.0133339,correct,19
+General-Track/unbdd_inv_gen_fig8.sl,"Enumerative Solver",0.016436,correct,19
+General-Track/unbdd_inv_gen_fig9.sl,"Enumerative Solver",0.0198539,correct,19
+General-Track/unbdd_inv_gen_finf1.sl,"Enumerative Solver",0.0155321,correct,19
+General-Track/unbdd_inv_gen_finf2.sl,"Enumerative Solver",0.0154471,correct,19
+General-Track/unbdd_inv_gen_n_c11.sl,"Enumerative Solver",0.020793,correct,19
+General-Track/unbdd_inv_gen_sum1.sl,"Enumerative Solver",3600.04,unsolved,0
+General-Track/unbdd_inv_gen_sum3.sl,"Enumerative Solver",0.0201569,correct,19
+General-Track/unbdd_inv_gen_sum4.sl,"Enumerative Solver",5.69683,correct,19
+General-Track/unbdd_inv_gen_tcs.sl,"Enumerative Solver",3600.1,unsolved,0
+General-Track/unbdd_inv_gen_term2.sl,"Enumerative Solver",0.013847,correct,19
+General-Track/unbdd_inv_gen_term3.sl,"Enumerative Solver",0.0137901,correct,19
+General-Track/unbdd_inv_gen_trex1.sl,"Enumerative Solver",0.0188091,correct,21
+General-Track/unbdd_inv_gen_trex2.sl,"Enumerative Solver",0.0137491,correct,19
+General-Track/unbdd_inv_gen_trex4.sl,"Enumerative Solver",0.013983,correct,19
+General-Track/unbdd_inv_gen_vmail.sl,"Enumerative Solver",0.0150811,correct,19
+General-Track/unbdd_inv_gen_w1.sl,"Enumerative Solver",0.0154291,correct,19
+General-Track/unbdd_inv_gen_w2.sl,"Enumerative Solver",0.031042,correct,21
+General-Track/unbdd_inv_gen_winf1.sl,"Enumerative Solver",0.0149649,correct,19
+General-Track/unbdd_inv_gen_winf2.sl,"Enumerative Solver",0.0148759,correct,19
+General-Track/icfp_25_1000.sl,"Enumerative Solver",1.37771,unsolved,0
+General-Track/icfp_28_10.sl,"Enumerative Solver",0.0163431,unsolved,0
+General-Track/icfp_30_10.sl,"Enumerative Solver",0.018454,unsolved,0
+General-Track/icfp_32_10.sl,"Enumerative Solver",0.017193,unsolved,0
+General-Track/icfp_38_10.sl,"Enumerative Solver",0.015945,unsolved,0
+General-Track/icfp_39_100.sl,"Enumerative Solver",0.04496,unsolved,0
+General-Track/icfp_45_10.sl,"Enumerative Solver",0.0161619,unsolved,0
+General-Track/icfp_45_1000.sl,"Enumerative Solver",1.37651,unsolved,0
+General-Track/icfp_51_10.sl,"Enumerative Solver",0.015683,unsolved,0
+General-Track/icfp_54_1000.sl,"Enumerative Solver",1.57608,unsolved,0
+General-Track/icfp_56_1000.sl,"Enumerative Solver",1.6028,unsolved,0
+General-Track/icfp_5_1000.sl,"Enumerative Solver",1.4295,unsolved,0
+General-Track/icfp_64_10.sl,"Enumerative Solver",0.0171931,unsolved,0
+General-Track/icfp_68_1000.sl,"Enumerative Solver",1.55475,unsolved,0
+General-Track/icfp_69_10.sl,"Enumerative Solver",0.017101,unsolved,0
+General-Track/icfp_72_10.sl,"Enumerative Solver",0.0177319,unsolved,0
+General-Track/icfp_73_10.sl,"Enumerative Solver",0.0155799,unsolved,0
+General-Track/icfp_7_10.sl,"Enumerative Solver",0.0164329,unsolved,0
+General-Track/icfp_7_1000.sl,"Enumerative Solver",1.37806,unsolved,0
+General-Track/icfp_81_1000.sl,"Enumerative Solver",1.22286,unsolved,0
+General-Track/icfp_82_10.sl,"Enumerative Solver",0.016812,unsolved,0
+General-Track/icfp_82_100.sl,"Enumerative Solver",0.0525671,unsolved,0
+General-Track/icfp_87_10.sl,"Enumerative Solver",0.01862,unsolved,0
+General-Track/icfp_93_1000.sl,"Enumerative Solver",1.59361,unsolved,0
+General-Track/icfp_94_100.sl,"Enumerative Solver",0.052322,unsolved,0
+General-Track/icfp_94_1000.sl,"Enumerative Solver",1.52103,unsolved,0
+General-Track/icfp_95_100.sl,"Enumerative Solver",0.046649,unsolved,0
+General-Track/icfp_96_10.sl,"Enumerative Solver",0.017514,unsolved,0
+General-Track/icfp_96_1000.sl,"Enumerative Solver",1.37091,unsolved,0
+General-Track/icfp_99_100.sl,"Enumerative Solver",0.0481679,unsolved,0
+General-Track/icfp_9_1000.sl,"Enumerative Solver",1.38367,unsolved,0
+General-Track/inv_gen_array.sl,"Enumerative Solver",1.66193,correct,19
+General-Track/inv_gen_cegar2.sl,"Enumerative Solver",87.4225,unsolved,0
+General-Track/inv_gen_cgr1.sl,"Enumerative Solver",0.030749,correct,19
+General-Track/inv_gen_ex14.sl,"Enumerative Solver",0.0150719,correct,19
+General-Track/inv_gen_ex23.sl,"Enumerative Solver",3.35167,correct,19
+General-Track/inv_gen_ex7.sl,"Enumerative Solver",0.026426,correct,19
+General-Track/inv_gen_fig1.sl,"Enumerative Solver",0.079556,correct,19
+General-Track/inv_gen_fig3.sl,"Enumerative Solver",0.177387,correct,19
+General-Track/inv_gen_fig6.sl,"Enumerative Solver",0.014321,correct,19
+General-Track/inv_gen_fig8.sl,"Enumerative Solver",0.0183289,correct,19
+General-Track/inv_gen_fig9.sl,"Enumerative Solver",0.035822,correct,19
+General-Track/inv_gen_finf1.sl,"Enumerative Solver",0.0216139,correct,19
+General-Track/inv_gen_finf2.sl,"Enumerative Solver",0.022047,correct,19
+General-Track/inv_gen_n_c11.sl,"Enumerative Solver",0.0273171,correct,19
+General-Track/inv_gen_sum1.sl,"Enumerative Solver",72.433,unsolved,0
+General-Track/inv_gen_sum3.sl,"Enumerative Solver",0.031265,correct,19
+General-Track/inv_gen_sum4.sl,"Enumerative Solver",2.42874,correct,19
+General-Track/inv_gen_tcs.sl,"Enumerative Solver",74.7215,unsolved,0
+General-Track/inv_gen_term2.sl,"Enumerative Solver",0.0153909,correct,19
+General-Track/inv_gen_term3.sl,"Enumerative Solver",0.014991,correct,19
+General-Track/inv_gen_trex1.sl,"Enumerative Solver",0.0147781,correct,19
+General-Track/inv_gen_trex2.sl,"Enumerative Solver",0.014491,correct,19
+General-Track/inv_gen_trex4.sl,"Enumerative Solver",0.016554,correct,19
+General-Track/inv_gen_vmail.sl,"Enumerative Solver",0.0157911,correct,19
+General-Track/inv_gen_w1.sl,"Enumerative Solver",0.018342,correct,19
+General-Track/inv_gen_w2.sl,"Enumerative Solver",0.0162521,correct,19
+General-Track/inv_gen_winf1.sl,"Enumerative Solver",0.017631,correct,19
+General-Track/inv_gen_winf2.sl,"Enumerative Solver",0.0213409,correct,19
+General-Track/LinExpr_eq1ex.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/LinExpr_eq2ex.sl,"Enumerative Solver",3600.13,unsolved,0
+General-Track/LinExpr_inv1.sl,"Enumerative Solver",1.21724,correct,10
+General-Track/LinExpr_inv1_ex.sl,"Enumerative Solver",2.11095,correct,14
+General-Track/logcount-d1.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/logcount-d5.sl,"Enumerative Solver",450.32,unsolved,0
+General-Track/logcount.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/logcount2-d1.sl,"Enumerative Solver",3600.12,unsolved,0
+General-Track/logcount2-d5.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/logcount2.sl,"Enumerative Solver",3600.1,unsolved,0
+General-Track/max10.sl,"Enumerative Solver",3600.1,unsolved,0
+General-Track/max12.sl,"Enumerative Solver",3600.1,unsolved,0
+General-Track/max13.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/max14.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/max15.sl,"Enumerative Solver",3600.11,unsolved,0
+General-Track/max2.sl,"Enumerative Solver",0.0143141,correct,6
+General-Track/max3.sl,"Enumerative Solver",1034.53,correct,15
+General-Track/max4.sl,"Enumerative Solver",3600.09,unsolved,0
+General-Track/max5.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/max6.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/max7.sl,"Enumerative Solver",3600.12,unsolved,0
+General-Track/max8.sl,"Enumerative Solver",3600.09,unsolved,0
+General-Track/max9.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/max_11.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/mpg_example1.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/mpg_example2.sl,"Enumerative Solver",3600.09,unsolved,0
+General-Track/mpg_example3.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/mpg_example4.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/mpg_example5.sl,"Enumerative Solver",0.0121419,unsolved,0
+General-Track/mpg_guard1.sl,"Enumerative Solver",1.88335,correct,12
+General-Track/mpg_guard2.sl,"Enumerative Solver",43.4661,correct,14
+General-Track/mpg_guard3.sl,"Enumerative Solver",570.346,correct,16
+General-Track/mpg_guard4.sl,"Enumerative Solver",3600.05,unsolved,0
+General-Track/mpg_ite1.sl,"Enumerative Solver",3600.03,unsolved,0
+General-Track/mpg_ite2.sl,"Enumerative Solver",3600.09,unsolved,0
+General-Track/mpg_plane1.sl,"Enumerative Solver",0.0140599,correct,3
+General-Track/mpg_plane2.sl,"Enumerative Solver",70.62,correct,17
+General-Track/mpg_plane3.sl,"Enumerative Solver",3600.02,unsolved,0
+General-Track/MPwL_d1s3.sl,"Enumerative Solver",0.0595231,correct,1
+General-Track/MPwL_d1s7.sl,"Enumerative Solver",0.326776,correct,1
+General-Track/MPwL_d4s3.sl,"Enumerative Solver",1.20702,correct,7
+General-Track/array_search_10.sl,CVC4-1.5.1-sygus-comp-v1,0.440159,correct,40976
+General-Track/array_search_11.sl,CVC4-1.5.1-sygus-comp-v1,0.967475,correct,101181
+General-Track/array_search_12.sl,CVC4-1.5.1-sygus-comp-v1,1.69697,correct,184376
+General-Track/array_search_13.sl,CVC4-1.5.1-sygus-comp-v1,4.5482,correct,481351
+General-Track/array_search_14.sl,CVC4-1.5.1-sygus-comp-v1,9.83061,correct,1054796
+General-Track/array_search_15.sl,CVC4-1.5.1-sygus-comp-v1,16.9279,correct,1843271
+General-Track/array_search_2.sl,CVC4-1.5.1-sygus-comp-v1,0.0176181,correct,26
+General-Track/array_search_3.sl,CVC4-1.5.1-sygus-comp-v1,0.0216489,correct,101
+General-Track/array_search_4.sl,CVC4-1.5.1-sygus-comp-v1,0.027215,correct,256
+General-Track/array_search_5.sl,CVC4-1.5.1-sygus-comp-v1,0.0349681,correct,631
+General-Track/array_search_6.sl,CVC4-1.5.1-sygus-comp-v1,0.050279,correct,1636
+General-Track/array_search_7.sl,CVC4-1.5.1-sygus-comp-v1,0.105981,correct,3311
+General-Track/array_search_8.sl,CVC4-1.5.1-sygus-comp-v1,0.13018,correct,9006
+General-Track/array_search_9.sl,CVC4-1.5.1-sygus-comp-v1,0.218047,correct,18371
+General-Track/array_sum_10_15.sl,CVC4-1.5.1-sygus-comp-v1,18.1115,correct,870609
+General-Track/array_sum_10_5.sl,CVC4-1.5.1-sygus-comp-v1,17.8644,correct,870097
+General-Track/array_sum_2_15.sl,CVC4-1.5.1-sygus-comp-v1,0.0184959,correct,24
+General-Track/array_sum_2_5.sl,CVC4-1.5.1-sygus-comp-v1,0.0154719,correct,14
+General-Track/array_sum_3_15.sl,CVC4-1.5.1-sygus-comp-v1,0.021702,correct,109
+General-Track/array_sum_3_5.sl,CVC4-1.5.1-sygus-comp-v1,0.0230951,correct,77
+General-Track/array_sum_4_15.sl,CVC4-1.5.1-sygus-comp-v1,0.028194,correct,189
+General-Track/array_sum_4_5.sl,CVC4-1.5.1-sygus-comp-v1,0.0280731,correct,173
+General-Track/array_sum_5_15.sl,CVC4-1.5.1-sygus-comp-v1,0.0430691,correct,833
+General-Track/array_sum_6_15.sl,CVC4-1.5.1-sygus-comp-v1,0.104227,correct,3249
+General-Track/array_sum_6_5.sl,CVC4-1.5.1-sygus-comp-v1,0.102538,correct,3185
+General-Track/array_sum_7_15.sl,CVC4-1.5.1-sygus-comp-v1,0.326181,correct,13329
+General-Track/array_sum_7_5.sl,CVC4-1.5.1-sygus-comp-v1,0.327558,correct,13201
+General-Track/array_sum_8_15.sl,CVC4-1.5.1-sygus-comp-v1,1.20729,correct,54193
+General-Track/array_sum_8_5.sl,CVC4-1.5.1-sygus-comp-v1,1.19178,correct,54065
+General-Track/array_sum_9_15.sl,CVC4-1.5.1-sygus-comp-v1,4.65655,correct,216801
+General-Track/array_sum_9_5.sl,CVC4-1.5.1-sygus-comp-v1,4.73721,correct,216545
+General-Track/commutative.sl,CVC4-1.5.1-sygus-comp-v1,0.0261601,correct,3
+General-Track/constant.sl,CVC4-1.5.1-sygus-comp-v1,0.0211789,correct,1
+General-Track/eightfuncs.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/fivefuncs-copy.sl,CVC4-1.5.1-sygus-comp-v1,289.506,correct,23
+General-Track/fivefuncs.sl,CVC4-1.5.1-sygus-comp-v1,285.77,correct,23
+General-Track/General_plus10.sl,CVC4-1.5.1-sygus-comp-v1,0.0361971,unsolved,0
+General-Track/hd-01-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.013348,correct,5
+General-Track/hd-01-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0158381,correct,5
+General-Track/hd-02-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.012933,correct,5
+General-Track/hd-02-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.016661,correct,5
+General-Track/hd-02-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0162841,correct,5
+General-Track/hd-03-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.01388,correct,4
+General-Track/hd-03-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.016387,correct,4
+General-Track/hd-03-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0164389,correct,4
+General-Track/hd-04-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0125319,correct,5
+General-Track/hd-04-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0145781,correct,5
+General-Track/hd-04-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0163181,correct,5
+General-Track/hd-05-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0126251,correct,5
+General-Track/hd-05-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.01373,correct,5
+General-Track/hd-05-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0158629,correct,5
+General-Track/hd-06-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0167219,correct,5
+General-Track/hd-06-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.014065,correct,5
+General-Track/hd-06-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.016256,correct,5
+General-Track/hd-07-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.015361,correct,6
+General-Track/hd-07-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0147201,correct,6
+General-Track/hd-07-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0162929,correct,6
+General-Track/hd-08-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0127731,correct,6
+General-Track/hd-08-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0146491,correct,6
+General-Track/hd-08-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0177489,correct,6
+General-Track/hd-09-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0140189,correct,9
+General-Track/hd-09-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.015203,correct,9
+General-Track/hd-09-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.017804,correct,10
+General-Track/hd-13-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.014229,correct,8
+General-Track/hd-13-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0146771,correct,8
+General-Track/hd-13-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.016324,correct,8
+General-Track/hd-14-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0144269,correct,9
+General-Track/hd-14-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.015785,correct,9
+General-Track/hd-14-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0177001,correct,9
+General-Track/hd-15-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0158089,correct,9
+General-Track/hd-15-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0174829,correct,10
+General-Track/hd-15-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0194129,correct,10
+General-Track/hd-17-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.029223,correct,9
+General-Track/hd-17-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0157661,correct,9
+General-Track/hd-17-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.017533,correct,9
+General-Track/hd-19-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0175,correct,19
+General-Track/hd-19-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0191709,correct,19
+General-Track/hd-19-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.021189,correct,19
+General-Track/hd-20-d0-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0950751,correct,20
+General-Track/hd-20-d1-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0964651,correct,20
+General-Track/hd-20-d5-prog.sl,CVC4-1.5.1-sygus-comp-v1,0.0978451,correct,22
+General-Track/icfp_103_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_104_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_105_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.12,unsolved,0
+General-Track/icfp_105_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.04,unsolved,0
+General-Track/icfp_113_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.05,unsolved,0
+General-Track/icfp_114_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/icfp_118_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_118_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/icfp_125_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_134_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_135_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.1,unsolved,0
+General-Track/icfp_139_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.09,unsolved,0
+General-Track/icfp_143_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/icfp_144_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_144_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_147_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_14_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_150_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_21_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/MPwL_d4s7.sl,CVC4-1.5.1-sygus-comp-v1,289.871,correct,7
+General-Track/MPwL_d5s3.sl,CVC4-1.5.1-sygus-comp-v1,111.013,correct,13
+General-Track/MPwL_d5s7.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/MPwoL_d1s3.sl,CVC4-1.5.1-sygus-comp-v1,0.563478,correct,1
+General-Track/MPwoL_d1s7.sl,CVC4-1.5.1-sygus-comp-v1,121.146,correct,1
+General-Track/MPwoL_d4s3.sl,CVC4-1.5.1-sygus-comp-v1,3.33925,correct,7
+General-Track/MPwoL_d4s7.sl,CVC4-1.5.1-sygus-comp-v1,277.231,correct,7
+General-Track/MPwoL_d5s3.sl,CVC4-1.5.1-sygus-comp-v1,111.781,correct,13
+General-Track/MPwoL_d5s7.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/ninefuncs.sl,CVC4-1.5.1-sygus-comp-v1,3600.1,unsolved,0
+General-Track/parity-AIG-d0.sl,CVC4-1.5.1-sygus-comp-v1,0.0134511,correct,56
+General-Track/parity-AIG-d1.sl,CVC4-1.5.1-sygus-comp-v1,0.0127149,correct,56
+General-Track/parity-NAND-d0.sl,CVC4-1.5.1-sygus-comp-v1,0.019688,correct,430
+General-Track/parity-NAND-d1.sl,CVC4-1.5.1-sygus-comp-v1,0.0147699,correct,106
+General-Track/parity.sl,CVC4-1.5.1-sygus-comp-v1,0.037039,unsolved,-
+General-Track/polynomial.sl,CVC4-1.5.1-sygus-comp-v1,0.026667,correct,2
+General-Track/polynomial1.sl,CVC4-1.5.1-sygus-comp-v1,0.0228979,correct,2
+General-Track/polynomial2.sl,CVC4-1.5.1-sygus-comp-v1,0.098453,correct,4
+General-Track/polynomial3.sl,CVC4-1.5.1-sygus-comp-v1,0.121675,correct,4
+General-Track/polynomial4.sl,CVC4-1.5.1-sygus-comp-v1,5.66532,correct,8
+General-Track/qm_area_sel_2.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_choose_01.sl,CVC4-1.5.1-sygus-comp-v1,39.605,correct,7
+General-Track/qm_choose_yz.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_in_range.sl,CVC4-1.5.1-sygus-comp-v1,3600.1,unsolved,0
+General-Track/qm_loop_1.sl,CVC4-1.5.1-sygus-comp-v1,2.32785,correct,5
+General-Track/qm_loop_2.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/qm_loop_3.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_max2.sl,CVC4-1.5.1-sygus-comp-v1,259.652,correct,7
+General-Track/qm_max3.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_max4.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_max5.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_neg_1.sl,CVC4-1.5.1-sygus-comp-v1,2.57213,correct,7
+General-Track/qm_neg_2.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_neg_3.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/qm_neg_4.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_neg_5.sl,CVC4-1.5.1-sygus-comp-v1,3600.1,unsolved,0
+General-Track/qm_neg_eq_1.sl,CVC4-1.5.1-sygus-comp-v1,19.2317,correct,7
+General-Track/qm_neg_eq_2.sl,CVC4-1.5.1-sygus-comp-v1,3600.01,unsolved,0
+General-Track/qm_neg_eq_3.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/qm_neg_eq_4.sl,CVC4-1.5.1-sygus-comp-v1,3600.12,unsolved,0
+General-Track/qm_neg_eq_5.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/s0.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/s0_d0.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/s0_d1.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/s0_d2.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/s1.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/s10.sl,CVC4-1.5.1-sygus-comp-v1,0.017777,correct,7
+General-Track/s11.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/s12.sl,CVC4-1.5.1-sygus-comp-v1,0.038561,unsolved,0
+General-Track/s2.sl,CVC4-1.5.1-sygus-comp-v1,0.0157671,correct,6
+General-Track/s3.sl,CVC4-1.5.1-sygus-comp-v1,0.017127,correct,1
+General-Track/s4.sl,CVC4-1.5.1-sygus-comp-v1,0.0160191,correct,11
+General-Track/s5.sl,CVC4-1.5.1-sygus-comp-v1,0.0168461,correct,17
+General-Track/s6.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/s7.sl,CVC4-1.5.1-sygus-comp-v1,0.0172219,correct,13
+General-Track/s8.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/s9.sl,CVC4-1.5.1-sygus-comp-v1,0.0188109,correct,7
+General-Track/sevenfuncs.sl,CVC4-1.5.1-sygus-comp-v1,3600.01,unsolved,0
+General-Track/seven_c1.sl,CVC4-1.5.1-sygus-comp-v1,0.178357,unsolved,0
+General-Track/seven_c2.sl,CVC4-1.5.1-sygus-comp-v1,0.163784,unsolved,0
+General-Track/seven_c3.sl,CVC4-1.5.1-sygus-comp-v1,0.180031,unsolved,0
+General-Track/seven_c4.sl,CVC4-1.5.1-sygus-comp-v1,0.30764,unsolved,0
+General-Track/seven_three_d0.sl,CVC4-1.5.1-sygus-comp-v1,0.12253,unsolved,0
+General-Track/seven_three_d1.sl,CVC4-1.5.1-sygus-comp-v1,0.114347,unsolved,0
+General-Track/sixfuncs.sl,CVC4-1.5.1-sygus-comp-v1,0.024171,correct,26
+General-Track/tenfunc1.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/tenfunc2.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/three.sl,CVC4-1.5.1-sygus-comp-v1,0.0865721,unsolved,0
+General-Track/three_d0.sl,CVC4-1.5.1-sygus-comp-v1,0.178554,unsolved,0
+General-Track/three_d1.sl,CVC4-1.5.1-sygus-comp-v1,0.115483,unsolved,0
+General-Track/three_d2.sl,CVC4-1.5.1-sygus-comp-v1,0.1586,unsolved,0
+General-Track/three_d3.sl,CVC4-1.5.1-sygus-comp-v1,4.3834,unsolved,0
+General-Track/twolets1.sl,CVC4-1.5.1-sygus-comp-v1,0.0232759,correct,16
+General-Track/twolets10.sl,CVC4-1.5.1-sygus-comp-v1,3600.12,unsolved,0
+General-Track/twolets3.sl,CVC4-1.5.1-sygus-comp-v1,0.0261761,correct,22
+General-Track/twolets4.sl,CVC4-1.5.1-sygus-comp-v1,0.0308561,correct,28
+General-Track/twolets5.sl,CVC4-1.5.1-sygus-comp-v1,114.133,violates_grammar,0
+General-Track/twolets6.sl,CVC4-1.5.1-sygus-comp-v1,3600.01,unsolved,0
+General-Track/twolets7.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/twolets8.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/twolets9.sl,CVC4-1.5.1-sygus-comp-v1,3600.1,unsolved,0
+General-Track/unbdd_inv_gen_array.sl,CVC4-1.5.1-sygus-comp-v1,3.17101,correct,19
+General-Track/unbdd_inv_gen_cegar2.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/unbdd_inv_gen_cgr1.sl,CVC4-1.5.1-sygus-comp-v1,2.61705,correct,21
+General-Track/unbdd_inv_gen_ex14.sl,CVC4-1.5.1-sygus-comp-v1,2.96113,correct,21
+General-Track/unbdd_inv_gen_ex23.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/unbdd_inv_gen_ex7.sl,CVC4-1.5.1-sygus-comp-v1,0.657017,correct,19
+General-Track/unbdd_inv_gen_fig1.sl,CVC4-1.5.1-sygus-comp-v1,70.6117,correct,23
+General-Track/unbdd_inv_gen_fig3.sl,CVC4-1.5.1-sygus-comp-v1,5.43614,correct,19
+General-Track/unbdd_inv_gen_fig6.sl,CVC4-1.5.1-sygus-comp-v1,0.279429,correct,19
+General-Track/unbdd_inv_gen_fig8.sl,CVC4-1.5.1-sygus-comp-v1,0.3118,correct,19
+General-Track/unbdd_inv_gen_fig9.sl,CVC4-1.5.1-sygus-comp-v1,0.58085,correct,19
+General-Track/unbdd_inv_gen_finf1.sl,CVC4-1.5.1-sygus-comp-v1,0.607995,correct,19
+General-Track/unbdd_inv_gen_finf2.sl,CVC4-1.5.1-sygus-comp-v1,0.607416,correct,19
+General-Track/unbdd_inv_gen_n_c11.sl,CVC4-1.5.1-sygus-comp-v1,0.914775,correct,19
+General-Track/unbdd_inv_gen_sum1.sl,CVC4-1.5.1-sygus-comp-v1,3600.01,unsolved,0
+General-Track/unbdd_inv_gen_sum3.sl,CVC4-1.5.1-sygus-comp-v1,1.19454,correct,19
+General-Track/unbdd_inv_gen_sum4.sl,CVC4-1.5.1-sygus-comp-v1,201.105,correct,19
+General-Track/unbdd_inv_gen_tcs.sl,CVC4-1.5.1-sygus-comp-v1,3600.01,unsolved,0
+General-Track/unbdd_inv_gen_term2.sl,CVC4-1.5.1-sygus-comp-v1,0.747077,correct,19
+General-Track/unbdd_inv_gen_term3.sl,CVC4-1.5.1-sygus-comp-v1,0.291168,correct,19
+General-Track/unbdd_inv_gen_trex1.sl,CVC4-1.5.1-sygus-comp-v1,18.8885,correct,21
+General-Track/unbdd_inv_gen_trex2.sl,CVC4-1.5.1-sygus-comp-v1,0.281671,correct,19
+General-Track/unbdd_inv_gen_trex4.sl,CVC4-1.5.1-sygus-comp-v1,0.464278,correct,19
+General-Track/unbdd_inv_gen_vmail.sl,CVC4-1.5.1-sygus-comp-v1,0.250896,correct,19
+General-Track/unbdd_inv_gen_w1.sl,CVC4-1.5.1-sygus-comp-v1,0.383446,correct,19
+General-Track/unbdd_inv_gen_w2.sl,CVC4-1.5.1-sygus-comp-v1,2.36099,correct,21
+General-Track/unbdd_inv_gen_winf1.sl,CVC4-1.5.1-sygus-comp-v1,0.0157789,correct,19
+General-Track/unbdd_inv_gen_winf2.sl,CVC4-1.5.1-sygus-comp-v1,0.0162469,correct,19
+General-Track/icfp_25_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_28_10.sl,CVC4-1.5.1-sygus-comp-v1,0.410703,correct,2
+General-Track/icfp_30_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_32_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_38_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.12,unsolved,0
+General-Track/icfp_39_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/icfp_45_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/icfp_45_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.07,unsolved,0
+General-Track/icfp_51_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_54_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.04,unsolved,0
+General-Track/icfp_56_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_5_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_64_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.1,unsolved,0
+General-Track/icfp_68_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.1,unsolved,0
+General-Track/icfp_69_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_72_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_73_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_7_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.12,unsolved,0
+General-Track/icfp_7_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.09,unsolved,0
+General-Track/icfp_81_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.03,unsolved,0
+General-Track/icfp_82_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/icfp_82_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_87_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/icfp_93_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_94_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_94_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.11,unsolved,0
+General-Track/icfp_95_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_96_10.sl,CVC4-1.5.1-sygus-comp-v1,3600.12,unsolved,0
+General-Track/icfp_96_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/icfp_99_100.sl,CVC4-1.5.1-sygus-comp-v1,3600.04,unsolved,0
+General-Track/icfp_9_1000.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/inv_gen_array.sl,CVC4-1.5.1-sygus-comp-v1,52.4998,correct,19
+General-Track/inv_gen_cegar2.sl,CVC4-1.5.1-sygus-comp-v1,15.7435,unsolved,0
+General-Track/inv_gen_cgr1.sl,CVC4-1.5.1-sygus-comp-v1,0.726458,correct,19
+General-Track/inv_gen_ex14.sl,CVC4-1.5.1-sygus-comp-v1,0.356531,correct,19
+General-Track/inv_gen_ex23.sl,CVC4-1.5.1-sygus-comp-v1,3600.02,unsolved,0
+General-Track/inv_gen_ex7.sl,CVC4-1.5.1-sygus-comp-v1,0.988327,correct,19
+General-Track/inv_gen_fig1.sl,CVC4-1.5.1-sygus-comp-v1,8.15565,correct,19
+General-Track/inv_gen_fig3.sl,CVC4-1.5.1-sygus-comp-v1,30.5191,correct,19
+General-Track/inv_gen_fig6.sl,CVC4-1.5.1-sygus-comp-v1,0.220839,correct,19
+General-Track/inv_gen_fig8.sl,CVC4-1.5.1-sygus-comp-v1,0.321554,correct,19
+General-Track/inv_gen_fig9.sl,CVC4-1.5.1-sygus-comp-v1,0.681559,correct,19
+General-Track/inv_gen_finf1.sl,CVC4-1.5.1-sygus-comp-v1,12.9787,correct,19
+General-Track/inv_gen_finf2.sl,CVC4-1.5.1-sygus-comp-v1,12.4739,correct,19
+General-Track/inv_gen_n_c11.sl,CVC4-1.5.1-sygus-comp-v1,1.09321,correct,19
+General-Track/inv_gen_sum1.sl,CVC4-1.5.1-sygus-comp-v1,114.408,unsolved,0
+General-Track/inv_gen_sum3.sl,CVC4-1.5.1-sygus-comp-v1,2.41671,correct,19
+General-Track/inv_gen_sum4.sl,CVC4-1.5.1-sygus-comp-v1,463.112,correct,19
+General-Track/inv_gen_tcs.sl,CVC4-1.5.1-sygus-comp-v1,90.4886,unsolved,0
+General-Track/inv_gen_term2.sl,CVC4-1.5.1-sygus-comp-v1,0.547484,correct,19
+General-Track/inv_gen_term3.sl,CVC4-1.5.1-sygus-comp-v1,0.363675,correct,19
+General-Track/inv_gen_trex1.sl,CVC4-1.5.1-sygus-comp-v1,1.41583,correct,19
+General-Track/inv_gen_trex2.sl,CVC4-1.5.1-sygus-comp-v1,0.221548,correct,19
+General-Track/inv_gen_trex4.sl,CVC4-1.5.1-sygus-comp-v1,0.468007,correct,19
+General-Track/inv_gen_vmail.sl,CVC4-1.5.1-sygus-comp-v1,0.413788,correct,19
+General-Track/inv_gen_w1.sl,CVC4-1.5.1-sygus-comp-v1,0.475737,correct,19
+General-Track/inv_gen_w2.sl,CVC4-1.5.1-sygus-comp-v1,0.414844,correct,19
+General-Track/inv_gen_winf1.sl,CVC4-1.5.1-sygus-comp-v1,0.0213099,correct,19
+General-Track/inv_gen_winf2.sl,CVC4-1.5.1-sygus-comp-v1,0.0216411,correct,19
+General-Track/LinExpr_eq1ex.sl,CVC4-1.5.1-sygus-comp-v1,0.611759,correct,57668
+General-Track/LinExpr_eq2ex.sl,CVC4-1.5.1-sygus-comp-v1,0.519838,correct,25462
+General-Track/LinExpr_inv1.sl,CVC4-1.5.1-sygus-comp-v1,591.609,correct,14
+General-Track/LinExpr_inv1_ex.sl,CVC4-1.5.1-sygus-comp-v1,0.079247,correct,4022
+General-Track/logcount-d1.sl,CVC4-1.5.1-sygus-comp-v1,3600.12,unsolved,0
+General-Track/logcount-d5.sl,CVC4-1.5.1-sygus-comp-v1,3600.05,unsolved,0
+General-Track/logcount.sl,CVC4-1.5.1-sygus-comp-v1,0.124097,unsolved,0
+General-Track/logcount2-d1.sl,CVC4-1.5.1-sygus-comp-v1,3600.1,unsolved,0
+General-Track/logcount2-d5.sl,CVC4-1.5.1-sygus-comp-v1,3600.04,unsolved,0
+General-Track/logcount2.sl,CVC4-1.5.1-sygus-comp-v1,0.462956,unsolved,0
+General-Track/max10.sl,CVC4-1.5.1-sygus-comp-v1,0.588253,correct,460
+General-Track/max12.sl,CVC4-1.5.1-sygus-comp-v1,1.62499,correct,673
+General-Track/max13.sl,CVC4-1.5.1-sygus-comp-v1,3.0896,correct,808
+General-Track/max14.sl,CVC4-1.5.1-sygus-comp-v1,5.13775,correct,957
+General-Track/max15.sl,CVC4-1.5.1-sygus-comp-v1,6.28473,correct,1044
+General-Track/max2.sl,CVC4-1.5.1-sygus-comp-v1,0.015588,correct,6
+General-Track/max3.sl,CVC4-1.5.1-sygus-comp-v1,0.0189811,correct,28
+General-Track/max4.sl,CVC4-1.5.1-sygus-comp-v1,0.0254979,correct,55
+General-Track/max5.sl,CVC4-1.5.1-sygus-comp-v1,0.040245,correct,93
+General-Track/max6.sl,CVC4-1.5.1-sygus-comp-v1,0.062606,correct,139
+General-Track/max7.sl,CVC4-1.5.1-sygus-comp-v1,0.120799,correct,196
+General-Track/max8.sl,CVC4-1.5.1-sygus-comp-v1,0.224524,correct,270
+General-Track/max9.sl,CVC4-1.5.1-sygus-comp-v1,0.323867,correct,358
+General-Track/max_11.sl,CVC4-1.5.1-sygus-comp-v1,0.983218,correct,552
+General-Track/mpg_example1.sl,CVC4-1.5.1-sygus-comp-v1,0.020136,correct,127
+General-Track/mpg_example2.sl,CVC4-1.5.1-sygus-comp-v1,0.027158,correct,259
+General-Track/mpg_example3.sl,CVC4-1.5.1-sygus-comp-v1,0.050357,correct,1001
+General-Track/mpg_example4.sl,CVC4-1.5.1-sygus-comp-v1,0.0858111,correct,3657
+General-Track/mpg_example5.sl,CVC4-1.5.1-sygus-comp-v1,0.0543599,correct,1767
+General-Track/mpg_guard1.sl,CVC4-1.5.1-sygus-comp-v1,0.017637,correct,23
+General-Track/mpg_guard2.sl,CVC4-1.5.1-sygus-comp-v1,0.0181721,correct,27
+General-Track/mpg_guard3.sl,CVC4-1.5.1-sygus-comp-v1,0.0179501,correct,31
+General-Track/mpg_guard4.sl,CVC4-1.5.1-sygus-comp-v1,0.0181609,correct,33
+General-Track/mpg_ite1.sl,CVC4-1.5.1-sygus-comp-v1,0.0200711,correct,77
+General-Track/mpg_ite2.sl,CVC4-1.5.1-sygus-comp-v1,0.0203841,correct,105
+General-Track/mpg_plane1.sl,CVC4-1.5.1-sygus-comp-v1,0.015168,correct,3
+General-Track/mpg_plane2.sl,CVC4-1.5.1-sygus-comp-v1,0.015679,correct,17
+General-Track/mpg_plane3.sl,CVC4-1.5.1-sygus-comp-v1,0.0176179,correct,29
+General-Track/MPwL_d1s3.sl,CVC4-1.5.1-sygus-comp-v1,0.567112,correct,1
+General-Track/MPwL_d1s7.sl,CVC4-1.5.1-sygus-comp-v1,121.675,correct,1
+General-Track/MPwL_d4s3.sl,CVC4-1.5.1-sygus-comp-v1,3.32782,correct,7
