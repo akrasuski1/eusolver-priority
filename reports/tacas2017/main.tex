@@ -28,6 +28,7 @@
 \pgfplotsset{compat=1.12}
 \usepackage{hyperref}
 \usepackage{marginnote}
+\usepackage{pgfplotstable}
 
 \hyphenation{enum-er-at-ive}
 
@@ -173,11 +174,6 @@
   the \sygus competition, \eusolver placed first in the general track
   and the programming-by-examples track, and placed second in the linear
   integer arithmetic track. 
-  \marginnote{Do we need this statement in the abstract?
-  Further, our solver is able to solve a
-  large number of instances from the ICFP class of benchmarks, which
-  were previously unsolved by all existing solvers. 
-  }
 \end{abstract}
 
 \section{Introduction}
@@ -362,7 +358,7 @@ approach.
 Further, to test the anytime extension, we run \eusolver on $50$ ICFP
 benchmarks with and without the extension.
 Note that no previous solver has been able to solve these ICFP
-benchmarks satisfactorily.
+benchmarks.
 We observed that the anytime extension of the algorithm was able to
 produce more compact solutions in $22$ cases.
 We were able to obtain upto $90\%$ reduction in solution size in some
@@ -1375,6 +1371,34 @@ seconds.
 % and 128 GB of memory, with a one hour time limit.
 
 % \subsection{Goals, Benchmarks and the State-of-the-art}
+\pgfplotstableread[row sep=\\,col sep=&]{
+  solver & EUSolver & CVC4 & ESolver \\
+  Gen. & 206 & 195 & 139 \\
+  LIA & 73 & 72 & 39 \\
+  PBE & 787 & 39 & 1 \\
+}\solvedData
+\begin{wrapfigure}{l}{0.4\textwidth}%[!t]
+\centering
+  \begin{tikzpicture}
+    \fontsize{8}{10}\selectfont
+    \begin{axis}[
+      ybar,
+      ytick align=outside,
+      bar width=0.15cm,
+      width=5cm,
+      height=5cm,
+      symbolic x coords={Gen.,LIA,PBE},
+      ]
+      \addplot[color=red,fill=red] table[x=solver,y=EUSolver]{\solvedData};
+      \addplot[color=blue,fill=blue] table[x=solver,y=CVC4]{\solvedData};
+      \addplot[color=green,fill=green] table[x=solver,y=ESolver]{\solvedData};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Number of benchmarks solved per track for \eusolver (red),
+  CVC4 (blue), and \esolver (green)}
+    \label{fig:num_solved}
+\vspace*{-1ex}
+\end{wrapfigure}
 \paragraph{Goals}
 We seek to empirically evaluate how our synthesis algorithm compares
 to other state-of-the-art synthesis techniques along the following
@@ -1404,7 +1428,44 @@ if the algorithm is given an additional (but fixed) time budget?
 % \item the benchmarks were similar to the ones that we considered.
 % \end{inparaenum}
 
-\begin{figure}
+
+\paragraph{Benchmarks}
+We draw benchmarks from $3$ tracks of \sygus
+competition 2016:
+\footnote{The \sygus competition 2016 included an addition track -- the
+invariant generation track. 
+However, the specifications in this track are not simply separable, and
+\eusolver falls back to the standard enumeration algorithm instead of
+the divide-and-conquer techniques described in this paper.
+}
+\begin{compactitem}[(a)]
+\item {\em General track.} The general track contains $309$ benchmarks
+  drawn from a wide variety of domains and applications.
+\item {\em Programming-by-example track.} The PBE track contains $852$
+  benchmarks where, for each benchmark, the semantic specification is
+  given by a set of input-output examples.
+\item {\em Linear-integer-arithmetic track.} The LIA track contains $73$
+  benchmarks, each over the linear integer arithmetic theory, where the
+  grammar is fixed to a standard grammar that generates conditional
+  linear arithmetic expressions.
+\end{compactitem}
+
+
+\vspace*{-3mm}
+\subsection{Discussion}
+% We compare the \dcsolve algorithm compares to contemporary
+% solvers along the three dimensions described earlier.
+
+Figures~\ref{fig:results} and~\ref{fig:num_solved} plot the full
+results of running \eusolver on the benchmarks from the three
+categories.
+Alongside are plotted the results of $2$ other state-of-the-art
+solvers:
+\begin{inparaenum}[(a)]
+\item the white-box solver CVC4-1.5.1 based on~\cite{reynolds-15}, and
+\item the enumerative black-box solvers \esolver described in~\cite{udupa-sygus}
+\end{inparaenum}
+\begin{figure}[t]
 \begin{subfigure}{0.33\textwidth}
   \begin{tikzpicture}
     \fontsize{8}{10}\selectfont
@@ -1479,63 +1540,55 @@ if the algorithm is given an additional (but fixed) time budget?
   Interpretation: For every point, the $x$-coordinate gives the number
   of benchmarks which are solved within the time indicated by the
   $y$-coordinate.
-  \caption{Results for \esolver (green), CVC4 (blue), and \eusolver (red)}
+  \caption{Running times for \esolver (green), CVC4 (blue), and \eusolver (red)}
   \label{fig:results}
 \end{figure}
 
-\paragraph{Benchmarks}
-We draw benchmarks from $3$ tracks of \sygus
-competition 2016:
-\footnote{The \sygus competition 2016 included an addition track -- the
-invariant generation track. 
-However, the specifications in this track are not simply separable, and
-\eusolver falls back to the standard enumeration algorithm instead of
-the divide-and-conquer techniques described in this paper.
-}
-\begin{compactitem}[(a)]
-\item {\em General track.} The general track contains $309$ benchmarks
-  drawn from a wide variety of domains and applications.
-\item {\em Programming-by-example track.} The PBE track contains $852$
-  benchmarks where, for each benchmark, the semantic specification is
-  given by a set of input-output examples.
-\item {\em Linear-integer-arithmetic track.} The LIA track contains $73$
-  benchmarks, each over the linear integer arithmetic theory, where the
-  grammar is fixed to a standard grammar that generates conditional
-  linear arithmetic expressions.
-\end{compactitem}
-
-
-\vspace*{-1mm}
-\subsection{Discussion}
-% We compare the \dcsolve algorithm compares to contemporary
-% solvers along the three dimensions described earlier.
-
-Figure~\ref{fig:results} plots the full results of running \eusolver on
-the benchmarks from the three categories.
-Alongside are plotted the results of $2$ other state-of-the-art
-solvers:
-\begin{inparaenum}[(a)]
-\item the white-box solver CVC4-1.5.1 based on~\cite{reynolds-15}, and
-\item the enumerative black-box solvers \esolver described in~\cite{udupa-sygus}
-\end{inparaenum}
 
 \paragraph{Performance}
 \eusolver was able to solve $206$ of the $309$ benchmarks in the
 general track and $72$ of the $73$ benchmarks in the
-programming-by-example track. 
-CVC4-1.5.1 solves $195$ and $73$ benchmarks in these categories, while 
-\esolver solves $139$ and $XXX$ \arsays{rerun esolver on lia}.
+PBE track. 
+CVC4 solves $195$ and $73$ benchmarks in these categories, while 
+\esolver solves $139$ and $34$.
 As Figure~\ref{fig:results} shows, the performance is comparable to both
-CVC4-1.5.1 and \esolver in both tracks, being only marginally slower in
+CVC4 and \esolver in both tracks, being only marginally slower in
 the LIA track.
 However, \eusolver performs exceptionally well on the PBE benchmarks,
-solving $787$ while CVC4-1.5.1 solved $39$ and \esolver solved $1$.
+solving $787$ while CVC4 solved $39$ and \esolver solved $1$.
 % As the results in Figure~\ref{fig:results} show,
-Programming-by-examples benchmarks require the solver
-to generalize from input-output examples---\eusolver inherits this from
-the enumerative approach.
+PBE benchmarks require the solver
+to generalize from input-output examples---\eusolver inherits this
+ability from the enumerative approach.
+\begin{wrapfigure}{l}{0.3\textwidth}%[!t]
+\centering
+  \begin{tikzpicture}
+    \fontsize{8}{10}\selectfont
+    \begin{axis}[
+      width=4cm,
+      height=4cm,
+      xlabel=\esolver sol. size,
+      ylabel=\eusolver sol. size,
+      tick align=outside,
+      grid=major,
+      line width=0.7pt,
+      % ytick={10, 100},
+      % xtick={10, 100},
+      xmin=0,
+      ymin=0,
+      xmax=25,
+      ymax=25
+      ]
+      \addplot[mark=.,color=gray] table {xequalsy.dat};
+      \addplot[only marks,mark=x,color=blue] table {plots/gen_eu_e_sizes.dat};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Scatter plot of \eusolver and \esolver solution sizes.}
+    \label{fig:size_comparison}
+\vspace*{-1ex}
+\end{wrapfigure}
 However, the standard enumerative solver \esolver is unable to solve
-these benchmarks as the solution sizes are large---\eusolver overcomes
+these benchmarks due to the large solution sizes---\eusolver overcomes
 this hurdle with the divide-and-conquer approach.
 
 % To summarize, the \dcsolve algorithm demonstrates vastly better
@@ -1547,24 +1600,24 @@ this hurdle with the divide-and-conquer approach.
 % generalize well from input-output examples as we will now discuss.
 
 \paragraph{Quality of Solutions}
-\marginnote{How to write this? Almost all the commonly solved benchmarks
-have equal solution sizes}
-Figure~\ref{fig:sizes} highlights the solution sizes produced by the
-three solvers for the commorly solved benchmarks.
-As can be seen, \eusolver often matches the solution sizes produced by
-$\esolver$ which is guaranteed to produce the smallest solution
+Figure~\ref{fig:size_comparison} highlights the solution sizes produced by
+\eusolver and \esolver  for the commorly solved benchmarks in the
+general track.
+\eusolver often matches the solution sizes produced by
+\esolver ($108$ of the $112$ benchmarks).
+\esolver is guaranteed to produce the smallest solution
 possible.
 This shows that the divide-and-conquer approach
 does not significantly sacrifice solution quality for better
 performance. 
 
-\begin{wrapfigure}{l}{0.4\textwidth}%[!t]
+\begin{wrapfigure}{r}{0.3\textwidth}%[!t]
 \centering
   \begin{tikzpicture}
     \fontsize{8}{10}\selectfont
     \begin{loglogaxis}[
-      width=5cm,
-      height=5cm,
+      width=4cm,
+      height=4cm,
       xlabel=First Solution Size,
       ylabel=Min. Solution Size,
       tick align=outside,
@@ -1582,10 +1635,10 @@ performance.
     \end{loglogaxis}
   \end{tikzpicture}
   \caption{Scatter plot of first vs. minimum size
-    solutions with the anytime extension. Points below the $x = y$ line
-    correspond to benchmarks which benefit from the anytime extension.}
+    solutions with the anytime extension. Points below $x = y$ 
+    benefit from the anytime extension.}
     \label{fig:anytime_results}
-\vspace*{-1ex}
+\vspace*{-2ex}
 \end{wrapfigure}
 \paragraph{Effect of Anytime Extension}
 We selected $50$ ICFP benchmarks from the general track and use
@@ -1617,7 +1670,7 @@ of the decision tree.
 % were enumerated, thus leading to the overall expression sizes of the
 % solutions to sometimes increase with time.
 
-Overall, our experimental evaluation suggests that:
+Overall, our experiments suggests that:
 % thus allows us to draw the following conclusions:
 \begin{inparaenum}[(a)]
 \item
@@ -1625,12 +1678,12 @@ The \dcsolve algorithm is able to quickly learn compact solutions,
 % for a large fraction of the ICFP benchmarks,
 and generalizes well from input-output examples.
 \item
-The anytime nature of the \dcsolve algorithm is often useful in
-reducing the size of the computed solution;
+The anytime nature of \dcsolve often 
+reduces the size of the computed solution;
 % by allowing additional execution time.
 \item
 The \dcsolve algorithm works competently on problems from different
-classes of benchmarks.
+domains.
 % domaother
 % classes of benchmarks that admit conditional expressions as solutions,
 % such as the parameterized ``max'' benchmarks.
@@ -1649,18 +1702,18 @@ framework~\cite{solar-lezama-05,solar-lezama-06} which
 % unoptimized C program as a correctness specification, and a partial
 % program with \emph{generator} expressions to specify syntactic
 % restrictions, and
-proposed the counterexample guided inductive
-synthesis (CEGIS). Almost all synthesis
+proposed counterexample guided inductive
+synthesis (CEGIS). Most synthesis
 algorithms proposed in recent literature
 % --- including the one described in this paper ---
 can be viewed as an instantiation of CEGIS.
 % More recently, constraint based synthesis approaches
 % have been applied to synthesize loop-free programs~\cite{jha-10,
 % gulwani-pldi-11}.
-Synthesis of string manipulating programs using input-output
+Synthesis of string manipulating programs using
 examples has found applications in Microsoft's
 FlashFill~\cite{gulwani-popl-11}, and the ideas have been generalized
-for other domains in a meta-synthesis framework called
+in a meta-synthesis framework called
 FlashMeta~\cite{polozov-15}.
 Other recent work in the area of program synthesis have
 used type-theoretic approaches~\cite{gvero-13,osera-15,frankle-16} for
@@ -1668,8 +1721,7 @@ program completion and for generating code snippets.
 Synthesis of recursive programs and data structure manipulating code
 % using constraint solving techniques
 % is yet another application of program synthesis that
-has also been studied extensively in recent
-years~\cite{kuncak-10,kneuss-13,albarghouthi-13,feser-15}.
+has also been studied extensively~\cite{kuncak-10,kneuss-13,albarghouthi-13,feser-15}.
 Lastly, synthesis techniques based on decision trees have been used to
 learn program invariants~\cite{garg-16}.
 
