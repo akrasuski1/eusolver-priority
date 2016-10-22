@@ -367,16 +367,16 @@ benchmarks with and without the extension.
 Note that no previous solver has been able to solve these ICFP
 benchmarks.
 We observed that the anytime extension of the algorithm was able to
-produce more compact solutions in $22$ cases.
-We were able to obtain upto $90\%$ reduction in solution size in some
-cases.
+produce more compact solutions in $18$ cases.
 \comment{
+We were able to obtain upto $???\%$ reduction in solution size in some
+cases.
  The tool was able
 to solve $47$ out of the $50$ problems in the ICFP suite of
 benchmarks.  % in less than $1$ hour.  To the best of our knowledge,
 no other solver has been able to solve the ICFP benchmarks
 satisfactorily.  Further, we also observed that the anytime extension
-of the algorithm was able to produce more compact solutions in $22$ of
+of the algorithm was able to produce more compact solutions in $19$ of
 the $47$ solved benchmarks.  We were able to obtain upto $90\%$
 reduction in solution size in some cases.  In the linear integer
 arithmetic domain, the tool performed much better than existing
@@ -1640,7 +1640,7 @@ performance.
 \centering
   \begin{tikzpicture}
     \fontsize{8}{10}\selectfont
-    \begin{loglogaxis}[
+    \begin{axis}[
       width=4cm,
       height=4cm,
       xlabel=First Solution Size,
@@ -1648,16 +1648,16 @@ performance.
       tick align=outside,
       grid=major,
       line width=0.7pt,
-      ytick={10, 100},
-      xtick={10, 100},
-      xmin=5,
-      ymin=5,
-      xmax=230,
-      ymax=230
+      % ytick={10, 100},
+      % xtick={10, 100},
+      xmin=2,
+      ymin=2,
+      xmax=70,
+      ymax=70,
       ]
       \addplot[mark=.,color=gray] table {xequalsy.dat};
-      \addplot[only marks,mark=x,color=blue] table {cumulative_improvement.dat};
-    \end{loglogaxis}
+      \addplot[only marks,mark=x,color=blue] table {plots/anytime.dat}; 
+    \end{axis}
   \end{tikzpicture}
   \caption{Scatter plot of first vs. minimum size
     solutions with the anytime extension. Points below $x = y$
@@ -1671,13 +1671,12 @@ to test the anytime extension described in Section~\ref{sec:optimizations}
 (the results are summarized in
 Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}
 in the appendix, and Figure~\ref{fig:anytime_results}).
-For about half the ICFP benchmarks, we were able to obtain a more
+For $18$ of the $50$ ICFP benchmarks, we were able to obtain a more
 compact solution by letting the algorithm continue execution after the
-first solution was discovered (last column in
+first solution was discovered.
 Further, the difference in the first and
-smallest solutions is sometimes very significant. For example, in the
-case of the ``icfp\_95\_100'' benchmark, we see the size of the
-solution go down from 220 to 24.
+smallest solutions is sometimes significant---for example, in the
+case of the ``icfp\_118\_100'' benchmark, we see a reduction of $55\%$.
 % by almost an order of magnitude, from 220 to 24.
 An interesting phenomenon that we observed was that while the size of
 the decision tree almost always went down with time, the size of the
