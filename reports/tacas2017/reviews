@@ -1,0 +1,192 @@
+Reviews
+
+Review 1
+Overall evaluation: 	2
+Reviewer's confidence: 	2
+Review:
+The paper presents an approach for syntax-guided synthesis where the
+idea is to use a specification and a context-free grammar to search for
+a small program expressable in the grammar and implementing the
+specification. The process of constructing the expressions is guided by
+counter-examples for the correctness of the expression with respect to
+the specification obtained through SMT queries. The novelty of the
+paper is in decomposing the grammar into two parts: one that construct
+terms that are correct on some inputs, and another that constructs
+predicates used for separating the inputs. The two parts are then
+combined using a decision tree learning algorithm.
+
+The paper combines techniques varying from SMT solving to decision trees
+into an efficient tool for synthesis. The description of the tool and
+the optimizations is, in my opinion, detailed enough to allow
+reimplementation. The experiments show that the tool is competitive
+against CVC4 and an earlier version of the tool and wins with an
+overwhelming margin on one cateogry. The paper is well written and in
+general in my opinion should be accepted to TACAS.
+
+I think that a closer integration of SMT solving, decision tree
+learning, and counterexample generation through techniques such as craig
+interpolation will offer interesting possibilities in the future for
+this line of research.
+
+Minor comments:
+
+p. 2, l. -6: The sentence is missing a word and the words sound and
+soundly repeat with different meanings.
+
+p. 6, l 4: "... plainly separable if can be rewritten" is missing a
+word?
+
+p. 6, l. 6: "... to be synthesized $f$ have the same arguments" => has
+
+p. 6, l. 21: Should Arg_C be Arg_C(p)?
+p. 6, l. 22: the word "... invocation of $f$ that occurs in $C$." For
+me it's unclear whether "that" refers to $f$ or Arg_C (or $p$?).
+
+p. 7, l. -17: "... conditional expressions grammars... " => "conditional
+expression grammars".
+
+p. 8, l. -12: "... for decision tree learning in Section 4.2." is
+missing some words.
+
+p. 12, l. 15: "Now, we whether any term..." is missing a word.
+
+p. 14, l. -22: "commorly" -> "commonly"
+
+===============================================================================
+
+Review 3
+Overall evaluation: 	
+1
+Reviewer's confidence: 	
+3
+Review
+Review:
+
+I would recommend to accept this paper for TACAS'17.
+
+Summary:
+The authors present a new algorithm for the syntax-guided synthesis
+(SyGuS) of programs. Their approach differs from the existing
+enumerative algorithm by dividing the problem into two distinct,
+iteratively executed steps: (a) Finding basic terms that satisfy part
+of the desired specification by covering a unique set of previously
+retrieved counterexamples, and (b) Determining a conditional logic
+based on these terms to completely satisfy the desired specification.
+
+The presented approach is evaluated based on the SyGuS competition 2016
+where it proved to be successful. The benchmarks are used for a detailed
+comparison to other participating tools with regards to size of
+retrieved results and the time required to compute them.  The evaluation
+indicates that the new approach greatly improves the performance
+scalability of the existing enumeration algorithm while barely
+increasing the size of the resulting program. The presented algorithm
+seems to be particularly well-suited for program synthesis based on
+exemplary inputs and outputs, but manages to stay competitive with
+current black-box and white-box approaches for other synthesis tasks.
+
+
+Comments:
+The paper motivates both the overall use of syntax-guided program
+synthesis and the introduction of their presented algorithm, the latter
+by illustrating the performance drawback of the existing enumeration
+algorithm. An introductory comparison of these two algorithms succeeds
+to highlight their differences early on and to further motivate what is
+being developed throughout the paper. A running example that is
+frequently used for example when a new formalism is introduced makes
+this already well-structured paper very readable and understandable.
+
+One concern that might arise while reading this paper is that the term
+"divide and conquer" is used to describe the presented DCSolve
+algorithm. As opposed to the usual definition, the DCSolve algorithm
+does not feature a recursive subdivision of the original (synthesis)
+problem. While the problem is being divided into two different domains
+of terms and predicates, the algorithm still iteratively expands sets of
+terms and predicates until a matching solution is found. The recursive
+nature of the algorithm is missing here. The use of the term "divide and
+conquer" that is already present in the title of this paper might
+therefore not be the best fit and confuse readers initially.
+
+The authors succeed to position their new algorithm in the related work
+and provide similarities and differences to existing approaches.
+Furthermore, they evaluate their first implementation of the new
+approach in comparison to existing tools and analyze both the quality of
+results and the execution time.
+
+Overall, this well-written paper has a clear contribution. It further
+manages to convince the reader that the presented approach is useful
+based on comparisons and a thorough evaluation. I therefore recommend to
+accept this paper for TACAS'17.
+
+
+Additional comments:
+* page 2: "... grows exponentially with solution size." --> "... grows exponentially with the solution size."
+* page 2: The text talks about the solution size, however the referenced Figure 2 contains an x-axis label "expression size".
+* page 2: "We use a simple multi-label decision tree learning algorithm returns ..." --> "We use a simple multi-label decision tree
+learning algorithm that returns ..."
+* page 3: "This exceptional performance is because eusolver is able to..." --> "This exceptional performance is based on eusolver's
+ability to ..."
+
+* page 3, "Illustrative Example":
+- Regarding T::= x and T::= y: Are there only two different variables allowed? I would have expected that there can be arbitrarily
+many, in which case x and y would again be implicit productions and therefore equivalent.
+
+* pages 4, Subsection "Basic Enumerative Strategy":
+- It is mentioned that the number of expressions grows exponentially with the size. It is not clear where the mentioned "hundreds
+of expressions" arise from. It might be helpful to reference that the behavior of the "enumerate" procedure is introduced later
+to avoid related questions.
+- "In general, the number of expressions grows exponentially with size" --> "In general, the number of expressions grows
+exponentially with the size" (see also the comment above regarding "size")
+
+* page 6: "if can be rewritten" --> "if it can be rewritten"
+* page 6: "every appearing application ... have the same arguments" --> "every appearing application ... has the same arguments"
+* page 7: "Figure 2 shows the time taken (in seconds) to generate all expressions up to a given size for the grammar from Figure 1":
+What is the definition of "all expressions" here? Footnote 1 and Appendix B indicate that the enumeration only produces terms that are
+distinct with respect to selected points.
+* page 7: "We introduce conditional expressions grammars" --> "We introduce conditional expression grammars"
+* page 7: "Most commonly occurring SyGuS" --> ". Most commonly occurring SyGuS"
+* page 8: "The exact procedure we use for decision tree learning in Section 4.2." --> "The exact procedure we use for decision tree
+learning is presented in Section 4.2."
+* page 12: "Now, we whether any term in Eq(0) is correct on the counter-example point–here, the term y" --> "Now, we check whether any
+term in Eq(0) is correct on the counter-example point, and therefore check the term y"
+* page 13: "We draw benchmarks from 3 tracks of SyGuS competition 2016" --> "We draw benchmarks from 3 tracks of the SyGuS competition
+2016"
+* page 13: "Alongside are plotted the results of 2 other state-of-the-art solvers:" --> "The plots also contain the results of 2 other
+state-of-the-art solvers:"
+* page 14: "commorly" --> "commonly"
+* page 14: What does "ICFP" stand for? Something with functional programming?
+* page 15: ", including DCSolve struggle to do." --> ", including DCSolve, struggle to achieve."
+* page 15: "while we use a information gain heuristic" --> "while we use an information gain heuristic"
+
+===============================================================================
+
+Review 2
+Overall evaluation: 	2
+Reviewer's confidence: 	2
+Review:
+The authors propose a novel procedure for solving the Syntax Guided
+Synthesis (SyGuS) problem, based on the enumerative approach that a
+subset of the authors developed previously in [2]. The paper starts with
+an observation that the simple enumerative approach works remarkably
+well on problems where the solution is small, but fails to scale to the
+problems with larger solution size. As a solution, the paper proposes a
+divide-and-conquer approach that is developed from the second key
+observation - that the expression that satisfies the synthesis problem
+may be large, but the individual parts within the expression (terms and
+predicates) are typically small. Hence, the new procedure only
+enumerates terms and predicates, and then uses the technique of learning
+decision trees to combine them into larger expressions. Finally, the
+authors propose a procedure that does not stop when it synthesizes the
+first satisfactory solution, but continues trying to generate a more
+succint solution.
+
+The resulting algorithm is evaluated on standard benchmarks from the
+SyGuS competition. The authors demonstrate significant improvements with
+the new algorithm, especially in the programming-by-example track, where
+the new procedure manages to solve 787 out of 852 problem instances,
+compared to only 39 from the other tools.
+
+The paper is based on simple and elegant ideas. The extension is natural
+and the results are to some extent expected, which in my opinion is a
+plus and shows that such a solution was needed. My only concern is that
+the paper is a bit too dense, the authors have apparently struggled with
+the space and tried to "squeeze" too much content.

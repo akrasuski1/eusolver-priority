@@ -135,18 +135,13 @@
 \title{
   \texorpdfstring{Scaling Enumerative Program Synthesis\\via
     Divide and Conquer}{Scaling Enumerative Program Synthesis via Divide and Conquer}
-  \vspace{-2ex}
+  \thanks{This research was supported by NSF Expeditions award CCF
+  1138996 and by the Simons Investigator award.}
   }
-\author{
-  \vspace{-1ex}
-  Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
-% \author{}
-\institute{
-  University of Pennsylvania
+\author{Rajeev Alur \and Arjun Radhakrishna \and Abhishek Udupa}
+\institute{University of Pennsylvania
 }
-% \institute{}
 \maketitle
-\vspace*{-6ex}
 
 \begin{abstract}
   Given a semantic constraint specified by a logical formula, and
@@ -246,15 +241,15 @@ verified against the full specification.
 If it is incorrect, a counter-example point is found and added to the
 set of input points.
 
-Although the enumerative strategy works well when the desired solutions
-have small to medium sizes, it does not scale well with the solution
-size.  Figure~\ref{figure:random_exponential_graph}
-% the x-axis
-% represents expression size and the y-axis represents the time taken to
-% enumerate all expressions of size up to the expression size.
-shows that the time taken to explore all potential solutions
-grows exponentially with solution size.  To overcome this scalability issue, we
-introduce a divide-and-conquer enumerative algorithm.
+Though the enumerative strategy works well when the solutions
+have small sizes, it does not scale well.
+The time take to explore all potential solutions up to a given size grows
+exponentially with the size.
+% Figure~\ref{figure:random_exponential_graph}
+% shows that the time taken to explore all potential solutions
+% grows exponentially with the expression size.  
+To overcome this scalability issue, we introduce a divide-and-conquer
+enumerative algorithm.
 
 The divide-and-conquer enumerative approach is based on this insight:
 while the full solution expression to the synthesis problem may be
@@ -283,7 +278,7 @@ the enumerative algorithm serve as the samples, the predicates
 enumerated serve as the attributes, and the terms serve as the labels.
 A term $\Term$ is a valid label for a point $\Point$ if $\Term$ is
 correct for $\Point$.  We use a simple multi-label decision tree
-learning algorithm returns a sound decision tree that classifies the
+learning algorithm to learn a decision tree that classifies the
 samples soundly, \ie, for each point, following the edges
 corresponding to the attribute values (\ie, predicates) leads to a
 label (\ie, term) which is correct for the point.
@@ -346,21 +341,21 @@ solutions. Decomposing the verification queries into
 % \end{inparaenum}
 
 \paragraph{Evaluation}
-We implemented the proposed algorithm in a prototype tool \eusolver and
+We implemented the proposed algorithm in a tool \eusolver and
 evaluated it on benchmarks from the \sygus competition.
 The tool was able to perform on par or better than existing solvers in
 most tracks of the 2016 \sygus competition, placing first in the general
 and programming-by-example tracks, and second in the
 linear-integer-arithmetic track.
-In the general and linear-integer-arithmetic tracks, the performance of
-\eusolver is comparable to the state-of-the-art white-box solver.
+In the general and linear-integer-arithmetic tracks, \eusolver's performance
+is comparable to the state-of-the-art solvers.
 However, in the programming-by-example track, \eusolver performs
 exceptionally well, solving $787$ of the $852$ benchmarks, while no
 other tool solved more than $39$.
-This exceptional performance is because \eusolver is able to
-generalize from examples like other enumerative approaches, and is
-able to scale to larger solution sizes due to the divide-and-conquer
-approach.
+This exceptional performance is due to \eusolver being able to
+generalize from examples like other enumerative approaches, while also
+being able to scale to larger solution sizes due to the
+divide-and-conquer approach.
 
 Further, to test the anytime extension, we run \eusolver on $50$ ICFP
 benchmarks with and without the extension.
@@ -369,7 +364,7 @@ benchmarks.
 We observed that the anytime extension of the algorithm was able to
 produce more compact solutions in $18$ cases.
 \comment{
-We were able to obtain upto $???\%$ reduction in solution size in some
+We were able to obtain up to $???\%$ reduction in solution size in some
 cases.
  The tool was able
 to solve $47$ out of the $50$ problems in the ICFP suite of
@@ -377,7 +372,7 @@ benchmarks.  % in less than $1$ hour.  To the best of our knowledge,
 no other solver has been able to solve the ICFP benchmarks
 satisfactorily.  Further, we also observed that the anytime extension
 of the algorithm was able to produce more compact solutions in $19$ of
-the $47$ solved benchmarks.  We were able to obtain upto $90\%$
+the $47$ solved benchmarks.  We were able to obtain up to $90\%$
 reduction in solution size in some cases.  In the linear integer
 arithmetic domain, the tool performed much better than existing
 black-box solvers, scaling to larger instances. The algorithm was also
@@ -407,8 +402,9 @@ The main contributions are as follows:
 \vspace*{-2ex}
 \section{Illustrative Example}
 \label{sec:example}
+\vspace*{-1ex}
 
-\begin{wrapfigure}{r}{0.4\textwidth}
+\begin{wrapfigure}{r}{0.38\textwidth}
   \vspace*{-3ex}
   \begin{alltt}
   \fontsize{8}{10}\selectfont
@@ -421,7 +417,7 @@ C ::= T \(\leq\) T | C \(\wedge\) C | \(\neg\) C
   \label{fig:lia_grammar}
   \vspace*{-1ex}
 \end{wrapfigure}
-We explain the salient points of our approach with an example.
+% We explain the salient points of our approach with an example.
 Consider a synthesis task to generate an expression $\Expr$ such that:
 \begin{inparaenum}[(a)]
 \item $\Expr$ is generated by the grammar from Figure~\ref{fig:lia_grammar}.
@@ -442,10 +438,9 @@ algorithm~\cite{udupa-transit} using
 Table~\ref{table:enumerative_example}.
 The enumerative algorithm maintains a set of input points
 $\Points$ (initially empty), and proceeds in rounds.
-In each round the algorithm proposes a solution expression which
-is correct on all of $\Points$.
-If this expression is correct on all inputs (verified by an SMT
-solver) the algorithm returns it.
+In each round, it proposes a candidate solution that is correct on all
+of $\Points$.
+If this candidate is correct on all inputs, it is returned.
 Otherwise, a counter-example input point is added to $\Points$.
 
 \begin{table}[!t]
@@ -457,7 +452,8 @@ Otherwise, a counter-example input point is added to $\Points$.
       1 & $0$ & $0$ & $\{ x \mapsto 1, y \mapsto 0 \}$ \\\hlx{h}
       2 & $0$, $1$ & $1$ & $\{ x \mapsto 0, y \mapsto 2 \}$ \\\hlx{h}
       3 & $0$, $1$, $x$, $y$, $\ldots$, $x + y$,  & $x+y$ & $\{ x \mapsto 1, y \mapsto 2 \}$ \\\hlx{h}
-      \vdots & \vdots & \vdots & \vdots\\\hlx{h}
+      \multicolumn{4}{c}{\ldots} \\\hlx{h}
+      % \small \vdots & \small\vdots & \small\vdots & \small\vdots\\\hlx{h}
       $n$ & $0$, \ldots, $\ITE{x \leq y}{y}{x}$  & $\ITE{x \leq y}{y}{x}$ &  \\\hlx{hvv}
   \end{tabular*}
   \vspace{1ex}
@@ -488,11 +484,12 @@ expressions.
 % size $1$) on all $\Points$.
 After several rounds, the algorithm eventually generates the expression
 $\ITE{x \leq y}{y}{x}$ which the SMT solver verifies to be correct.
-Note that to get the correct expression, the algorithm had to generate
-a large number (in this case, hundreds of expressions).  In general,
-the number of expressions grows exponentially with size.  Thus, the
-enumerative solver fails to scale to problems which only admit
-solutions representable by large expressions.
+In the full run, the basic enumerative strategy (algorithm presented in
+Section~\ref{sec:enumeration}) generates a large number (in this case,
+hundreds) of expressions before generating the correct expression.
+In general, the number of generated expressions grows exponentially with
+the size of the smallest correct expression. 
+Thus, the enumerative solver fails to scale to large solution sizes.
 
 
 \paragraph{Divide and Conquer Enumeration}
@@ -554,10 +551,8 @@ expressions.
   \vspace{-2ex}
 \end{table}
 
-\vspace*{-1mm}
 \section{Problem Statement and Background}
 \label{sec:problem}
-\vspace*{-1mm}
 Let us fix the function to be synthesized $\SynthFun$ and its formal
 parameters $\FormalParameters$.
 We write $\range(\SynthFun)$ to denote the range of $\SynthFun$.
@@ -659,12 +654,13 @@ Here, we use a simple syntactic notion of point-wise specifications,
 which we call \emph{plain separability}, for convenience.
 However, our techniques can be generalized to any notion of point-wise
 specifications.
-Formally, we say that a specification is {\em plainly separable} if can
-be rewritten into a conjunctive normal form where each clause is either
+Formally, we say that a specification is {\em plainly separable} if it
+can be rewritten into a conjunctive normal form where each clause is
+either
 \begin{inparaenum}[(a)]
 \item a tautology, or
-\item every appearing application of the function to be synthesized
-  $\SynthFun$ have the same arguments.
+\item each appearing application of the function to be synthesized
+  $\SynthFun$ has the same arguments.
 \end{inparaenum}
 
 \begin{example}
@@ -697,9 +693,9 @@ Formally, we say that $\Expr \models \Spec \downharpoonleft
 replacing each clause $C$ in $\Spec$
 by $\mathit{Pre}_C(\Point) \Rightarrow C$.
 Here, the premise $\mathit{Pre}_C(\Point)$ is given by $\bigwedge_{p \in
-\FormalParameters} \mathit{Arg}_C(p) = \Point[p]$ where $\mathit{Arg}_C$ is the
-actual argument corresponding to the formal parameter $p$ in the
-unique invocation of $\SynthFun$ that occurs in $C$.
+\FormalParameters} \mathit{Arg}_C(p) = \Point[p]$ where
+$\mathit{Arg}_C(p)$ is the actual argument corresponding to the formal
+parameter $p$ in the unique invocation of $\SynthFun$ that occurs in $C$.
 We extend this definition to sets of points as follows: $\Expr \models
 \Spec \downharpoonleft \Points \Leftrightarrow \bigwedge_{\Point \in
 \Points} \Expr \models \Spec\downharpoonleft\Point$.
@@ -760,9 +756,9 @@ set of points (line~\ref{line:basic:concrete_check}) and then fully
 it is returned (line~\ref{line:basic:return}).  Otherwise, we pick a
 counter-example input point (\ie, an input on which $\Expr$ is
 incorrect) and add it to the set of points and repeat
-(line~\ref{line:basic:continue}). A full description of the
-\textsc{enumerate} procedure can be found in
-\ref{section:appendix_esolver}.
+(line~\ref{line:basic:continue}). 
+A full description of the \textsc{enumerate} procedure can be found in
+\cite{udupa-sygus} and \cite{udupa-transit}.
 
 \begin{theorem}
   \label{thm:basic_enumeration}
@@ -771,6 +767,7 @@ incorrect) and add it to the set of points and repeat
   smallest solution expression.
 \end{theorem}
 
+\comment{
 \begin{wrapfigure}{l}{0.5\textwidth}
 \centering
 \begin{tikzpicture}
@@ -790,25 +787,23 @@ ytick = {0.0001, 0.01, 1, 100, 10000, 1000000, 10000000}
 \caption{Scalability of Enumeration}
 \label{figure:random_exponential_graph}
 \end{wrapfigure}
+}
 \paragraph{Features and Limitations}
-The algorithm based on enumeration performs surprisingly well, considering its
+The enumerative algorithm performs surprisingly well, considering its
 simplicity, on small to medium sized benchmarks
 (see~\cite{udupa-transit,udupa-sygus}).
 Further, due to the guarantee of Theorem~\ref{thm:basic_enumeration}
 that the enumerative approach produces small solutions, the algorithm is
 capable of generalizing from specifications that are input-output
 examples.
-
+%
 However, enumeration quickly fails to scale with growing size of
 solutions.
-Figure~\ref{figure:random_exponential_graph} shows the time taken (in seconds) to
-generate all expressions up to a given size for the grammar
-from Figure~\ref{fig:lia_grammar}.
-As can be seen from the graph, the time taken grows exponentially with
-the size.
+% Figure~\ref{figure:random_exponential_graph} shows
+The time necessary for the enumerative solver to generate all
+expressions up to a given size grows exponentially with the size.
 
 
-\vspace*{-2ex}
 \section{The Divide-and-Conquer Enumeration Algorithm}
 \label{sec:algo}
 
@@ -816,7 +811,7 @@ the size.
 % and conquer enumeration algorithm.
 
 \paragraph{Conditional Expression Grammars}
-We introduce conditional expressions grammars that separate an
+We introduce conditional expression grammars that separate an
 expression grammar into two grammars that generate:
 \begin{inparaenum}[(a)]
 \item the return value expression, and
@@ -841,7 +836,8 @@ $\Theory[\FormalParameters]$ such that:
   }}$, and
 \item $\Expr_1, \Expr_2 \in \sem{\tuple{ \Grammar_T, \Grammar_P }}
   \wedge \Pred \in \sem{\Grammar_P} \implies
-  \ITE{\Pred}{\Expr_1}{\Expr_2} \in \sem{\tuple{ \Grammar_T, \Grammar_P }}$
+  \ITE{\Pred}{\Expr_1}{\Expr_2} \in \sem{\tuple{ \Grammar_T, \Grammar_P
+  }}$.
 \end{inparaenum}
 Most commonly occurring \sygus grammars in practice can be rewritten
 as conditional expression grammars automatically.
@@ -893,7 +889,6 @@ to a standard text-book (see, for example,~\cite{bishop-book}).
   \item return the label of the leaf $x + y$.
   \end{inparaenum}
 \end{example}
-\vspace*{-1ex}
 
 \begin{wrapfigure}{l}{0.33\textwidth}
   \centering
@@ -945,10 +940,9 @@ sample $\Point$, the label associated with it by the decision tree covers
 the point.
 We use the notation {\sc LearnDT} to denote a generic, sound
 decision tree learning procedure.
-The exact procedure we use for decision tree learning in
+The exact procedure we use for decision tree learning is presented in
 Section~\ref{sec:decision_trees}.
 
-\vspace*{-2ex}
 \subsection{Algorithm}
 \label{sec:algo:main}
 
@@ -1045,16 +1039,14 @@ predicates and retry.
   though $\Terms$ is guaranteed to contain terms that cover all points.
   This is required to achieve semi-completeness, i.e., without this, the
   algorithm might not find a solution even if one exists.
-  See \ref{sec:app:ex} for an example.
+  % See \ref{sec:app:ex} for an example.
 \end{remark}
 
 \begin{theorem}
-\vspace*{-1mm}
   Algorithm~\ref{algo:main} is sound for the {\upshape\sygus} problem.
   Further, assuming a sound and complete {\sc LearnDT} procedure, if
   there exists a solution expression, Algorithm~\ref{algo:main} is
   guaranteed to find it.
-\vspace*{-1mm}
 \end{theorem}
 The proof of the above theorem is similar to the proof of soundness and
 partial-completeness for the original enumerative solver.
@@ -1063,10 +1055,8 @@ learning procedure will return a decision tree if one exists.
 We present such a procedure in the next section.
 
 
-\vspace*{-1ex}
 \subsection{Decision Tree Learning}
 \label{sec:decision_trees}
-\vspace*{-1ex}
 
 The standard multi-label decision tree learning algorithm (based on
 ID3~\cite{quinlan-86}) is presented in Algorithm~\ref{algo:dt_learning}.
@@ -1249,7 +1239,6 @@ generated, leading to the compact solution $\SynthFun(x, y) \equiv
     \caption{Decision tree for predicates of size $4$}
     \label{fig:dt:small}
   \end{subfigure}
-  \vspace*{-2ex}
 \end{wrapfigure}
 
 \paragraph{Decision Tree Repair}
@@ -1300,7 +1289,7 @@ counter-example.
   Now, when the verification of the expression fails, with the
   counter-example point $\{ x \mapsto 1, y \mapsto 2 \}$, we check the
   term that is returned for the counter-example point--here, $0$.
-  Now, we whether any term in $\Equiv(0)$ is correct on the
+  Now, we check whether any term in $\Equiv(0)$ is correct on the
   counter-example point--here, the term $y$.
   If so, we replace the original term with the equivalent term that is
   additionally correct on the counter-example point and proceed with
@@ -1339,7 +1328,6 @@ This optimization works very well along with the decision tree repair
 described above as we can verify and repair each branch of the decision
 tree separately.
 
-\vspace*{-2mm}
 \begin{example}
   Consider the verification of the expression $\ITE{x \leq y}{0}{1}$
   for the running example.
@@ -1351,7 +1339,6 @@ tree separately.
   This gives us two separate counter-example points.
 \end{example}
 
-\vspace{-3ex}
 \section{Evaluation}
 \label{sec:evaluation}
 % \input{results_one_shot_table}
@@ -1433,7 +1420,6 @@ seconds.
   \caption{Number of benchmarks solved per track for \eusolver (red),
   CVC4 (blue), and \esolver (green)}
     \label{fig:num_solved}
-\vspace*{-1ex}
 \end{wrapfigure}
 \paragraph{Goals}
 We seek to empirically evaluate how our synthesis algorithm compares
@@ -1455,8 +1441,7 @@ if the algorithm is given an additional (but fixed) time budget?
 \end{inparaenum}
 
 \paragraph{Benchmarks}
-We draw benchmarks from $3$ tracks of \sygus
-competition 2016:
+We draw benchmarks from $3$ tracks of the \sygus competition 2016:
 \footnote{The \sygus competition 2016 included an addition track -- the
 invariant generation track.
 However, the specifications in this track are not simply separable, and
@@ -1476,7 +1461,6 @@ the divide-and-conquer techniques described in this paper.
 \end{inparaenum}
 
 
-\vspace*{-3mm}
 \subsection{Discussion}
 % We compare the \dcsolve algorithm compares to contemporary
 % solvers along the three dimensions described earlier.
@@ -1484,7 +1468,7 @@ the divide-and-conquer techniques described in this paper.
 Figures~\ref{fig:results} and~\ref{fig:num_solved} plot the full
 results of running \eusolver on the benchmarks from the three
 categories.
-Alongside are plotted the results of $2$ other state-of-the-art
+The plots also contain the results of $2$ other state-of-the-art
 solvers:
 \begin{inparaenum}[(a)]
 \item the white-box solver CVC4-1.5.1 based on~\cite{reynolds-15}, and
@@ -1506,9 +1490,9 @@ solvers:
       xtick={0,50,100,150,200,250},
       line width=0.7pt
       ]
-      \addplot[mark=.,color=red] table {plots/general_eusolver.dat};
-      \addplot[mark=.,color=blue] table {plots/general_cvc4.dat};
-      \addplot[mark=.,color=black!60!green] table {plots/general_esolver.dat};
+      \addplot[solid,color=red] table {plots/general_eusolver.dat};
+      \addplot[dashed,color=blue] table {plots/general_cvc4.dat};
+      \addplot[dotted,color=black!60!green] table {plots/general_esolver.dat};
     \end{axis}
     %\end{semilogyaxis}
   \end{tikzpicture}
@@ -1530,8 +1514,8 @@ solvers:
       xtick={0,20,40,60,80},
       line width=0.7pt
       ]
-      \addplot[mark=.,color=red] table {plots/lia_eusolver.dat};
-      \addplot[mark=.,color=blue] table {plots/lia_cvc4.dat};
+      \addplot[solid,color=red] table {plots/lia_eusolver.dat};
+      \addplot[dashed,color=blue] table {plots/lia_cvc4.dat};
     \end{axis}
     %\end{semilogyaxis}
   \end{tikzpicture}
@@ -1553,8 +1537,8 @@ solvers:
       xtick={0,200,400,600,800},
       line width=0.7pt
       ]
-      \addplot[mark=.,color=red] table {plots/pbe_eusolver.dat};
-      \addplot[mark=.,color=blue] table {plots/pbe_cvc4.dat};
+      \addplot[solid,color=red] table {plots/pbe_eusolver.dat};
+      \addplot[dashed,color=blue] table {plots/pbe_cvc4.dat};
     \end{axis}
     %\end{semilogyaxis}
   \end{tikzpicture}
@@ -1565,7 +1549,7 @@ solvers:
   Interpretation: For every point, the $x$-coordinate gives the number
   of benchmarks which are solved within the time indicated by the
   $y$-coordinate.
-  \caption{Running times for \esolver (green), CVC4 (blue), and \eusolver (red)}
+  \caption{Running times for \esolver (dotted), CVC4 (dashed), and \eusolver (solid)}
   \label{fig:results}
 \end{figure}
 
@@ -1626,7 +1610,7 @@ this hurdle with the divide-and-conquer approach.
 
 \paragraph{Quality of Solutions}
 Figure~\ref{fig:size_comparison} highlights the solution sizes produced by
-\eusolver and \esolver  for the commorly solved benchmarks in the
+\eusolver and \esolver  for the commonly solved benchmarks in the
 general track.
 \eusolver often matches the solution sizes produced by
 \esolver ($108$ of the $112$ benchmarks).
@@ -1666,11 +1650,17 @@ performance.
 \vspace*{-2ex}
 \end{wrapfigure}
 \paragraph{Effect of Anytime Extension}
-We selected $50$ ICFP benchmarks from the general track and use
-to test the anytime extension described in Section~\ref{sec:optimizations}
-(the results are summarized in
-Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}
-in the appendix, and Figure~\ref{fig:anytime_results}).
+We selected $50$ ICFP benchmarks from the general track and use them
+to test the anytime extension described in
+Section~\ref{sec:optimizations}.
+The ICFP benchmarks are synthesis tasks that were first proposed as a
+part of the ICFP programming contest 2013, which were then adapted to
+the \sygus setting.
+To the best of our knowledge, no other \sygus solver has been able to
+solve the ICFP benchmarks satisfactorily.
+% (the results are summarized in
+% Tables~\ref{table:anytime_results_1}~and~\ref{table:anytime_results_2}
+% in the appendix, and Figure~\ref{fig:anytime_results}).
 For $18$ of the $50$ ICFP benchmarks, we were able to obtain a more
 compact solution by letting the algorithm continue execution after the
 first solution was discovered.
@@ -1713,10 +1703,8 @@ domains.
 % such as the parameterized ``max'' benchmarks.
 \end{inparaenum}
 
-\vspace*{-3mm}
 \section{Concluding Remarks}
 \label{sec:conclusion}
-\vspace*{-2mm}
 
 \paragraph{Related Work}
 Program synthesis has seen a revived interest in the last decade,
@@ -1783,7 +1771,7 @@ also uses decision trees.
   agnostic algorithm.
   The algorithm presented in~\cite{madhusudan-16-pw} can
   easily learn large constants in the linear integer domain.
-  This is something that enumerative approaches, including \dcsolve
+  This is something that enumerative approaches, including \dcsolve,
   struggle to do.
 %   Finally, it is unclear how the techniques of~\cite{madhusudan-16-pw}
 %   can handle syntactic restrictions in a general manner.
@@ -1792,7 +1780,7 @@ also uses decision trees.
   % enumerative approaches.
  The heuristics used for decision tree learning are different;
   in~\cite{madhusudan-16-pw}, the authors use a heuristic based on
-  hitting sets, while we use a information gain heuristic with
+  hitting sets, while we use an information gain heuristic with
   cover-based priors.
 
 
@@ -1823,7 +1811,9 @@ produce more compact solutions.
 \bibliography{main}
 \end{small}
 
+\comment{
 \input{appendix}
+}
 
 \comment{
 Formally, a {\em decision tree} $\DecisionTree$  is a tuple $\tuple{
