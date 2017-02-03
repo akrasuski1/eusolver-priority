@@ -348,7 +348,7 @@ def make_solver(file_sexp):
                     flush=True)
     except:
         # Fail quietly
-        pass
+        raise
 
 # Tests:
 
@@ -372,7 +372,7 @@ def find_grammar_anamolies():
                 file_sexp = parser.sexpFromFile(benchmark_file)
                 benchmark_tuple = parser.extract_benchmark(file_sexp)
             except Exception:
-                pass
+                raise
                 # print('Failed', benchmark_file)
 
 
