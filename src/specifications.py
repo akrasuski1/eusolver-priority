@@ -47,6 +47,9 @@ class SpecInterface(object):
     def term_signature(self, term, points):
         raise basetypes.AbstractMethodError('SpecInterface.check_on_point()')
 
+    def is_pointwise(self):
+        return not self.is_multipoint
+
 class FormulaSpec(SpecInterface):
     def __init__(self, spec_expr, syn_ctx, synth_funs):
         self.syn_ctx = syn_ctx
@@ -73,7 +76,7 @@ class FormulaSpec(SpecInterface):
                 # print(eval_ctx.eval_stack_top)
                 retval.append(r)
             except (basetypes.PartialFunctionError, basetypes.UnboundLetVariableError):
-                # Exceptions may be raised when applying partial functions like div, mod, etc 
+                # Exceptions may be raised when applying partial functions like div, mod, etc
                 retval.append(False)
 
         return retval
@@ -160,7 +163,6 @@ class PBESpec(SpecInterface):
             raw_args = tuple([ evaluation.evaluate_expression(a, eval_ctx) for a in args ])
             raw_value = evaluation.evaluate_expression_raw(value, eval_ctx)
             self.valuations[raw_args] = raw_value
-
 
     def term_signature(self, term, points):
         # try:
