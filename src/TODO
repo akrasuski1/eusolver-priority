@@ -6,6 +6,7 @@ Grammar pruning - done for commutativity, probably not associativity till after 
 
 CAV 15 strategy
 	Grammar unroller
+	Use Mukund's cool A* search strategy
 
 LIA optimizations
 	pairwise unification
