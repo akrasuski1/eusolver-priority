@@ -136,7 +136,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
         self.bunch_generator = None
         self.max_term_size = 1024
-        self.one_term_coverage = False
+        self.stopping_condition = check_term_sufficiency
 
     def set_max_term_size(self, size):
         self.max_term_size = size
@@ -177,14 +177,10 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         if (num_points == 0): # No points, any term will do
             return self._trivial_solve()
 
-        stopping_condition = \
-                check_term_sufficiency if not self.one_term_coverage \
-                else check_one_term_sufficiency
-
         signature_to_term = self.signature_to_term
         if restart_everytime or self.bunch_generator is None:
             self.restart_bunched_generator()
-        while (not stopping_condition(signature_to_term, num_points)):
+        while (not self.stopping_condition(signature_to_term, num_points)):
             success = self.generate_more_terms()
             if not success:
                 return False

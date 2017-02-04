@@ -41,7 +41,6 @@
 from bitvectors import BitVector
 import parser
 import expr_transforms
-import random
 import verifiers
 import termsolvers
 import lia_massager
@@ -272,7 +271,7 @@ def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, ver
     term_generator = grammar.to_generator(generator_factory)
 
     term_solver = TermSolver(specification.term_signature, term_generator)
-    term_solver.one_term_coverage = True
+    term_solver.stopping_condition = termsolvers.check_one_term_sufficiency
     unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
 
     solver = solvers.Solver(syn_ctx)
@@ -301,7 +300,7 @@ def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, 
     term_generator = grammar.to_generator(generator_factory)
 
     term_solver = TermSolver(specification.term_signature, term_generator)
-    term_solver.one_term_coverage = True
+    term_solver.stopping_condition = termsolvers.check_one_term_sufficiency
     unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
 
     solver = solvers.Solver(syn_ctx)
