@@ -1,5 +1,7 @@
 #!/bin/bash
 
+EUSOLVER_ROOT=`pwd`
+
 # --------------------------------------
 
 # Change to yes and set Z3_PYTHON_PATH to where z3 python module exists,
@@ -7,14 +9,12 @@
 HAVE_Z3=yes
 
 # Z3_PYTHON_PATH=$LOCAL_Z3_ROOT/thirdparty/z3/build/python
-
 REBUILD_LOCAL_Z3=no
 
 # --------------------------------------
 
 # TODO: Check for existence of cmake, python3, pyparsing etc
 
-EUSOLVER_ROOT=`pwd`
 LOCAL_Z3_ROOT="$EUSOLVER_ROOT"/thirdparty/z3
 
 # Build libeusolver
