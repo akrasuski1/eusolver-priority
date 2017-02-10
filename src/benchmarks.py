@@ -53,11 +53,6 @@ import exprs
 import enumerators
 import exprtypes
 import semantics_core
-import semantics_bv
-import semantics_types
-import semantics_lia
-import semantics_slia
-import synthesis_context
 import grammars
 
 def get_pbe_valuations(constraints, synth_fun):
