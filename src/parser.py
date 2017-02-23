@@ -47,39 +47,6 @@ def parse_bitvec(bv_exp):
         return None
     return BitVector(value, length)
 
-def parse_icfp_constraint(exp):
-    if exp[0] != '=':
-        return None
-    lhs = exp[1]
-    rhs = exp[2]
-    if len(lhs) != 2 or lhs[0] != 'f':
-        return None
-    arg = parse_bitvec(lhs[1])
-    val = parse_bitvec(rhs)
-    if arg is None or val is None:
-        return None
-    return ([arg], val)
-
-def get_icfp_points(exp):
-    icfp_rest = [['set-logic', 'BV'], ['define-fun', 'shr1', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['bvlshr', 'x', (['BitVec', ('Int', 64)], 1)]], ['define-fun', 'shr4', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['bvlshr', 'x', (['BitVec', ('Int', 64)], 4)]], ['define-fun', 'shr16', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['bvlshr', 'x', (['BitVec', ('Int', 64)], 16)]], ['define-fun', 'shl1', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['bvshl', 'x', (['BitVec', ('Int', 64)], 1)]], ['define-fun', 'if0', [['x', ['BitVec', ('Int', 64)]], ['y', ['BitVec', ('Int', 64)]], ['z', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], ['ite', ['=', 'x', (['BitVec', ('Int', 64)], 1)], 'y', 'z']], ['synth-fun', 'f', [['x', ['BitVec', ('Int', 64)]]], ['BitVec', ('Int', 64)], [['Start', ['BitVec', ('Int', 64)], [(['BitVec', ('Int', 64)], 0), (['BitVec', ('Int', 64)], 1), 'x', ['bvnot', 'Start'], ['shl1', 'Start'], ['shr1', 'Start'], ['shr4', 'Start'], ['shr16', 'Start'], ['bvand', 'Start', 'Start'], ['bvor', 'Start', 'Start'], ['bvxor', 'Start', 'Start'], ['bvadd', 'Start', 'Start'], ['if0', 'Start', 'Start', 'Start']]]]], ['check-synth']]
-    constraints = [ c for c in exp if c[0] == 'constraint' ]
-    rest = [ c for c in exp if c[0] != 'constraint' ]
-    if rest != icfp_rest:
-        # print("Not an icfp benchmark")
-        return None
-
-    points = []
-    for constraint in constraints:
-        if len(constraint) != 2:
-            pass
-            # print("Could not parse icfp constraint: %s" % constraint)
-        point = parse_icfp_constraint(constraint[1])
-        if point == None:
-            # print("Could not parse icfp constraint: %s" % constraint)
-            return None
-        points.append(point)
-    return points
-
 def filter_sexp_for(head, file_sexp):
     curr = []
     rest = []
