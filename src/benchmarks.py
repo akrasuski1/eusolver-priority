@@ -39,7 +39,7 @@
 # Code:
 
 from bitvectors import BitVector
-import parser
+from parsers import parser
 import expr_transforms
 import verifiers
 import termsolvers
@@ -378,8 +378,6 @@ def print_solutions(synth_funs, final_solutions):
 # Tests:
 
 def test_make_solver(benchmark_files):
-    import parser
-
     for benchmark_file in benchmark_files:
         file_sexp = parser.sexpFromFile(benchmark_file)
         make_solver(file_sexp)
@@ -394,8 +392,8 @@ def find_grammar_anamolies():
             # print("Doing", benchmark_file)
             try:
             # if True:
-                file_sexp = parser.sexpFromFile(benchmark_file)
-                benchmark_tuple = parser.extract_benchmark(file_sexp)
+                file_sexp = parser.parser.sexpFromFile(benchmark_file)
+                benchmark_tuple = parser.parser.extract_benchmark(file_sexp)
             except Exception:
                 raise
                 # print('Failed', benchmark_file)

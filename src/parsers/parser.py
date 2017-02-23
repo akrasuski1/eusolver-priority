@@ -1,6 +1,6 @@
 # Author: Garvit Juniwal (garvitjuniwal@eecs.berkeley.edu)
 
-import sexp
+from . import sexp
 import exprs
 import grammars
 import semantics_core
