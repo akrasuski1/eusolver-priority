@@ -44,20 +44,12 @@ various function symbols."""
 import basetypes
 import utils
 import exprtypes
-from evaluation import evaluate_expression_on_stack
-import evaluation
 import exprs
 import z3
 from enum import IntEnum
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
-
-_expr_to_str = exprs.expression_to_string
-_variable_expression = exprs.ExpressionKinds.variable_expression
-_constant_expression = exprs.ExpressionKinds.constant_expression
-_function_expression = exprs.ExpressionKinds.function_expression
-_formal_parameter_expression = exprs.ExpressionKinds.formal_parameter_expression
 
 class FunctionKinds(IntEnum):
     """Function Kinds.
@@ -100,13 +92,13 @@ def _to_smt_constant_expression(expr_object, smt_context_object):
 
 def expression_to_smt(expr_object, smt_context_object, var_subst_map = None):
     kind = expr_object.expr_kind
-    if (kind == _variable_expression):
+    if (kind == exprs.ExpressionKinds.variable_expression):
         ret = _to_smt_variable_expression(expr_object, smt_context_object)
-    elif (kind == _formal_parameter_expression):
+    elif (kind == exprs.ExpressionKinds.formal_parameter_expression):
         ret = var_subst_map[expr_object.parameter_position]
-    elif (kind == _constant_expression):
+    elif (kind == exprs.ExpressionKinds.constant_expression):
         ret = _to_smt_constant_expression(expr_object, smt_context_object)
-    elif (kind == _function_expression):
+    elif (kind == exprs.ExpressionKinds.function_expression):
         fun_info = expr_object.function_info
         ret = fun_info.to_smt(expr_object, smt_context_object, var_subst_map)
     else:
@@ -157,6 +149,8 @@ class FunctionBase(object):
         raise basetypes.AbstractMethodError('FunctionBase.evaluate()')
 
     def _evaluate_children(self, expr_object, eval_context_object):
+        from evaluation import evaluate_expression_on_stack
+
         for child in expr_object.children:
             evaluate_expression_on_stack(child, eval_context_object)
 
@@ -181,15 +175,13 @@ class UnknownFunctionBase(FunctionBase):
         the formal parameters to the function. We substitute the formal parameters
         with the values obtained by evaluating the children."""
 
+        from evaluation import evaluate_expression_on_stack
+
         num_children = len(expr_object.children)
         self._evaluate_children(expr_object, eval_context_object)
         parameter_map = [exprs.Value(eval_context_object.peek(i), self.domain_types[i])
                          for i in reversed(range(len(self.domain_types)))]
         eval_context_object.pop(num_children)
-
-        # print('Evaluating unknown function expression:' +
-        #       '\n%s with actual args:\n%s' % (_expr_to_str(expr_object),
-        #                                       str(parameter_map)))
 
         orig_valuation_map = eval_context_object.valuation_map
         eval_context_object.set_valuation_map(parameter_map)

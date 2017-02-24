@@ -42,7 +42,7 @@ import basetypes
 import utils
 import exprs
 import exprtypes
-import semantics_types
+from semantics import semantics_types
 import itertools
 import functools
 import z3smt
@@ -554,8 +554,8 @@ def canonicalize_specification(expr, syn_ctx, theory):
 
 def test_cnf_conversion():
     import synthesis_context
-    import semantics_core
-    import semantics_lia
+    from semantics import semantics_core
+    from semantics import semantics_lia
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                  semantics_lia.LIAInstantiator())

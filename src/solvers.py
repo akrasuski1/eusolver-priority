@@ -44,7 +44,7 @@ import exprs
 import termsolvers
 import unifiers
 import verifiers
-import semantics_types
+from semantics import semantics_types
 from enum import IntEnum
 
 import signal

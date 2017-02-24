@@ -40,7 +40,7 @@
 
 from unifiers import *
 from eusolver import BitSet
-import semantics_core
+from semantics import semantics_core
 import evaluation
 from termsolvers_lia import collect_terms
 

@@ -39,7 +39,7 @@
 # Code:
 
 import utils
-import semantics_types
+from semantics import semantics_types
 import exprs
 import exprtypes
 import expr_transforms

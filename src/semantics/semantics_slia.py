@@ -36,10 +36,10 @@
 
 # Code:
 
-from semantics_types import FunctionBase, InterpretedFunctionBase
-import semantics_types
+from semantics import semantics_types
+from semantics import semantics_lia
+from semantics.semantics_types import FunctionBase, InterpretedFunctionBase
 import basetypes
-import semantics_lia
 import exprtypes
 import z3
 

@@ -42,8 +42,8 @@ import exprtypes
 import functools
 import utils
 import z3
-import semantics_types
-from semantics_types import FunctionBase, InterpretedFunctionBase
+from semantics import semantics_types
+from semantics.semantics_types import FunctionBase, InterpretedFunctionBase
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()

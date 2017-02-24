@@ -3,12 +3,12 @@
 from . import sexp
 import exprs
 import grammars
-import semantics_core
-import semantics_lia
-import semantics_bv
-import semantics_slia
+from semantics import semantics_core
+from semantics import semantics_lia
+from semantics import semantics_bv
+from semantics import semantics_slia
+from semantics import semantics_types
 import synthesis_context
-import semantics_types
 import exprtypes
 from bitvectors import BitVector
 

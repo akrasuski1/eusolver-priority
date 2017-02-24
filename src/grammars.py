@@ -41,7 +41,7 @@
 import basetypes
 import itertools
 import exprtypes
-import semantics_types
+from semantics import semantics_types
 import random
 import exprs
 import enumerators
@@ -263,8 +263,8 @@ def make_default_grammar(syn_ctx, theory, return_type, args):
         ret.from_default = True
         return ret
     elif theory == 'BV':
-        import semantics_bv
-        import semantics_core
+        from semantics import semantics_bv
+        from semantics import semantics_core
         print("ARSAYS: Default bit-vec grammar shouldn't be used!")
         (start, start_bool) = ('Start', 'StartBool')
         bv_size = 64

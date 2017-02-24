@@ -52,7 +52,7 @@ import solvers
 import exprs
 import enumerators
 import exprtypes
-import semantics_core
+from semantics import semantics_core
 import grammars
 
 def get_pbe_valuations(constraints, synth_fun):

@@ -47,6 +47,7 @@ import sys
 import collections
 from enum import IntEnum
 import exprtypes
+from semantics import semantics_types
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -348,7 +349,6 @@ def is_application_of(obj, func_name_or_info):
     return False
 
 def _check_equivalence_under_constraint(expr1, expr2, smt_ctx, arg_vars, constraint, random):
-    import semantics_types
     import z3
 
     expr1_smt = semantics_types.expression_to_smt(expr1, smt_ctx, arg_vars)
@@ -385,7 +385,6 @@ def _z3_solve(z3_expr, arg_vars):
 
 
 def sample(pred_or_pred_smt, smt_ctx, arg_vars):
-    import semantics_types
     if is_expression(pred_or_pred_smt):
         pred_smt = semantics_types.expression_to_smt(pred_or_pred_smt, smt_ctx, arg_vars)
     else:
@@ -397,7 +396,6 @@ def sample(pred_or_pred_smt, smt_ctx, arg_vars):
 def random_sample(pred_or_pred_smt, smt_ctx, arg_vars):
     import z3
     import random
-    import semantics_types
 
     if len(arg_vars) != 1 or type(arg_vars[0]) != z3.BitVecRef:
         raise NotImplementedError

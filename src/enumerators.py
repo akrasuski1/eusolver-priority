@@ -597,8 +597,8 @@ class StreamGenerator(GeneratorBase):
 ############################################################
 def _generate_test_generators():
     import synthesis_context
-    import semantics_core
-    import semantics_lia
+    from semantics import semantics_core
+    from semantics import semantics_lia
 
     syn_ctx = synthesis_context.SynthesisContext(semantics_core.CoreInstantiator(),
                                                   semantics_lia.LIAInstantiator())

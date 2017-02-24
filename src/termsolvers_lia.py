@@ -42,8 +42,8 @@ from termsolvers import TermSolverInterface
 import exprs
 import exprtypes
 import itertools
-import semantics_types
-import semantics_core
+from semantics import semantics_types
+from semantics import semantics_core
 import z3smt
 import evaluation
 

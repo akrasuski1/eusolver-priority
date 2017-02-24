@@ -42,7 +42,7 @@ import exprs
 import specifications
 import termsolvers
 import random
-import semantics_types
+from semantics import semantics_types
 import exprtypes
 import evaluation
 import enumerators

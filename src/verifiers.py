@@ -40,7 +40,7 @@ import exprs
 import z3smt
 import exprtypes
 import z3
-import semantics_types
+from semantics import semantics_types
 import basetypes
 import evaluation
 from bitvectors import BitVector

@@ -43,7 +43,7 @@ import evaluation
 from eusolver import BitSet
 import enumerators
 import exprs
-import semantics_types
+from semantics import semantics_types
 
 _expr_to_str = exprs.expression_to_string
 _is_expr = exprs.is_expression
