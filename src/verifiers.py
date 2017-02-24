@@ -36,13 +36,13 @@
 #
 #
 
-import exprs
+from exprs import exprs
 import z3smt
-import exprtypes
+from exprs import exprtypes
 import z3
 from semantics import semantics_types
 import basetypes
-import evaluation
+from exprs import evaluation
 from bitvectors import BitVector
 
 _expr_to_str = exprs.expression_to_string

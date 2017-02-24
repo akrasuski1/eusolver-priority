@@ -41,7 +41,7 @@
 from unifiers import *
 from eusolver import BitSet
 from semantics import semantics_core
-import evaluation
+from exprs import evaluation
 from termsolvers_lia import collect_terms
 
 _expr_to_str = exprs.expression_to_string

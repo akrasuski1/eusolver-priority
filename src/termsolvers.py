@@ -39,10 +39,10 @@
 # Code:
 
 
-import evaluation
+from exprs import evaluation
 from eusolver import BitSet
 import enumerators
-import exprs
+from exprs import exprs
 from semantics import semantics_types
 
 _expr_to_str = exprs.expression_to_string

@@ -38,9 +38,9 @@
 
 # Code:
 
-import evaluation
+from exprs import evaluation
 import unifiers_lia
-import exprs
+from exprs import exprs
 import termsolvers
 import unifiers
 import verifiers

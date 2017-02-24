@@ -40,9 +40,9 @@
 
 import utils
 from semantics import semantics_types
-import exprs
-import exprtypes
-import expr_transforms
+from exprs import exprs
+from exprs import exprtypes
+from exprs import expr_transforms
 import basetypes
 
 if __name__ == '__main__':

@@ -39,8 +39,8 @@
 # Code:
 
 import basetypes
-import exprs
-import exprtypes
+from exprs import exprs
+from exprs import exprtypes
 import functools
 import utils
 import z3

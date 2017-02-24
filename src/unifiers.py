@@ -38,13 +38,13 @@
 
 # Code:
 
-import exprs
+from exprs import exprs
 import specifications
 import termsolvers
 import random
 from semantics import semantics_types
-import exprtypes
-import evaluation
+from exprs import exprtypes
+from exprs import evaluation
 import enumerators
 from eusolver import BitSet
 import eusolver

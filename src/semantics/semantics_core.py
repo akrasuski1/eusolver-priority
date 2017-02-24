@@ -41,9 +41,9 @@
 i.e., equality, conditionals and basic boolean operations."""
 
 import basetypes
-import evaluation
-import exprs
-import exprtypes
+from exprs import evaluation
+from exprs import exprs
+from exprs import exprtypes
 import utils
 import z3
 from semantics import semantics_types

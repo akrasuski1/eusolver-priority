@@ -39,13 +39,13 @@
 # Code:
 
 from termsolvers import TermSolverInterface
-import exprs
-import exprtypes
+from exprs import exprs
+from exprs import exprtypes
 import itertools
 from semantics import semantics_types
 from semantics import semantics_core
 import z3smt
-import evaluation
+from exprs import evaluation
 
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt

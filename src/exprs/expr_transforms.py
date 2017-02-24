@@ -40,8 +40,8 @@
 
 import basetypes
 import utils
-import exprs
-import exprtypes
+from exprs import exprs
+from exprs import exprtypes
 from semantics import semantics_types
 import itertools
 import functools

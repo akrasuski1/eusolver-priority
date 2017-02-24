@@ -40,10 +40,10 @@
 
 import basetypes
 import itertools
-import exprtypes
+from exprs import exprtypes
 from semantics import semantics_types
 import random
-import exprs
+from exprs import exprs
 import enumerators
 
 

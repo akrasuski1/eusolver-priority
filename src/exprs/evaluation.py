@@ -39,7 +39,7 @@
 # Code:
 
 import utils
-import exprs
+from exprs import exprs
 import basetypes
 
 # if __name__ == '__main__':

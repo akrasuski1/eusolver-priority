@@ -40,7 +40,7 @@
 
 from bitvectors import BitVector
 from parsers import parser
-import expr_transforms
+from exprs import expr_transforms
 import verifiers
 import termsolvers
 import lia_massager
@@ -49,9 +49,9 @@ import specifications
 import unifiers
 import unifiers_lia
 import solvers
-import exprs
+from exprs import exprs
 import enumerators
-import exprtypes
+from exprs import exprtypes
 from semantics import semantics_core
 import grammars
 

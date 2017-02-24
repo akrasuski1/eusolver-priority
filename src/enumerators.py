@@ -39,12 +39,12 @@
 # Code:
 
 import utils
-import evaluation
+from exprs import evaluation
 import basetypes
 import copy
 import itertools
-import exprs
-import exprtypes
+from exprs import exprs
+from exprs import exprtypes
 import time
 
 # if __name__ == '__main__':

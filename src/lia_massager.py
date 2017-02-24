@@ -38,9 +38,9 @@
 
 # Code:
 
-import exprs
+from exprs import exprs
 import termsolvers_lia
-import exprtypes
+from exprs import exprtypes
 
 def simplify(syn_ctx, expr):
     if not exprs.is_function_expression(expr):

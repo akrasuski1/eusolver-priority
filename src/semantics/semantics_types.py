@@ -43,8 +43,8 @@ various function symbols."""
 
 import basetypes
 import utils
-import exprtypes
-import exprs
+from exprs import exprtypes
+from exprs import exprs
 import z3
 from enum import IntEnum
 
@@ -149,7 +149,7 @@ class FunctionBase(object):
         raise basetypes.AbstractMethodError('FunctionBase.evaluate()')
 
     def _evaluate_children(self, expr_object, eval_context_object):
-        from evaluation import evaluate_expression_on_stack
+        from exprs.evaluation import evaluate_expression_on_stack
 
         for child in expr_object.children:
             evaluate_expression_on_stack(child, eval_context_object)
@@ -175,7 +175,7 @@ class UnknownFunctionBase(FunctionBase):
         the formal parameters to the function. We substitute the formal parameters
         with the values obtained by evaluating the children."""
 
-        from evaluation import evaluate_expression_on_stack
+        from exprs.evaluation import evaluate_expression_on_stack
 
         num_children = len(expr_object.children)
         self._evaluate_children(expr_object, eval_context_object)

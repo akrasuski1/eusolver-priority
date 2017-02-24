@@ -39,9 +39,9 @@
 # Code:
 
 import basetypes
-import evaluation
-import expr_transforms
-import exprs
+from exprs import evaluation
+from exprs import expr_transforms
+from exprs import exprs
 
 class SpecInterface(object):
     def term_signature(self, term, points):

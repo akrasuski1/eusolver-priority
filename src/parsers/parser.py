@@ -1,7 +1,7 @@
 # Author: Garvit Juniwal (garvitjuniwal@eecs.berkeley.edu)
 
 from . import sexp
-import exprs
+from exprs import exprs
 import grammars
 from semantics import semantics_core
 from semantics import semantics_lia
@@ -9,7 +9,7 @@ from semantics import semantics_bv
 from semantics import semantics_slia
 from semantics import semantics_types
 import synthesis_context
-import exprtypes
+from exprs import exprtypes
 from bitvectors import BitVector
 
 def stripComments(bmFile):

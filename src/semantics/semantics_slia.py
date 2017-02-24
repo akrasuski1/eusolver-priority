@@ -40,7 +40,7 @@ from semantics import semantics_types
 from semantics import semantics_lia
 from semantics.semantics_types import FunctionBase, InterpretedFunctionBase
 import basetypes
-import exprtypes
+from exprs import exprtypes
 import z3
 
 if __name__ == '__main__':
