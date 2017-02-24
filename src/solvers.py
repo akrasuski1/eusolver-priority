@@ -41,7 +41,7 @@
 from exprs import evaluation
 import unifiers_lia
 from exprs import exprs
-import termsolvers
+from termsolvers import termsolvers
 import unifiers
 import verifiers
 from semantics import semantics_types

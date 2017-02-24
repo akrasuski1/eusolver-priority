@@ -42,7 +42,7 @@ from unifiers import *
 from eusolver import BitSet
 from semantics import semantics_core
 from exprs import evaluation
-from termsolvers_lia import collect_terms
+from termsolvers.termsolvers_lia import collect_terms
 
 _expr_to_str = exprs.expression_to_string
 

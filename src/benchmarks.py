@@ -42,9 +42,9 @@ from bitvectors import BitVector
 from parsers import parser
 from exprs import expr_transforms
 import verifiers
-import termsolvers
+from termsolvers import termsolvers
 import lia_massager
-import termsolvers_lia
+from termsolvers import termsolvers_lia
 import specifications
 import unifiers
 import unifiers_lia

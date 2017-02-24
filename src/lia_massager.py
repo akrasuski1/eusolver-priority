@@ -39,7 +39,7 @@
 # Code:
 
 from exprs import exprs
-import termsolvers_lia
+from termsolvers import termsolvers_lia
 from exprs import exprtypes
 
 def simplify(syn_ctx, expr):

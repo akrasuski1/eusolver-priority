@@ -40,7 +40,7 @@
 
 from exprs import exprs
 import specifications
-import termsolvers
+from termsolvers import termsolvers
 import random
 from semantics import semantics_types
 from exprs import exprtypes

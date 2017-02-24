@@ -38,7 +38,7 @@
 
 # Code:
 
-from termsolvers import TermSolverInterface
+from termsolvers.termsolvers import TermSolverInterface
 from exprs import exprs
 from exprs import exprtypes
 import itertools
