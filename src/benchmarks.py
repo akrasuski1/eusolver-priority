@@ -45,15 +45,15 @@ import verifiers
 from termsolvers import termsolvers
 import lia_massager
 from termsolvers import termsolvers_lia
-import specifications
+from core import specifications
 from unifiers import unifiers
 from unifiers import unifiers_lia
-import solvers
+from core import solvers
 from exprs import exprs
 import enumerators
 from exprs import exprtypes
 from semantics import semantics_core
-import grammars
+from core import grammars
 
 def get_pbe_valuations(constraints, synth_fun):
     valuations = []

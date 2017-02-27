@@ -39,7 +39,7 @@
 # Code:
 
 from exprs import exprs
-import specifications
+from core import specifications
 from termsolvers import termsolvers
 import random
 from semantics import semantics_types

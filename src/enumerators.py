@@ -596,7 +596,7 @@ class StreamGenerator(GeneratorBase):
 # TEST CASES and utils for other test cases.
 ############################################################
 def _generate_test_generators():
-    import synthesis_context
+    from core import synthesis_context
     from semantics import semantics_core
     from semantics import semantics_lia
 

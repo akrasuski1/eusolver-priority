@@ -549,7 +549,7 @@ def canonicalize_specification(expr, syn_ctx, theory):
 #######################################################################
 
 def test_cnf_conversion():
-    import synthesis_context
+    from core import synthesis_context
     from semantics import semantics_core
     from semantics import semantics_lia
 

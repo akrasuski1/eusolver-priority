@@ -2,13 +2,13 @@
 
 from . import sexp
 from exprs import exprs
-import grammars
+from core import grammars
 from semantics import semantics_core
 from semantics import semantics_lia
 from semantics import semantics_bv
 from semantics import semantics_slia
 from semantics import semantics_types
-import synthesis_context
+from core import synthesis_context
 from exprs import exprtypes
 from utils.bitvectors import BitVector
 
