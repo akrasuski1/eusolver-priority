@@ -38,9 +38,9 @@
 
 # Code:
 
-import utils
+from utils import utils
 from exprs import evaluation
-import basetypes
+from utils import basetypes
 import copy
 import itertools
 from exprs import exprs

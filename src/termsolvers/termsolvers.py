@@ -44,6 +44,7 @@ from eusolver import BitSet
 import enumerators
 from exprs import exprs
 from semantics import semantics_types
+from utils import basetypes
 
 _expr_to_str = exprs.expression_to_string
 _is_expr = exprs.is_expression

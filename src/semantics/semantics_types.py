@@ -41,8 +41,8 @@
 """This module implements some base types required for defining semantics of
 various function symbols."""
 
-import basetypes
-import utils
+from utils import basetypes
+from utils import utils
 from exprs import exprtypes
 from exprs import exprs
 import z3

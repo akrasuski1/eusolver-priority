@@ -38,7 +38,7 @@
 
 # Code:
 
-from bitvectors import BitVector
+from utils.bitvectors import BitVector
 from parsers import parser
 from exprs import expr_transforms
 import verifiers

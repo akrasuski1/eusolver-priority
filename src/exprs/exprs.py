@@ -42,7 +42,8 @@
 expressions as needed
 """
 
-import utils
+from utils import utils
+from utils import basetypes
 import sys
 import collections
 from enum import IntEnum

@@ -38,12 +38,12 @@
 
 # Code:
 
-import utils
+from utils import utils
 from semantics import semantics_types
 from exprs import exprs
 from exprs import exprtypes
 from exprs import expr_transforms
-import basetypes
+from utils import basetypes
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()

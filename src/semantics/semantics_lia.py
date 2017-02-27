@@ -36,11 +36,11 @@
 
 # Code:
 
-import basetypes
+from utils import basetypes
 from exprs import exprs
 from exprs import exprtypes
 import functools
-import utils
+from utils import utils
 import z3
 from semantics import semantics_types
 from semantics.semantics_types import FunctionBase, InterpretedFunctionBase

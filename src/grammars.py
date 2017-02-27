@@ -38,7 +38,7 @@
 
 # Code:
 
-import basetypes
+from utils import basetypes
 import itertools
 from exprs import exprtypes
 from semantics import semantics_types

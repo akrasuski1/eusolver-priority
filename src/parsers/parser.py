@@ -10,7 +10,7 @@ from semantics import semantics_slia
 from semantics import semantics_types
 import synthesis_context
 from exprs import exprtypes
-from bitvectors import BitVector
+from utils.bitvectors import BitVector
 
 def stripComments(bmFile):
     noComments = '('

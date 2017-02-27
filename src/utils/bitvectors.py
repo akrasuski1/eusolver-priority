@@ -38,8 +38,8 @@
 
 """Implementation of fixed length (which can be arbitrary) bitvectors"""
 
-import utils
-import basetypes
+from utils import utils
+from utils import basetypes
 
 class BitVector(object):
     __slots__ = ['value', 'size', 'mask', 'sign_mask']

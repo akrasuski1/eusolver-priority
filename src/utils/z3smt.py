@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-# basetypes.py ---
+# z3smt.py ---
 #
-# Filename: basetypes.py
+# Filename: z3smt.py
 # Author: Abhishek Udupa
-# Created: Tue Aug 18 11:13:18 2015 (-0400)
+# Created: Thu Aug 20 17:57:12 2015 (-0400)
 #
 #
 # Copyright (c) 2015, Abhishek Udupa, University of Pennsylvania
@@ -38,61 +38,54 @@
 
 # Code:
 
-
-"""Implementation of a few basic types used in various contexts"""
-
-import utils
+import z3
+from utils import utils
+from exprs import exprs
+from exprs import exprtypes
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
 
-class OptionError(Exception):
-    def __init__(self, error_msg):
-        self.error_msg = error_msg
+class Z3SMTContext(object):
+    """A simple wrapper around the z3.Context class."""
+    def __init__(self, *args, **kwargs):
+        self.context_obj = z3.Context(*args, **kwargs)
+        self.interpretation_map = {}
+        self.solvers = []
 
-    def __str__(self):
-        return 'Option Error: ' + self.error_msg
+    def ctx(self):
+        return self.context_obj
 
-    def __repr__(self):
-        return self.__str__()
+    def ref(self):
+        return self.context_obj.ref()
 
+    def make_solver(self):
+        ret = z3.Solver(ctx=self.ctx())
+        self.solvers.append(ret)
+        return ret
 
-class ArgumentError(Exception):
-    def __init__(self, error_msg):
-        self.error_msg = error_msg
+    def interrupt(self):
+        self.context_obj.interrupt()
 
-    def __str__(self):
-        return 'Argument Error: ' + self.error_msg
+    def make_bool_sort(self):
+        return z3.BoolSort(self.ctx())
 
-    def __repr__(self):
-        return self.__str__()
+    def make_int_sort(self):
+        return z3.IntSort(self.ctx())
 
-class AbstractMethodError(Exception):
-    def __init__(self, method_name):
-        self.method_name = method_name
+    def make_string_sort(self):
+        return z3.StringSort(self.ctx())
 
-    def __str__(self):
-        return 'Attempted to call abstract method: ' + self.method_name
+    def make_bitvector_sort(self, size):
+        return z3.BitVecSort(size, self.ctx())
 
-    def __repr__(self):
-        return self.__str__()
+    def set_interpretation(self, unknown_function_or_unknown_function_id, interpretation):
+        if type(unknown_function_or_unknown_function_id) != int:
+            unknown_function_id = unknown_function_or_unknown_function_id.unknown_function_id
+        else:
+            unknown_function_id = unknown_function_or_unknown_function_id
+        self.interpretation_map[unknown_function_id] = interpretation
 
-class UnhandledCaseError(Exception):
-    def __init__(self, error_msg):
-        self.error_msg = error_msg
-
-    def __str__(self):
-        return
-        """Unhandled case, could be new subclass, or just a non-exhaustive
-        pattern/case match. Details: """ + error_msg
-
-class PartialFunctionError(Exception):
-    def __init__(self):
-        pass
-
-class UnboundLetVariableError(Exception):
-    def __init__(self):
-        pass
 
 #
-# basetypes.py ends here
+# z3smt.py ends here

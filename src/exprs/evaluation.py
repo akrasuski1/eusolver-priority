@@ -38,9 +38,9 @@
 
 # Code:
 
-import utils
+from utils import utils
 from exprs import exprs
-import basetypes
+from utils import basetypes
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()

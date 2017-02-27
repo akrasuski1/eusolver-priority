@@ -38,18 +38,14 @@
 
 # Code:
 
-import basetypes
-import utils
+from utils import basetypes
 from exprs import exprs
 from exprs import exprtypes
 from semantics import semantics_types
 import itertools
 import functools
-import z3smt
+from utils import z3smt
 import z3
-
-# if __name__ == '__main__':
-#     utils.arint_module_misuse_and_exit()
 
 _expr_to_str = exprs.expression_to_string
 

@@ -43,8 +43,8 @@
 i.e., false negatives are allowed, but not false positives."""
 
 import sys
-import basetypes
-import utils
+from utils import basetypes
+from utils import utils
 import random
 
 # if __name__ == '__main__':

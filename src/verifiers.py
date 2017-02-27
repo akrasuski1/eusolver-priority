@@ -37,13 +37,13 @@
 #
 
 from exprs import exprs
-import z3smt
+from utils import z3smt
 from exprs import exprtypes
 import z3
 from semantics import semantics_types
-import basetypes
+from utils import basetypes
 from exprs import evaluation
-from bitvectors import BitVector
+from utils.bitvectors import BitVector
 
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt

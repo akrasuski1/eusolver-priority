@@ -38,7 +38,7 @@
 
 # Code:
 
-import basetypes
+from utils import basetypes
 from exprs import evaluation
 from exprs import expr_transforms
 from exprs import exprs

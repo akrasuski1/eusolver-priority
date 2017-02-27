@@ -40,11 +40,11 @@
 
 """Defines a type class and a set of types commonly used"""
 
-import basetypes
+from utils import basetypes
 from enum import IntEnum
-import utils
+from utils import utils
 import collections
-import z3smt
+from utils import z3smt
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()

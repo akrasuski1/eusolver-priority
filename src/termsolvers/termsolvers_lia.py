@@ -44,7 +44,7 @@ from exprs import exprtypes
 import itertools
 from semantics import semantics_types
 from semantics import semantics_core
-import z3smt
+from utils import z3smt
 from exprs import evaluation
 
 _expr_to_str = exprs.expression_to_string
