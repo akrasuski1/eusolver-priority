@@ -38,7 +38,7 @@
 
 # Code:
 
-from unifiers import *
+from unifiers.unifiers import *
 from eusolver import BitSet
 from semantics import semantics_core
 from exprs import evaluation

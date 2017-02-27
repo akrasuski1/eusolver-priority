@@ -46,8 +46,8 @@ from termsolvers import termsolvers
 import lia_massager
 from termsolvers import termsolvers_lia
 import specifications
-import unifiers
-import unifiers_lia
+from unifiers import unifiers
+from unifiers import unifiers_lia
 import solvers
 from exprs import exprs
 import enumerators

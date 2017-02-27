@@ -39,10 +39,10 @@
 # Code:
 
 from exprs import evaluation
-import unifiers_lia
+from unifiers import unifiers_lia
 from exprs import exprs
 from termsolvers import termsolvers
-import unifiers
+from unifiers import unifiers
 import verifiers
 from semantics import semantics_types
 from enum import IntEnum
