@@ -41,7 +41,7 @@
 
 from exprs import evaluation
 from eusolver import BitSet
-import enumerators
+from enumerators import enumerators
 from exprs import exprs
 from semantics import semantics_types
 from utils import basetypes

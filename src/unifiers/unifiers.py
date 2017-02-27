@@ -45,7 +45,7 @@ import random
 from semantics import semantics_types
 from exprs import exprtypes
 from exprs import evaluation
-import enumerators
+from enumerators import enumerators
 from eusolver import BitSet
 import eusolver
 from utils import basetypes

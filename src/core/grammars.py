@@ -44,7 +44,7 @@ from exprs import exprtypes
 from semantics import semantics_types
 import random
 from exprs import exprs
-import enumerators
+from enumerators import enumerators
 
 
 def _nt_to_generator_name(nt):

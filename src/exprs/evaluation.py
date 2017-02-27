@@ -157,7 +157,7 @@ class EvaluationContext(object):
 
 
 def test_evaluation():
-    import enumerators
+    from enumerators import enumerators
     generator = enumerators._generate_test_generators()
     generator.set_size(8)
     points = [(1, 2, 3), (2, 5, 6), (6, 1, 3), (10, 4, 6), (7, 1, 5)]

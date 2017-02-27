@@ -50,7 +50,7 @@ from unifiers import unifiers
 from unifiers import unifiers_lia
 from core import solvers
 from exprs import exprs
-import enumerators
+from enumerators import enumerators
 from exprs import exprtypes
 from semantics import semantics_core
 from core import grammars
