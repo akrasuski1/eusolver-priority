@@ -41,7 +41,7 @@
 from utils.bitvectors import BitVector
 from parsers import parser
 from exprs import expr_transforms
-import verifiers
+from verifiers import verifiers
 from termsolvers import termsolvers
 from utils import lia_massager
 from termsolvers import termsolvers_lia
