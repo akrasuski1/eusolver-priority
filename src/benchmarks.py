@@ -43,7 +43,7 @@ from parsers import parser
 from exprs import expr_transforms
 import verifiers
 from termsolvers import termsolvers
-import lia_massager
+from utils import lia_massager
 from termsolvers import termsolvers_lia
 from core import specifications
 from unifiers import unifiers
