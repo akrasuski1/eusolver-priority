@@ -295,7 +295,7 @@ def process_inv_constraints(inv_constraints_data, synth_instantiator, syn_ctx, f
         invp = syn_ctx.make_function_expr(inv_func, *primed_vars)
         pre = syn_ctx.make_function_expr(pre_name, *unprimed_vars)
         post = syn_ctx.make_function_expr(post_name, *unprimed_vars)
-        trans = syn_ctx.make_function_expr(trans_name, *unprimed_vars, *primed_vars)
+        trans = syn_ctx.make_function_expr(trans_name, *(unprimed_vars + primed_vars))
 
         constraints.append(syn_ctx.make_function_expr('=>', pre, inv))
         constraints.append(syn_ctx.make_function_expr('=>', syn_ctx.make_function_expr('and', inv, trans), invp))
