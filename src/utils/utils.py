@@ -73,7 +73,7 @@ def partitions(n, k):
     "of the split components is considered relevant.
     """
     if (n < k):
-        raise ArgumentError('n must be greater than or equal to k in call ' +
+        raise ValueError('n must be greater than or equal to k in call ' +
                             'to utils.partitions(n, k)')
 
     cuts = []

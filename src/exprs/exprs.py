@@ -42,13 +42,12 @@
 expressions as needed
 """
 
-from utils import utils
 from utils import basetypes
-import sys
 import collections
 from enum import IntEnum
 from exprs import exprtypes
 from semantics import semantics_types
+from utils import utils
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()

@@ -42,7 +42,6 @@ from utils import utils
 from semantics import semantics_types
 from exprs import exprs
 from exprs import exprtypes
-from exprs import expr_transforms
 from utils import basetypes
 
 if __name__ == '__main__':
@@ -70,7 +69,7 @@ class SynthesisContext(object):
         if (existing != None and existing.variable_type == var_type):
             return existing
         elif (existing != None and existing.variable_type != var_type):
-            raise ArgumentError(('Variable named \'%s\' has already ' +
+            raise ValueError(('Variable named \'%s\' has already ' +
                                  'been created with type %s') % (var_name, str(existing.var_type)))
         else:
             retval = exprs.VariableInfo(var_type, var_name, var_eval_offset)
@@ -87,7 +86,7 @@ class SynthesisContext(object):
     def set_eval_offset_for_variable(self, var_name, var_eval_offset):
         var_info = self.get_variable(var_name)
         if (var_info == None):
-            raise ArgumentError('Could not find a variable named %s in context' % var_name)
+            raise ValueError('Could not find a variable named %s in context' % var_name)
         var_info.var_eval_offset = var_eval_offset
 
     def make_variable_expr(self, var_type, var_name,
@@ -113,7 +112,7 @@ class SynthesisContext(object):
     def make_synth_function(self, function_name, domain_types, range_type):
         predef_function = self.make_function(function_name, *domain_types)
         if (predef_function != None):
-            raise ArgumentError(('Function named \'%s\' is a predefined function ' +
+            raise ValueError(('Function named \'%s\' is a predefined function ' +
                                  'given the signature. Could not instantiate it as ' +
                                  'an unknown function') % function_name)
 

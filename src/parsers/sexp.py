@@ -47,9 +47,21 @@ BNF reference: http://theory.lcs.mit.edu/~rivest/sexp.txt
 <null>          :: "" ;
 """
 
-from pyparsing import *
+from pyparsing import \
+        Suppress, \
+        Regex, \
+        Word, \
+        hexnums, \
+        printables, \
+        Group, \
+        alphanums, \
+        Optional, \
+        OneOrMore, \
+        dblQuotedString, \
+        Forward, \
+        ZeroOrMore, \
+        ParseFatalException
 from base64 import b64decode
-import pprint
 
 def verifyLen(s,l,t):
     t = t[0]

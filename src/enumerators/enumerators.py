@@ -41,11 +41,8 @@
 from utils import utils
 from exprs import evaluation
 from utils import basetypes
-import copy
-import itertools
 from exprs import exprs
 from exprs import exprtypes
-import time
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -471,15 +468,15 @@ class FilteredGenerator(GeneratorBase):
         self.generator_object = generator_object
 
     def generate(self):
-        for obj in generator_object.generate():
-            if (filter_object.check(obj)):
+        for obj in self.generator_object.generate():
+            if (self.filter_object.check(obj)):
                 yield obj
 
     def set_size(self, new_size):
-        generator_object.set_size(new_size)
+        self.generator_object.set_size(new_size)
 
     def clone(self):
-        return FilteredGenerator(filter_object, generator_object.clone(), self.name)
+        return FilteredGenerator(self.filter_object, self.generator_object.clone(), self.name)
 
 
 class BunchedGenerator(GeneratorBase):
@@ -543,21 +540,22 @@ class StreamGenerator(GeneratorBase):
         self.enable_logging = enable_logging
 
     def generate(self):
+        # import time
+
         current_size = 1
-        total_exps = 0
-        logging_enabled = self.enable_logging
-        if (logging_enabled):
-            generation_start_time = time.clock()
+        # total_exps = 0
+        # logging_enabled = self.enable_logging
+        # if (logging_enabled):
+        #     generation_start_time = time.clock()
 
         max_size = self.max_size
         sub_generator_object = self.generator_object
-        finished = False
 
         while (current_size <= max_size):
             total_of_current_size = 0
             sub_generator_object.set_size(current_size)
-            if (logging_enabled):
-                current_size_start_time = time.clock()
+            # if (logging_enabled):
+            #     current_size_start_time = time.clock()
 
             sub_generator_state = sub_generator_object.generate()
             while (True):
@@ -566,20 +564,11 @@ class StreamGenerator(GeneratorBase):
                     total_of_current_size += 1
                     yield retval
                 except StopIteration:
-                    if (logging_enabled):
-                        current_size_end_time = time.clock()
-                        current_size_time = current_size_end_time - current_size_start_time
-                        cumulative_size_time = current_size_end_time - generation_start_time
-                        # print(('StreamGenerator: Enumerated objects of size %d in %f ' +
-                        #        'seconds.') % (current_size, current_size_time))
-                        # print(('StreamGenerator: Total time to enumerate objects upto and ' +
-                        #        'including size %d is %f seconds') % (current_size,
-                        #                                              cumulative_size_time))
-                        total_exps += total_of_current_size
-                        # print(('StreamGenerator: Total expressions of ' +
-                        #        'size %d = %d') % (current_size, total_of_current_size))
-                        # print(('StreamGenerator: Total expressions of ' +
-                        #        'size upto and including %d = %d') % (current_size, total_exps))
+                    # if (logging_enabled):
+                    #     current_size_end_time = time.clock()
+                    #     current_size_time = current_size_end_time - current_size_start_time
+                    #     cumulative_size_time = current_size_end_time - generation_start_time
+                    #     total_exps += total_of_current_size
 
                     current_size += 1
                     break
@@ -651,7 +640,6 @@ def _generate_test_generators():
                                                             start_generator_ph,
                                                             start_generator_ph])],))
 
-    start_bool_generator = \
     generator_factory.make_generator('StartBool',
                                      AlternativesGenerator,
                                      ([FunctionalGenerator(and_fun,
@@ -675,17 +663,17 @@ def _generate_test_generators():
 
 def test_generators():
     start_generator = _generate_test_generators()
-    # start_generator.set_size(5)
-    # for exp in start_generator.generate():
-    #     print(exprs.expression_to_string(exp))
+    start_generator.set_size(5)
+    for exp in start_generator.generate():
+        print(exprs.expression_to_string(exp))
 
     # tests for bunched generators
-    # print('Testing bunched generators....')
+    print('Testing bunched generators....')
     bunch_generator = BunchedGenerator(start_generator, 10, 5)
-    # for bunch in bunch_generator.generate():
-    #     # print('Bunch:')
-    #     for exp in bunch:
-    #         # print('    %s' % exprs.expression_to_string(exp))
+    for bunch in bunch_generator.generate():
+        print('Bunch:')
+        for exp in bunch:
+            print('    %s' % exprs.expression_to_string(exp))
 
 if __name__ == '__main__':
     test_generators()

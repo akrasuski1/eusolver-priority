@@ -39,16 +39,7 @@
 # Code:
 
 from exprs import evaluation
-from unifiers import unifiers_lia
 from exprs import exprs
-from termsolvers import termsolvers
-from unifiers import unifiers
-from verifiers import verifiers
-from semantics import semantics_types
-from enum import IntEnum
-
-import signal
-import resource
 
 EUSOLVER_MEMORY_LIMIT = (1 << 31)
 
@@ -86,8 +77,8 @@ class Solver(object):
 
     def solve(self, generator_factory, term_solver, unifier, verifier, verify_term_solve=True):
         import time
-        syn_ctx = self.syn_ctx
-        spec = syn_ctx.get_specification()
+        # syn_ctx = self.syn_ctx
+        # spec = syn_ctx.get_specification()
 
         time_origin = time.clock()
 

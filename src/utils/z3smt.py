@@ -40,8 +40,6 @@
 
 import z3
 from utils import utils
-from exprs import exprs
-from exprs import exprtypes
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()

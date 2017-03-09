@@ -38,9 +38,6 @@
 
 """Implementation of fixed length (which can be arbitrary) bitvectors"""
 
-from utils import utils
-from utils import basetypes
-
 class BitVector(object):
     __slots__ = ['value', 'size', 'mask', 'sign_mask']
 
@@ -50,10 +47,10 @@ class BitVector(object):
         elif (isinstance(value, str)):
             self.value = int(value)
         else:
-            raise ArgumentError('Invalid value for BitVector')
+            raise ValueError('Invalid value for BitVector')
         self.size = size
         if (size <= 0):
-            raise ArgumentError('Size of BitVector must be greater than 1')
+            raise ValueError('Size of BitVector must be greater than 1')
         self.mask = (1 << size) - 1
         self.sign_mask = (1 << (size - 1))
         self.value &= self.mask
@@ -189,9 +186,9 @@ class BitVector(object):
 def _test_repr_str():
     a = BitVector(1, 8)
     b = BitVector(255, 8)
-    # print(a)
-    # print(a.__repr__())
-    # print(b._signed_value())
+    print(a)
+    print(a.__repr__())
+    print(b._signed_value())
 
 def _test_sdiv():
     import random

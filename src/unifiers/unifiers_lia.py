@@ -38,10 +38,12 @@
 
 # Code:
 
-from unifiers.unifiers import *
 from eusolver import BitSet
 from semantics import semantics_core
+from unifiers.unifiers import UnifierInterface
 from exprs import evaluation
+from exprs import exprs
+from exprs import exprtypes
 from termsolvers.termsolvers_lia import collect_terms
 
 _expr_to_str = exprs.expression_to_string

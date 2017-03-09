@@ -38,7 +38,6 @@
 
 # Code:
 
-from utils.bitvectors import BitVector
 from parsers import parser
 from exprs import expr_transforms
 from verifiers import verifiers
@@ -141,7 +140,6 @@ def _merge_grammars(sf_grammar_list):
     rules = {}
     starts = []
     for sf_name, sf_obj, grammar in sf_grammar_list:
-        prefix = sf_name
         renamed_grammar = grammar.add_prefix(sf_name)
         nts.extend(renamed_grammar.non_terminals)
         nt_type.update(renamed_grammar.nt_type)
@@ -391,12 +389,10 @@ def find_grammar_anamolies():
             benchmark_file = os.path.join(folder, filename)
             # print("Doing", benchmark_file)
             try:
-            # if True:
                 file_sexp = parser.parser.sexpFromFile(benchmark_file)
-                benchmark_tuple = parser.parser.extract_benchmark(file_sexp)
+                parser.parser.extract_benchmark(file_sexp)
             except Exception:
                 raise
-                # print('Failed', benchmark_file)
 
 
 if __name__ == "__main__":

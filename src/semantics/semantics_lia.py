@@ -37,13 +37,12 @@
 # Code:
 
 from utils import basetypes
-from exprs import exprs
 from exprs import exprtypes
 import functools
 from utils import utils
 import z3
 from semantics import semantics_types
-from semantics.semantics_types import FunctionBase, InterpretedFunctionBase
+from semantics.semantics_types import InterpretedFunctionBase
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()

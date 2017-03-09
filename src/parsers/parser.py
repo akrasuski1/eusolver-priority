@@ -1,6 +1,6 @@
 # Author: Garvit Juniwal (garvitjuniwal@eecs.berkeley.edu)
 
-from . import sexp
+from parsers.sexp import sexp as sexpParser
 from exprs import exprs
 from core import grammars
 from semantics import semantics_core
@@ -28,7 +28,7 @@ def sexpFromFile(benchmarkFileName):
         return None
 
     bm = stripComments(benchmarkFile)
-    bmExpr = sexp.sexp.parseString(bm, parseAll=True).asList()[0]
+    bmExpr = sexpParser.parseString(bm, parseAll=True).asList()[0]
     benchmarkFile.close()
     return bmExpr
 

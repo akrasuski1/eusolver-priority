@@ -39,14 +39,11 @@
 # Code:
 
 from exprs import exprs
-from core import specifications
 from termsolvers import termsolvers
 import random
 from semantics import semantics_types
 from exprs import exprtypes
 from exprs import evaluation
-from enumerators import enumerators
-from eusolver import BitSet
 import eusolver
 from utils import basetypes
 
@@ -131,7 +128,7 @@ class EnumerativeDTUnifierBase(UnifierInterface):
 
     def unify(self):
         term_solver = self.term_solver
-        signature_to_term = term_solver.get_signature_to_term()
+        # signature_to_term = term_solver.get_signature_to_term()
         self.last_dt_size = 0
 
         pred_solver = self.pred_solver

@@ -204,9 +204,9 @@ def rewrite_pred(syn_ctx, pred, boolean_combs, comparators, neg, consts, constan
 
     if used_comparator in [ '<=', '=', '>=' ] and len(left) == 0 and len(right) == 0:
         if len(consts) > 0:
-            use_func = next(c for c in comparators if c in [ '<=', '>=', '=' ])
-            c = next(x for x in consts)
             return exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
+            # use_func = next(c for c in comparators if c in [ '<=', '>=', '=' ])
+            # c = next(x for x in consts)
             # return syn_ctx.make_function_expr(use_func,
             #         exprs.ConstantExpression(exprs.Value(c, exprtypes.IntType())),
             #         exprs.ConstantExpression(exprs.Value(c, exprtypes.IntType())))

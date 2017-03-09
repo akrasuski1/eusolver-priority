@@ -39,9 +39,7 @@
 # Code:
 
 from utils import basetypes
-from exprs import exprs
 from exprs import exprtypes
-import functools
 from utils import utils
 import z3
 from semantics import semantics_types

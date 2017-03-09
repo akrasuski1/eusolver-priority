@@ -84,7 +84,7 @@ class UnhandledCaseError(Exception):
     def __str__(self):
         return
         """Unhandled case, could be new subclass, or just a non-exhaustive
-        pattern/case match. Details: """ + error_msg
+        pattern/case match. Details: """ + self.error_msg
 
 class PartialFunctionError(Exception):
     def __init__(self):

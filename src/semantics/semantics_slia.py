@@ -38,8 +38,7 @@
 
 from semantics import semantics_types
 from semantics import semantics_lia
-from semantics.semantics_types import FunctionBase, InterpretedFunctionBase
-from utils import basetypes
+from semantics.semantics_types import InterpretedFunctionBase
 from exprs import exprtypes
 from utils import utils
 import z3

@@ -43,9 +43,6 @@ from exprs import exprs
 from exprs import exprtypes
 from semantics import semantics_types
 import itertools
-import functools
-from utils import z3smt
-import z3
 
 _expr_to_str = exprs.expression_to_string
 
@@ -460,7 +457,6 @@ def canonicalize_multipoint_specification(expr, syn_ctx):
     variable_list = orig_variable_list
     for i, v in enumerate(variable_list):
         v.variable_eval_offset = i
-    canon_spec = expr
 
     return (variable_list, expr)
 
@@ -576,11 +572,11 @@ def test_cnf_conversion():
                                                exprtypes.IntType())
     binary_max_app = syn_ctx.make_function_expr(binary_max, var_exprs[0], var_exprs[1])
     binary_max_app_rev = syn_ctx.make_function_expr(binary_max, var_exprs[1], var_exprs[0])
-    non_separable = syn_ctx.make_function_expr('eq', binary_max_app, binary_max_app_rev)
+    # non_separable = syn_ctx.make_function_expr('eq', binary_max_app, binary_max_app_rev)
     # print(check_single_invocation_property(non_separable, syn_ctx))
 
-    max_rec = syn_ctx.make_function_expr(binary_max, binary_max_app, binary_max_app)
-    non_separable2 = syn_ctx.make_function_expr('eq', max_rec, binary_max_app)
+    # max_rec = syn_ctx.make_function_expr(binary_max, binary_max_app, binary_max_app)
+    # non_separable2 = syn_ctx.make_function_expr('eq', max_rec, binary_max_app)
     # print(check_single_invocation_property(non_separable2, syn_ctx))
 
     canonicalize_specification(formula, syn_ctx)

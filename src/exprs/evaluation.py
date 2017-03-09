@@ -38,7 +38,6 @@
 
 # Code:
 
-from utils import utils
 from exprs import exprs
 from utils import basetypes
 

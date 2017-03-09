@@ -43,8 +43,6 @@
 from utils import basetypes
 from enum import IntEnum
 from utils import utils
-import collections
-from utils import z3smt
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -189,7 +187,7 @@ class _BitVectorType(TypeBase):
         return (not self.__eq__(other))
 
     def get_size(self):
-        return size
+        return self.size
 
     def print_string(self):
         return '(BitVec %d)' % self.size

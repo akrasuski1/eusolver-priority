@@ -39,11 +39,9 @@
 # Code:
 
 
-from exprs import evaluation
 from eusolver import BitSet
 from enumerators import enumerators
 from exprs import exprs
-from semantics import semantics_types
 from utils import basetypes
 
 _expr_to_str = exprs.expression_to_string
@@ -107,7 +105,7 @@ class TermSolverInterface(object):
 
     def _default_compute_term_signature(self, term, old_signature=None):
         points = self.points
-        num_points = len(points)
+        # num_points = len(points)
         retval = self.signature_factory()
 
         if old_signature is not None:
@@ -116,7 +114,7 @@ class TermSolverInterface(object):
         else:
             start_index = 0
 
-        num_new_points = retval.size_of_universe()
+        # num_new_points = retval.size_of_universe()
         new_points = points[start_index:]
         for i, v in enumerate(self.term_signature(term, new_points), start_index):
             if v:
