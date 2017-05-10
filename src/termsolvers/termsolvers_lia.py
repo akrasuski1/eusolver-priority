@@ -44,6 +44,8 @@ from exprs import exprtypes
 from semantics import semantics_types
 from semantics import semantics_core
 from utils import z3smt
+from utils.lia_utils import LIAInequality
+from utils import lia_utils
 from exprs import evaluation
 
 _expr_to_str = exprs.expression_to_string
@@ -53,22 +55,6 @@ def _is_constant(d):
     if len(d) == 1 and 1 in d.keys():
         return True
     return False
-
-def _dict_to_expr(d, syn_ctx):
-    if 1 in d:
-        ret = exprs.ConstantExpression(exprs.Value(d.pop(1), exprtypes.IntType()))
-    else:
-        ret = None
-    for v, i in d.items():
-        if i == 1:
-            vt = v
-        else:
-            vt = syn_ctx.make_function_expr('mul', v, exprs.ConstantExpression(exprs.Value(i, exprtypes.IntType())))
-        if ret is None:
-            ret = vt
-        else:
-            ret = syn_ctx.make_function_expr('add', ret, vt)
-    return ret
 
 def collect_terms(expr):
     if exprs.is_variable_expression(expr) or exprs.is_formal_parameter_expression(expr):
@@ -108,133 +94,6 @@ def collect_terms(expr):
         # print(_expr_to_str(expr))
         raise NotImplementedError
 
-def solve_inequalities(model, outvars, inequalities, syn_ctx):
-    if len(outvars) == 1:
-        return solve_inequalities_one_outvar(model, outvars[0], inequalities, syn_ctx)
-
-    # Check if we can get away with factoring out one outvar
-    for ineq in inequalities:
-        if not ineq.function_info.function_name == '=' and not ineq.function_info.function_name == 'eq':
-            continue
-        l, r = collect_terms(ineq.children[0]), collect_terms(ineq.children[1])
-        for outvar in outvars:
-            coeff = l.get(outvar, 0) - r.get(outvar, 0)
-            if abs(coeff) == 1:
-                [t] = solve_inequalities_one_outvar(model, outvar, [ineq], syn_ctx)
-                rest_ineqs = [ exprs.substitute(e, outvar, t) for e in inequalities if e != ineq ]
-                rest_outvars = [ o for o in outvars if o != outvar ]
-                rest_sol = solve_inequalities(model, rest_outvars, rest_ineqs, syn_ctx)
-                sols = list(zip(rest_outvars, rest_sol))
-                while True:
-                    tp = exprs.substitute_all(t, sols)
-                    if tp == t:
-                        break
-                    t = tp
-                sols_dict = dict(sols)
-                sols_dict[outvar] = t
-                return [ sols_dict[o] for o in outvars ]
-
-    # Otherwise, just pick the first outvar
-    [t] = solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx)
-    rest_ineqs = [ exprs.substitute(e, outvar, t) for e in inequalities if e != ineq ]
-    rest_outvars = [ o for o in outvars if o != outvar ]
-    rest_sol = solve_inequalities(model, rest_outvars, rest_ineqs, syn_ctx)
-    sols = list(zip(rest_outvars, rest_sol))
-    while True:
-        tp = exprs.substitute_all(t, sols)
-        if tp == t:
-            break
-        t = tp
-    sols_dict = dict(sols)
-    sols_dict[outvar] = t
-    return [ sols_dict[o] for o in outvars ]
-
-def solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx):
-    if len(inequalities) == 0:
-        return [ exprs.ConstantExpression(exprs.Value(0, exprtypes.IntType())) ]
-    # print(model)
-    # print([ _expr_to_str(i) for i in inequalities ])
-    def evaluate(d):
-        d = d.copy()
-        ret = d.pop(1, 0)
-        for v, i in d.items():
-            ret += model[v.variable_info.variable_eval_offset].value_object.value_object
-        return ret
-
-    flip = { '>=':'<=', '>':'<', '<=':'>=', '<':'>', 'eq':'eq', '=':'=' }
-    normalized_ineqs = []
-    for ineq in inequalities:
-        left = collect_terms(ineq.children[0])
-        right = collect_terms(ineq.children[1])
-        outvar_coeff = left.get(outvar, 0) - right.get(outvar, 0)
-        if outvar_coeff == 0:
-            continue
-
-        normalized = {}
-        for v in left.keys() | right.keys():
-            normalized[v] = right.get(v, 0) - left.get(v, 0)
-            if outvar_coeff < 0:
-                normalized[v] *= -1
-        normalized.pop(outvar)
-
-        func_name = ineq.function_info.function_name
-        assert func_name in [ '=', 'eq', '<=', '>=', '>', '<' ]
-        if outvar_coeff < 0:
-            func_name = flip[func_name]
-        if func_name == '<':
-            func_name = '<='
-            normalized[1] = normalized.get(1, 0) - 1
-        elif func_name == '>':
-            func_name = '>='
-            normalized[1] = normalized.get(1, 0) + 1
-        normalized_ineqs.append((abs(outvar_coeff), func_name, normalized))
-        # print(_expr_to_str(ineq), ' =========> ')
-        # print('\t', outvar_coeff, ' * outvar', func_name, [ (i, _expr_to_str(v) if exprs.is_expression(v) else 1) for (v, i) in normalized.items() ])
-
-    # Equalities
-    eqs = [ ineq for ineq in  normalized_ineqs if ineq[1] == 'eq' or ineq[1] == '=' ]
-    if len(eqs) > 0:
-        (coeff, _, rhs) = eqs[0]
-        rhs = _dict_to_expr(rhs, syn_ctx)
-        if coeff == 1:
-            return [ rhs ]
-        else:
-            return [ syn_ctx.make_function_expr('div', rhs,
-                    exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType()))) ]
-
-    # Upper bounds
-    uppers = [ ineq for ineq in  normalized_ineqs if ineq[1] == '<=' ]
-    if len(uppers) == 0:
-        tighest_upper = None
-    else:
-        tighest_upper = min(uppers, key=lambda a: evaluate(a[2]) / a[0] )
-
-    # Lower bounds
-    lowers = [ ineq for ineq in  normalized_ineqs if ineq[1] == '>=' ]
-    if len(lowers) == 0:
-        tighest_lower = None
-    else:
-        tighest_lower = max(lowers, key=lambda a: evaluate(a[2]) / a[0] )
-    # print(tighest_lower)
-
-    if tighest_upper is not None:
-        coeff = tighest_upper[0]
-        rhs = _dict_to_expr(tighest_upper[2], syn_ctx)
-        if coeff == 1:
-            return [ rhs ]
-        return [ syn_ctx.make_function_expr('div', rhs,
-                exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType()))) ]
-    elif tighest_lower is not None:
-        coeff = tighest_lower[0]
-        rhs = _dict_to_expr(tighest_lower[2], syn_ctx)
-        if coeff == 1:
-            return [ rhs ]
-        return [ syn_ctx.make_function_expr('div',
-                syn_ctx.make_function_expr('add', rhs, exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType()))),
-                exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType()))) ]
-    else:
-        return exprs.ConstantExpression(exprs.Value(0, exprtypes.IntType()))
-
 class SpecAwareLIATermSolver(TermSolverInterface):
     def __init__(self, term_signature, spec):
         super().__init__()
@@ -243,10 +102,9 @@ class SpecAwareLIATermSolver(TermSolverInterface):
         self.spec = spec
         self.syn_ctx = self.spec.syn_ctx
         self.point_var_exprs =  [ exprs.VariableExpression(v) for v in spec.point_vars ]
-        self.clauses = spec.get_canon_clauses()
+
         self.smt_ctx = z3smt.Z3SMTContext()
         self.eval_ctx = evaluation.EvaluationContext()
-
         self.canon_apps = [ self.spec.canon_application[sf] for sf in self.synth_funs ]
 
         self.outvars = []
@@ -255,8 +113,17 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                     exprs.VariableExpression(exprs.VariableInfo(
                         exprtypes.IntType(), 'outvar_' + fn.function_name,
                         len(self.point_var_exprs) + len(self.outvars))))
-        all_vars = self.point_var_exprs + self.outvars
-        self.all_vars_z3 = [ _expr_to_smt(v, self.smt_ctx) for v in all_vars ]
+        self.all_vars = self.point_var_exprs + self.outvars
+        self.all_vars_z3 = [ _expr_to_smt(v, self.smt_ctx) for v in self.all_vars ]
+
+        # self.clauses = spec.get_canon_clauses()
+        self.lia_clauses = [ [ 
+            LIAInequality.from_expr(exprs.substitute_all(disjunct, list(zip(self.canon_apps, self.outvars))))
+            for disjunct in clause  ]
+            for clause in spec.get_canon_clauses() ]
+        self.rewritten_spec = exprs.substitute_all(
+                self.spec.get_canonical_specification(),
+                list(zip(self.canon_apps, self.outvars)))
 
     def generate_more_terms(self):
         pass
@@ -277,7 +144,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
         syn_ctx = self.syn_ctx
         smt_ctx = self.smt_ctx
         eval_ctx = self.eval_ctx
-        canon_spec = self.spec.get_canonical_specification()
+        spec = self.rewritten_spec
 
         # Find one value of output
         eq_constrs = []
@@ -286,44 +153,22 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                     exprs.ConstantExpression(value), var)
             eq_constrs.append(c)
         full_constr = self.syn_ctx.make_function_expr('and',
-                canon_spec, *eq_constrs)
-
-        for synth_fun, outvar in zip(self.synth_funs, self.outvars):
-            smt_ctx.set_interpretation(synth_fun, outvar)
-            eval_ctx.set_interpretation(synth_fun, outvar)
+                spec, *eq_constrs)
 
         raw_z3_model = exprs.sample(full_constr, smt_ctx, self.all_vars_z3)
-        model = [ exprs.Value(z3_value.as_long(), exprtypes.IntType()) for z3_value in raw_z3_model ]
+        model = dict(zip(self.all_vars, [ z3_value.as_long() for z3_value in raw_z3_model ]))
 
-        # Filter to disjuncts that are true in this model
-        model_clauses = []
-        for clause in self.clauses:
-            new_clause = []
-            for disjunct in clause:
-                d = exprs.substitute_all(disjunct, list(zip(self.canon_apps, self.outvars)))
-                eval_ctx.set_valuation_map(model)
-                if evaluation.evaluate_expression_raw(d, eval_ctx):
-                    new_clause.append(d)
-            model_clauses.append(new_clause)
-
-
-        # Filter to disjuncts that have outvar occurring in them
-        outvar_clauses = []
+        # Find the first disjunct that 
+        # (a) Is true in this model
+        # (b) Contains some outvar 
+        ineqs = []
         outvar_set = set(self.outvars)
-        for clause in model_clauses:
-            new_clause = []
+        for clause in self.lia_clauses:
             for disjunct in clause:
-                if len(outvar_set & exprs.get_all_variables(disjunct)) > 0:
-                    new_clause.append(disjunct)
-            outvar_clauses.append(new_clause)
-
-        # Pick the first disjunct from each clause and solve 
-        relevent_disjuncts = []
-        for outvar_clause in outvar_clauses:
-            if len(outvar_clause) > 0:
-                relevent_disjuncts.append(outvar_clause[0])
-
-        return solve_inequalities(model, self.outvars, relevent_disjuncts, syn_ctx)
+                if disjunct.eval(model) & len(outvar_set & disjunct.get_variables()) > 0:
+                    ineqs.append(disjunct)
+                    break
+        return lia_utils.solve_inequalities(model, self.outvars, ineqs, syn_ctx)
 
     def _single_solve(self, ivs, points):
         s = self.signature_factory()
