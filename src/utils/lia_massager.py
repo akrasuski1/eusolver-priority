@@ -41,6 +41,7 @@
 from exprs import exprs
 from termsolvers import termsolvers_lia
 from exprs import exprtypes
+from utils.lia_utils import LIAExpression, LIAInequality
 
 def simplify(syn_ctx, expr):
     if not exprs.is_function_expression(expr):
@@ -160,14 +161,13 @@ def get_atomic_preds(e):
 
 
 def rewrite_term(syn_ctx, term, neg, consts, constant_multiplication):
-    term_dict = termsolvers_lia.collect_terms(term)
-    return rewrite_term_dict(syn_ctx, term_dict, neg, consts, constant_multiplication)
+    lia_term = LIAExpression.from_expr(term)
+    return rewrite_lia_term(syn_ctx, term_dict, neg, consts, constant_multiplication)
 
-def rewrite_term_dict(syn_ctx, term_dict, neg, consts, constant_multiplication):
-    c = term_dict.get(1, 0)
-
+def rewrite_lia_term(syn_ctx, lia_term, neg, consts, constant_multiplication):
+    c = lia_term.get_const()
     linear_terms = [ make_linear_term(syn_ctx, v, coeff, consts, neg, constant_multiplication)
-            for (v, coeff) in term_dict.items() if v != 1 ]
+            for (v, coeff) in lia_term.get_var_coeff_pairs() ]
 
     if c != 0:
         new_term = make_constant(syn_ctx, c, consts, neg)
@@ -186,60 +186,39 @@ def rewrite_term_dict(syn_ctx, term_dict, neg, consts, constant_multiplication):
     return new_term
 
 def rewrite_pred(syn_ctx, pred, boolean_combs, comparators, neg, consts, constant_multiplication):
-    used_comparator = pred.function_info.function_name
-    left = termsolvers_lia.collect_terms(pred.children[0])
-    right = termsolvers_lia.collect_terms(pred.children[1])
+    liaineq = LIAInequality.from_expr(pred).to_positive_form()
 
-    for k in left.keys() | right.keys():
-        val = left.get(k, 0) - right.get(k, 0)
-        if val == 0:
-            left.pop(k, 0)
-            right.pop(k, 0)
-        elif val > 0:
-            left[k] = val
-            right.pop(k, 0)
-        else:
-            right[k] = -val
-            left.pop(k, 0)
-
-    if used_comparator in [ '<=', '=', '>=' ] and len(left) == 0 and len(right) == 0:
+    if liaineq.is_valid():
         if len(consts) > 0:
             return exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
-            # use_func = next(c for c in comparators if c in [ '<=', '>=', '=' ])
-            # c = next(x for x in consts)
-            # return syn_ctx.make_function_expr(use_func,
-            #         exprs.ConstantExpression(exprs.Value(c, exprtypes.IntType())),
-            #         exprs.ConstantExpression(exprs.Value(c, exprtypes.IntType())))
         else:
             return None
 
+    (left, op, right) = (liaineq.left, liaineq.op, liaineq.right)
+
     negate = { '<':'>=', '>':'<=', '>=':'<', '<=':'>' }
     flip = { '<':'>', '>':'<', '>=':'<=', '<=':'>=' }
-    if used_comparator not in comparators:
-        if used_comparator in negate and negate[used_comparator] in comparators:
-            left = dict([ (k,-v) for (k,v) in left.items() ])
-            right = dict([ (k,-v) for (k,v) in right.items() ])
-            used_comparator = negate[used_comparator]
-        elif used_comparator in flip and flip[used_comparator] in comparators:
-            left, right = right, left
-            used_comparator = flip[used_comparator]
-        else:
-            if used_comparator == '=' and ('<=' in comparators or '>=' in comparators):
-                use_func = '<=' if '<=' in comparators else '>='
-                p1 = syn_ctx.make_function_expr(use_func, pred.children[0], pred.children[1])
-                p2 = syn_ctx.make_function_expr(use_func, pred.children[1], pred.children[0])
+    if op not in comparators:
+        if op in negate and negate[op] in comparators:
+            (left, op, right) = (-left, negate[op], -right)
+        elif op in flip and flip[op] in comparators:
+            (left, op, right) = (right, flip[op], left)
+        elif op == '=' and ('<=' in comparators or '>=' in comparators) and 'and' in boolean_combs:
+                new_op = '<=' if '<=' in comparators else '>='
+                p1 = syn_ctx.make_function_expr(new_op, pred.children[0], pred.children[1])
+                p2 = syn_ctx.make_function_expr(new_op, pred.children[1], pred.children[0])
                 return syn_ctx.make_function_expr('and', 
                         rewrite_pred(syn_ctx, p1, boolean_combs, comparators, neg, consts, constant_multiplication),
                         rewrite_pred(syn_ctx, p2, boolean_combs, comparators, neg, consts, constant_multiplication))
-            else:
-                return None
+        else:
+            return None
 
-    left_term = rewrite_term_dict(syn_ctx, left, neg, consts, constant_multiplication)
-    right_term = rewrite_term_dict(syn_ctx, right, neg, consts, constant_multiplication)
+    left_term = rewrite_lia_term(syn_ctx, liaineq.left, neg, consts, constant_multiplication)
+    right_term = rewrite_lia_term(syn_ctx, liaineq.right, neg, consts, constant_multiplication)
     if left_term is None or right_term is None:
         return None
 
-    return syn_ctx.make_function_expr(used_comparator, left_term, right_term)
+    return syn_ctx.make_function_expr(op, left_term, right_term)
 
 def verify(expr, boolean_combs, comparators, consts, negatives, constant_multiplication, div, mod):
     if not constant_multiplication and exprs.find_application(expr, '*') is not None:

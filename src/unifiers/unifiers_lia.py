@@ -44,7 +44,6 @@ from unifiers.unifiers import UnifierInterface
 from exprs import evaluation
 from exprs import exprs
 from exprs import exprtypes
-from termsolvers.termsolvers_lia import collect_terms
 
 _expr_to_str = exprs.expression_to_string
 
@@ -52,11 +51,8 @@ _true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
 _false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
 
 def simplify_inequality(inequality):
-    op = inequality.function_info.function_name
-    arg1, arg2 = inequality.children
-    if op in [ 'eq', '=', '<=', 'le', '>=', 'ge' ]:
-        if collect_terms(arg1) == collect_terms(arg2):
-            return _true_expr
+    if inequality.is_valid():
+        return _true_expr
     return inequality
 
 def _filter_to_intro_vars(clauses, intro_vars):

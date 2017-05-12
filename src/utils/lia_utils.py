@@ -48,13 +48,16 @@ _expr_to_str = exprs.expression_to_string
 class LIAExpression(object):
     def __init__(self, coeffs):
         self.coeffs = coeffs
-        self.vars = set(coeffs.keys())
+        self.vars = set(v in coeffs.keys() if coeffs[v] != 0)
 
     def get_variables(self):
         return self.vars
 
     def get_coefficient(self, var):
-        return self.coeffs[var]
+        if var in self.coeffs:
+            return self.coeffs[var]
+        else:
+            return 0
 
     def set_coefficient(self, var, val):
         self.coeffs[var] = val
@@ -131,6 +134,16 @@ class LIAExpression(object):
         else:
             return self.coeffs[1]
 
+    def get_var_coeff_pairs(self):
+        return [ (var, coeff) for var, coeff in self.coeffs.items() if var != 1 ]
+
+    def substitute(self, var, other):
+        assert other.get_coefficient(var) == 0
+        c = self.get_coefficient(var)
+        ret = self + LIAExpression({1:c}) * other 
+        ret.set_coefficient(var, 0)
+        return ret
+
     def to_expr(self, syn_ctx):
         def term_to_expr(var, coeff):
             if var == 1:
@@ -180,8 +193,35 @@ class LIAInequality(object):
         assert type(self.left) == LIAExpression
         assert type(self.right) == LIAExpression
 
+    def is_valid(self):
+        normalized = self.left - self.right
+        if len(normalized.vars) != 0:
+            return False
+        return self.op_func(normalized.get_const(), 0)
+
+    def to_positive_form(self):
+        normalized = self.left - self.right
+        l = {}
+        r = {}
+        for v, c in normalized.coeffs.items():
+            if c > 0:
+                l[v] = c
+            elif c < 0:
+                r[v] = -c
+            else:
+                pass
+        return LIAInequality(LIAExpression(l), self.op, LIAExpression(r))
+
+    def is_equality(self):
+        return self.op == 'eq' or self.op == '='
+
     def get_variables(self):
         return self.left.get_variables() | self.right.get_variables()
+
+    def substitute(self, var, expr):
+        l = self.left.substitute(var, expr)
+        r = self.right.substitute(var, expr)
+        return LIAInequality(l, self.op, r)
 
     def eval(self, model):
         l = self.left.eval(model)
@@ -239,24 +279,22 @@ def solve_inequalities(model, outvars, inequalities, syn_ctx):
     '''
     # Check if we can get away with factoring out one outvar
     for ineq in inequalities:
-        if not ineq.function_info.function_name == '=' and not ineq.function_info.function_name == 'eq':
+        if not ineq.is_equality():
             continue
-        l, r = collect_terms(ineq.children[0]), collect_terms(ineq.children[1])
         for outvar in outvars:
-            coeff = l.get(outvar, 0) - r.get(outvar, 0)
-            if abs(coeff) == 1:
-                [t] = solve_inequalities_one_outvar(model, outvar, [ineq], syn_ctx)
-                rest_ineqs = [ exprs.substitute(e, outvar, t) for e in inequalities if e != ineq ]
+            (coeff, (_, eq_expr, _)) = ineq.get_bounds(outvar)
+            if coeff == 1:
+                rest_ineqs = [ e.substitute(outvar, eq_expr) for e in inequalities if e != ineq ]
                 rest_outvars = [ o for o in outvars if o != outvar ]
                 rest_sol = solve_inequalities(model, rest_outvars, rest_ineqs, syn_ctx)
                 sols = list(zip(rest_outvars, rest_sol))
                 while True:
-                    tp = exprs.substitute_all(t, sols)
-                    if tp == t:
+                    tp = exprs.substitute_all(eq_expr, sols)
+                    if tp == eq_expr:
                         break
-                    t = tp
+                    eq_expr = tp
                 sols_dict = dict(sols)
-                sols_dict[outvar] = t
+                sols_dict[outvar] = eq_expr
                 return [ sols_dict[o] for o in outvars ]
 
     # Otherwise, just pick the first outvar
@@ -305,6 +343,7 @@ def solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx):
                 return [ syn_ctx.make_function_expr('div', rhs,
                     exprs.ConstantExpression(exprs.Value(coeff, exprtypes.IntType()))) ]
 
+    # Lower bounds
     if len(lbs) > 0:
         tightest_lb = max(lbs, key=lambda a: a[1].eval(model) / a[0])
         if tightest_lb is not None:

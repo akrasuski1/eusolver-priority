@@ -51,49 +51,6 @@ from exprs import evaluation
 _expr_to_str = exprs.expression_to_string
 _expr_to_smt = semantics_types.expression_to_smt
 
-def _is_constant(d):
-    if len(d) == 1 and 1 in d.keys():
-        return True
-    return False
-
-def collect_terms(expr):
-    if exprs.is_variable_expression(expr) or exprs.is_formal_parameter_expression(expr):
-        return {expr:1}
-    elif exprs.is_constant_expression(expr):
-        return {1:expr.value_object.value_object}
-
-    func_name = expr.function_info.function_name
-    if func_name in [ '+', 'add' ]:
-        ret = {}
-        ds = [ collect_terms(c) for c in expr.children ]
-        for d in ds:
-            for v, i in d.items():
-                ret[v] = ret.get(v, 0) + i
-        return ret
-    elif func_name == 'sub' or (func_name == '-' and len(expr.children) == 2):
-        [ d1, d2 ] = [ collect_terms(c) for c in expr.children ]
-        ret = d1.copy()
-        for v, i in d2.items():
-            ret[v] = ret.get(v, 0) - i
-        return ret
-    elif func_name in [ '*', 'mul' ]:
-        [ d1, d2 ] = [ collect_terms(c) for c in expr.children ]
-        (c, t) = (d1, d2) if _is_constant(d1) else (d2, d1)
-        constant = c[1]
-        ret = {}
-        for v, i in t.items():
-            ret[v] = i * constant
-        return ret
-    elif func_name == '-':
-        d = collect_terms(expr.children[0])
-        ret = {}
-        for v, i in d.items():
-            ret[v] = - i
-        return ret
-    else:
-        # print(_expr_to_str(expr))
-        raise NotImplementedError
-
 class SpecAwareLIATermSolver(TermSolverInterface):
     def __init__(self, term_signature, spec):
         super().__init__()
