@@ -48,7 +48,7 @@ _expr_to_str = exprs.expression_to_string
 class LIAExpression(object):
     def __init__(self, coeffs):
         self.coeffs = coeffs
-        self.vars = set(v in coeffs.keys() if coeffs[v] != 0)
+        self.vars = set([v for v in coeffs.keys() if coeffs[v] != 0])
 
     def get_variables(self):
         return self.vars
@@ -86,7 +86,7 @@ class LIAExpression(object):
             ret[var] = ret.get(var, 0) - coeff
         return LIAExpression(ret)
 
-    def __neg__(self, other):
+    def __neg__(self):
         ret = { var:(-coeff) for var, coeff in self.coeffs.items() }
         return LIAExpression(ret)
 
@@ -112,7 +112,7 @@ class LIAExpression(object):
 
         func_name = expr.function_info.function_name
         if func_name in [ '+', 'add' ]:
-            return reduce(LIAExpression.__plus__, map(LIAExpression.from_expr, expr.children))
+            return reduce(LIAExpression.__add__, map(LIAExpression.from_expr, expr.children))
         elif func_name == 'sub' or (func_name == '-' and len(expr.children) == 2):
             return LIAExpression.from_expr(expr.children(0)) - LIAExpression.from_expr(expr.children(1))
         elif func_name in [ '*', 'mul' ]:
@@ -132,7 +132,7 @@ class LIAExpression(object):
         if len(self.coeffs) == 0:
             return 0
         else:
-            return self.coeffs[1]
+            return self.coeffs.get(1, 0)
 
     def get_var_coeff_pairs(self):
         return [ (var, coeff) for var, coeff in self.coeffs.items() if var != 1 ]

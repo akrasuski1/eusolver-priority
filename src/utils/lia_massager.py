@@ -162,7 +162,7 @@ def get_atomic_preds(e):
 
 def rewrite_term(syn_ctx, term, neg, consts, constant_multiplication):
     lia_term = LIAExpression.from_expr(term)
-    return rewrite_lia_term(syn_ctx, term_dict, neg, consts, constant_multiplication)
+    return rewrite_lia_term(syn_ctx, lia_term, neg, consts, constant_multiplication)
 
 def rewrite_lia_term(syn_ctx, lia_term, neg, consts, constant_multiplication):
     c = lia_term.get_const()

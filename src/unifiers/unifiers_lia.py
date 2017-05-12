@@ -44,6 +44,7 @@ from unifiers.unifiers import UnifierInterface
 from exprs import evaluation
 from exprs import exprs
 from exprs import exprtypes
+from utils.lia_utils import LIAInequality
 
 _expr_to_str = exprs.expression_to_string
 
@@ -51,7 +52,7 @@ _true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
 _false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
 
 def simplify_inequality(inequality):
-    if inequality.is_valid():
+    if LIAInequality.from_expr(inequality).is_valid():
         return _true_expr
     return inequality
 
