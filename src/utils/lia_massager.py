@@ -61,6 +61,8 @@ def simplify(syn_ctx, expr):
             return false
         elif len(cond_true_children) == 0:
             return true
+        elif len(cond_true_children) == 1:
+            return cond_true_children[0]
         else:
             return syn_ctx.make_function_expr('and', *cond_true_children)
     elif func_name == 'or':
@@ -71,6 +73,8 @@ def simplify(syn_ctx, expr):
             return true
         elif len(cond_false_children) == 0:
             return false
+        elif len(cond_false_children) == 1:
+            return cond_false_children[0]
         else:
             return syn_ctx.make_function_expr('or', *cond_false_children)
     elif func_name == 'not':
@@ -213,12 +217,14 @@ def rewrite_pred(syn_ctx, pred, boolean_combs, comparators, neg, consts, constan
         else:
             return None
 
+    liaineq = LIAInequality(left, op, right).to_positive_form()
     left_term = rewrite_lia_term(syn_ctx, liaineq.left, neg, consts, constant_multiplication)
     right_term = rewrite_lia_term(syn_ctx, liaineq.right, neg, consts, constant_multiplication)
     if left_term is None or right_term is None:
         return None
 
-    return syn_ctx.make_function_expr(op, left_term, right_term)
+    ret = syn_ctx.make_function_expr(liaineq.op, left_term, right_term)
+    return ret
 
 def verify(expr, boolean_combs, comparators, consts, negatives, constant_multiplication, div, mod):
     if not constant_multiplication and exprs.find_application(expr, '*') is not None:
@@ -314,6 +320,8 @@ def rewrite_arbitrary_arity_and_or(syn_ctx, sol):
         
 
 def massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging):
+    # for sf in final_solution:
+    #   print(exprs.expression_to_string(sf))
     try:
         new_final_solution = []
         for sf, sol in zip(synth_funs, final_solution):

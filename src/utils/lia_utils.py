@@ -195,7 +195,7 @@ class LIAInequality(object):
 
     def is_valid(self):
         normalized = self.left - self.right
-        if len(normalized.vars) != 0:
+        if not normalized.is_const():
             return False
         return self.op_func(normalized.get_const(), 0)
 
