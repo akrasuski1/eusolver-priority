@@ -56,8 +56,9 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
     for i in range(num_vars):
         eval_value = model.evaluate(var_smt_expr_list[i], True)
         if (var_info_list[i].variable_type == exprtypes.BoolType()):
-            point[i] = exprs.Value(bool(str(eval_value)), exprtypes.BoolType())
+            point[i] = exprs.Value(bool(eval_value), exprtypes.BoolType())
         elif (var_info_list[i].variable_type == exprtypes.IntType()):
+            # TODO: Why are these int(str(eval_value)) instead of eval_value.as_long()
             point[i] = exprs.Value(int(str(eval_value)), exprtypes.IntType())
         elif (var_info_list[i].variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
             point[i] = exprs.Value(BitVector(int(str(eval_value)),
