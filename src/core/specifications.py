@@ -72,7 +72,7 @@ class FormulaSpec(SpecInterface):
             eval_ctx.set_valuation_map(point)
             try:
                 r = evaluation.evaluate_expression_raw(self.canon_spec, eval_ctx)
-                # print(exprs.expression_to_string(term), "is", r, "on", [ p.value for p in point ])
+                # print(exprs.expression_to_string(term), "is", r, "on", [ p.value_object for p in point ])
                 # print(eval_ctx.eval_stack_top)
                 retval.append(r)
             except (basetypes.PartialFunctionError, basetypes.UnboundLetVariableError):

@@ -90,7 +90,17 @@ def evaluate_expression_raw(expr_object, eval_context):
         evaluate_expression_on_stack(expr_object, eval_context)
         retval = eval_context.peek()
         eval_context.pop()
-        # print(exprs.expression_to_string(expr_object), 'evaluated to', retval)
+        '''
+        print(
+                exprs.expression_to_string(expr_object),
+                'evaluated to',
+                retval,
+                'on',
+                [ p.value_object for p in eval_context.valuation_map],
+                ' and ',
+                [ exprs.expression_to_string(t) for fid, t in eval_context.interpretation_map.items() ]
+            )
+        '''
         ret = retval
     except:
         # reset the stack
