@@ -89,7 +89,7 @@ class ExpressionRewrite(RewriteBase):
         return False
 
     def substitute_expr(self, old, new):
-        self.expr = exprs.substitute_expr(self.expr, old, new)
+        self.expr = exprs.substitute(self.expr, old, new)
 
 class NTRewrite(RewriteBase):
     def __init__(self, non_terminal, nt_type):
