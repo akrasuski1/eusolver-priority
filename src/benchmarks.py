@@ -229,6 +229,8 @@ def lia_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specificati
 def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
     if len(synth_funs) > 1:
         raise UnsuitableSolverException("DT Unification Solver: Multi-function unification not supported")
+    if specification.is_multipoint:
+        raise UnsuitableSolverException("Multi point specification")
 
     synth_fun = synth_funs[0]
     grammar = grammar_map[synth_fun]
