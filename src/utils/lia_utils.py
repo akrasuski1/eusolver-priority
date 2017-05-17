@@ -114,7 +114,7 @@ class LIAExpression(object):
         if func_name in [ '+', 'add' ]:
             return reduce(LIAExpression.__add__, map(LIAExpression.from_expr, expr.children))
         elif func_name == 'sub' or (func_name == '-' and len(expr.children) == 2):
-            return LIAExpression.from_expr(expr.children(0)) - LIAExpression.from_expr(expr.children(1))
+            return LIAExpression.from_expr(expr.children[0]) - LIAExpression.from_expr(expr.children[1])
         elif func_name in [ '*', 'mul' ]:
             return reduce(LIAExpression.__mul__, map(LIAExpression.from_expr, expr.children))
         elif func_name == '-':
@@ -320,7 +320,7 @@ def solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx):
     bounds = [ ineq.get_bounds(outvar) for ineq in inequalities ]
     eqs = [ (c, eq_exp) for (c, (_, eq_exp, _)) in bounds if eq_exp is not None ]
     lbs = [ (c, lb_exp) for (c, (lb_exp, _, _)) in bounds if lb_exp is not None ]
-    ubs = [ (c, eq_exp) for (c, (_, _, ub_exp)) in bounds if ub_exp is not None ]
+    ubs = [ (c, ub_exp) for (c, (_, _, ub_exp)) in bounds if ub_exp is not None ]
 
     # Equalities
     if len(eqs) > 0:
