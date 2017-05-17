@@ -259,8 +259,14 @@ def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specificati
     return final_solution
 
 def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
+    if len(synth_funs) != 1:
+        raise UnsuitableSolverException("Classic esolver for multi-function disable due to bugs")
     assert len(synth_funs) == 1
-    generator_factory = enumerators.PointDistinctGeneratorFactory(specification)
+    try:
+        generator_factory = enumerators.PointDistinctGeneratorFactory(specification)
+    except:
+        raise UnsuitableSolverException("Enumerator problems")
+
     TermSolver = termsolvers.PointDistinctTermSolver
     grammar = grammar_map[synth_funs[0]]
     term_generator = grammar.to_generator(generator_factory)
@@ -281,7 +287,7 @@ def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, ver
     rewritten_solutions = rewrite_solution(synth_funs, solution, reverse_mapping=None)
     return rewritten_solutions
 
-def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier, mode):
+def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):
     generator_factory = enumerators.RecursiveGeneratorFactory()
     TermSolver = termsolvers.PointlessTermSolver
 

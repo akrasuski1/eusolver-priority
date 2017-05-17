@@ -228,11 +228,7 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
 
     def solve(self):
         self.monotonic_expr_id = 0
-        if self.one_term_coverage:
-            return self._default_solve(restart_everytime=False)
-        else:
-            return self._default_solve(restart_everytime=True)
-
+        return self._default_solve(restart_everytime=False)
 
 class PointDistinctTermSolver(EnumerativeTermSolverBase):
     def __init__(self, term_signature, term_generator):

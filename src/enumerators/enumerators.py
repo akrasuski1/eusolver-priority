@@ -352,7 +352,7 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
             for app in self.applications:
                 for child in app.children:
                     if exprs.find_application(child, spec.synth_funs[0].function_name) is not None:
-                        raise NotImplementedError
+                        raise Exception("Unable to form point out of forall variables")
             self.point_profiles = []
         else:
             self.applications = None
