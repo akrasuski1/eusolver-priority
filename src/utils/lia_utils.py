@@ -61,7 +61,7 @@ class LIAExpression(object):
 
     def set_coefficient(self, var, val):
         self.coeffs[var] = val
-        if val == 0:
+        if val == 0 and var in self.vars:
             self.vars.remove(var)
 
     def eval(self, model):
@@ -120,7 +120,7 @@ class LIAExpression(object):
         elif func_name == '-':
             return -LIAExpression.from_expr(expr.children[0])
         else:
-            print(_expr_to_str(expr))
+            # print(_expr_to_str(expr))
             raise NotImplementedError
 
     def is_const(self):
@@ -272,19 +272,22 @@ class LIAInequality(object):
             raise NotImplementedError
 
 def solve_inequalities(model, outvars, inequalities, syn_ctx):
+    # print("===================")
+    # for var, val in model.items():
+     #    print(exprs.expression_to_string(var) + " = " + str(val))
     if len(outvars) == 1:
         return solve_inequalities_one_outvar(model, outvars[0], inequalities, syn_ctx)
 
-    raise NotImplementedError
-    '''
+    # raise NotImplementedError
     # Check if we can get away with factoring out one outvar
     for ineq in inequalities:
         if not ineq.is_equality():
             continue
         for outvar in outvars:
-            (coeff, (_, eq_expr, _)) = ineq.get_bounds(outvar)
+            (coeff, (_, eq_lia_expr, _)) = ineq.get_bounds(outvar)
             if coeff == 1:
-                rest_ineqs = [ e.substitute(outvar, eq_expr) for e in inequalities if e != ineq ]
+                eq_expr = eq_lia_expr.to_expr(syn_ctx)
+                rest_ineqs = [ e.substitute(outvar, eq_lia_expr) for e in inequalities if e != ineq ]
                 rest_outvars = [ o for o in outvars if o != outvar ]
                 rest_sol = solve_inequalities(model, rest_outvars, rest_ineqs, syn_ctx)
                 sols = list(zip(rest_outvars, rest_sol))
@@ -295,11 +298,15 @@ def solve_inequalities(model, outvars, inequalities, syn_ctx):
                     eq_expr = tp
                 sols_dict = dict(sols)
                 sols_dict[outvar] = eq_expr
+                # print( [ (exprs.expression_to_string(o), exprs.expression_to_string(sols_dict[o])) for o in outvars ])
+                # print("===================")
                 return [ sols_dict[o] for o in outvars ]
 
     # Otherwise, just pick the first outvar
+    outvar = outvars[0]
     [t] = solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx)
-    rest_ineqs = [ exprs.substitute(e, outvar, t) for e in inequalities if e != ineq ]
+    lia_t = LIAExpression.from_expr(t)
+    rest_ineqs = [ e.substitute(outvar, lia_t) for e in inequalities if e != ineq ]
     rest_outvars = [ o for o in outvars if o != outvar ]
     rest_sol = solve_inequalities(model, rest_outvars, rest_ineqs, syn_ctx)
     sols = list(zip(rest_outvars, rest_sol))
@@ -310,8 +317,9 @@ def solve_inequalities(model, outvars, inequalities, syn_ctx):
         t = tp
     sols_dict = dict(sols)
     sols_dict[outvar] = t
+    # print( [ (exprs.expression_to_string(o), exprs.expression_to_string(sols_dict[o])) for o in outvars ])
+    # print("===================")
     return [ sols_dict[o] for o in outvars ]
-    '''
 
 def solve_inequalities_one_outvar(model, outvar, inequalities, syn_ctx):
     if len(inequalities) == 0:

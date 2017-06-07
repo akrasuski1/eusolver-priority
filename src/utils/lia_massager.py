@@ -202,12 +202,14 @@ def rewrite_pred(syn_ctx, pred, boolean_combs, comparators, neg, consts, constan
 
     negate = { '<':'>=', '>':'<=', '>=':'<', '<=':'>' }
     flip = { '<':'>', '>':'<', '>=':'<=', '<=':'>=' }
+    addNot = False
     if op not in comparators:
-        if op in negate and negate[op] in comparators:
-            (left, op, right) = (-left, negate[op], -right)
+        if op in negate and negate[op] in comparators and boolean_combs:
+            (left, op, right) = (left, negate[op], right)
+            addNot = True
         elif op in flip and flip[op] in comparators:
             (left, op, right) = (right, flip[op], left)
-        elif op == '=' and ('<=' in comparators or '>=' in comparators) and 'and' in boolean_combs:
+        elif op == '=' and ('<=' in comparators or '>=' in comparators) and boolean_combs:
                 new_op = '<=' if '<=' in comparators else '>='
                 p1 = syn_ctx.make_function_expr(new_op, pred.children[0], pred.children[1])
                 p2 = syn_ctx.make_function_expr(new_op, pred.children[1], pred.children[0])
@@ -224,6 +226,8 @@ def rewrite_pred(syn_ctx, pred, boolean_combs, comparators, neg, consts, constan
         return None
 
     ret = syn_ctx.make_function_expr(liaineq.op, left_term, right_term)
+    if addNot:
+        ret = syn_ctx.make_function_expr('not', ret)
     return ret
 
 def verify(expr, boolean_combs, comparators, consts, negatives, constant_multiplication, div, mod):
@@ -345,14 +349,12 @@ def massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging):
                     return None
                 sol = exprs.substitute(sol, term, termp)
 
-
             aps = get_atomic_preds(sol)
             for ap in aps:
                 new_ap = rewrite_pred(syn_ctx, ap, boolean_combs, comparators, negatives, consts, constant_multiplication)
                 if new_ap is None:
                     return None
                 sol = exprs.substitute(sol, ap, new_ap)
-
 
             sol = simplify(syn_ctx, sol)
 

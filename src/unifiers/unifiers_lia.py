@@ -227,6 +227,8 @@ class SpecAwareLIAUnifier(UnifierInterface):
             yield ("TERM", triv)
             return
 
+        # print([ [ pi.value_object for pi in p ] for p in self.points])
+
         pred_terms = []
 
         # Pick terms which cover maximum number of points

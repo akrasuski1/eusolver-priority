@@ -150,10 +150,11 @@ class SpecAwareLIATermSolver(TermSolverInterface):
             # print("Trivial solve!")
             return self._trivial_solve()
 
+        # print("Nontrivial solve!")
         # for point in self.points:
-        #     print("POINT:", [ p.value_object for p in point])
+            # print("POINT:", [ p.value_object for p in point])
         # for sig, term in self.signature_to_term.items():
-        #     print('SIGTOTERM:', str(sig), _expr_to_str(term))
+            # print('SIGTOTERM:', str(sig), _expr_to_str(term))
 
         intro_var_signature = []
         for point in self.points:
