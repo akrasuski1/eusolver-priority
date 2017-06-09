@@ -204,12 +204,12 @@ def rewrite_pred(syn_ctx, pred, boolean_combs, comparators, neg, consts, constan
     flip = { '<':'>', '>':'<', '>=':'<=', '<=':'>=' }
     addNot = False
     if op not in comparators:
-        if op in negate and negate[op] in comparators and boolean_combs:
+        if op in negate and negate[op] in comparators:
             (left, op, right) = (left, negate[op], right)
             addNot = True
         elif op in flip and flip[op] in comparators:
             (left, op, right) = (right, flip[op], left)
-        elif op == '=' and ('<=' in comparators or '>=' in comparators) and boolean_combs:
+        elif op == '=' and ('<=' in comparators or '>=' in comparators):
                 new_op = '<=' if '<=' in comparators else '>='
                 p1 = syn_ctx.make_function_expr(new_op, pred.children[0], pred.children[1])
                 p2 = syn_ctx.make_function_expr(new_op, pred.children[1], pred.children[0])
@@ -353,6 +353,7 @@ def massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging):
             for ap in aps:
                 new_ap = rewrite_pred(syn_ctx, ap, boolean_combs, comparators, negatives, consts, constant_multiplication)
                 if new_ap is None:
+                    print(exprs.expression_to_string(ap))
                     return None
                 sol = exprs.substitute(sol, ap, new_ap)
 
