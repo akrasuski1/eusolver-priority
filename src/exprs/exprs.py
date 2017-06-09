@@ -155,8 +155,9 @@ class VariableInfo(object):
 
 
 def _constant_to_string(constant_type, constant_value):
-    if (constant_type == exprtypes.BoolType() or
-        constant_type == exprtypes.IntType()):
+    if constant_type == exprtypes.BoolType():
+        return str(constant_value).lower()
+    elif constant_type == exprtypes.IntType():
         return str(constant_value)
     elif constant_type == exprtypes.StringType():
         return '"%s"' % constant_value
