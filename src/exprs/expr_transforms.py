@@ -103,7 +103,11 @@ class LIAFlattener(ExprTransformerBase):
         elif function_name in [ '<=', '>=', '<', '>', '=', 'eq', 'ne' ]:
             children = [ self._do_transform(child, syn_ctx) for child in expr_object.children ]
             return syn_ctx.make_function_expr(function_name, *children)
-        elif function_name in [ 'not' ] and expr_object.children[0].function_info.function_name in [ '<=', '>=', '<', '>', '=', 'eq', 'ne' ]:
+        elif (
+                function_name in [ 'not' ] and 
+                exprs.is_function_expression(expr_object.children[0]) and
+                expr_object.children[0].function_info.function_name in [ '<=', '>=', '<', '>', '=', 'eq', 'ne' ]
+                ):
             child = expr_object.children[0]
             child_func_name = child.function_info.function_name
             ret_func_name = neg[child_func_name]
@@ -230,7 +234,10 @@ class NNFConverter(ExprTransformerBase):
     def _do_transform(self, expr_object, syn_ctx, polarity):
         kind = expr_object.expr_kind
         if (kind != exprs.ExpressionKinds.function_expression):
-            ret = expr_object
+            if (polarity):
+                ret = expr_object
+            else:
+                ret = syn_ctx.make_function_expr('not', expr_object)
 
         elif (not self._matches_expression_any(expr_object, 'and', 'or', 'not')):
             if (polarity):

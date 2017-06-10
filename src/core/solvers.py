@@ -103,8 +103,10 @@ class Solver(object):
                 unifier_state = unifier.unify()
                 unification = next(unifier_state)
                 # print('Unification done!')
+                # print(exprs.expression_to_string(unification[1]))
                 sol_or_cex = verifier.verify(unification)
                 # print('Verification done!')
+                # print(sol_or_cex)
             else:
                 # print('Term solve incomplete!')
                 sol_or_cex = cexs

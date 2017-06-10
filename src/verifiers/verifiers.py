@@ -225,7 +225,10 @@ class StdVerifier(VerifierBase):
         eq_cnstr = _expr_to_smt(self.outvar_cnstr, smt_ctx)
         smt_solver.push()
         smt_solver.add(eq_cnstr)
+        # print("1:", exprs.expression_to_string(self.canon_spec))
+        # print("2:", smt_solver)
         r = smt_solver.check()
+        # print("3:", smt_solver.model())
         smt_solver.pop()
 
         if (r == z3.sat):
