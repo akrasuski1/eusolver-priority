@@ -134,7 +134,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         self.term_signature = term_signature
 
         self.bunch_generator = None
-        self.max_term_size = 1024
+        self.max_term_size = 128
         self.stopping_condition = check_term_sufficiency
 
     def set_max_term_size(self, size):
@@ -192,6 +192,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             bunch = next(bunch_generator_state)
         except StopIteration:
             return False
+
 
         for term in bunch:
             if transform_term is not None:
