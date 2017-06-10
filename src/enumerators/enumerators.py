@@ -520,7 +520,10 @@ class BunchedGenerator(GeneratorBase):
                         return
                 current_index += 1
             self.current_object_size = current_size
-            yield retval
+            if all(map(lambda f: f is None, retval)):
+                return
+            else:
+                yield retval
 
 
     def set_size(self, new_bunch_size):

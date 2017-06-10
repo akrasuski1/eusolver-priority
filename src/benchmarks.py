@@ -283,7 +283,10 @@ def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, ver
             verifier,
             verify_term_solve=False
             )
-    solution = next(solutions)
+    try:
+        solution = next(solutions)
+    except StopIteration:
+        return "NO SOLUTION"
     rewritten_solutions = rewrite_solution(synth_funs, solution, reverse_mapping=None)
     return rewritten_solutions
 
@@ -356,7 +359,10 @@ def make_solver(file_sexp):
         try:
             print("Trying solver:", solver_name)
             final_solutions = solver(*solver_args)
-            print_solutions(synth_funs, final_solutions)
+            if final_solutions == "NO SOLUTION":
+                print("(fail)")
+            else:
+                print_solutions(synth_funs, final_solutions)
             break
         except UnsuitableSolverException as exception:
             print(exception)
