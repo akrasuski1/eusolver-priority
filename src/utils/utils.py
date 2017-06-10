@@ -43,6 +43,7 @@
 
 import math
 import sys
+from eusolver import BitSet
 
 def print_module_misuse_and_exit():
     # print('This module is intented for use as a library, and not as a ' +
@@ -145,5 +146,14 @@ class UIDGenerator(object):
         r = ((prefix + '%s') % self.next_uid)
         self.next_uid += 1
         return r
+
+def bitset_extend(bitset, value):
+    assert type(value) == bool
+    newset = BitSet(bitset.size_of_universe() + 1)
+    newset.copy_in(bitset)
+    if value:
+        newset.add(bitset.size_of_universe())
+    return newset
+
 #
 # utils.py ends here

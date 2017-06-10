@@ -55,17 +55,7 @@ def model_to_point(model, var_smt_expr_list, var_info_list):
     point = [None] * num_vars
     for i in range(num_vars):
         eval_value = model.evaluate(var_smt_expr_list[i], True)
-        if (var_info_list[i].variable_type == exprtypes.BoolType()):
-            point[i] = exprs.Value(bool(eval_value), exprtypes.BoolType())
-        elif (var_info_list[i].variable_type == exprtypes.IntType()):
-            # TODO: Why are these int(str(eval_value)) instead of eval_value.as_long()
-            point[i] = exprs.Value(int(str(eval_value)), exprtypes.IntType())
-        elif (var_info_list[i].variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
-            point[i] = exprs.Value(BitVector(int(str(eval_value)),
-                                             var_info_list[i].variable_type.size),
-                                   var_info_list[i].variable_type)
-        else:
-            raise basetypes.UnhandledCaseError('solvers.In model_to_point')
+        point[i] = z3smt.z3value_to_value(eval_value, var_info_list[i])
     return tuple(point)
 
 def _decision_tree_to_guard_term_list_internal(decision_tree, pred_list, term_list,
@@ -108,6 +98,18 @@ def _decision_tree_to_expr_internal(decision_tree, pred_list, syn_ctx, selected_
 # We use the fact that the guard_term_list lists leaves left to right
 def decision_tree_to_expr(decision_tree, pred_list, syn_ctx, selected_leaf_terms):
     return _decision_tree_to_expr_internal(decision_tree, pred_list, syn_ctx, selected_leaf_terms)
+
+def naive_dt_to_expr(syn_ctx, dt, preds, terms):
+    if dt.is_leaf():
+        for tid in dt.get_all_label_ids():
+            return terms[tid]
+    else:
+        pred_id = dt.get_split_attribute_id()
+        pred = preds[pred_id]
+        thene = naive_dt_to_expr(syn_ctx, dt.get_positive_child(), preds, terms)
+        elsee = naive_dt_to_expr(syn_ctx, dt.get_negative_child(), preds, terms)
+        return syn_ctx.make_function_expr('ite', pred, thene, elsee)
+
 
 class VerifierBase(object):
     def __init__(self):

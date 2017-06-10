@@ -40,6 +40,7 @@
 
 import z3
 from utils import utils
+from exprs import exprtypes,exprs
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
@@ -84,6 +85,19 @@ class Z3SMTContext(object):
             unknown_function_id = unknown_function_or_unknown_function_id
         self.interpretation_map[unknown_function_id] = interpretation
 
+
+def z3value_to_value(value, var_info):
+    if (var_info.variable_type == exprtypes.BoolType()):
+        return exprs.Value(bool(value), exprtypes.BoolType())
+    elif (var_info.variable_type == exprtypes.IntType()):
+        # TODO: Why are these int(str(value)) instead of value.as_long()
+        return exprs.Value(int(str(value)), exprtypes.IntType())
+    elif (var_info.variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
+        return exprs.Value(BitVector(int(str(value)),
+                                         var_info.variable_type.size),
+                               var_info.variable_type)
+    else:
+        raise basetypes.UnhandledCaseError('solvers.In model_to_point')
 
 #
 # z3smt.py ends here

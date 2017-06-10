@@ -39,11 +39,28 @@
 # Code:
 
 from exprs import exprs
+from verifiers import verifiers
+import eusolver
 from termsolvers import termsolvers_lia
 from exprs import exprtypes
 from utils.lia_utils import LIAExpression, LIAInequality
+from utils import utils
+from utils import z3smt
+import semantics
+from eusolver import BitSet
 
 def simplify(syn_ctx, expr):
+    e0 = expr
+    while True:
+        e0 = simplify_basic(syn_ctx, e0)
+        e1 = simplify_modus_ponens(syn_ctx, e0)
+        if not exprs.equals(e0, e1):
+            e0 = e1
+            continue
+        break
+    return e1
+
+def simplify_basic(syn_ctx, expr):
     if not exprs.is_function_expression(expr):
         return expr
     func_name = expr.function_info.function_name
@@ -54,7 +71,7 @@ def simplify(syn_ctx, expr):
     true = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
     false = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
     if func_name == 'and':
-        cond_children = [ simplify(syn_ctx, c) for c in expr.children ]
+        cond_children = [ simplify_basic(syn_ctx, c) for c in expr.children ]
         cond_true_children = [ c for c in cond_children if c != true ]
         cond_false_children = [ c for c in cond_children if c == false ]
         if len(cond_false_children) > 0:
@@ -66,7 +83,7 @@ def simplify(syn_ctx, expr):
         else:
             return syn_ctx.make_function_expr('and', *cond_true_children)
     elif func_name == 'or':
-        cond_children = [ simplify(syn_ctx, c) for c in expr.children ]
+        cond_children = [ simplify_basic(syn_ctx, c) for c in expr.children ]
         cond_true_children = [ c for c in cond_children if c == true ]
         cond_false_children = [ c for c in cond_children if c != false ]
         if len(cond_true_children) > 0:
@@ -78,7 +95,7 @@ def simplify(syn_ctx, expr):
         else:
             return syn_ctx.make_function_expr('or', *cond_false_children)
     elif func_name == 'not':
-        child = simplify(syn_ctx, expr.children[0])
+        child = simplify_basic(syn_ctx, expr.children[0])
         if child == true:
             return false
         elif child == false:
@@ -86,15 +103,15 @@ def simplify(syn_ctx, expr):
         else:
             return expr
     else: #ITE
-        cond = simplify(syn_ctx, expr.children[0])
+        cond = simplify_basic(syn_ctx, expr.children[0])
         if cond == true:
-            return simplify(syn_ctx, expr.children[1])
+            return simplify_basic(syn_ctx, expr.children[1])
         elif cond == false:
-            return simplify(syn_ctx, expr.children[2])
+            return simplify_basic(syn_ctx, expr.children[2])
         else:
             return syn_ctx.make_function_expr('ite', cond, 
-                    simplify(syn_ctx, expr.children[1]),
-                    simplify(syn_ctx, expr.children[2]))
+                    simplify_basic(syn_ctx, expr.children[1]),
+                    simplify_basic(syn_ctx, expr.children[2]))
 
 def make_linear_term(syn_ctx, v, c, consts, neg, constant_multiplication):
     if c == 1:
@@ -250,6 +267,45 @@ def verify(expr, boolean_combs, comparators, consts, negatives, constant_multipl
         return False
     return True
 
+def simplify_modus_ponens(syn_ctx, expr):
+    if exprs.is_application_of(expr, 'ite'):
+        [cond,e_then,e_else] = expr.children
+        rcond = apply_modus_ponens(syn_ctx, cond)
+        rthen = simplify_modus_ponens(syn_ctx, e_then)
+        relse = simplify_modus_ponens(syn_ctx, e_else)
+        ret = syn_ctx.make_function_expr('ite', rcond, rthen, relse)
+        return ret
+    else:
+        return expr
+
+def is_and_or(e):
+    return (
+            exprs.is_application_of(e, 'and') or
+            exprs.is_application_of(e, 'or')
+            )
+
+def apply_modus_ponens(syn_ctx, pred):
+    if exprs.is_application_of(pred, 'and'):
+        children = pred.children
+        new_children = [ c for c in children ]
+        for child in children:
+            if is_and_or(child):
+                continue
+            # Is atomic
+            to_remove = []
+            for nc in new_children:
+                if exprs.is_application_of(nc, 'or') and any(map(lambda e: exprs.equals(e, child), nc.children)):
+                    to_remove.append(nc)
+                else:
+                    pass
+            new_children = [ nc for nc in new_children if nc not in to_remove ]
+        if len(new_children) == 1:
+            return new_children[0]
+        else:
+            return syn_ctx.make_function_expr('and', *new_children)
+    else:
+        return pred
+
 def rewrite_boolean_combs(syn_ctx, sol):
     import functools
 
@@ -353,14 +409,16 @@ def massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging):
             for ap in aps:
                 new_ap = rewrite_pred(syn_ctx, ap, boolean_combs, comparators, negatives, consts, constant_multiplication)
                 if new_ap is None:
-                    print(exprs.expression_to_string(ap))
+                    # print(exprs.expression_to_string(ap))
                     return None
                 sol = exprs.substitute(sol, ap, new_ap)
 
             sol = simplify(syn_ctx, sol)
 
             if not boolean_combs:
-                sol = rewrite_boolean_combs(syn_ctx, sol)
+                # print(exprs.expression_to_string(sol))
+                # sol = rewrite_boolean_combs(syn_ctx, sol)
+                sol = dt_rewrite_boolean_combs(syn_ctx, sol, sf)
             else:
                 sol = rewrite_arbitrary_arity_and_or(syn_ctx, sol)
 
@@ -374,4 +432,57 @@ def massage_full_lia_solution(syn_ctx, synth_funs, final_solution, massaging):
     except:
         raise
         # return None
+
+# Assumes boolean functions are in terms of formal parameters
+def dt_rewrite_boolean_combs(syn_ctx, sol, synth_fun):
+    orig_sol = sol
+    smt_ctx = z3smt.Z3SMTContext()
+    vs = exprs.get_all_variables(sol)
+    dummy_vars = [
+            exprs.VariableExpression(
+                exprs.VariableInfo(
+                    v.variable_info.variable_type,
+                    "D" + v.variable_info.variable_name,
+                    i)) for (i, v) in enumerate(vs) ]
+    argvars = [ semantics.semantics_types.expression_to_smt(v, smt_ctx) 
+            for v in dummy_vars ]
+    sol = exprs.substitute_all(sol, list(zip(vs, dummy_vars)))
+    preds = get_atomic_preds(sol)
+    terms = get_terms(sol)
+
+    points = []
+
+    from exprs import evaluation
+    eval_ctx = evaluation.EvaluationContext()
+    def add_point(point, pred_sig_list, term_sig_list):
+        points.append(point)
+        eval_ctx.set_valuation_map(point)
+        solv = evaluation.evaluate_expression_raw(sol, eval_ctx)
+        new_pred_sig_list = [
+            utils.bitset_extend(sig, evaluation.evaluate_expression_raw(pred, eval_ctx))
+            for (sig, pred) in zip(pred_sig_list, preds)
+            ]
+        new_term_sig_list = [
+            utils.bitset_extend(sig, solv == evaluation.evaluate_expression_raw(term, eval_ctx))
+            for (sig, term) in zip(term_sig_list, terms)
+            ]
+        return (new_pred_sig_list, new_term_sig_list)
+
+    pred_sig_list = [ BitSet(0) for p in preds ]
+    term_sig_list = [ BitSet(0) for t in terms ]
+
+    expr = terms[0]
+    fsol = None
+    while True:
+        z3point = exprs.sample(syn_ctx.make_function_expr('ne', expr, sol), smt_ctx, argvars)
+        if z3point is None:
+            fsol = expr
+            break
+        else:
+            point = list(map(lambda v, d: z3smt.z3value_to_value(v, d.variable_info), z3point, dummy_vars))
+            (pred_sig_list, term_sig_list) = add_point(point, pred_sig_list, term_sig_list)
+            dt = eusolver.eus_learn_decision_tree_for_ml_data(pred_sig_list, term_sig_list)
+            expr = verifiers.naive_dt_to_expr(syn_ctx, dt, preds, terms)
+    sol = exprs.substitute_all(fsol, list(zip(dummy_vars, vs)))
+    return sol
 

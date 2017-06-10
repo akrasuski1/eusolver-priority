@@ -461,5 +461,29 @@ def match(expr_template, expr):
             d[v] = e
     return d
 
+def equals(e1, e2):
+    # print("1:", expression_to_string(e1))
+    # print("2:", expression_to_string(e2))
+    if e1.expr_kind != e2.expr_kind:
+        ret = False
+    else:
+        kind = e1.expr_kind
+        if (kind == _variable_expression):
+            ret = e1.variable_info == e2.variable_info
+        elif (kind == _formal_parameter_expression):
+            ret = ((e1.unknown_function_info == e2.unknown_function_info) and
+                    (e1.parameter_position == e2.parameter_position))
+        elif (kind == _constant_expression):
+            ret = (e1.value_object == e2.value_object)
+        elif (kind == _function_expression):
+            if e1.function_info.function_name != e2.function_info.function_name:
+                ret = False
+            else:
+                ret = all(map(lambda ec1, ec2: equals(ec1,ec2), e1.children, e2.children))
+        else:
+            assert False
+    # print(ret)
+    return ret
+
 #
 # exprs.py ends here
