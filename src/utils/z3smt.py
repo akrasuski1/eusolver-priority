@@ -41,6 +41,7 @@
 import z3
 from utils import utils
 from exprs import exprtypes,exprs
+from utils.bitvectors import BitVector
 
 if __name__ == '__main__':
     utils.print_module_misuse_and_exit()
