@@ -32,7 +32,7 @@ rm -rf "$TEMPDIR"
 echo "Getting Python-3.5.1" && wget --quiet -O "$STAREXECDIR"/thirdparty/Python-3.5.1.tgz "$PYTHONURL"
 
 # Copy sources to bin directory
-echo "Copying sources into $STAREXECDIR/bin" && cp src/*.py "$STAREXECDIR"/bin/
+echo "Copying sources into $STAREXECDIR/bin" && cp -R src/* "$STAREXECDIR"/bin/
 
 # Where is pyparsing installed
 PIP_OUTPUT=`pip3 show -f pyparsing`
