@@ -78,12 +78,18 @@ cat > "$STAREXECDIR"/bin/starexec_run_default << "EOF"
 #!/bin/bash
 
 PYPATH="../thirdparty/Python-3.5.1/python"
+WORKDIR=`pwd`
+export Z3_LIBRARY_PATH="$WORKDIR/../thirdparty/z3/build/python"
 
 if [ -z "$PYPATH" ]; then
 	echo "python3 not found"
 else
-	PYTHONPATH=../thirdparty/libeusolver/build:../thirdparty/z3/build "$PYPATH" benchmarks.py "$1"
+	sed -i 's/^import pkg_resources/# &/' ../thirdparty/z3/build/python/z3/z3core.py
+	sed -i 's!^\(\s*\)_dirs =.*$!\1_dirs = ["'$Z3_LIBRARY_PATH'"]!' ../thirdparty/z3/build/python/z3/z3core.py
+	cp ../thirdparty/z3/build/libz3.so ../thirdparty/z3/build/python > /dev/null
+	PYTHONPATH=../thirdparty/libeusolver/build:../thirdparty/z3/build/python "$PYPATH" benchmarks.py "$1"
 fi
+
 EOF
 
 cat > "$STAREXECDIR"/starexec_description.txt << EOF
