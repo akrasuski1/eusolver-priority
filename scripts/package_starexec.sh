@@ -86,7 +86,6 @@ if [ -z "$PYPATH" ]; then
 else
 	sed -i 's/^import pkg_resources/# &/' ../thirdparty/z3/build/python/z3/z3core.py
 	sed -i 's!^\(\s*\)_dirs =.*$!\1_dirs = ["'$Z3_LIBRARY_PATH'"]!' ../thirdparty/z3/build/python/z3/z3core.py
-	cp ../thirdparty/z3/build/libz3.so ../thirdparty/z3/build/python > /dev/null
 	PYTHONPATH=../thirdparty/libeusolver/build:../thirdparty/z3/build/python "$PYPATH" benchmarks.py "$1"
 fi
 
