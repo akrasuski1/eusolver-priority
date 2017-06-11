@@ -176,17 +176,9 @@ class SynthesisContext(object):
             return False
         return (self.variables_map.get(variable_info.variable_name, None) != None)
 
-    def assert_spec(self, spec, synth_funs):
-        assert self.spec is None
+    def set_synth_funs(self, synth_funs):
         assert self.synth_funs is None
         self.synth_funs = synth_funs
-        self.spec = spec
-
-    def get_specification(self):
-        return self.spec
-
-    def clear_assertions(self):
-        self.spec = None
 
     def get_synth_funs(self):
         return self.synth_funs

@@ -157,20 +157,20 @@ def make_specification(synth_funs, theory, syn_ctx, constraints):
     if not expr_transforms.is_single_invocation(constraints, theory, syn_ctx):
         specification = specifications.MultiPointSpec(syn_ctx.make_function_expr('and', *constraints),
                 syn_ctx, synth_funs)
-        syn_ctx.assert_spec(specification, synth_funs)
-        verifier = verifiers.MultiPointVerifier(syn_ctx)
+        syn_ctx.set_synth_funs(synth_funs)
+        verifier = verifiers.MultiPointVerifier(syn_ctx, specification)
     elif len(synth_funs) == 1 and get_pbe_valuations(constraints, synth_funs[0]) is not None:
         synth_fun = synth_funs[0]
         valuations = get_pbe_valuations(constraints, synth_fun)
         specification = specifications.PBESpec(valuations, synth_fun, theory)
-        syn_ctx.assert_spec(specification, synth_funs)
-        verifier = verifiers.PBEVerifier(syn_ctx)
+        syn_ctx.set_synth_funs(synth_funs)
+        verifier = verifiers.PBEVerifier(syn_ctx, specification)
     else:
         spec_expr = constraints[0] if len(constraints) == 1 \
                 else syn_ctx.make_function_expr('and', *constraints)
         specification = specifications.StandardSpec(spec_expr, syn_ctx, synth_funs, theory)
-        syn_ctx.assert_spec(specification, synth_funs)
-        verifier = verifiers.StdVerifier(syn_ctx)
+        syn_ctx.set_synth_funs(synth_funs)
+        verifier = verifiers.StdVerifier(syn_ctx, specification)
     return specification, verifier
 
 def full_lia_grammars(grammar_map):

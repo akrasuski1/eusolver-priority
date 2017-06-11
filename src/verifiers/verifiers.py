@@ -136,9 +136,9 @@ class VerifierBase(object):
         return sol_or_cexs
 
 class MultiPointVerifier(VerifierBase):
-    def __init__(self, syn_ctx):
+    def __init__(self, syn_ctx, spec):
         self.syn_ctx = syn_ctx
-        spec = syn_ctx.get_specification()
+        self.spec = spec
 
         self.canon_spec = spec.get_canonical_specification()
         self.neg_canon_spec = syn_ctx.make_function_expr('not', self.canon_spec)
@@ -187,9 +187,9 @@ class MultiPointVerifier(VerifierBase):
         return sol_or_cexs
 
 class StdVerifier(VerifierBase):
-    def __init__(self, syn_ctx):
+    def __init__(self, syn_ctx, spec):
         self.syn_ctx = syn_ctx
-        spec = syn_ctx.get_specification()
+        self.spec = spec
         self.synth_funs = syn_ctx.get_synth_funs()
 
         self.smt_ctx = z3smt.Z3SMTContext()
@@ -340,8 +340,8 @@ class StdVerifier(VerifierBase):
 
 
 class PBEVerifier(VerifierBase):
-    def __init__(self, syn_ctx):
-        self.spec = syn_ctx.get_specification()
+    def __init__(self, syn_ctx, spec):
+        self.spec = spec
         self.valuations = self.spec.valuations
         self.syn_ctx = syn_ctx
         self.eval_ctx = self.spec.eval_ctx 

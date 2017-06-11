@@ -77,8 +77,6 @@ class Solver(object):
 
     def solve(self, generator_factory, term_solver, unifier, verifier, verify_term_solve=True):
         import time
-        # syn_ctx = self.syn_ctx
-        # spec = syn_ctx.get_specification()
 
         time_origin = time.clock()
 
