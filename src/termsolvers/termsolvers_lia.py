@@ -113,18 +113,32 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                 spec, *eq_constrs)
 
         raw_z3_model = exprs.sample(full_constr, smt_ctx, self.all_vars_z3)
+        # print("B1:", raw_z3_model)
         model = dict(zip(self.all_vars, [ z3_value.as_long() for z3_value in raw_z3_model ]))
+        # print("B2:")
+        # for var, val in model.items():
+            # print("\t", exprs.expression_to_string(var), "--->", val)
 
         # Find the first disjunct that 
         # (a) Is true in this model
         # (b) Contains some outvar 
+        # print("B3:")
+        # for clause in self.lia_clauses:
+            # for disj in clause:
+                # print(str(disj), end=" , ")
+            # print()
         ineqs = []
         outvar_set = set(self.outvars)
         for clause in self.lia_clauses:
             for disjunct in clause:
-                if disjunct.eval(model) & len(outvar_set & disjunct.get_variables()) > 0:
+                # print(str(disjunct) + " --> " + str(disjunct.eval(model)))
+                # print(str(disjunct) + " --> " + str(len(outvar_set & disjunct.get_variables())))
+                if disjunct.eval(model) and len(outvar_set & disjunct.get_variables()) > 0:
                     ineqs.append(disjunct)
                     break
+        # print("B3:")
+        # for ineq in ineqs:
+            # print("\t", str(ineq))
         return lia_utils.solve_inequalities(model, self.outvars, ineqs, syn_ctx)
 
     def _single_solve(self, ivs, points):
@@ -150,6 +164,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
             # print("Trivial solve!")
             return self._trivial_solve()
 
+        # print("-----------------")
         # print("Nontrivial solve!")
         # for point in self.points:
             # print("POINT:", [ p.value_object for p in point])
@@ -175,7 +190,9 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                 curr_ivs = ivs
 
         for ivs, points in ivs_groups:
+            # print("A:")
             terms = self._single_solve(ivs, points)
+            # print("C:", [ exprs.expression_to_string(t) for t in terms ])
             new_terms = []
             for term, sf in zip(terms, self.synth_funs):
                 new_terms.append(exprs.substitute_all(term, 
@@ -195,6 +212,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                 if t:
                     sig.add(i)
             self.signature_to_term[sig] = single_term
+        # print("-----------------")
 
         return True
 

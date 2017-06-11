@@ -219,6 +219,12 @@ class SpecAwareLIAUnifier(UnifierInterface):
     def unify(self):
         term_solver = self.term_solver
         sig_to_term = term_solver.get_signature_to_term()
+
+        # print([ f.function_name for f in self.synth_funs])
+        # for point in self.points:
+            # print([ c.value_object for c in point])
+        # for (sig, term) in sig_to_term.items():
+            # print(str(sig), exprs.expression_to_string(term))
         eval_ctx = self.eval_ctx
         self.last_dt_size = 0
 

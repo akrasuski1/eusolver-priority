@@ -53,6 +53,14 @@ class LIAExpression(object):
     def get_variables(self):
         return self.vars
 
+    def __str__(self):
+        ret = ""
+        for var, val in self.coeffs.items():
+            if var == 1:
+                ret += "+ " + str(val)
+            ret += "+ " + str(val) + "*" + exprs.expression_to_string(var)
+        return ret
+
     def get_coefficient(self, var):
         if var in self.coeffs:
             return self.coeffs[var]
@@ -171,7 +179,7 @@ _op_funcs = {
         '>=': operator.__ge__,
         '=': operator.__eq__,
         'eq': operator.__eq__,
-        'ne': operator.__eq__
+        'ne': operator.__ne__
         }
 
 _op_flip = { 
@@ -192,6 +200,10 @@ class LIAInequality(object):
         self.op_func = _op_funcs[op]
         assert type(self.left) == LIAExpression
         assert type(self.right) == LIAExpression
+
+    def __str__(self):
+        ret = str(self.left) + " " + self.op + " " + str(self.right)
+        return ret
 
     def is_valid(self):
         normalized = self.left - self.right
@@ -226,6 +238,8 @@ class LIAInequality(object):
     def eval(self, model):
         l = self.left.eval(model)
         r = self.right.eval(model)
+        # print(str(self.left), "--->", l)
+        # print(str(self.right), "--->", r)
         return self.op_func(l, r)
 
     @staticmethod
