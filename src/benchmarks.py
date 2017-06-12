@@ -53,6 +53,7 @@ from enumerators import enumerators
 from exprs import exprtypes
 from semantics import semantics_core
 from core import grammars
+import decomposer
 
 def get_pbe_valuations(constraints, synth_fun):
     valuations = []
@@ -272,7 +273,7 @@ def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, ver
     term_generator = grammar.to_generator(generator_factory)
 
     term_solver = TermSolver(specification.term_signature, term_generator)
-    term_solver.stopping_condition = termsolvers.check_one_term_sufficiency
+    term_solver.stopping_condition = termsolvers.StoppingCondition.one_term_sufficiency
     unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
 
     solver = solvers.Solver(syn_ctx)
@@ -304,7 +305,7 @@ def memoryless_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, 
     term_generator = grammar.to_generator(generator_factory)
 
     term_solver = TermSolver(specification.term_signature, term_generator)
-    term_solver.stopping_condition = termsolvers.check_one_term_sufficiency
+    term_solver.stopping_condition = termsolvers.StoppingCondition.one_term_sufficiency
     unifier = unifiers.NullUnifier(None, term_solver, synth_funs, syn_ctx, specification)
 
     solver = solvers.Solver(syn_ctx)

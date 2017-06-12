@@ -43,22 +43,26 @@ from eusolver import BitSet
 from enumerators import enumerators
 from exprs import exprs
 from utils import basetypes
+from enum import Enum
 
 _expr_to_str = exprs.expression_to_string
 _is_expr = exprs.is_expression
 _get_expr_with_id = exprs.get_expr_with_id
 
-def check_term_sufficiency(sig_to_term, num_points):
-    accumulator = BitSet(num_points)
-    for (sig, term) in sig_to_term.items():
-        accumulator |= sig
-    return (accumulator.is_full())
+class StoppingCondition(Enum):
+    one_term_sufficiency = 1
+    term_sufficiency = 2 
+# def check_term_sufficiency(sig_to_term, num_points):
+#     accumulator = BitSet(num_points)
+#     for (sig, term) in sig_to_term.items():
+#         accumulator |= sig
+#     return (accumulator.is_full())
 
-def check_one_term_sufficiency(sig_to_term, num_points):
-    for (sig, term) in sig_to_term.items():
-        if sig.is_full():
-            return True
-    return False
+# def check_one_term_sufficiency(sig_to_term, num_points):
+#     for (sig, term) in sig_to_term.items():
+#         if sig.is_full():
+#             return True
+#     return False
 
 class TermSolverInterface(object):
     def __init__(self):
@@ -79,12 +83,14 @@ class TermSolverInterface(object):
         points = self.points
         points.extend(new_points)
         self.signature_factory = BitSet.make_factory(len(points))
+        self.one_full_signature = False
         self._do_complete_sig_to_term()
 
     def _do_complete_sig_to_term(self):
         # print("Completing sig to term")
         # for point in self.points:
         #     print("POINT:", [ p.value_object for p in point])
+        self.full_signature = self.signature_factory()
 
         old_sig_to_term = self.signature_to_term
         new_sig_to_term = {}
@@ -96,6 +102,9 @@ class TermSolverInterface(object):
             new_sig = self._compute_term_signature(term)
             if not new_sig.is_empty():
                 new_sig_to_term[new_sig] = term
+            self.full_signature |= new_sig
+            if new_sig.is_full():
+                self.one_full_signature = True
 
         # for sig, term in new_sig_to_term.items():
         #     print("NEW SIG TO TERM:", str(sig), _expr_to_str(term))
@@ -135,7 +144,9 @@ class EnumerativeTermSolverBase(TermSolverInterface):
 
         self.bunch_generator = None
         self.max_term_size = 128
-        self.stopping_condition = check_term_sufficiency
+        self.stopping_condition = StoppingCondition.term_sufficiency
+        self.full_signature = BitSet.make_factory(0)()
+        self.one_full_signature = False
 
     def set_max_term_size(self, size):
         self.max_term_size = size
@@ -179,10 +190,16 @@ class EnumerativeTermSolverBase(TermSolverInterface):
         signature_to_term = self.signature_to_term
         if restart_everytime or self.bunch_generator is None:
             self.restart_bunched_generator()
-        while (not self.stopping_condition(signature_to_term, num_points)):
+        while True:
             success = self.generate_more_terms()
             if not success:
                 return False
+            if (self.stopping_condition == StoppingCondition.term_sufficiency
+                    and self.full_signature.is_full()):
+                return True
+            elif (self.stopping_condition == StoppingCondition.one_term_sufficiency
+                    and self.one_full_signature):
+                return True
         return True
 
     def _default_generate_more_terms(self, transform_term=None):
@@ -201,6 +218,9 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             if (sig in signature_to_term or sig.is_empty()):
                 continue
             signature_to_term[sig] = term
+            self.full_signature = self.full_signature | sig
+            if sig.is_full():
+                self.one_full_signature = True
 
         return True
 
