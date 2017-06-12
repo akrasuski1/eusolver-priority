@@ -53,7 +53,6 @@ from enumerators import enumerators
 from exprs import exprtypes
 from semantics import semantics_core
 from core import grammars
-import decomposer
 
 def get_pbe_valuations(constraints, synth_fun):
     valuations = []
@@ -358,7 +357,7 @@ def make_solver(file_sexp):
 
     for solver_name, solver in solvers:
         try:
-            # print("Trying solver:", solver_name)
+            print("Trying solver:", solver_name)
             final_solutions = solver(*solver_args)
             if final_solutions == "NO SOLUTION":
                 print("(fail)")
@@ -366,7 +365,7 @@ def make_solver(file_sexp):
                 print_solutions(synth_funs, final_solutions)
             break
         except UnsuitableSolverException as exception:
-            # print(exception)
+            print(exception)
             pass
     else:
         # print("Unable to solve!")
@@ -394,8 +393,18 @@ def print_solutions(synth_funs, final_solutions):
 
 def test_make_solver(benchmark_files):
     for benchmark_file in benchmark_files:
+        print(benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
+
+        # import cProfile, pstats
+        # pr = cProfile.Profile()
+        # pr.enable()
         make_solver(file_sexp)
+        # pr.disable()
+        # sortby = 'time'
+        # ps = pstats.Stats(pr).sort_stats(sortby)
+        # ps.print_stats()
+        # print(s.getvalue())
 
 def find_grammar_anamolies():
     import os

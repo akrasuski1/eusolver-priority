@@ -142,6 +142,9 @@ def make_constant(syn_ctx, c, consts, neg):
         for x in range(1, c):
             ret = syn_ctx.make_function_expr('+', ret, exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType())))
         return ret
+    elif c < 0 and neg:
+        return syn_ctx.make_function_expr('-', make_constant(syn_ctx, -c, consts, neg))
+
     return None
 
 def get_terms(e):
