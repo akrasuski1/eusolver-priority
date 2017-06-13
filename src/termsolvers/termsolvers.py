@@ -230,14 +230,15 @@ class PointlessTermSolver(EnumerativeTermSolverBase):
     def __init__(self, term_signature, term_generator):
         super().__init__(term_signature)
         self.term_generator = term_generator
-        self.eval_cache = {}
+        # self.eval_cache = {}
         self.monotonic_expr_id = 0
 
     def _compute_term_signature(self, term):
-        eval_cache = self.eval_cache
-        old_signature = eval_cache.get(term.expr_id)
-        retval = self._default_compute_term_signature(term, old_signature)
-        eval_cache[term.expr_id] = retval
+        # eval_cache = self.eval_cache
+        # old_signature = eval_cache.get(term.expr_id)
+        # retval = self._default_compute_term_signature(term, old_signature)
+        # eval_cache[term.expr_id] = retval
+        retval = self._default_compute_term_signature(term)
         return retval
 
     def generate_more_terms(self):
