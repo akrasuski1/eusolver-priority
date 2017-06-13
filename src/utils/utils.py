@@ -155,5 +155,34 @@ def bitset_extend(bitset, value):
         newset.add(bitset.size_of_universe())
     return newset
 
+def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
+    import signal
+
+    class TimeoutError(Exception):
+        pass
+
+    def handler(signum, frame):
+        raise TimeoutError()
+
+    # set the timeout handler
+    signal.signal(signal.SIGALRM, handler) 
+    signal.alarm(timeout_duration)
+    try:
+        result = func(*args, **kwargs)
+    except TimeoutError as exc:
+        result = default
+    finally:
+        signal.alarm(0)
+
+    return result
+
 #
 # utils.py ends here
+
+if __name__ == '__main__':
+    def f(i):
+        import time
+        time.sleep(4)
+        return i
+    t = timeout(f, (42,), timeout_duration = 3, default=None)
+    # print(t)

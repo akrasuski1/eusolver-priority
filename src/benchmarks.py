@@ -43,6 +43,7 @@ from exprs import expr_transforms
 from verifiers import verifiers
 from termsolvers import termsolvers
 from utils import lia_massager
+from utils import utils
 from termsolvers import termsolvers_lia
 from core import specifications
 from unifiers import unifiers
@@ -335,16 +336,30 @@ def make_solver(file_sexp):
     assert len(theories) == 1
     theory = theories[0]
 
-    constraints = massage_constraints(syn_ctx, macro_instantiator, uf_instantiator, theory, constraints)
-    synth_funs = list(synth_instantiator.get_functions().values())
-    specification, verifier = make_specification(synth_funs, theory, syn_ctx, constraints)
-
-    solvers = [ 
+    solvers = [
             ("LIA Unification", lia_unification_solver),
             ("STD Unification", std_unification_solver),
             ("Classic Esolver", classic_esolver),
             ("Memoryless Esolver", memoryless_esolver)
             ]
+    rewritten_constraints = utils.timeout(
+            massage_constraints,
+            (syn_ctx, macro_instantiator, uf_instantiator, theory, constraints),
+            {},
+            timeout_duration=120,
+            default=None
+            )
+    if rewritten_constraints is not None:
+        constraints = rewritten_constraints
+    else:
+        solvers = [
+            ("LIA Unification", lia_unification_solver),
+            ("Memoryless Esolver", memoryless_esolver)
+            ]
+
+    synth_funs = list(synth_instantiator.get_functions().values())
+    specification, verifier = make_specification(synth_funs, theory, syn_ctx, constraints)
+
 
     solver_args = (
             theory,
@@ -357,7 +372,7 @@ def make_solver(file_sexp):
 
     for solver_name, solver in solvers:
         try:
-            print("Trying solver:", solver_name)
+            # print("Trying solver:", solver_name)
             final_solutions = solver(*solver_args)
             if final_solutions == "NO SOLUTION":
                 print("(fail)")
@@ -365,7 +380,7 @@ def make_solver(file_sexp):
                 print_solutions(synth_funs, final_solutions)
             break
         except UnsuitableSolverException as exception:
-            print(exception)
+            # print(exception)
             pass
     else:
         # print("Unable to solve!")
@@ -393,7 +408,7 @@ def print_solutions(synth_funs, final_solutions):
 
 def test_make_solver(benchmark_files):
     for benchmark_file in benchmark_files:
-        print(benchmark_file)
+        # print(benchmark_file)
         file_sexp = parser.sexpFromFile(benchmark_file)
 
         # import cProfile, pstats
