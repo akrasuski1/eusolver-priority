@@ -353,7 +353,6 @@ def make_solver(file_sexp):
         constraints = rewritten_constraints
     else:
         solvers = [
-            ("LIA Unification", lia_unification_solver),
             ("Memoryless Esolver", memoryless_esolver)
             ]
 
