@@ -56,15 +56,15 @@ def evaluate_pred_raw(expr_object, eval_context):
     return evaluate_expression_raw(expr_object, eval_context)
 
 def evaluate_expression_on_stack(expr_object, eval_context):
-    # print('Evaluating:', exprs.expression_to_string(expr_object))
+    # print("Evaluating", exprs.expression_to_string(expr_object))
     old_stack_size = eval_context.eval_stack_top
     kind = expr_object.expr_kind
     if (kind == _variable_expression):
         o = expr_object.variable_info.variable_eval_offset
         if o == exprs.VariableInfo._undefined_offset:
-            let_variables = eval_context.peek_let_variables()
-            if expr_object in let_variables:
-                eval_context.push(let_variables[expr_object])
+            value = eval_context.lookup_let_variable(expr_object)
+            if value is not None:
+                eval_context.push(value)
             else:
                 raise basetypes.UnboundLetVariableError()
         else:
@@ -132,6 +132,12 @@ class EvaluationContext(object):
         if len(self.let_variable_stack) == 0:
             return {}
         return self.let_variable_stack[-1]
+
+    def lookup_let_variable(self, let_variable):
+        for bindings in reversed(self.let_variable_stack):
+            if let_variable in bindings:
+                return bindings[let_variable]
+        return None
 
     def peek(self, peek_depth = 0):
         return self.eval_stack[self.eval_stack_top - 1 - peek_depth]
