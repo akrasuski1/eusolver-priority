@@ -157,9 +157,16 @@ class BitVector(object):
         return self._signed_value() > other._signed_value()
 
     def lshr(self, other):
+        if other.value >= self.size:
+            return BitVector(0, self.size)
         return BitVector(self.value >> other.value, self.size)
 
     def ashr(self, other):
+        if other.value >= self.size:
+            if self._signed_value() >= 0:
+                return BitVector(0, self.size)
+            else:
+                return BitVector(-1, self.size)
         sans = self._signed_value() >> other.value
         return BitVector(self._to_unsigned(sans), self.size)
 
