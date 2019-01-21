@@ -337,10 +337,10 @@ def make_solver(file_sexp):
     theory = theories[0]
 
     solvers = [
-            ("LIA Unification", lia_unification_solver),
+            #("LIA Unification", lia_unification_solver),
             ("STD Unification", std_unification_solver),
-            ("Classic Esolver", classic_esolver),
-            ("Memoryless Esolver", memoryless_esolver)
+            #("Classic Esolver", classic_esolver),
+            #("Memoryless Esolver", memoryless_esolver)
             ]
     rewritten_constraints = utils.timeout(
             massage_constraints,
@@ -371,7 +371,7 @@ def make_solver(file_sexp):
 
     for solver_name, solver in solvers:
         try:
-            # print("Trying solver:", solver_name)
+            print("Trying solver:", solver_name)
             final_solutions = solver(*solver_args)
             if final_solutions == "NO SOLUTION":
                 print("(fail)")
@@ -379,7 +379,7 @@ def make_solver(file_sexp):
                 print_solutions(synth_funs, final_solutions)
             break
         except UnsuitableSolverException as exception:
-            # print(exception)
+            print(exception)
             pass
     else:
         # print("Unable to solve!")
