@@ -209,6 +209,7 @@ class EnumerativeTermSolverBase(TermSolverInterface):
             bunch = next(bunch_generator_state)
         except StopIteration:
             return False
+        print("BUNCH", exprs.expression_to_string(bunch[0]))
 
 
         for term in bunch:

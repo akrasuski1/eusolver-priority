@@ -209,6 +209,7 @@ class AlternativesGenerator(GeneratorBase):
         self.sub_generators = [x.clone() for x in sub_generators]
 
     def set_size(self, new_size):
+        print("ALT %s set size" % self.name, new_size)
         self.allowed_size = new_size
 
         for sub_generator in self.sub_generators:

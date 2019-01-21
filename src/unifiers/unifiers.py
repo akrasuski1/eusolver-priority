@@ -107,17 +107,18 @@ class EnumerativeDTUnifierBase(UnifierInterface):
             pred_list.append(pred)
             pred_sig_list.append(pred_sig)
 
-        # print('Calling native decision tree learner...')
-        # print('pred_sig_list: %s' % [str(x) for x in pred_sig_list])
-        # print('term_sig_list: %s' % [str(x) for x in term_sig_list], flush=True)
-        # print('pred_list: %s' % [_expr_to_str(x) for x in pred_list], flush=True)
-        # print('term_list: %s' % [_expr_to_str(x) for x in term_list], flush=True)
-        # print('points   :\n%s' % _point_list_to_str(self.points), flush=True)
+        if 0:
+            print('Calling native decision tree learner...')
+            print('pred_sig_list: %s' % [str(x) for x in pred_sig_list])
+            print('term_sig_list: %s' % [str(x) for x in term_sig_list], flush=True)
+            print('pred_list: %s' % [_expr_to_str(x) for x in pred_list], flush=True)
+            print('term_list: %s' % [_expr_to_str(x) for x in term_list], flush=True)
+            print('points   :\n%s' % "\n".join(", ".join(str(cc.value_object)
+                for cc in c) for c in (self.points)), flush=True)
         dt = eusolver.eus_learn_decision_tree_for_ml_data(pred_sig_list,
                                                           term_sig_list)
-        # print('Done!', flush=True)
-        # print(dt, flush=True)
-        # print('Obtained decision tree:\n%s' % str(dt))
+        #print('Done!', flush=True)
+        #print('Obtained decision tree:\n%s' % str(dt))
         if (dt == None):
             return None
         else:
@@ -150,6 +151,12 @@ class EnumerativeDTUnifierBase(UnifierInterface):
                 term_solver.generate_more_terms()
                 continue
             self.last_dt_size = get_decision_tree_size(dt_tuple[-1])
+            print("UTERMS", "\n".join(
+                [ "\t"+_expr_to_str(term) for sig,term in
+                    term_solver.get_signature_to_term().items()]))
+            print("UPREDS", "\n".join(
+                [ "\t"+_expr_to_str(term) for sig,term in
+                    pred_solver.get_signature_to_term().items()]))
 
             yield ("DT_TUPLE", dt_tuple)
             term_solver.generate_more_terms()

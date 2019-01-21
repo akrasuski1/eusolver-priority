@@ -476,6 +476,7 @@ class Grammar(object):
             generators = []
             leaves = []
             for rewrite in self.rules[nt]:
+                print("NT %s, RULE %s - %s" % (nt, rewrite, type(rewrite)))
                 if type(rewrite) == ExpressionRewrite:
                     leaves.append(rewrite.expr)
                 elif type(rewrite) == NTRewrite:

@@ -161,15 +161,15 @@ class SpecAwareLIATermSolver(TermSolverInterface):
 
     def solve(self):
         if len(self.points) == 0:
-            # print("Trivial solve!")
+            print("Trivial solve!")
             return self._trivial_solve()
 
-        # print("-----------------")
-        # print("Nontrivial solve!")
-        # for point in self.points:
-            # print("POINT:", [ p.value_object for p in point])
-        # for sig, term in self.signature_to_term.items():
-            # print('SIGTOTERM:', str(sig), _expr_to_str(term))
+        print("-----------------")
+        print("Nontrivial solve!")
+        for point in self.points:
+            print("POINT:", [ p.value_object for p in point])
+        for sig, term in self.signature_to_term.items():
+            print('SIGTOTERM:', str(sig), _expr_to_str(term))
 
         intro_var_signature = []
         for point in self.points:
@@ -190,15 +190,15 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                 curr_ivs = ivs
 
         for ivs, points in ivs_groups:
-            # print("A:")
+            print("A:")
             terms = self._single_solve(ivs, points)
-            # print("C:", [ exprs.expression_to_string(t) for t in terms ])
+            print("C:", [ exprs.expression_to_string(t) for t in terms ])
             new_terms = []
             for term, sf in zip(terms, self.synth_funs):
                 new_terms.append(exprs.substitute_all(term, 
                     list(zip(self.spec.intro_vars, self.spec.formal_params[sf]))))
             terms = new_terms
-            # print([ _expr_to_str(t) for t in terms ])
+            print([ _expr_to_str(t) for t in terms ])
 
             sig = self.signature_factory()
             if len(self.synth_funs) > 1:
@@ -212,7 +212,7 @@ class SpecAwareLIATermSolver(TermSolverInterface):
                 if t:
                     sig.add(i)
             self.signature_to_term[sig] = single_term
-        # print("-----------------")
+        print("-----------------")
 
         return True
 

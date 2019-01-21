@@ -77,18 +77,20 @@ class Solver(object):
 
     def solve(self, generator_factory, term_solver, unifier, verifier, verify_term_solve=True):
         import time
+        import verifiers.verifiers
 
         time_origin = time.clock()
 
         while (True):
-            # print('________________')
+            print('________________')
             # iterate until we have terms that are "sufficient"
             success = term_solver.solve()
             if not success:
                 return None
             # we now have a sufficient set of terms
-            # print('Term solve complete!')
-            # print([ _expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()])
+            print('Term solve complete!')
+            print("TERMS", "\n".join(
+                [ "\t"+_expr_to_str(term) for sig,term in term_solver.get_signature_to_term().items()]))
 
             # Check term solver for completeness
             if verify_term_solve:
@@ -100,13 +102,24 @@ class Solver(object):
             if cexs is None:
                 unifier_state = unifier.unify()
                 unification = next(unifier_state)
-                # print('Unification done!')
-                # print(exprs.expression_to_string(unification[1]))
+                print('Unification done!')
+                #print(unification)
+                # FFS, docs!
+                dt = unification[1][-1]
+                if dt is None:
+                    print("AFTER_UU", None)
+                else:
+                    uu = verifiers.verifiers.naive_dt_to_expr(self.syn_ctx, dt,
+                            unification[1][2], unification[1][0])
+                    print("AFTER_UU", exprs.expression_to_string(uu))
                 sol_or_cex = verifier.verify(unification)
-                # print('Verification done!')
-                # print(sol_or_cex)
+                print('Verification done!')
+                if _is_expr(sol_or_cex):
+                    print("FOUND_FINAL", exprs.expression_to_string(sol_or_cex))
+                else:
+                    print("%d cex found" % len(sol_or_cex))
             else:
-                # print('Term solve incomplete!')
+                print('Term solve incomplete!')
                 sol_or_cex = cexs
 
             if _is_expr(sol_or_cex):
@@ -124,8 +137,8 @@ class Solver(object):
                     yield sol_or_cex
                 return
 
-            # for cex in sol_or_cex:
-                # print('ADDING POINT:', [p.value_object for p in cex])
+            for cex in sol_or_cex:
+                print('ADDING POINT:', [p.value_object for p in cex])
             term_solver.add_points(sol_or_cex) # Term solver can add all points at once
             unifier.add_points(sol_or_cex)
             self.add_points(sol_or_cex)
