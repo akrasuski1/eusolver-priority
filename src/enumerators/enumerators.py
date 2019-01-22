@@ -141,7 +141,11 @@ class NonLeafGenerator(GeneratorBase):
         if (self.allowed_size - 1 < self.arity):
             return
 
-        for partition in utils.partitions(self.allowed_size - 1, self.arity):
+        
+        ps = list(utils.partitions(self.allowed_size - 1, self.arity))
+        import random
+        random.shuffle(ps)
+        for partition in ps:
             if not self.good_size_tuple(partition):
                 continue
             self._set_sub_generator_sizes(partition)
@@ -207,6 +211,8 @@ class AlternativesGenerator(GeneratorBase):
         # assert (len(sub_generators) > 1)
         super().__init__(name)
         self.sub_generators = [x.clone() for x in sub_generators]
+        import random
+        random.shuffle(self.sub_generators)
         self.nt = nt
         self.rules = rules
 
