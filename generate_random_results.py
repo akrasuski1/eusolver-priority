@@ -18,6 +18,7 @@ files = glob.glob("benchmarks/icfp/*.sl")
 files += glob.glob("benchmarks/icfp_generated/*.sl")
 files += glob.glob("benchmarks/max/*.sl")
 files += glob.glob("benchmarks_se/arrays/*.sl")
+files += glob.glob("benchmarks_custom/hackers_delight/*.sl")
 
 if len(sys.argv) > 1:
     files = sys.argv[1:]

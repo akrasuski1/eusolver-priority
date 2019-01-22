@@ -1,4 +1,5 @@
 import glob, sys
+import subprocess
 import sexpdata, ast, json
 
 files = glob.glob("random_results/*")
@@ -42,20 +43,27 @@ def parse_file(fname):
     s = open(f).read().split("FINAL_SOLUTION")[-1].strip()
     return ast.literal_eval(str(sexpdata.loads(s)).replace("Symbol", ""))
 
+def get_grammar(fname):
+    fname = fname.split("/")[1][:-10].replace("@", "/")
+    s = subprocess.check_output("bash ./eusolver '%s' | grep ________________ -m 1 -B 100000" % fname,
+            stderr=subprocess.DEVNULL, shell=True)
+    print(s.decode("utf8"))
 
 counts = {}
 for f in sorted(files):
     print(f)
+    get_grammar(f)
+    asd
     tree = parse_file(f)
     defun, funname, args, retval, tree = tree
     assert defun == "define-fun"
     args = [a[0] for a in args]
     tsz, exp = postorder(tree, args)
-    print tsz
+    print(tsz)
     for e in exp:
         if e not in counts:
             counts[e] = 0
         counts[e] += 1
-print "---"
+print("---")
 for e in sorted(counts):
-    print e, counts[e]
+    print(e, counts[e])
