@@ -13,7 +13,7 @@ cases = ["-/*", "-+"]
 
 samples = []
 
-for i in range(10000):
+for i in range(1000):
     case = random.choice(cases)
     weights = {}
     for c in case:
@@ -47,7 +47,7 @@ for i in range(100):
 
         step = 1e-3
         s1 = sum(predicted[c] for c in case)
-        predicted[res] = 1-(1-predicted[res])/(1+step)
+        predicted[res] = s1*(1-(1-predicted[res]/s1)/(1+step))
         for c in case:
             if c != res:
                 predicted[c] /= (1+step)
