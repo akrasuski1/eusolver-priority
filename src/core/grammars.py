@@ -475,20 +475,23 @@ class Grammar(object):
         for nt in self.non_terminals:
             generators = []
             leaves = []
+            print("NT %s:" % nt)
             for rewrite in self.rules[nt]:
-                print("NT %s, RULE %s - %s" % (nt, rewrite, type(rewrite)))
                 if type(rewrite) == ExpressionRewrite:
+                    print("\tEXPR %s" % rewrite)
                     leaves.append(rewrite.expr)
                 elif type(rewrite) == NTRewrite:
+                    print("\tNTRW %s" % rewrite)
                     generators.append(place_holders[_nt_to_generator_name(rewrite.non_terminal)])
                 elif type(rewrite) == FunctionRewrite:
+                    print("\tFUNC %s" % rewrite)
                     generators.append(rewrite.to_generator(place_holders))
                 else:
                     raise Exception('Unknown rewrite type: %s' % str(type(rewrite)))
             leaf_generator = enumerators.LeafGenerator(leaves)
             nt_generator = generator_factory.make_generator(_nt_to_generator_name(nt),
                     enumerators.AlternativesGenerator,
-                            ([ leaf_generator ] + generators ,))
+                            ([ leaf_generator ] + generators , nt, self.rules[nt]))
             if nt == self.start:
                 ret = nt_generator
         return ret
