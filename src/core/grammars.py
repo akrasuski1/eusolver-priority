@@ -488,10 +488,13 @@ class Grammar(object):
                     generators.append(rewrite.to_generator(place_holders))
                 else:
                     raise Exception('Unknown rewrite type: %s' % str(type(rewrite)))
-            leaf_generator = enumerators.LeafGenerator(leaves)
+            #leaf_generator = enumerators.LeafGenerator(leaves)
+            leaf_generators = [
+                enumerators.LeafGenerator([leaf]) for leaf in leaves
+            ]
             nt_generator = generator_factory.make_generator(_nt_to_generator_name(nt),
                     enumerators.AlternativesGenerator,
-                            ([ leaf_generator ] + generators , nt, self.rules[nt]))
+                            (leaf_generators + generators , nt, self.rules[nt]))
             if nt == self.start:
                 ret = nt_generator
         return ret
