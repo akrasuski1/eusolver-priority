@@ -42,11 +42,11 @@ for i in range(100):
     random.shuffle(samples)
     loss = 0
     for case, res in samples:
-        loss += sum(math.log(predicted[c]) for c in case if c != res)
-        loss += math.log(1-predicted[res])
+        s1 = sum(predicted[c] for c in case)
+        loss += sum(math.log(predicted[c]/s1) for c in case if c != res)
+        loss += math.log(1-predicted[res]/s1)
 
         step = 1e-3
-        s1 = sum(predicted[c] for c in case)
         predicted[res] = s1*(1-(1-predicted[res]/s1)/(1+step))
         for c in case:
             if c != res:
