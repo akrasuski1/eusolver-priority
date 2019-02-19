@@ -494,7 +494,7 @@ class Grammar(object):
             ]
             nt_generator = generator_factory.make_generator(_nt_to_generator_name(nt),
                     enumerators.AlternativesGenerator,
-                            (leaf_generators + generators , nt, self.rules[nt]))
+                            (leaf_generators + generators , nt, self.rules[nt], generator_factory))
             if nt == self.start:
                 ret = nt_generator
         return ret
