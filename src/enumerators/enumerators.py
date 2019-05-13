@@ -45,7 +45,8 @@ from exprs import exprs
 from exprs import exprtypes
 from queue import PriorityQueue
 from collections import defaultdict
-
+import os
+import random
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -233,24 +234,82 @@ def leaf_expr_to_word(expr):
             return str(num)
     elif s.startswith("_arg_"):
         return "__arg"
+    elif s == "z":
+        return "z"
 
     print(s)
     assert False
 
 
-alt_preferences = ast.literal_eval(open("trained_dict2").read())
-min_prio = 1e-4
+
+def get_preferences_for_size_normal(sz):
+    if sz in alt_preferences:
+        pref = alt_preferences[sz]
+    else:
+        if sz > max(alt_preferences):
+            pref = alt_preferences[max(alt_preferences)]
+        else:
+            pref = []
+
+    return pref
+def get_preferences_for_size_conflated(sz):
+    return alt_preferences
 
 
-def score_expr_combiner(op_score, children_score):
+def score_expr_combiner_normal(op_score, children_score):
     return op_score * children_score
+def score_expr_combiner_naive(op_score, children_score):
+    return op_score + children_score/1e4
+def score_expr_combiner_random(op_score, children_score):
+    return random.random()
 
 
-def score_children_combiner(children_scores):
-    score = 1
+def score_children_combiner_normal(children_scores):
+    score = 1.0
     for s in children_scores:
         score *= s
     return score
+def score_children_combiner_naive(children_scores):
+    score = 0.0
+    for s in children_scores:
+        score /= 10000.0
+        score += s
+    return s
+def score_children_combiner_random(children_scores):
+    return random.random()
+
+min_prio = 1e-4
+union_fun = smart_union_of_generators
+product_fun = smart_cartesian_product_of_generators
+get_preferences_for_size = get_preferences_for_size_normal
+
+settings = os.environ["EUSOLVER_SETTINGS"].split(",")
+for setting in settings:
+    setting = setting.split("=")
+    if setting[0] == "algo":
+        if setting[1] == "random":
+            score_children_combiner = score_children_combiner_random
+            score_expr_combiner = score_expr_combiner_random
+        elif setting[1] == "greedy":
+            score_children_combiner = score_children_combiner_naive
+            score_expr_combiner = score_expr_combiner_naive
+        elif setting[1] == "stochastic":
+            score_children_combiner = score_children_combiner_normal
+            score_expr_combiner = score_expr_combiner_normal
+        else:
+            assert False
+    elif setting[0] == "min_prio":
+        min_prio = float(setting[1])
+    elif setting[0] == "weights":
+        alt_preferences = ast.literal_eval(open(setting[1]).read())
+    elif setting[0] == "conflate_size":
+        get_preferences_for_size = get_preferences_for_size_conflated
+    else:
+        assert False
+
+
+
+
 
 
 class LeafGenerator(GeneratorBase):
@@ -264,8 +323,12 @@ class LeafGenerator(GeneratorBase):
         self.allowed_size = 0
 
         assert len(self.leaf_objects) == 1
-        pref = {a[0]: a[1] for a in alt_preferences[1]}
-        self.leaf_objects = [x._replace(score=pref[leaf_expr_to_word(x)]) for x in self.leaf_objects]
+
+        pref = get_preferences_for_size(1)
+        self.pref = defaultdict(lambda: min_prio)
+        for el, score in pref:
+            self.pref[el] = score
+        self.leaf_objects = [x._replace(score=self.pref[leaf_expr_to_word(x)]) for x in self.leaf_objects]
 
     def generate(self):
         current_position = 0
@@ -282,97 +345,6 @@ class LeafGenerator(GeneratorBase):
 
     def clone(self):
         return LeafGenerator(self.leaf_objects, self.name)
-
-class NonLeafGenerator(GeneratorBase):
-    """A generator with sub generators."""
-
-    def __init__(self, sub_generators, name=None):
-        super().__init__(name)
-        self.sub_generators = [x.clone() for x in sub_generators]
-        self.arity = len(sub_generators)
-        self.allowed_size = 0
-        assert self.arity > 0
-        self.good_size_tuple = default_good_size_tuple
-
-    def set_size(self, new_size):
-        self.allowed_size = new_size
-
-    def _set_sub_generator_sizes(self, partition):
-        assert (len(partition) == self.arity)
-
-        for i in range(self.arity):
-            self.sub_generators[i].set_size(partition[i])
-        return
-
-    def _instantiate(self, sub_exprs):
-        raise basetypes.AbstractMethodError('NonLeafGenerator._instantiate()')
-
-    def generate(self):
-        if (self.allowed_size - 1 < self.arity):
-            return
-
-        
-        ps = list(utils.partitions(self.allowed_size - 1, self.arity))
-        ps = [p for p in ps if self.good_size_tuple(p)]
-        print("PARTS", ps)
-        #import random
-        #random.shuffle(ps)
-        for partition in ps:
-            gens = [x.clone() for x in self.sub_generators]
-            for i in range(self.arity):
-                gens[i].set_size(partition[i])
-            for product_tuple in cartesian_product_of_generators(*gens):
-                yield self._instantiate(product_tuple)
-
-
-class ExpressionTemplateGenerator(NonLeafGenerator):
-    """A generator for expressions with placeholders."""
-
-    def __init__(self, expr_template, place_holder_vars, sub_generators, good_size_tuple, name=None):
-        super().__init__(sub_generators, name)
-        self.expr_template = expr_template
-        self.place_holder_vars = place_holder_vars
-        assert len(place_holder_vars) == len(sub_generators)
-        if good_size_tuple is not None:
-            self.good_size_tuple = good_size_tuple
-
-    def _instantiate(self, sub_exprs):
-        # print('TEMPLATE:', exprs.expression_to_string(self.expr_template))
-        # print('PHS:', [ exprs.expression_to_string(p) for p in self.place_holder_vars ])
-        # print('SUBS:', [ exprs.expression_to_string(s) for s in sub_exprs ])
-        ret = exprs.substitute_all(self.expr_template, list(zip(self.place_holder_vars, sub_exprs)))
-        # print('RES:', exprs.expression_to_string(ret))
-        return ret
-
-    def clone(self):
-        return ExpressionTemplateGenerator(
-                self.expr_template,
-                self.place_holder_vars,
-                [x.clone() for x in self.sub_generators],
-                self.good_size_tuple,
-                self.name)
-
-class FunctionalGenerator(NonLeafGenerator):
-    """A generator for function objects.
-    Accepts a function symbol and a list of "sub-generators"
-    and builds expressions rooted with the function symbol, where
-    the arguments to the function are the expressions generated by
-    the "sub-generators".
-    The "sub-generators and function symbol can be changed after construction,
-    this is useful in the case of recursive generators."""
-
-    def __init__(self, function_descriptor, sub_generators, name = None):
-        super().__init__(sub_generators,  name)
-        assert function_descriptor is not None
-        self.function_descriptor = function_descriptor
-
-    def _instantiate(self, sub_exprs):
-        return exprs.FunctionExpression(self.function_descriptor, sub_exprs)
-
-    def clone(self):
-        return FunctionalGenerator(self.function_descriptor,
-                                   [x.clone() for x in self.sub_generators],
-                                   self.name)
 
 
 class AlternativesGenerator(GeneratorBase):
@@ -398,7 +370,7 @@ class AlternativesGenerator(GeneratorBase):
             sub_generator.set_size(new_size)
 
     def generate(self):
-        for obj in smart_union_of_generators(*[g.generate() for g in self.sub_generators]):
+        for obj in union_fun(*[g.generate() for g in self.sub_generators]):
             yield obj
 
     def clone(self):
@@ -437,24 +409,17 @@ class AlternativesExpressionTemplateGenerator(GeneratorBase):
 
             self.cloned_gens.append(gens)
 
-        if new_size in alt_preferences:
-            pref = alt_preferences[new_size]
-        else:
-            if new_size > max(alt_preferences):
-                pref = alt_preferences[max(alt_preferences)]
-            else:
-                pref = []
+        pref = get_preferences_for_size(new_size)
 
         self.pref = defaultdict(lambda: min_prio)
         for el, score in pref:
             self.pref[el] = score
 
     def generate(self):
-        # TODO priority
         newgens = []
         for gens in self.cloned_gens:
             def gen(gens):
-                for product_tuple in smart_cartesian_product_of_generators(*gens):
+                for product_tuple in product_fun(*gens):
                     retval = exprs.substitute_all(
                             self.expr_template, list(zip(
                                 self.place_holder_vars, product_tuple)))
@@ -468,7 +433,7 @@ class AlternativesExpressionTemplateGenerator(GeneratorBase):
 
             newgens.append(gen(gens))
 
-        for val in smart_union_of_generators(*newgens):
+        for val in union_fun(*newgens):
             yield val
 
     def clone(self):
