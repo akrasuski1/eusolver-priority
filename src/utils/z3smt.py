@@ -96,7 +96,7 @@ def z3value_to_value(value, var_info):
     elif (var_info.variable_type.type_code == exprtypes.TypeCodes.bit_vector_type):
         return exprs.Value(BitVector(int(str(value)),
                                          var_info.variable_type.size),
-                               var_info.variable_type)
+                               var_info.variable_type, -1)
     else:
         raise basetypes.UnhandledCaseError('solvers.In model_to_point')
 

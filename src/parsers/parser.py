@@ -71,7 +71,7 @@ def sexp_to_value(sexp):
         value = value_exp
     else:
         raise Exception('Unknown type: %s' % value_type)
-    return exprs.Value(value, value_type)
+    return exprs.Value(value, value_type, -1)
 
 def sexp_to_type(sexp):
     if type(sexp) == list and sexp[0] == 'BitVec':
@@ -339,8 +339,8 @@ def make_constant_rules(constraints):
     for constraint in constraints:
         constants |= exprs.get_all_constants(constraint)
 
-    constants.add(exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType())))
-    constants.add(exprs.ConstantExpression(exprs.Value(0, exprtypes.IntType())))
+    constants.add(exprs.ConstantExpression(exprs.Value(1, exprtypes.IntType(), -1)))
+    constants.add(exprs.ConstantExpression(exprs.Value(0, exprtypes.IntType(), -1)))
 
     const_templates = []
     for const in constants:

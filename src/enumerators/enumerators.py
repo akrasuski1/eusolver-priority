@@ -43,6 +43,9 @@ from exprs import evaluation
 from utils import basetypes
 from exprs import exprs
 from exprs import exprtypes
+from queue import PriorityQueue
+from collections import defaultdict
+
 
 # if __name__ == '__main__':
 #     utils.print_module_misuse_and_exit()
@@ -52,6 +55,33 @@ def commutative_good_size_tuple(sizes):
 
 def default_good_size_tuple(sizes):
     return True
+
+def union_of_generators(*generators):
+    for gen in generators:
+        for e in gen:
+            yield e
+
+def smart_union_of_generators(*generators):
+    index = 0
+    queue = PriorityQueue()
+    for i, gen in enumerate(generators):
+        try:
+            elem = next(gen)
+            queue.put((-elem.score, index, elem, i))
+            index += 1
+        except StopIteration:
+            pass
+
+    while not queue.empty():
+        score, _, elem, i = queue.get()
+        yield elem
+
+        try:
+            elem = next(generators[i])
+            queue.put((-elem.score, index, elem, i))
+            index += 1
+        except StopIteration:
+            pass
 
 def cartesian_product_of_generators(*generators):
     """A generator that produces the cartesian product of the input
@@ -65,6 +95,72 @@ def cartesian_product_of_generators(*generators):
         for sub_tuple in cartesian_product_of_generators(*generators[1:]):
             for elem in generators[0].generate():
                 yield (elem, ) + sub_tuple
+
+
+def smart_cartesian_product_of_generators(*generators):
+    for val in _smart_cartesian_product_of_generators(*generators):
+        yield val.val
+
+
+def _smart_cartesian_product_of_generators(*generators):
+    class Element:
+        def __init__(self, score, val):
+            self.score = score
+            self.val = val
+
+        def __str__(self):
+            return "%s\tscore = %s" % (self.val, self.score)
+
+    if len(generators) == 1:
+        for elem in generators[0].generate():
+            yield Element(elem.score, (elem, ))
+    else:
+        rgen = _smart_cartesian_product_of_generators(*generators[1:])
+        egen = generators[0].generate()
+
+        # This may throw StopIteration, but it's expected.
+        rec = [next(rgen)]
+        elems = [next(egen)]
+
+        rfinished = False
+        efinished = False
+
+        index = 0 # For tie resolution...
+        queue = PriorityQueue()
+        queue.put((-score_children_combiner([elems[0].score, rec[0].score]), index, (0, 0)))
+        index += 1
+
+        # maxvis[e] - maximum r, such that (e, r) was at one point in queue
+        maxvis = [0]
+
+        while not queue.empty():
+            score, _, (e, r) = queue.get()
+            yield Element(-score, (elems[e], ) + rec[r].val)
+
+            # Try to add e+1, 0
+            if r == 0 and len(elems) <= e + 1:
+                try:
+                    elems.append(next(egen))
+                    maxvis.append(-1)
+                except StopIteration:
+                    pass
+
+            if len(elems) > e + 1 and maxvis[e+1] == -1:
+                queue.put((-score_children_combiner([elems[e+1].score, rec[r].score]), index, (e+1, 0)))
+                index += 1
+                maxvis[e+1] = 0
+
+            # Try to add e, r+1
+            if len(rec) <= r + 1:
+                try:
+                    rec.append(next(rgen))
+                except StopIteration:
+                    pass
+
+            if len(rec) > r + 1 and maxvis[e] < r+1:
+                queue.put((-score_children_combiner([elems[e].score, rec[r+1].score]), index, (e, r+1)))
+                index += 1
+                maxvis[e] = r+1
 
 
 class GeneratorBase(object):
@@ -87,6 +183,76 @@ class GeneratorBase(object):
         raise basetypes.AbstractMethodError('GeneratorBase.clone()')
 
 
+def parse_as_int(s):
+    if s[:2] == "#x":
+        num = int(s[2:], 16)
+        return num
+    else:
+        return int(s)
+
+def parsable_as_int(s):
+    try:
+        parse_as_int(s)
+        return True
+    except ValueError:
+        return False
+
+import ast, sexpdata
+def from_sexp(s):
+    return ast.literal_eval(str(sexpdata.loads(s)).replace("Symbol", ""))
+
+
+def rule_to_word(rule):
+    rule = str(rule)
+    if "dummy_pred" in rule:
+        word = from_sexp(rule)[1][0]
+    elif rule[0] == "(":
+        word = from_sexp(rule)[0]
+    else:
+        word = rule.split()[0]
+
+    if word.startswith("_arg_"):
+        word = "__arg"
+    elif parsable_as_int(word):
+        num = parse_as_int(word)
+        if num > 1:
+            word = "__bigint"
+        else:
+            word = str(num)
+
+    return word
+
+
+def leaf_expr_to_word(expr):
+    s = exprs.expression_to_string(expr)
+    if parsable_as_int(s):
+        num = parse_as_int(s)
+        if num > 1:
+            return "__bigint"
+        else:
+            return str(num)
+    elif s.startswith("_arg_"):
+        return "__arg"
+
+    print(s)
+    assert False
+
+
+alt_preferences = ast.literal_eval(open("trained_dict2").read())
+min_prio = 1e-4
+
+
+def score_expr_combiner(op_score, children_score):
+    return op_score * children_score
+
+
+def score_children_combiner(children_scores):
+    score = 1
+    for s in children_scores:
+        score *= s
+    return score
+
+
 class LeafGenerator(GeneratorBase):
     """A generator for leaf objects.
     Variables, constants and the likes."""
@@ -96,6 +262,10 @@ class LeafGenerator(GeneratorBase):
         self.leaf_objects = list(leaf_objects)
         self.iterable_size = len(self.leaf_objects)
         self.allowed_size = 0
+
+        assert len(self.leaf_objects) == 1
+        pref = {a[0]: a[1] for a in alt_preferences[1]}
+        self.leaf_objects = [x._replace(score=pref[leaf_expr_to_word(x)]) for x in self.leaf_objects]
 
     def generate(self):
         current_position = 0
@@ -205,46 +375,6 @@ class FunctionalGenerator(NonLeafGenerator):
                                    self.name)
 
 
-def parse_as_int(s):
-    if s[:2] == "#x":
-        num = int(s[2:], 16)
-        return num
-    else:
-        return int(s)
-
-def parsable_as_int(s):
-    try:
-        parse_as_int(s)
-        return True
-    except ValueError:
-        return False
-
-import ast, sexpdata
-def from_sexp(s):
-    return ast.literal_eval(str(sexpdata.loads(s)).replace("Symbol", ""))
-
-def rule_to_word(rule):
-    rule = str(rule)
-    if "dummy_pred" in rule:
-        word = from_sexp(rule)[1][0]
-    elif rule[0] == "(":
-        word = from_sexp(rule)[0]
-    else:
-        word = rule.split()[0]
-
-    if word.startswith("_arg_"):
-        word = "__arg"
-    elif parsable_as_int(word):
-        num = parse_as_int(word)
-        if num > 1:
-            word = "__bigint"
-        else:
-            word = str(num)
-
-    return word
-
-
-alt_preferences = ast.literal_eval(open("trained_dict2").read())
 class AlternativesGenerator(GeneratorBase):
     """A generator that accepts multiple "sub-generators" and
     generates a sequence that is equivalent to the concatenation of
@@ -261,34 +391,6 @@ class AlternativesGenerator(GeneratorBase):
 
     def set_size(self, new_size):
         print("ALT %s set size" % self.nt, new_size)
-        if 0:
-            print("ALT: rules:\n", "\n".join("\t"+str(r)+" == " +rule_to_word(r) for r in self.rules))
-            print("lengths:", len(self.rules), len(self.sub_generators))
-            arr = list(zip(self.rules, self.sub_generators))
-            if new_size in alt_preferences:
-                pref = alt_preferences[new_size]
-            else:
-                if new_size > max(alt_preferences):
-                    pref = alt_preferences[max(alt_preferences)]
-                else:
-                    pref = []
-
-            for i, (rule, gen) in enumerate(arr):
-                word = rule_to_word(rule)
-                index = 10**6
-                for j, (w, score) in enumerate(pref):
-                    if w == word:
-                        index = j
-
-                index += i / 1e3 # Break ties by original order.
-                arr[i] = (index, rule, gen)
-
-            print(arr)
-            arr.sort()
-            self.rules = [a[1] for a in arr]
-            self.sub_generators = [a[2] for a in arr]
-
-            print("ALT: rules after:\n", "\n".join("\t"+str(r)+" == " +rule_to_word(r) for r in self.rules))
 
         self.allowed_size = new_size
 
@@ -296,12 +398,8 @@ class AlternativesGenerator(GeneratorBase):
             sub_generator.set_size(new_size)
 
     def generate(self):
-        for sub_generator in self.sub_generators:
-            print("ALTYIELD")
-            yield from sub_generator.generate()
-            # # audupa: comment out above and uncomment below for python3 < 3.3
-            # for obj in sub_generator.generate():
-            #     yield obj
+        for obj in smart_union_of_generators(*[g.generate() for g in self.sub_generators]):
+            yield obj
 
     def clone(self):
         return AlternativesGenerator([x.clone() for x in self.sub_generators],
@@ -339,11 +437,39 @@ class AlternativesExpressionTemplateGenerator(GeneratorBase):
 
             self.cloned_gens.append(gens)
 
+        if new_size in alt_preferences:
+            pref = alt_preferences[new_size]
+        else:
+            if new_size > max(alt_preferences):
+                pref = alt_preferences[max(alt_preferences)]
+            else:
+                pref = []
+
+        self.pref = defaultdict(lambda: min_prio)
+        for el, score in pref:
+            self.pref[el] = score
 
     def generate(self):
+        # TODO priority
+        newgens = []
         for gens in self.cloned_gens:
-            for product_tuple in cartesian_product_of_generators(*gens):
-                yield exprs.substitute_all(self.expr_template, list(zip(self.place_holder_vars, product_tuple)))
+            def gen(gens):
+                for product_tuple in smart_cartesian_product_of_generators(*gens):
+                    retval = exprs.substitute_all(
+                            self.expr_template, list(zip(
+                                self.place_holder_vars, product_tuple)))
+                    word = rule_to_word(exprs.expression_to_string(retval))
+                    score = self.pref[word]
+
+                    children_score = score_children_combiner(x.score for x in product_tuple)
+                    score = score_expr_combiner(score, children_score)
+                    retval = retval._replace(score=score)
+                    yield retval
+
+            newgens.append(gen(gens))
+
+        for val in smart_union_of_generators(*newgens):
+            yield val
 
     def clone(self):
         return AlternativesExpressionTemplateGenerator(self.expr_template,
@@ -470,6 +596,7 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
         self.finished_generators = {}
         self.eval_ctx = evaluation.EvaluationContext()
         self.cache_sizes = []
+        self.all_caches = []
 
         if spec.is_multipoint:
             assert len(spec.synth_funs) == 1
@@ -498,18 +625,20 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
     def clear_caches(self):
         # self.print_caches()
         self.cache_sizes.append(self.get_cache_size())
+        self.all_caches.append(self.cache)
         self.cache = {}
         self.signatures = {}
         self.base_generators = {}
         self.finished_generators = {}
 
     def print_caches(self):
-        print('++++++++++++')
-        for placeholder, size in self.cache:
-            print(placeholder, size, '->')
-            for term in self.cache[(placeholder, size)]:
-                print("\t", exprs.expression_to_string(term))
-        print('++++++++++++')
+        for i, cache in enumerate(self.all_caches):
+            print('++++++++++++', i)
+            for placeholder, size in cache:
+                print(placeholder, size, '->')
+                for term in cache[(placeholder, size)]:
+                    print("\tscore=", term.score, "\t", exprs.expression_to_string(term))
+        print('++++++++++++', "fin")
 
     def add_points(self, points):
         self.points.extend(points)

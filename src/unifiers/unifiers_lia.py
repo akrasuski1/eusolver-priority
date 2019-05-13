@@ -48,8 +48,8 @@ from utils.lia_utils import LIAInequality
 
 _expr_to_str = exprs.expression_to_string
 
-_true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType()))
-_false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType()))
+_true_expr = exprs.ConstantExpression(exprs.Value(True, exprtypes.BoolType(), -1))
+_false_expr = exprs.ConstantExpression(exprs.Value(False, exprtypes.BoolType(), -1))
 
 def simplify_inequality(inequality):
     if LIAInequality.from_expr(inequality).is_valid():

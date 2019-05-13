@@ -110,7 +110,7 @@ def evaluate_expression_raw(expr_object, eval_context):
 
 def evaluate_expression(expr_object, eval_context):
     retval = evaluate_expression_raw(expr_object, eval_context)
-    retval = exprs.Value(retval, exprs.get_expression_type(expr_object))
+    retval = exprs.Value(retval, exprs.get_expression_type(expr_object), -1)
     return retval
 
 class EvaluationContext(object):

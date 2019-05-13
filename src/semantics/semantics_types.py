@@ -179,7 +179,7 @@ class UnknownFunctionBase(FunctionBase):
 
         num_children = len(expr_object.children)
         self._evaluate_children(expr_object, eval_context_object)
-        parameter_map = [exprs.Value(eval_context_object.peek(i), self.domain_types[i])
+        parameter_map = [exprs.Value(eval_context_object.peek(i), self.domain_types[i], -1)
                          for i in reversed(range(len(self.domain_types)))]
         eval_context_object.pop(num_children)
 

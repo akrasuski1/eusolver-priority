@@ -65,23 +65,24 @@ class ExpressionKinds(IntEnum):
 
 
 _VariableExpression = collections.namedtuple('VariableExpression',
-                                             ['expr_kind', 'variable_info', 'expr_id'])
+                                             ['expr_kind', 'variable_info', 'expr_id', 'score'])
 
 _FormalParameterExpression = collections.namedtuple('FormalParameterExpression',
                                                     ['expr_kind',
                                                      'unknown_function_info',
                                                      'parameter_type',
                                                      'parameter_position',
-                                                     'expr_id'])
+                                                     'expr_id',
+                                                     'score'])
 
 _ConstantExpression = collections.namedtuple('ConstantExpression',
-                                             ['expr_kind', 'value_object', 'expr_id'])
+                                             ['expr_kind', 'value_object', 'expr_id', 'score'])
 
 _FunctionExpression = collections.namedtuple('FunctionExpression',
                                              ['expr_kind', 'function_info',
-                                              'children', 'expr_id'])
+                                              'children', 'expr_id', 'score'])
 
-Value = collections.namedtuple('Value', ['value_object', 'value_type'])
+Value = collections.namedtuple('Value', ['value_object', 'value_type', 'score'])
 
 _variable_expression = ExpressionKinds.variable_expression
 _constant_expression = ExpressionKinds.constant_expression
@@ -107,21 +108,21 @@ def get_expr_with_id(expr_object, expr_id):
 
 
 def VariableExpression(variable_info):
-    return _VariableExpression(_variable_expression, variable_info, None)
+    return _VariableExpression(_variable_expression, variable_info, None, -1)
 
 def ConstantExpression(value_object):
-    return _ConstantExpression(_constant_expression, value_object, None)
+    return _ConstantExpression(_constant_expression, value_object, None, -1)
 
 def FunctionExpression(function_info, children):
     assert function_info is not None
     assert type(children) is tuple
     return _FunctionExpression(_function_expression,
-                               function_info, children, None)
+                               function_info, children, None, -1)
 
 def FormalParameterExpression(unknown_function_info, parameter_type, parameter_position):
     return _FormalParameterExpression(_formal_parameter_expression,
                                       unknown_function_info, parameter_type,
-                                      parameter_position, None)
+                                      parameter_position, None, -1)
 
 def value_to_string(the_value):
     if (the_value.value_type.type_code == exprtypes.TypeCodes.boolean_type):

@@ -137,6 +137,7 @@ class EnumerativeDTUnifierBase(UnifierInterface):
         while True:
             triv = self._try_trivial_unification()
             if triv is not None:
+                print("TERM", triv)
                 yield ("TERM", triv)
                 return
 
@@ -158,6 +159,7 @@ class EnumerativeDTUnifierBase(UnifierInterface):
                 [ "\t"+_expr_to_str(term) for sig,term in
                     pred_solver.get_signature_to_term().items()]))
 
+            print("DT_TUPLE", dt_tuple)
             yield ("DT_TUPLE", dt_tuple)
             term_solver.generate_more_terms()
 

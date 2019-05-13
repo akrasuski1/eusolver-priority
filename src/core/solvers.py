@@ -105,7 +105,10 @@ class Solver(object):
                 print('Unification done!')
                 #print(unification)
                 # FFS, docs!
-                dt = unification[1][-1]
+                if unification[0] == "TERM":
+                    dt = unification[1].expr_id
+                else:
+                    dt = unification[1][-1]
                 if dt is None:
                     print("AFTER_UU", None)
                 else:
