@@ -164,7 +164,8 @@ class FunctionRewrite(RewriteBase):
             good_size_tuple = enumerators.commutative_good_size_tuple
         else:
             good_size_tuple = enumerators.default_good_size_tuple
-        return enumerators.ExpressionTemplateGenerator(expr_template, ph_vars, sub_gens, good_size_tuple=good_size_tuple)
+        return enumerators.AlternativesExpressionTemplateGenerator(expr_template, ph_vars, sub_gens, good_size_tuple=good_size_tuple)
+        #return enumerators.ExpressionTemplateGenerator(expr_template, ph_vars, sub_gens, good_size_tuple=good_size_tuple)
 
     def rename_nt(self, old_name, new_name):
         new_children = [ child.rename_nt(old_name, new_name) 

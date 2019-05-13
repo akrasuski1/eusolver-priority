@@ -258,7 +258,11 @@ def std_unification_solver(theory, syn_ctx, synth_funs, grammar_map, specificati
     solution = next(solutions)
     final_solution = rewrite_solution([synth_fun], solution, reverse_mapping)
     term_generator.actual_generator.factory.print_caches()
+
+    generator_factory.finalize()
     print("Total predicates visited:", generator_factory.visited_cnt)
+    print("Cache sizes:", generator_factory.get_cache_sizes())
+    print("Sum total:", sum(generator_factory.get_cache_sizes()))
     return final_solution
 
 def classic_esolver(theory, syn_ctx, synth_funs, grammar_map, specification, verifier):

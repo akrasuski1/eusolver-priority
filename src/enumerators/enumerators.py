@@ -261,9 +261,9 @@ class AlternativesGenerator(GeneratorBase):
 
     def set_size(self, new_size):
         print("ALT %s set size" % self.nt, new_size)
-        print("ALT: rules:\n", "\n".join("\t"+str(r)+" == " +rule_to_word(r) for r in self.rules))
-        print("lengths:", len(self.rules), len(self.sub_generators))
         if 0:
+            print("ALT: rules:\n", "\n".join("\t"+str(r)+" == " +rule_to_word(r) for r in self.rules))
+            print("lengths:", len(self.rules), len(self.sub_generators))
             arr = list(zip(self.rules, self.sub_generators))
             if new_size in alt_preferences:
                 pref = alt_preferences[new_size]
@@ -305,8 +305,49 @@ class AlternativesGenerator(GeneratorBase):
 
     def clone(self):
         return AlternativesGenerator([x.clone() for x in self.sub_generators],
+                self.nt, self.rules,
                                      self.name)
 
+class AlternativesExpressionTemplateGenerator(GeneratorBase):
+    def __init__(self, expr_template, place_holder_vars, sub_generators, good_size_tuple, name=None):
+        super().__init__(name)
+        self.nlgens = [x.clone() for x in sub_generators]
+        self.arity = len(sub_generators)
+        self.allowed_size = 0
+        assert self.arity > 0
+        self.good_size_tuple = good_size_tuple
+        self.expr_template = expr_template
+        self.place_holder_vars = place_holder_vars
+
+    def set_size(self, new_size):
+        self.allowed_size = new_size
+        
+        if (self.allowed_size - 1 < self.arity):
+            ps = []
+        else:
+            ps = list(utils.partitions(self.allowed_size - 1, self.arity))
+            ps = [p for p in ps if self.good_size_tuple(p)]
+        print("ANLG:PARTS", ps)
+
+        lgens = []
+        self.cloned_gens = []
+
+        for partition in ps:
+            gens = [x.clone() for x in self.nlgens]
+            for i in range(self.arity):
+                gens[i].set_size(partition[i])
+
+            self.cloned_gens.append(gens)
+
+
+    def generate(self):
+        for gens in self.cloned_gens:
+            for product_tuple in cartesian_product_of_generators(*gens):
+                yield exprs.substitute_all(self.expr_template, list(zip(self.place_holder_vars, product_tuple)))
+
+    def clone(self):
+        return AlternativesExpressionTemplateGenerator(self.expr_template,
+                self.place_holder_vars, self.nlgens, self.good_size_tuple, self.name)
 
 class _RecursiveGeneratorPlaceholder(GeneratorBase):
     """A type for placeholders for recursive generators.
@@ -428,6 +469,7 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
         self.base_generators = {}
         self.finished_generators = {}
         self.eval_ctx = evaluation.EvaluationContext()
+        self.cache_sizes = []
 
         if spec.is_multipoint:
             assert len(spec.synth_funs) == 1
@@ -441,8 +483,21 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
             self.applications = None
             self.point_profiles = None
 
+    def get_cache_size(self):
+        sm = 0
+        for placeholder, size in self.cache:
+            sm += len(self.cache[(placeholder, size)])
+        return sm
+
+    def finalize(self):
+        self.cache_sizes.append(self.get_cache_size())
+
+    def get_cache_sizes(self):
+        return self.cache_sizes
+
     def clear_caches(self):
         # self.print_caches()
+        self.cache_sizes.append(self.get_cache_size())
         self.cache = {}
         self.signatures = {}
         self.base_generators = {}
@@ -452,7 +507,6 @@ class PointDistinctGeneratorFactory(GeneratorFactoryBase):
         print('++++++++++++')
         for placeholder, size in self.cache:
             print(placeholder, size, '->')
-            pass
             for term in self.cache[(placeholder, size)]:
                 print("\t", exprs.expression_to_string(term))
         print('++++++++++++')
