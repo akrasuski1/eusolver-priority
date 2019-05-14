@@ -3,9 +3,22 @@ import random, math
 import subprocess
 import sexpdata, ast, json
 
-files = glob.glob("random_results/*")
-if len(sys.argv) > 1:
-    files = sys.argv[1:]
+outname = sys.argv[1]
+sample_ratio = float(sys.argv[2])
+globs = sys.argv[3:]
+
+files = []
+for g in globs:
+    files += glob.glob("random_results_may/" + g)
+
+print(len(files))
+file_roots = [f.split(".sl")[0] for f in files]
+file_roots = list(set(file_roots))
+random.shuffle(file_roots)
+file_roots = file_roots[:int(len(file_roots) * sample_ratio)]
+files = [f for f in files if f.split(".sl")[0] in file_roots]
+print(len(files))
+
 
 # returns (tree_size, [(tree_size, ispred, expansion)])
 def postorder(tree, args, ispred=False):
@@ -47,7 +60,10 @@ def from_sexp(s):
     return ast.literal_eval(str(sexpdata.loads(s)).replace("Symbol", ""))
 
 def get_solution(fname):
-    tree = from_sexp(open(f).read().split("FINAL_SOLUTION")[-1].strip())
+    x = open(f).read().split("FINAL_SOLUTION")
+    if len(x) == 1:
+        return None
+    tree = from_sexp(x[-1].strip())
     defun, funname, args, retval, tree = tree
     assert defun == "define-fun"
     args = [a[0] for a in args]
@@ -72,10 +88,15 @@ grammar_cache = {}
 def get_grammar(fname):
     fname = fname.split("/")[1][:-10].replace("@", "/")
     if fname not in grammar_cache:
-        s = subprocess.check_output("EUSOLVER_SETTINGS='algo=random' bash ./eusolver '%s' | grep ________________ -m 1 -B 100000" % fname,
-                stderr=subprocess.DEVNULL, shell=True)
-        grammar_cache[fname] = s
+        try:
+            s = subprocess.check_output("EUSOLVER_SETTINGS='algo=random' bash ./eusolver '%s' | grep ________________ -m 1 -B 100000" % fname,
+                    stderr=subprocess.DEVNULL, shell=True)
+            grammar_cache[fname] = s
+        except subprocess.CalledProcessError:
+            grammar_cache[fname] = None
     s = grammar_cache[fname]
+    if s is None:
+        return None
 
     possibilities = []
     for line in s.decode("utf8").splitlines():
@@ -104,52 +125,15 @@ def get_grammar(fname):
 
     return list(set(possibilities))
 
-def learn_weights(samples, smooth=1e-9):
-    all_possibilities = set()
-    for chosen, poss in samples:
-        for p in poss:
-            all_possibilities.add(p)
-
-    predicted = {k: 1.0/len(all_possibilities) for k in all_possibilities}
-    samples = samples[:]
-
-    prevloss = None
-    step = 1e-2
-    while step > 1e-6:
-        random.shuffle(samples)
-        loss = 0
-        for res, case in samples:
-            s1 = sum(predicted[c] for c in case)
-            loss += sum(math.log(predicted[c]/s1) for c in case if c != res)
-            loss += math.log(1-predicted[res]/s1)
-
-            predicted[res] = s1*(1-(1-predicted[res]/s1)/(1+step))
-            for c in case:
-                if c != res:
-                    predicted[c] /= (1+step)
-
-                mn = smooth * s1
-                predicted[c] = max(predicted[c], mn)
-
-            s2 = sum(predicted[c] for c in case)
-            for p in case:
-                predicted[p] *= s1/s2
-
-        if prevloss is not None:
-            delta = prevloss - loss
-            # print(loss, delta, step)
-            if delta < 1e-9: # Negative or zero.
-                step /= 1.3
-        prevloss = loss
-
-    return predicted
-
 
 situations = {}
 for f in sorted(files):
     print(f)
     grammar = get_grammar(f)
     exp = get_solution(f)
+    if exp is None or grammar is None:
+        print("no solution")
+        continue
     print(grammar)
     for e in exp:
         print("  ", e)
@@ -160,6 +144,8 @@ for f in sorted(files):
         situations[sz].append((choice, grammar))
 
 print("---")
+
+outfile = open("models/" + outname + ".situations", "w")
 for e in sorted(situations):
     distinct = {}
     for cg in situations[e]:
@@ -168,13 +154,13 @@ for e in sorted(situations):
             distinct[key] = 0
         distinct[key] += 1
     print("SITUATION %s\n - %d samples, %d distinct" % (e, len(situations[e]), len(distinct)))
+    outfile.write("SITUATION %s\n - %d samples, %d distinct\n" % (e, len(situations[e]), len(distinct)))
     arr = sorted([(distinct[k], k) for k in distinct])[::-1]
     for cnt, key in arr:
         print("  %02d of %s from (%s)" % (cnt, key[0], ", ".join(key[1])))
+        outfile.write("  %02d of %s from (%s)\n" % (cnt, key[0], ", ".join(key[1])))
 
-    weights = learn_weights(situations[e])
-    arr = sorted([(weights[p], p) for p in weights])[::-1]
-    print("LEARNED:")
-    for p, q in arr:
-        print("\t", q, p)
     print("EOL")
+    outfile.write("EOL\n")
+
+open("models/" + outname + ".used", "w").write("".join(f + "\n" for f in file_roots))

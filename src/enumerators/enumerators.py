@@ -249,7 +249,7 @@ def get_preferences_for_size_normal(sz):
         if sz > max(alt_preferences):
             pref = alt_preferences[max(alt_preferences)]
         else:
-            pref = []
+            pref = {}
 
     return pref
 def get_preferences_for_size_conflated(sz):
@@ -329,7 +329,7 @@ class LeafGenerator(GeneratorBase):
 
         pref = get_preferences_for_size(1)
         self.pref = defaultdict(lambda: min_prio)
-        for el, score in pref:
+        for el, score in pref.items():
             self.pref[el] = score
         self.leaf_objects = [x._replace(score=self.pref[leaf_expr_to_word(x)]) for x in self.leaf_objects]
 
@@ -413,9 +413,10 @@ class AlternativesExpressionTemplateGenerator(GeneratorBase):
             self.cloned_gens.append(gens)
 
         pref = get_preferences_for_size(new_size)
+        print(pref)
 
         self.pref = defaultdict(lambda: min_prio)
-        for el, score in pref:
+        for el, score in pref.items():
             self.pref[el] = score
 
     def generate(self):
