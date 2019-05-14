@@ -254,6 +254,8 @@ def get_preferences_for_size_normal(sz):
     return pref
 def get_preferences_for_size_conflated(sz):
     return alt_preferences
+def get_preferences_for_size_null(sz):
+    return []
 
 
 def score_expr_combiner_normal(op_score, children_score):
@@ -290,6 +292,7 @@ for setting in settings:
         if setting[1] == "random":
             score_children_combiner = score_children_combiner_random
             score_expr_combiner = score_expr_combiner_random
+            get_preferences_for_size = get_preferences_for_size_null
         elif setting[1] == "greedy":
             score_children_combiner = score_children_combiner_naive
             score_expr_combiner = score_expr_combiner_naive
