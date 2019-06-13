@@ -1,0 +1,13 @@
+SITUATION 1
+ - 10814 samples, 1 distinct
+  10814 of __arg from (+, -, 0, 1, <=, =, >=, S, __arg, and, not, or)
+EOL
+SITUATION 3
+ - 3408 samples, 2 distinct
+  1748 of >= from (+, -, 0, 1, <=, =, >=, S, __arg, and, not, or)
+  1660 of <= from (+, -, 0, 1, <=, =, >=, S, __arg, and, not, or)
+EOL
+SITUATION 4
+ - 104 samples, 1 distinct
+  104 of not from (+, -, 0, 1, <=, =, >=, S, __arg, and, not, or)
+EOL

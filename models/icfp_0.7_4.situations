@@ -1,0 +1,75 @@
+SITUATION 1
+ - 52688 samples, 3 distinct
+  32600 of __arg from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  17634 of 1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  2454 of 0 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+EOL
+SITUATION 2
+ - 25491 samples, 5 distinct
+  5468 of bvnot from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  5255 of shl1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  5102 of shr4 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  5081 of shr16 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  4585 of shr1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+EOL
+SITUATION 3
+ - 16266 samples, 9 distinct
+  3559 of shr4 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  3399 of shr16 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  2586 of bvand from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  2447 of shr1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  1753 of bvnot from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  1094 of shl1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  823 of bvadd from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  447 of bvxor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  158 of bvor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+EOL
+SITUATION 4
+ - 11628 samples, 9 distinct
+  5297 of bvand from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  1472 of bvadd from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  952 of bvxor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  761 of bvor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  735 of shl1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  671 of shr4 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  667 of shr1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  544 of shr16 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  529 of bvnot from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+EOL
+SITUATION 5
+ - 8595 samples, 9 distinct
+  5347 of bvand from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  706 of bvnot from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  603 of bvadd from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  559 of shr16 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  349 of shr1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  345 of shl1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  335 of bvxor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  262 of bvor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  89 of shr4 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+EOL
+SITUATION 6
+ - 484 samples, 9 distinct
+  228 of bvand from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  63 of bvor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  53 of bvxor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  30 of shr1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  29 of shr4 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  27 of bvadd from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  21 of shl1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  19 of bvnot from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  14 of shr16 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+EOL
+SITUATION 7
+ - 122 samples, 6 distinct
+  33 of bvadd from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  23 of shl1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  22 of shr4 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  15 of bvxor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  15 of bvor from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+  14 of shr1 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+EOL
+SITUATION 8
+ - 1 samples, 1 distinct
+  01 of shr16 from (0, 1, =, __arg, __bigint, bvadd, bvand, bvnot, bvor, bvxor, shl1, shr1, shr16, shr4)
+EOL

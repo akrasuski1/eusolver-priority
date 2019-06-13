@@ -1,0 +1,36 @@
+434
+14
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_8.sl_942608970
+178 [226.2104202054027] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_12.sl_957137612
+330 [314.97403293525065] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_14.sl_690169164
+444 [476.4792596494115] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_4.sl_714763467
+62 [134.06644104405711] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_9.sl_756990569
+207 [474.292327859049] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_2.sl_437981380
+30 [77.47454895927362] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_10.sl_921401189
+245 [298.0483417222324] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_7.sl_508078130
+140 [210.02021016330366] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_11.sl_645091597
+296 [322.14288813096437] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_5.sl_033874261
+94 [134.3806932297147] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_13.sl_097036898
+389 [346.7286513153009] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_6.sl_726809100
+129 [181.396351856465] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_15.sl_150384517
+478 [442.3188691415842] arrays
+results/stochastic:not_array.model.per_size/benchmarks_se@arrays@array_search_3.sl_613898955
+50 [95.66007110102726] arrays
+Global stats:
+A: 1.2155576521201295
+G: 1.394285319353516
+arrays
+A: 0.7390135380036515
+G: 1.394285319353516

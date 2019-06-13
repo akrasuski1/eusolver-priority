@@ -1,0 +1,26 @@
+434
+14
+results/stochastic:not_max.model.per_size/benchmarks@max@max_6.sl_236924656
+results/stochastic:not_max.model.per_size/benchmarks@max@max_12.sl_939517503
+results/stochastic:not_max.model.per_size/benchmarks@max@max_9.sl_337371451
+results/stochastic:not_max.model.per_size/benchmarks@max@max_14.sl_469947066
+results/stochastic:not_max.model.per_size/benchmarks@max@max_13.sl_417804417
+results/stochastic:not_max.model.per_size/benchmarks@max@max_7.sl_244429844
+results/stochastic:not_max.model.per_size/benchmarks@max@max_3.sl_911122925
+102 [184.26202618124205] max
+results/stochastic:not_max.model.per_size/benchmarks@max@max_4.sl_682822914
+544 [667.0460647337999] max
+results/stochastic:not_max.model.per_size/benchmarks@max@max_8.sl_103063277
+results/stochastic:not_max.model.per_size/benchmarks@max@max_15.sl_345570475
+results/stochastic:not_max.model.per_size/benchmarks@max@max_10.sl_903382836
+results/stochastic:not_max.model.per_size/benchmarks@max@max_5.sl_545770641
+2152 [2211.8586283687787] max
+results/stochastic:not_max.model.per_size/benchmarks@max@max_11.sl_916137227
+results/stochastic:not_max.model.per_size/benchmarks@max@max_2.sl_175010342
+9 [39.72151109620335] max
+Global stats:
+A: 1.1054108408906391
+G: 1.7804211184195748
+max
+A: 0.8620368600483798
+G: 1.7804211184195748

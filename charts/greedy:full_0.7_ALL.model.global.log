@@ -1,0 +1,2511 @@
+4345
+1312
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_15.3.sl_856496296
+6020 [3641.6933003977506] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-20-d1-prog.sl_180761930
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_11.20.sl_983892995
+3985 [4266.28976128922] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-07-d0-prog.sl_644470263
+48 [53.41618705792747] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_11.5.sl_806258146
+1260 [831.291356992127] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_1.10.sl_547617163
+1238 [1596.9259430401219] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_107750378
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.5.sl_174236158
+275 [429.6042699548238] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_5.6.sl_592219813
+534 [930.2908907233199] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_15.7.sl_986692342
+2584 [1500.631778404841] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_9.20.sl_659828379
+1083 [960.285901222634] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_8.8.sl_054771759
+2760 [2432.9599810128325] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_1.1.sl_086154879
+573 [1360.7901423457877] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_10.16.sl_507123380
+3335 [4197.85950884471] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_12.9.sl_617530689
+2019 [2577.724603313127] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_921092953
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_5.sl_856017032
+2897 [2211.8586283687787] max
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_9.5.sl_409889134
+240 [353.3373859841795] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_14.19.sl_405971825
+2753 [4689.942844612569] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_54_1000.sl_564358730
+67 [112.90637495674675] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.17.sl_295022736
+1375 [1409.5742107947842] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_9.4.sl_417851101
+1973 [3042.8793888919063] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_14.10.sl_866211156
+4373 [6102.439393907673] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-04-d0-prog.sl_833588969
+27 [19.953082427327114] hackers
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-18-d1-prog.sl_832150964
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_7.8.sl_887380053
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_125_10.sl_970938508
+823 [1188.0976146585706] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_3.14.sl_227492233
+387 [526.8783696119541] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_7.5.sl_863187367
+855 [856.7062481790872] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-06-d5-prog.sl_782144783
+784 [341.583880406398] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_81_1000.sl_329088442
+321 [1702.7133700239192] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_se@arrays@array_search_15.sl_268639896
+467 [442.3188691415842] arrays
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_5.20.sl_999736968
+295 [242.0484178504282] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_10.8.sl_871632815
+1250 [1656.8965058653393] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_4.sl_169087084
+359 [667.0460647337999] max
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-05-d1-prog.sl_359324081
+67 [55.25165502314504] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_11.3.sl_668954905
+2181 [3837.34465516066] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_2.16.sl_239161198
+379 [675.2099146091093] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_2.19.sl_362308785
+350 [312.47317666080465] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_7.4.sl_188955085
+2600 [4338.6295527818165] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-07-d1-prog.sl_606903486
+104 [146.4133796165058] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_7.sl_482496665
+results/greedy:full_0.7_6.model.global/benchmarks_se@arrays@array_search_2.sl_858329312
+46 [77.47454895927362] arrays
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_13.20.sl_705185277
+1605 [6008.092100851606] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.3.sl_377793346
+1850 [3323.9765971591514] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_3.15.sl_761478629
+54 [80.30710977280974] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_3.5.sl_692156250
+252 [272.84989377867316] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.8.sl_466107061
+2703 [2152.1320575557615] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-03-d5-prog.sl_586639892
+44 [60.27314960825695] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.20.sl_474308278
+4 [2.1074358993444715] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_3.16.sl_039958856
+3089 [3785.2965302128337] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.18.sl_304630489
+387 [619.5108378370196] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_11.8.sl_886981111
+200 [1077.6310996460754] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_14.16.sl_426320568
+698 [1039.8431208429167] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-15-d1-prog.sl_501791346
+skip, forbidden
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-08-d5-prog.sl_786490826
+213 [170.24495194290353] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_28_10.sl_740939560
+5 [8.349451898962183] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_9.13.sl_404525278
+187 [152.56856407381775] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_14.18.sl_982497701
+1193 [2605.2420360552255] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_4.13.sl_186389051
+1855 [2210.6571707026364] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_8.17.sl_337045140
+221 [242.26438932682157] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_10.1.sl_366377720
+740 [1431.0191642601528] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_12.sl_854863094
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_14.3.sl_610720177
+2809 [2871.587255948558] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_13.10.sl_339566853
+111 [194.5312271201664] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-15-d0-prog.sl_987275306
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-19-d0-prog.sl_512691961
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_12.12.sl_835581100
+249 [192.1848386164767] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_7.3.sl_897856224
+1318 [2072.3428771987587] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_2.5.sl_581412220
+381 [654.8574575413656] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_93_1000.sl_526292517
+182 [318.2657785451151] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-02-d5-prog.sl_234378146
+174 [223.61049007923873] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_3.9.sl_627125638
+135 [109.5205301831707] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_1.6.sl_798010148
+1249 [2816.877066013322] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_12.3.sl_481737366
+3071 [2159.6729317541412] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_8.12.sl_971628608
+524 [365.4244338230893] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_15.15.sl_153109630
+868 [1664.8870931433237] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_8.7.sl_632129097
+427 [335.0877677921212] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_15.8.sl_862302282
+skip, forbidden
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_3.sl_357091246
+140 [184.26202618124205] max
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.16.sl_531082254
+204 [419.53787482766086] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_6.sl_335150798
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_14.sl_040659729
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_14.2.sl_206408289
+520 [755.2757080447792] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-15-d5-prog.sl_031771911
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_10.11.sl_510271579
+1467 [2895.180923909539] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-11-d5-prog.sl_730759076
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_3.1.sl_982883063
+1084 [841.3687464479405] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_9.sl_054434009
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_2.12.sl_367420599
+706 [362.03351800639354] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_10.13.sl_906103934
+702 [1348.3778955794357] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_651619388
+26 [26.429835057556687] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.19.sl_356522809
+1543 [2547.1706604629494] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_4.7.sl_077728732
+13829 [9196.765556001545] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-14-d0-prog.sl_032159992
+3807 [2724.2825119388294] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.4.sl_095867502
+954 [586.5339299576723] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_5.11.sl_805208572
+1063 [2420.1494453570604] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_15.2.sl_786164856
+6201 [3278.658539469878] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_6.11.sl_353450907
+143 [102.3920446474144] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_9.12.sl_312072430
+812 [1228.5840412709965] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-04-d5-prog.sl_960881483
+580 [274.92290551369945] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_12.20.sl_901608489
+1075 [1300.8771527416816] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_922800519
+362 [234.67997826022807] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_8.18.sl_425396397
+2095 [2645.8773584457713] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_15.16.sl_582477783
+1601 [836.2936386925628] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_12.13.sl_702986720
+5732 [9188.517891995565] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_103_10.sl_631248948
+690 [1113.923790542598] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_21_1000.sl_056956169
+210 [223.58425073053243] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_1.15.sl_739898165
+896 [1602.6833029966456] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_4.20.sl_141876599
+2700 [3751.895130594821] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_4.16.sl_858038536
+808 [1849.9615156558355] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_8.5.sl_625786019
+806 [2238.799480391896] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_2.1.sl_756141081
+skip, forbidden
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_15.sl_590061153
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_12.11.sl_580197509
+914 [789.1937054828956] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-08-d1-prog.sl_735098900
+73 [57.09119641632274] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_11.2.sl_150555651
+2151 [3890.531203695999] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_se@arrays@array_search_13.sl_796528426
+380 [346.7286513153009] arrays
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_5.17.sl_784310980
+960 [2317.0072346399074] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_39_100.sl_706084236
+296 [185.2515513145968] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_2.11.sl_905930358
+3613 [7357.756546928355] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_56_1000.sl_628764459
+2109 [3804.5448773666194] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_13.1.sl_812818066
+1733 [1402.695312571477] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp@icfp_14_1000.sl_642531814
+results/greedy:full_0.7_6.model.global/benchmarks@max@max_8.sl_410887987
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_12.10.sl_609730059
+1066 [2483.14420809561] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_1.5.sl_179715380
+210 [338.786825787048] icfp
+results/greedy:full_0.7_6.model.global/benchmarks_custom@hackers_delight@hd-06-d0-prog.sl_676758515
+37 [33.17461030320567] hackers
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_3.17.sl_927445778
+624 [1543.2758349165063] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_4.8.sl_279786070
+3332 [3596.140436804101] icfp
+results/greedy:full_0.7_6.model.global/benchmarks@icfp_generated@icfp_gen_1.18.sl_149887225
+1738 [4350.515679190679] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.20.sl_120295293
+295 [242.0484178504282] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_8.8.sl_174966292
+2760 [2432.9599810128325] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_1.2.sl_445534460
+1196 [1747.9430250508772] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.7.sl_317503419
+300 [535.3572838170829] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_134_1000.sl_390309090
+762 [1992.006407783717] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.4.sl_705777957
+1963 [2328.2448581632393] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_10.11.sl_514918909
+1467 [2895.180923909539] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_3.10.sl_198817599
+skip, forbidden
+results/greedy:full_0.7_5.model.global/benchmarks@max@max_9.sl_688099712
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.2.sl_227993642
+263 [708.86861519127] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@max@max_6.sl_593949266
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.18.sl_293070104
+333 [683.6696255475738] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.19.sl_016453248
+885 [2653.5428877004083] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_10.8.sl_915417075
+1250 [1656.8965058653393] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_8.1.sl_699553390
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_322703142
+26 [26.429835057556687] hackers
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_2.3.sl_973638762
+1079 [1210.2278446294042] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-08-d0-prog.sl_647007093
+32 [45.23060597654513] hackers
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.3.sl_392210740
+6020 [3641.6933003977506] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.10.sl_220622022
+1066 [2483.14420809561] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_7.2.sl_120614899
+328 [1393.0457771797317] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_14.20.sl_967671846
+1070 [1978.656078221973] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.16.sl_649305259
+262 [734.3958581568594] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_1.19.sl_146171236
+394 [282.45220615381237] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.17.sl_893890982
+960 [2317.0072346399074] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_4.17.sl_254725766
+skip, forbidden
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.4.sl_899224956
+1102 [2808.086876138438] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_2.12.sl_191609668
+706 [362.03351800639354] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_113_1000.sl_867915986
+105 [111.28675981839554] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_4.20.sl_179739654
+2700 [3751.895130594821] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_4.16.sl_817476611
+808 [1849.9615156558355] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_54_1000.sl_613733795
+67 [112.90637495674675] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_4.19.sl_425622497
+7493 [5842.507568261379] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_4.1.sl_825925698
+1687 [1092.3517551469756] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.19.sl_651127177
+930 [1846.1240327150201] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.12.sl_888727445
+249 [192.1848386164767] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_2.18.sl_490127561
+642 [1583.724310518733] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_2.11.sl_762901831
+3613 [7357.756546928355] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_3.3.sl_777596857
+3253 [4257.125674809206] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-20-d5-prog.sl_536565660
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.16.sl_005564905
+567 [706.4464763921868] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_6.6.sl_932067541
+2118 [4567.256198697803] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.9.sl_916416996
+1820 [3413.222527218782] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_103_10.sl_215748888
+690 [1113.923790542598] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-14-d0-prog.sl_336761535
+3843 [2724.2825119388294] hackers
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_13.9.sl_017019699
+576 [1260.3843722563856] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_56_1000.sl_310072749
+2109 [3804.5448773666194] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_9.5.sl_147137336
+240 [353.3373859841795] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_8.9.sl_279386893
+1109 [2112.6994439202203] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_2.19.sl_884742644
+350 [312.47317666080465] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_6.9.sl_045043931
+5685 [7684.110202623547] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-13-d1-prog.sl_973474420
+28 [38.11576419738886] hackers
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_118_100.sl_523774115
+326 [447.18074452328005] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.14.sl_852577657
+1228 [2588.2049412385277] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_99_100.sl_652980277
+707 [528.2884044969372] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_8.14.sl_736722500
+1177 [2179.1261527225265] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-07-d1-prog.sl_156272554
+104 [146.4133796165058] hackers
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_6.11.sl_854328286
+143 [102.3920446474144] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_7.5.sl_813664407
+855 [856.7062481790872] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_se@arrays@array_search_2.sl_402910904
+46 [77.47454895927362] arrays
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_39_100.sl_842948775
+296 [185.2515513145968] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_11.15.sl_437065614
+1546 [1819.4923872405238] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_1.3.sl_420245343
+422 [456.1083652419557] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_1.12.sl_944624832
+901 [728.9327002817902] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_11.11.sl_952067898
+1410 [2287.1002487943924] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_4.10.sl_329063001
+118 [207.56175169392904] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_se@arrays@array_search_6.sl_223465551
+138 [181.396351856465] arrays
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.6.sl_446188802
+1537 [3232.444104924365] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_14.15.sl_592966796
+2771 [2902.2893071113704] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_11.1.sl_267111018
+1868 [2051.091607056243] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_14.2.sl_773642543
+520 [755.2757080447792] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_10.13.sl_824984989
+702 [1348.3778955794357] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.9.sl_475385209
+1306 [2364.5171422562844] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_10.3.sl_654287603
+1139 [1879.8156088655905] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_10.4.sl_544615108
+skip, forbidden
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_6.5.sl_715264019
+275 [429.6042699548238] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_13.4.sl_993960201
+1361 [3048.2565791784623] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_559864983
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.16.sl_043238554
+1601 [836.2936386925628] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_9.1.sl_034232967
+1608 [1021.6895432304295] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_45_10.sl_014308468
+24 [45.286129042822175] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_11.14.sl_522354353
+1159 [970.4274977872036] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@max@max_4.sl_146346383
+359 [667.0460647337999] max
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_94_1000.sl_015873060
+69 [138.04059009776347] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.5.sl_731723914
+469 [1842.2881815106728] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_se@arrays@array_search_5.sl_312021420
+140 [134.3806932297147] arrays
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_8.16.sl_183605380
+562 [644.6998126427827] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_4.13.sl_838913641
+1855 [2210.6571707026364] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.20.sl_686947898
+1300 [2790.608242601109] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_13.12.sl_852667069
+270 [331.7068210679791] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.6.sl_257968576
+534 [930.2908907233199] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_2.9.sl_184103890
+159 [178.56578966741853] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_9.16.sl_279881878
+749 [513.7041053903238] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-03-d0-prog.sl_587455335
+4 [4.0] hackers
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_8.6.sl_442195995
+1905 [2487.5776878101983] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_4.9.sl_904697053
+1022 [2873.1715462425914] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.3.sl_933459433
+3071 [2159.6729317541412] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_9.10.sl_672911838
+2304 [1294.494410467566] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_10.19.sl_154383486
+941 [1459.4347850325908] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_8.15.sl_218596516
+skip, forbidden
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_14.1.sl_095556170
+2296 [1465.2186955673476] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@max@max_8.sl_845105294
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_10.6.sl_393140563
+skip, forbidden
+results/greedy:full_0.7_5.model.global/benchmarks_se@arrays@array_search_15.sl_516305068
+467 [442.3188691415842] arrays
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.15.sl_379166775
+1194 [2736.2293417416918] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.13.sl_431870254
+701 [499.21421305815727] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_7.1.sl_563252588
+skip, forbidden
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_508554159
+360 [234.67997826022807] hackers
+results/greedy:full_0.7_5.model.global/benchmarks@max@max_2.sl_675351197
+9 [39.72151109620335] max
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_3.9.sl_064911777
+135 [109.5205301831707] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_13.5.sl_657134803
+1933 [4545.9469561529295] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_9.7.sl_585832532
+227 [201.7122742068316] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_14_1000.sl_133005410
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_14.5.sl_890613183
+1457 [2290.901706282299] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_1.10.sl_786202506
+1238 [1596.9259430401219] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.12.sl_482932775
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_8.12.sl_149419060
+524 [365.4244338230893] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_14.6.sl_912436522
+896 [2099.2382566453684] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_11.4.sl_645754360
+1235 [2535.164008878313] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_15.8.sl_332269239
+skip, forbidden
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_6.16.sl_337815953
+204 [419.53787482766086] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_12.20.sl_599846890
+1075 [1300.8771527416816] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp@icfp_105_1000.sl_218408146
+65 [123.5854255590436] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_11.5.sl_325929231
+1260 [831.291356992127] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_7.3.sl_927787433
+1318 [2072.3428771987587] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_5.10.sl_310306546
+418 [629.8206976012546] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_14.18.sl_546187420
+1193 [2605.2420360552255] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_11.12.sl_477161871
+2384 [2239.9431158895504] icfp
+results/greedy:full_0.7_5.model.global/benchmarks_custom@hackers_delight@hd-09-d5-prog.sl_223737516
+41 [51.4230498104616] hackers
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_6.2.sl_187241766
+1262 [57.48216038344478] icfp
+results/greedy:full_0.7_5.model.global/benchmarks@icfp_generated@icfp_gen_7.20.sl_808505600
+3409 [3449.555807064879] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_12.2.sl_994026184
+263 [708.86861519127] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_13.6.sl_043122080
+570 [907.0991905007509] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_10.17.sl_029076739
+655 [772.594971819657] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-17-d0-prog.sl_619261833
+202 [499.52382162294134] hackers
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.3.sl_204786915
+422 [456.1083652419557] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_32_10.sl_979040286
+595 [318.8613479158369] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.16.sl_687500107
+698 [1039.8431208429167] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_7.4.sl_214476206
+2600 [4338.6295527818165] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_2.11.sl_190899437
+3613 [7357.756546928355] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_56_1000.sl_530891024
+2109 [3804.5448773666194] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_2.1.sl_953020415
+skip, forbidden
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_9.8.sl_922895952
+258 [151.2059312107659] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_13.2.sl_134187769
+98 [1022.0025548097467] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_12.17.sl_200317803
+681 [777.0505380905744] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.20.sl_644737087
+1245 [1770.3282090557968] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_10.5.sl_655362644
+1576 [1738.626264773181] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_12.16.sl_044305333
+567 [706.4464763921868] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_45_10.sl_876925167
+24 [45.286129042822175] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.17.sl_523211684
+2223 [5106.24443467527] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.18.sl_813290445
+1738 [4350.515679190679] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_7.3.sl_875737802
+1318 [2072.3428771987587] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.4.sl_281614000
+557 [1861.3201650969986] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_135_100.sl_788245291
+385 [484.67083121439435] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-12-d5-prog.sl_296132869
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_10.6.sl_783553904
+skip, forbidden
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_3.9.sl_983677799
+135 [109.5205301831707] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_15.7.sl_391303946
+2584 [1500.631778404841] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_9.17.sl_990253704
+1139 [2085.2585541640883] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_105_100.sl_795889000
+120 [179.9084085468588] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_se@arrays@array_search_5.sl_722226715
+140 [134.3806932297147] arrays
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_15.5.sl_979343604
+469 [1842.2881815106728] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_7.11.sl_208233432
+1444 [1516.2919287581944] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_15.9.sl_077392271
+1820 [3413.222527218782] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_se@arrays@array_search_8.sl_965329605
+329 [226.2104202054027] arrays
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_11.3.sl_677092525
+2181 [3837.34465516066] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_11.2.sl_500719122
+2151 [3890.531203695999] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_11.4.sl_141353489
+1235 [2535.164008878313] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_6.3.sl_466674017
+1850 [3323.9765971591514] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_12.19.sl_300390470
+885 [2653.5428877004083] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_se@arrays@array_search_10.sl_653915770
+237 [298.0483417222324] arrays
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_2.10.sl_810811633
+666 [1503.4448406568415] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_4.19.sl_528316198
+7493 [5842.507568261379] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_531061334
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_8.10.sl_881487527
+2070 [3274.3705487420084] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_5.15.sl_240811848
+1194 [2736.2293417416918] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_3.13.sl_448717040
+366 [835.3914934739823] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_10.11.sl_838462009
+1467 [2895.180923909539] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_11.17.sl_730693765
+skip, forbidden
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_8.3.sl_438573035
+1570 [2271.181605964104] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_7.6.sl_053020705
+976 [2456.1728377908316] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_5.16.sl_320120961
+262 [734.3958581568594] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_12.15.sl_305759840
+845 [1149.5648388222642] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_015054483
+skip, forbidden
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.13.sl_838177576
+1335 [2800.4790204320734] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_73_10.sl_217455993
+87 [189.6285740160743] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_7.5.sl_781661803
+855 [856.7062481790872] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_3.4.sl_359152961
+7 [10.771247708052407] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_9.5.sl_242405273
+240 [353.3373859841795] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.7.sl_717200262
+1251 [2548.0140648031847] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_99_100.sl_167125844
+707 [528.2884044969372] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_15.18.sl_909686717
+781 [861.1566219436312] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_12.5.sl_252074820
+1149 [1633.1756313300666] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-10-d5-prog.sl_603816824
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_14_1000.sl_619005091
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-05-d1-prog.sl_531872266
+67 [55.25165502314504] hackers
+results/greedy:full_0.7_0.model.global/benchmarks@max@max_4.sl_722279592
+359 [667.0460647337999] max
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_10.7.sl_132015116
+328 [1058.2062601914124] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_2.9.sl_444648098
+159 [178.56578966741853] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.17.sl_566177716
+157 [138.79666306605156] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_4.13.sl_702227796
+1855 [2210.6571707026364] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_11.7.sl_989554809
+1553 [1215.4834011475618] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@max@max_8.sl_779033622
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.8.sl_975851012
+65 [147.34277871181337] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_278686520
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_4.17.sl_366697565
+skip, forbidden
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_6.11.sl_328159432
+143 [102.3920446474144] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@max@max_5.sl_698108329
+2897 [2211.8586283687787] max
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_13.7.sl_667526661
+687 [630.2951242340483] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_7.18.sl_861500170
+1688 [2414.1594537125325] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_118_100.sl_403595568
+326 [447.18074452328005] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.11.sl_421483712
+1788 [2546.593682109126] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-02-d1-prog.sl_795542160
+30 [52.80565213622834] hackers
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_94_1000.sl_732813194
+69 [138.04059009776347] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-03-d0-prog.sl_423985478
+4 [4.0] hackers
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_4.11.sl_909824755
+skip, forbidden
+results/greedy:full_0.7_0.model.global/benchmarks@max@max_9.sl_404566559
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_11.9.sl_326881512
+1124 [1816.1411389338757] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_278499362
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.5.sl_054762902
+210 [338.786825787048] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_72_10.sl_525343452
+547 [370.71824639335557] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-09-d5-prog.sl_150660460
+41 [51.4230498104616] hackers
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_13.3.sl_947005849
+2690 [3794.698106773059] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_9.11.sl_516916699
+2043 [1182.6473579895612] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.6.sl_099354417
+896 [2099.2382566453684] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-06-d1-prog.sl_769904053
+169 [122.91422729565919] hackers
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_5.13.sl_139947506
+965 [2493.148852593131] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-17-d1-prog.sl_185542891
+654 [1114.0652110548606] hackers
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_7.8.sl_009488809
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_38_10.sl_314895348
+166 [246.87490088395498] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-18-d0-prog.sl_127667836
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_7_10.sl_170353737
+115 [643.7717028555295] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_13.14.sl_207296482
+441 [471.20089170738044] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_13.12.sl_953330784
+270 [331.7068210679791] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_6.2.sl_000974097
+1262 [57.48216038344478] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_4.18.sl_674216933
+350 [373.5533067346098] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.3.sl_344236046
+2809 [2871.587255948558] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_94_100.sl_173171998
+66 [146.82766018456016] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_se@arrays@array_search_13.sl_869010701
+380 [346.7286513153009] arrays
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_12.14.sl_438078767
+1067 [2369.350685993117] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_96_1000.sl_632536705
+2122 [3129.7245548151095] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_8.6.sl_258601202
+1905 [2487.5776878101983] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_73_10.sl_636993181
+87 [189.6285740160743] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_8.13.sl_363499132
+650 [519.1450498764992] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_7.1.sl_933874823
+skip, forbidden
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_10.3.sl_075157419
+1139 [1879.8156088655905] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_4.9.sl_036958332
+1022 [2873.1715462425914] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.6.sl_037344464
+1249 [2816.877066013322] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_94_100.sl_223779962
+66 [146.82766018456016] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_5.14.sl_739788912
+1228 [2588.2049412385277] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_6.18.sl_602745733
+387 [619.5108378370196] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_6.5.sl_481815809
+275 [429.6042699548238] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp@icfp_93_1000.sl_158493856
+182 [318.2657785451151] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-08-d0-prog.sl_738865337
+32 [45.23060597654513] hackers
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_15.10.sl_784391865
+351 [1242.5318286395177] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_14.18.sl_163047920
+1193 [2605.2420360552255] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.14.sl_604697344
+skip, forbidden
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_4.15.sl_941124506
+179 [120.59709063109146] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_9.1.sl_308894793
+1608 [1021.6895432304295] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_5.18.sl_108744789
+1268 [2200.401582573527] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_2.19.sl_142570283
+350 [312.47317666080465] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_1.7.sl_901875850
+751 [1221.9007256497507] icfp
+results/greedy:full_0.7_0.model.global/benchmarks@icfp_generated@icfp_gen_9.10.sl_932132540
+2304 [1294.494410467566] icfp
+results/greedy:full_0.7_0.model.global/benchmarks_custom@hackers_delight@hd-09-d0-prog.sl_596187430
+59 [116.38870651406666] hackers
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-18-d1-prog.sl_598522586
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_15.2.sl_142918413
+6582 [3278.658539469878] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_13.8.sl_994826089
+3435 [2253.0312837711504] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.16.sl_239345402
+570 [706.4464763921868] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_39_100.sl_595172798
+296 [185.2515513145968] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_14.3.sl_563459726
+2691 [2871.587255948558] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_13.16.sl_456715059
+2723 [5242.8029623797775] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_10.12.sl_677934156
+179 [134.39694116348426] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_6.16.sl_230724754
+264 [419.53787482766086] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_15.16.sl_678915198
+1602 [836.2936386925628] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_7.2.sl_232190652
+329 [1393.0457771797317] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_82_100.sl_376824091
+527 [1434.9427380667591] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_9.11.sl_976352120
+2272 [1182.6473579895612] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.6.sl_167719075
+965 [2487.5776878101983] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_4.6.sl_451939316
+5990 [3512.81264008622] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_13.13.sl_537646392
+3055 [4878.377226524902] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_7.7.sl_529384298
+1454 [1629.5383608227773] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.5.sl_420335812
+254 [272.84989377867316] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.8.sl_585210709
+1707 [2432.9599810128325] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.15.sl_793396202
+59 [80.30710977280974] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_5.6.sl_025851983
+516 [930.2908907233199] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_6.12.sl_818015926
+97 [50.80457812783813] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_13.2.sl_390356604
+93 [1022.0025548097467] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.5.sl_884348159
+804 [2238.799480391896] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.3.sl_418487628
+3256 [4257.125674809206] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_14.11.sl_411715474
+1575 [2546.593682109126] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_2.8.sl_553376728
+166 [107.0970486295835] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-10-d0-prog.sl_373596392
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_10.6.sl_767374419
+skip, forbidden
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_2.18.sl_424921953
+642 [1583.724310518733] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_4.12.sl_594334157
+606 [404.9134573930352] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.17.sl_432873031
+567 [777.0505380905744] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_15.18.sl_843448566
+787 [861.1566219436312] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_10.1.sl_844470616
+734 [1431.0191642601528] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.20.sl_677826591
+708 [2583.9441500704634] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_11.3.sl_814366055
+1599 [3837.34465516066] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_1.19.sl_027547091
+389 [282.45220615381237] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_1.3.sl_403262644
+422 [456.1083652419557] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_se@arrays@array_search_5.sl_634988435
+97 [134.3806932297147] arrays
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_150_10.sl_428874535
+202 [785.1040492524327] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_82_10.sl_872295914
+280 [1431.3924559422403] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.13.sl_897064818
+4467 [9188.517891995565] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.9.sl_215589972
+1113 [2112.6994439202203] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.12.sl_141209400
+303 [218.01466399783476] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_5.13.sl_312472723
+1412 [2493.148852593131] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.9.sl_917889574
+1698 [2577.724603313127] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_5.10.sl_939518114
+420 [629.8206976012546] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_15.4.sl_166332587
+1738 [2328.2448581632393] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_6.19.sl_171156156
+1534 [2547.1706604629494] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.19.sl_812928001
+1073 [2653.5428877004083] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_1.16.sl_892101095
+1283 [1181.8292795445977] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_9.1.sl_686251968
+621 [1021.6895432304295] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_9.2.sl_419380880
+808 [1292.5473392485803] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.8.sl_448153506
+679 [894.9727696358377] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_7.14.sl_135385111
+903 [1613.7132196508082] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_5_1000.sl_539359876
+144 [217.59399911661893] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-19-d1-prog.sl_402648207
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-19-d5-prog.sl_899494866
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_4.14.sl_216811951
+544 [612.5029814448142] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_641800415
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_7.4.sl_215996695
+2331 [4338.6295527818165] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_94_1000.sl_101002273
+69 [138.04059009776347] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_14.2.sl_141571123
+520 [755.2757080447792] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_15.6.sl_289898991
+1109 [2801.0921728546336] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.3.sl_658213965
+3113 [2159.6729317541412] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_4.2.sl_660717335
+850 [2116.368470877464] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.18.sl_670729366
+3001 [5495.445833077082] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_147_1000.sl_121064831
+409 [305.4179194705285] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_10.19.sl_389474093
+643 [1459.4347850325908] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@max@max_4.sl_786361865
+693 [667.0460647337999] max
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_6.13.sl_195035798
+128 [241.7248176237208] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_5.14.sl_118885096
+1307 [2588.2049412385277] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@max@max_13.sl_938540110
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-01-d1-prog.sl_106551713
+41 [41.28883857823398] hackers
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.4.sl_047885642
+1336 [2067.4913647170733] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_11.11.sl_539500327
+1676 [2287.1002487943924] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.18.sl_711755354
+458 [683.6696255475738] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_5.2.sl_525669785
+872 [738.5891984191219] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_11.20.sl_008018103
+3285 [4266.28976128922] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@max@max_11.sl_268769294
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_5.12.sl_685636893
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.16.sl_794788757
+561 [644.6998126427827] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_2.9.sl_747488187
+159 [178.56578966741853] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_se@arrays@array_search_15.sl_649925038
+467 [442.3188691415842] arrays
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_72_10.sl_766861657
+547 [370.71824639335557] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-13-d0-prog.sl_273692386
+18 [38.1421594887902] hackers
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.15.sl_605667641
+skip, forbidden
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_14.1.sl_166597849
+2483 [1465.2186955673476] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_992935584
+skip, forbidden
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_14.18.sl_365664767
+1274 [2605.2420360552255] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_2.11.sl_174182085
+4460 [7357.756546928355] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_5.7.sl_802907027
+270 [385.441934718822] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_144_1000.sl_444675071
+1299 [2193.80490039856] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_4.19.sl_946506269
+7200 [5842.507568261379] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_9.17.sl_971575326
+1123 [2085.2585541640883] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-12-d1-prog.sl_394672459
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-07-d5-prog.sl_135600898
+1006 [1511.1628940765868] hackers
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_1.1.sl_123775678
+575 [1360.7901423457877] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_25_1000.sl_048197696
+837 [2113.602258893391] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_193080357
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_2.3.sl_128141069
+1124 [1210.2278446294042] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-06-d1-prog.sl_421470558
+162 [122.91422729565919] hackers
+results/greedy:full_0.7_2.model.global/benchmarks_se@arrays@array_search_10.sl_991806113
+237 [298.0483417222324] arrays
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.2.sl_857790808
+146 [518.7083873526385] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_12.4.sl_067219629
+1703 [1486.4156811718453] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_15.13.sl_418456616
+707 [499.21421305815727] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-04-d1-prog.sl_876756035
+133 [98.7977462356773] hackers
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-18-d0-prog.sl_673437938
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_14.13.sl_955247812
+1832 [2800.4790204320734] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_13.15.sl_446648053
+894 [2220.1375492810294] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.18.sl_831070570
+2613 [2645.8773584457713] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_144_100.sl_555021003
+1287 [2082.8142273761437] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_10.18.sl_335901912
+445 [965.1473553961067] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_32_10.sl_848135851
+595 [318.8613479158369] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_11.18.sl_341375866
+1913 [1224.460952140912] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_7.5.sl_547809678
+369 [856.7062481790872] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_se@arrays@array_search_14.sl_765388298
+617 [476.4792596494115] arrays
+results/greedy:full_0.7_2.model.global/benchmarks@max@max_2.sl_757168387
+9 [39.72151109620335] max
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_87_10.sl_133960160
+168 [132.14093500790423] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-15-d5-prog.sl_249885167
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_7.1.sl_338431476
+skip, forbidden
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_13.10.sl_657515007
+149 [194.5312271201664] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_96_1000.sl_670809653
+1408 [3129.7245548151095] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_8.7.sl_077100091
+427 [335.0877677921212] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.9.sl_064462496
+135 [109.5205301831707] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.7.sl_078442585
+2009 [2132.8445637700984] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp@icfp_94_100.sl_149036381
+67 [146.82766018456016] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_3.19.sl_622812977
+759 [590.2669984759151] icfp
+results/greedy:full_0.7_2.model.global/benchmarks_custom@hackers_delight@hd-17-d0-prog.sl_486170466
+202 [499.52382162294134] hackers
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_4.9.sl_334379179
+886 [2873.1715462425914] icfp
+results/greedy:full_0.7_2.model.global/benchmarks@icfp_generated@icfp_gen_6.14.sl_484046112
+1813 [1589.930572698794] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.9.sl_820077877
+1713 [2577.724603313127] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_10.9.sl_123507937
+631 [543.1093030806628] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-20-d0-prog.sl_511602857
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-18-d1-prog.sl_012300176
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_9.1.sl_889809803
+627 [1021.6895432304295] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@max@max_12.sl_294249453
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_15.16.sl_888910067
+1602 [836.2936386925628] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_13.7.sl_596136008
+686 [630.2951242340483] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.13.sl_060988578
+4479 [9188.517891995565] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_3.15.sl_966753494
+59 [80.30710977280974] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.14.sl_764699245
+1026 [2369.350685993117] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.16.sl_699872389
+272 [734.3958581568594] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.12.sl_769171147
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_4.17.sl_670951587
+skip, forbidden
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_9.19.sl_700487104
+1215 [3009.3922734559055] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_113_1000.sl_742161603
+105 [111.28675981839554] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_2.11.sl_989695489
+4471 [7357.756546928355] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-18-d5-prog.sl_770866180
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.2.sl_977067132
+262 [708.86861519127] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_250008298
+skip, forbidden
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_862084470
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.1.sl_348212781
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_104_10.sl_357587015
+123 [178.6914734320271] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_1.1.sl_706179985
+572 [1360.7901423457877] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.15.sl_203367899
+779 [1149.5648388222642] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_10.5.sl_823288073
+1900 [1738.626264773181] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_2.4.sl_232565420
+1444 [3759.9718340073123] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_4.12.sl_510781470
+606 [404.9134573930352] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_39_100.sl_323348294
+296 [185.2515513145968] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_8.9.sl_892840853
+1125 [2112.6994439202203] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_15.15.sl_498736501
+1031 [1664.8870931433237] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_15.19.sl_334180808
+1172 [1846.1240327150201] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_13.12.sl_195160408
+162 [331.7068210679791] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-05-d0-prog.sl_061056855
+31 [21.653271657906107] hackers
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_2.9.sl_826178686
+159 [178.56578966741853] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.8.sl_326318888
+431 [894.9727696358377] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_1.16.sl_613335783
+1283 [1181.8292795445977] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_3.12.sl_307461646
+311 [218.01466399783476] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_1.8.sl_125437371
+1100 [2291.8209945083813] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_45_1000.sl_304722281
+29 [45.393841073607675] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-17-d0-prog.sl_247710776
+202 [499.52382162294134] hackers
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_8.20.sl_117963692
+3026 [4005.724405549613] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_11.6.sl_433433682
+8 [7.659949856983717] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-03-d0-prog.sl_372394357
+4 [4.0] hackers
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_14.16.sl_336856994
+715 [1039.8431208429167] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_6.7.sl_158554339
+1509 [1160.7011611522958] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_25_1000.sl_769361309
+846 [2113.602258893391] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_3.19.sl_109652993
+762 [590.2669984759151] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_10.7.sl_818709921
+326 [1058.2062601914124] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-07-d5-prog.sl_681120092
+985 [1511.1628940765868] hackers
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_3.18.sl_754934743
+3034 [5495.445833077082] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_1.18.sl_442593302
+1550 [4350.515679190679] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_14.19.sl_633148163
+2696 [4689.942844612569] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_4.14.sl_276719990
+544 [612.5029814448142] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.10.sl_538351148
+1308 [2483.14420809561] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.15.sl_727467797
+1006 [2736.2293417416918] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_8.1.sl_650747256
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_15.1.sl_397475398
+695 [1304.407938086629] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-15-d0-prog.sl_239404136
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_15.17.sl_884530816
+2498 [6288.64468498417] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_15.11.sl_221032114
+420 [461.2949390387083] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.4.sl_199408111
+848 [2808.086876138438] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_54_1000.sl_811176412
+67 [112.90637495674675] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_2.13.sl_733073117
+578 [2600.160480226906] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_15.9.sl_226347954
+3253 [3413.222527218782] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@max@max_9.sl_954790477
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_11.7.sl_734428613
+1555 [1215.4834011475618] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_6.12.sl_880343092
+97 [50.80457812783813] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_14.8.sl_022823834
+66 [147.34277871181337] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_10.4.sl_775486692
+skip, forbidden
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_10.16.sl_386929526
+3888 [4197.85950884471] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_3.14.sl_876376403
+389 [526.8783696119541] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_13.13.sl_670515704
+3072 [4878.377226524902] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_1.10.sl_988586796
+1428 [1596.9259430401219] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_13.3.sl_596399240
+2926 [3794.698106773059] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_8.14.sl_761869872
+477 [2179.1261527225265] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_1.4.sl_062198300
+567 [1861.3201650969986] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.20.sl_186257641
+1068 [1300.8771527416816] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_11.9.sl_927725454
+1042 [1816.1411389338757] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-18-d0-prog.sl_727167934
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_6.18.sl_593932745
+390 [619.5108378370196] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_10.14.sl_841409798
+1569 [2982.6269188852257] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_707026990
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_135_100.sl_531948167
+324 [484.67083121439435] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_14.18.sl_547300657
+1289 [2605.2420360552255] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.13.sl_780925901
+1424 [2493.148852593131] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_883143054
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_4.10.sl_331410064
+119 [207.56175169392904] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_6.9.sl_788600021
+4104 [7684.110202623547] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.17.sl_418364090
+1040 [2317.0072346399074] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_6.13.sl_496665016
+128 [241.7248176237208] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.3.sl_030217424
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_7.8.sl_217662469
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_15.5.sl_803489522
+1170 [1842.2881815106728] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_14.10.sl_202445109
+5836 [6102.439393907673] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_4.6.sl_963815081
+6217 [3512.81264008622] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_3.11.sl_333813082
+431 [396.24420504164794] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_81_1000.sl_885340512
+322 [1702.7133700239192] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_030671314
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_8.13.sl_173179515
+650 [519.1450498764992] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_9.12.sl_919316205
+984 [1228.5840412709965] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_14.7.sl_643609150
+1501 [2548.0140648031847] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_13.5.sl_680958069
+3229 [4545.9469561529295] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-01-d1-prog.sl_214573617
+43 [41.28883857823398] hackers
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_21_1000.sl_945704054
+212 [223.58425073053243] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_9.17.sl_304714433
+1129 [2085.2585541640883] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-20-d5-prog.sl_211629078
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_12.6.sl_194337815
+1547 [3232.444104924365] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_11.20.sl_002291140
+3288 [4266.28976128922] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-02-d5-prog.sl_194603780
+172 [223.61049007923873] hackers
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_2.10.sl_441037067
+890 [1503.4448406568415] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@max@max_5.sl_576193269
+2897 [2211.8586283687787] max
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_14.12.sl_753605802
+54 [66.05225506621119] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_4.5.sl_004964792
+874 [1033.1470357049996] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_13.17.sl_659998707
+487 [584.5492484943388] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@max@max_13.sl_101739914
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_96_10.sl_000093702
+663 [2191.0442283945304] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_105_1000.sl_906360287
+65 [123.5854255590436] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_11.3.sl_355369199
+1599 [3837.34465516066] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_6.14.sl_086121603
+1828 [1589.930572698794] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_4.20.sl_221306825
+3060 [3751.895130594821] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@max@max_6.sl_228147500
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_8.16.sl_802558732
+561 [644.6998126427827] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp@icfp_94_1000.sl_379821884
+69 [138.04059009776347] icfp
+results/greedy:full_0.7_1.model.global/benchmarks_custom@hackers_delight@hd-12-d5-prog.sl_657195180
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_5.9.sl_970238050
+1613 [2364.5171422562844] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_1.3.sl_849995178
+422 [456.1083652419557] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_7.17.sl_132130964
+356 [334.75365623531906] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_9.4.sl_388348901
+1704 [3042.8793888919063] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_2.12.sl_433363559
+706 [362.03351800639354] icfp
+results/greedy:full_0.7_1.model.global/benchmarks@icfp_generated@icfp_gen_9.20.sl_365654228
+1083 [960.285901222634] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_7.5.sl_302846011
+369 [856.7062481790872] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_586173313
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_10.20.sl_450831753
+3806 [7546.4760607926155] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.11.sl_446377066
+4460 [7357.756546928355] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-12-d5-prog.sl_971203041
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_139_10.sl_130713382
+134 [109.58871790084316] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_9.10.sl_061700418
+1912 [1294.494410467566] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_3.15.sl_784618349
+59 [80.30710977280974] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_5.4.sl_046651444
+845 [2808.086876138438] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_14.12.sl_757222142
+54 [66.05225506621119] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_87_10.sl_605851118
+168 [132.14093500790423] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_11.13.sl_657940853
+706 [1381.5332488497559] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_3.7.sl_506363752
+2009 [2132.8445637700984] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_6.6.sl_294860732
+1838 [4567.256198697803] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_se@arrays@array_search_4.sl_388726713
+60 [134.06644104405711] arrays
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_8.12.sl_702776996
+529 [365.4244338230893] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_10.2.sl_047533488
+52 [861.7656538471431] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_135_100.sl_433225690
+324 [484.67083121439435] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_6.11.sl_788951466
+144 [102.3920446474144] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.19.sl_286103927
+350 [312.47317666080465] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_15.4.sl_567073483
+1738 [2328.2448581632393] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_1.8.sl_509012229
+1088 [2291.8209945083813] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_13.17.sl_556579187
+487 [584.5492484943388] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_533110372
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_8.8.sl_018986387
+1707 [2432.9599810128325] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_1.20.sl_550005481
+1626 [1770.3282090557968] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_12.15.sl_393332912
+779 [1149.5648388222642] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.13.sl_895843699
+578 [2600.160480226906] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_13.4.sl_402675529
+1363 [3048.2565791784623] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_104_10.sl_546462987
+123 [178.6914734320271] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_94_100.sl_735912814
+67 [146.82766018456016] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.7.sl_197931579
+813 [2177.630679112316] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-19-d5-prog.sl_929776457
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_12.12.sl_886539977
+250 [192.1848386164767] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_45_10.sl_795039014
+29 [45.286129042822175] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-17-d1-prog.sl_712015250
+654 [1114.0652110548606] hackers
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_147_1000.sl_242329107
+409 [305.4179194705285] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_14.4.sl_633318282
+949 [882.2296529152583] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_1.16.sl_899320478
+1283 [1181.8292795445977] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_5.10.sl_196519732
+420 [629.8206976012546] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_118_100.sl_482901663
+323 [447.18074452328005] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_10.5.sl_847405150
+1879 [1738.626264773181] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_5.19.sl_927391443
+653 [528.2884044969372] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_13.7.sl_198008361
+686 [630.2951242340483] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_72_10.sl_940290599
+547 [370.71824639335557] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_7.8.sl_514116754
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_11.12.sl_050784963
+2823 [2239.9431158895504] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_73_10.sl_554415940
+82 [189.6285740160743] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_se@arrays@array_search_8.sl_028478262
+299 [226.2104202054027] arrays
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_14.18.sl_741187600
+1274 [2605.2420360552255] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_se@arrays@array_search_11.sl_685956021
+287 [322.14288813096437] arrays
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_4.13.sl_674027661
+1601 [2210.6571707026364] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_8.2.sl_246182399
+252 [953.0937745069668] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_3.11.sl_699342332
+431 [396.24420504164794] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@max@max_12.sl_438988613
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_12.9.sl_664152131
+1698 [2577.724603313127] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_51_10.sl_302132195
+357 [270.39977652179624] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_se@arrays@array_search_9.sl_837730411
+200 [474.292327859049] arrays
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_7.15.sl_990613732
+385 [635.6574555078683] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.10.sl_369971080
+890 [1503.4448406568415] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_3.17.sl_634282594
+882 [1543.2758349165063] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_11.2.sl_989774768
+1781 [3890.531203695999] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-09-d5-prog.sl_515763555
+41 [51.4230498104616] hackers
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_13.10.sl_663823628
+149 [194.5312271201664] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_21_1000.sl_346462512
+212 [223.58425073053243] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_3.13.sl_129514347
+364 [835.3914934739823] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_6.9.sl_659929734
+4101 [7684.110202623547] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_9.18.sl_457888237
+1112 [1849.4377606477306] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_14.17.sl_976723337
+156 [138.79666306605156] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_10.13.sl_878839528
+1521 [1348.3778955794357] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_45_1000.sl_190793798
+29 [45.393841073607675] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_15.8.sl_453704345
+skip, forbidden
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_5.12.sl_638110709
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_6.12.sl_986562397
+97 [50.80457812783813] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_7.3.sl_177782716
+1325 [2072.3428771987587] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-20-d0-prog.sl_981689840
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-04-d5-prog.sl_361946349
+549 [274.92290551369945] hackers
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_11.9.sl_050406410
+1042 [1816.1411389338757] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_8.4.sl_543907426
+1332 [2067.4913647170733] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-19-d0-prog.sl_159588058
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.18.sl_038476001
+642 [1583.724310518733] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-05-d0-prog.sl_779507168
+31 [21.653271657906107] hackers
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-13-d0-prog.sl_126594862
+18 [38.1421594887902] hackers
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_12.5.sl_664060507
+1633 [1633.1756313300666] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-20-d5-prog.sl_675051230
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_11.8.sl_801781481
+186 [1077.6310996460754] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_5.3.sl_141714208
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_14.6.sl_061801970
+1186 [2099.2382566453684] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_14.5.sl_541309639
+1012 [2290.901706282299] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_114_100.sl_727124945
+624 [745.8105757312521] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_1.13.sl_651363999
+1559 [3057.3204101485708] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.9.sl_283378519
+159 [178.56578966741853] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_6.7.sl_183780493
+1509 [1160.7011611522958] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_6.4.sl_581458191
+962 [586.5339299576723] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_14.3.sl_253775516
+2691 [2871.587255948558] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_5.11.sl_438604699
+1850 [2420.1494453570604] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_15.10.sl_684052975
+354 [1242.5318286395177] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.2.sl_360854001
+325 [682.1200303633649] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_134_1000.sl_803043376
+1054 [1992.006407783717] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_14.7.sl_532053683
+1489 [2548.0140648031847] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@max@max_7.sl_705682887
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.3.sl_466376606
+1132 [1210.2278446294042] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.6.sl_368313924
+1999 [4055.974475753138] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_10.4.sl_862313697
+skip, forbidden
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-04-d0-prog.sl_850354205
+27 [19.953082427327114] hackers
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_10.17.sl_775526624
+636 [772.594971819657] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_10.9.sl_222448572
+631 [543.1093030806628] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_3.14.sl_859543357
+389 [526.8783696119541] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_7_1000.sl_902349156
+512 [1531.6235989822203] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@max@max_3.sl_890112602
+105 [184.26202618124205] max
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_93_1000.sl_633546790
+169 [318.2657785451151] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-02-d5-prog.sl_565420138
+172 [223.61049007923873] hackers
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_15.14.sl_118873270
+2912 [3776.044802197855] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_8.7.sl_781005026
+427 [335.0877677921212] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_2.20.sl_770272614
+2337 [2056.0517089384525] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_6.3.sl_668881322
+1762 [3323.9765971591514] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp@icfp_103_10.sl_665653021
+691 [1113.923790542598] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_1.3.sl_405928891
+422 [456.1083652419557] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_723585861
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_11.6.sl_068571427
+8 [7.659949856983717] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_5.18.sl_429216788
+1766 [2200.401582573527] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_3.3.sl_074823093
+3256 [4257.125674809206] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_1.11.sl_427823636
+518 [323.22450582226816] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_9.16.sl_390913388
+746 [513.7041053903238] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-03-d5-prog.sl_894705803
+44 [60.27314960825695] hackers
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-09-d1-prog.sl_614675939
+41 [54.000118146207946] hackers
+results/greedy:full_0.7_8.model.global/benchmarks@max@max_9.sl_543332095
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_13.13.sl_327969544
+3063 [4878.377226524902] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_10.1.sl_555320772
+734 [1431.0191642601528] icfp
+results/greedy:full_0.7_8.model.global/benchmarks@icfp_generated@icfp_gen_3.9.sl_690443048
+135 [109.5205301831707] icfp
+results/greedy:full_0.7_8.model.global/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_480996943
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_7_10.sl_671640163
+115 [643.7717028555295] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.7.sl_391363439
+227 [201.7122742068316] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_4.2.sl_993595691
+524 [2116.368470877464] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_104_10.sl_928460282
+69 [178.6914734320271] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_se@arrays@array_search_7.sl_076151504
+135 [210.02021016330366] arrays
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_5.9.sl_093354103
+1306 [2364.5171422562844] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_12.4.sl_730768630
+1772 [1486.4156811718453] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_5.14.sl_902442375
+1228 [2588.2049412385277] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-14-d0-prog.sl_437252583
+3807 [2724.2825119388294] hackers
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_7.3.sl_822665940
+1318 [2072.3428771987587] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_1.6.sl_955003176
+1249 [2816.877066013322] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_5_1000.sl_469772930
+90 [217.59399911661893] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_10.15.sl_320223367
+663 [2219.0095052769675] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_3.19.sl_243526255
+710 [590.2669984759151] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_3.12.sl_830686667
+311 [218.01466399783476] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-20-d0-prog.sl_057359294
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_14.2.sl_375420500
+520 [755.2757080447792] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.15.sl_015460796
+1628 [1168.467575370147] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-05-d1-prog.sl_910152086
+67 [55.25165502314504] hackers
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_10.7.sl_361368158
+328 [1058.2062601914124] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_15.15.sl_562627228
+868 [1664.8870931433237] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_4.7.sl_937558364
+13829 [9196.765556001545] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-07-d5-prog.sl_437358751
+984 [1511.1628940765868] hackers
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_14.4.sl_631008609
+957 [882.2296529152583] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_2.16.sl_698623326
+379 [675.2099146091093] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_3.16.sl_567378449
+3089 [3785.2965302128337] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_14.9.sl_494433285
+results/greedy:full_0.7_7.model.global/benchmarks@max@max_12.sl_751023285
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_14_1000.sl_641746894
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-15-d1-prog.sl_108998743
+skip, forbidden
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_96_10.sl_709706970
+889 [2191.0442283945304] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.12.sl_165357366
+2384 [2239.9431158895504] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_6.12.sl_741819276
+97 [50.80457812783813] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_8.1.sl_740849244
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_5.8.sl_227474009
+5195 [3593.753791824967] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_2.4.sl_466815573
+2308 [3759.9718340073123] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.12.sl_624738808
+812 [1228.5840412709965] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_94_1000.sl_696261303
+69 [138.04059009776347] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_14.18.sl_620146515
+1193 [2605.2420360552255] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_2.14.sl_136242957
+342 [477.2997613751572] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_134_1000.sl_744737427
+762 [1992.006407783717] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_8.4.sl_679470715
+1122 [2067.4913647170733] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@max@max_9.sl_823230939
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_13.16.sl_276018930
+3121 [5242.8029623797775] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_12.18.sl_277145561
+333 [683.6696255475738] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_2.15.sl_974258653
+1573 [2765.5846231228866] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.5.sl_652574030
+1260 [831.291356992127] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_12.19.sl_870933232
+885 [2653.5428877004083] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_4.9.sl_913007162
+1022 [2873.1715462425914] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_10.5.sl_270659274
+1576 [1738.626264773181] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_8.14.sl_007379514
+1177 [2179.1261527225265] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_7.18.sl_977570675
+1688 [2414.1594537125325] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_7.1.sl_402393379
+skip, forbidden
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_4.1.sl_857377914
+1687 [1092.3517551469756] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.9.sl_121854629
+1124 [1816.1411389338757] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_2.12.sl_744275101
+706 [362.03351800639354] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_4.8.sl_128634010
+3332 [3596.140436804101] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.4.sl_081223588
+1235 [2535.164008878313] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_7.14.sl_791342141
+595 [1613.7132196508082] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_2.3.sl_516895110
+1079 [1210.2278446294042] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_8.8.sl_195553579
+2760 [2432.9599810128325] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@max@max_5.sl_750220838
+2897 [2211.8586283687787] max
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_10.14.sl_837366743
+2070 [2982.6269188852257] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.20.sl_377292500
+1083 [960.285901222634] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.11.sl_456656593
+2043 [1182.6473579895612] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.10.sl_760562847
+1427 [2403.1223591579005] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_13.8.sl_737514082
+3804 [2253.0312837711504] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_15.10.sl_328340337
+351 [1242.5318286395177] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_6.5.sl_119185486
+275 [429.6042699548238] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-08-d1-prog.sl_840929578
+73 [57.09119641632274] hackers
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_024106541
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.18.sl_696963153
+880 [1849.4377606477306] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_8.12.sl_876217242
+524 [365.4244338230893] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_6.10.sl_803723687
+7368 [6075.27191418463] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_3.6.sl_032838625
+1569 [2400.574000988888] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_3.17.sl_953128759
+624 [1543.2758349165063] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_se@arrays@array_search_2.sl_401038783
+46 [77.47454895927362] arrays
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_15.3.sl_748878377
+6020 [3641.6933003977506] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_15.1.sl_590185031
+698 [1304.407938086629] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-15-d5-prog.sl_041764168
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_14.7.sl_342265756
+1251 [2548.0140648031847] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_7.19.sl_106683143
+310 [251.8346894670327] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_se@arrays@array_search_8.sl_862595400
+329 [226.2104202054027] arrays
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_7.6.sl_708181473
+976 [2456.1728377908316] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@max@max_6.sl_015627767
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_25_1000.sl_074242303
+1318 [2113.602258893391] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-15-d0-prog.sl_558291759
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-04-d1-prog.sl_513634479
+125 [98.7977462356773] hackers
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_1.14.sl_095026262
+skip, forbidden
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_6.6.sl_028881130
+2118 [4567.256198697803] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-09-d1-prog.sl_345219429
+41 [54.000118146207946] hackers
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_13.18.sl_158307958
+3724 [4681.72754002556] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_1.13.sl_471766112
+1728 [3057.3204101485708] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_5.2.sl_355966250
+1105 [738.5891984191219] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.1.sl_886821370
+1868 [2051.091607056243] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_237406038
+360 [234.67997826022807] hackers
+results/greedy:full_0.7_7.model.global/benchmarks@max@max_10.sl_198340641
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_15.4.sl_069406254
+1963 [2328.2448581632393] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_8.16.sl_513964946
+562 [644.6998126427827] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_8.11.sl_959545431
+2621 [5678.7144024805975] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_4.6.sl_624186550
+6162 [3512.81264008622] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_158136729
+26 [26.429835057556687] hackers
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_4.15.sl_458643538
+179 [120.59709063109146] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.16.sl_820760458
+2295 [3353.78286932107] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_13.12.sl_629321258
+270 [331.7068210679791] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_556196602
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_15.18.sl_093510912
+781 [861.1566219436312] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_150_10.sl_471037929
+215 [785.1040492524327] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_12.6.sl_250555021
+1537 [3232.444104924365] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_82_100.sl_055828281
+752 [1434.9427380667591] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.14.sl_832605936
+438 [428.0852172763551] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@max@max_8.sl_050642651
+results/greedy:full_0.7_7.model.global/benchmarks_custom@hackers_delight@hd-07-d0-prog.sl_873874327
+48 [53.41618705792747] hackers
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_13.19.sl_845415045
+365 [712.4218465522466] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_39_100.sl_484641041
+296 [185.2515513145968] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_105_100.sl_027250961
+120 [179.9084085468588] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_12.20.sl_041142212
+1075 [1300.8771527416816] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.16.sl_269561916
+749 [513.7041053903238] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_14.8.sl_961460924
+65 [147.34277871181337] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_2.19.sl_848200939
+350 [312.47317666080465] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.19.sl_610849530
+985 [1876.0678678482275] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_73_10.sl_111025711
+87 [189.6285740160743] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.6.sl_516713906
+2908 [5461.503254091627] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.2.sl_099316599
+2151 [3890.531203695999] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_3.10.sl_285656820
+skip, forbidden
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_10.10.sl_394363965
+2451 [5730.4340473611965] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_9.3.sl_673966662
+761 [2647.3328638607645] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp@icfp_125_10.sl_355470256
+823 [1188.0976146585706] icfp
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.11.sl_277376224
+1410 [2287.1002487943924] icfp
+results/greedy:full_0.7_7.model.global/benchmarks_se@arrays@array_search_10.sl_618029309
+237 [298.0483417222324] arrays
+results/greedy:full_0.7_7.model.global/benchmarks@icfp_generated@icfp_gen_11.7.sl_547260781
+1553 [1215.4834011475618] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_12.14.sl_232596920
+1202 [2369.350685993117] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_15.16.sl_855653917
+1471 [836.2936386925628] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_041370371
+26 [26.429835057556687] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_13.19.sl_083117897
+371 [712.4218465522466] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@max@max_3.sl_483132761
+140 [184.26202618124205] max
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_82_10.sl_588107417
+280 [1431.3924559422403] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.6.sl_063816039
+1842 [4567.256198697803] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_143_1000.sl_919318165
+938 [1238.7991859951042] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_30_10.sl_898905322
+939 [794.7202782878016] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_7.15.sl_443417771
+387 [635.6574555078683] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@max@max_9.sl_431451007
+results/greedy:full_0.7_4.model.global/benchmarks@max@max_13.sl_455133361
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_2.4.sl_359233861
+1438 [3759.9718340073123] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_68_1000.sl_003377527
+skip, forbidden
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_9.17.sl_118235158
+1074 [2085.2585541640883] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.2.sl_550681370
+254 [953.0937745069668] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_2.7.sl_262300277
+811 [2177.630679112316] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.10.sl_019698456
+7531 [6075.27191418463] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_12.7.sl_483178227
+338 [535.3572838170829] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_9.11.sl_318096193
+770 [1182.6473579895612] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_3.18.sl_188287770
+3541 [5495.445833077082] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.4.sl_747543213
+768 [586.5339299576723] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_14.4.sl_560950791
+1176 [882.2296529152583] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_118_10.sl_235639150
+729 [583.70105392792] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_3.6.sl_749314837
+1451 [2400.574000988888] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.5.sl_472995463
+809 [2238.799480391896] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.14.sl_414138995
+1029 [970.4274977872036] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_9.18.sl_026159799
+526 [1849.4377606477306] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-10-d5-prog.sl_279686096
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_13.4.sl_069801675
+1377 [3048.2565791784623] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_105_1000.sl_914828197
+65 [123.5854255590436] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_15.6.sl_590481924
+873 [2801.0921728546336] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_14.12.sl_308948406
+50 [66.05225506621119] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_5.6.sl_488834794
+636 [930.2908907233199] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-06-d0-prog.sl_659544181
+37 [33.17461030320567] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.9.sl_830493022
+4169 [7684.110202623547] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_1.7.sl_498941305
+290 [1221.9007256497507] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_9.20.sl_214256700
+1038 [960.285901222634] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_103_10.sl_550363623
+716 [1113.923790542598] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@max@max_8.sl_988408761
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.17.sl_902064781
+226 [242.26438932682157] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_661302884
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_2.12.sl_713847114
+698 [362.03351800639354] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_15.20.sl_161445275
+1618 [2790.608242601109] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_28_10.sl_132728533
+6 [8.349451898962183] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-06-d5-prog.sl_545296810
+403 [341.583880406398] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_7.19.sl_058091524
+338 [251.8346894670327] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_3.7.sl_140062514
+2001 [2132.8445637700984] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_10.7.sl_056272241
+326 [1058.2062601914124] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_38_10.sl_944150466
+216 [246.87490088395498] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_5.11.sl_201860361
+1458 [2420.1494453570604] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_13.10.sl_591842015
+140 [194.5312271201664] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-13-d0-prog.sl_320446587
+18 [38.1421594887902] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.6.sl_375586825
+7 [7.659949856983717] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.15.sl_291152363
+189 [198.5689883166617] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.5.sl_729823095
+1207 [831.291356992127] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_104_10.sl_157554850
+126 [178.6914734320271] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.5.sl_212830113
+298 [429.6042699548238] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_3.9.sl_735572081
+135 [109.5205301831707] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.15.sl_610063994
+skip, forbidden
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_1.20.sl_547125342
+1413 [1770.3282090557968] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.3.sl_110596978
+1761 [2271.181605964104] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_5.7.sl_693283435
+270 [385.441934718822] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_13.13.sl_046957883
+2751 [4878.377226524902] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_se@arrays@array_search_10.sl_418554026
+237 [298.0483417222324] arrays
+results/greedy:full_0.7_4.model.global/benchmarks_se@arrays@array_search_14.sl_171647563
+663 [476.4792596494115] arrays
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_2.5.sl_280937392
+330 [654.8574575413656] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_263281292
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_363178037
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_12.2.sl_330501855
+254 [708.86861519127] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_2.2.sl_894301232
+325 [682.1200303633649] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_14.1.sl_435037175
+1230 [1465.2186955673476] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_12.3.sl_191947695
+2793 [2159.6729317541412] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_5.4.sl_502456287
+783 [2808.086876138438] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_4.3.sl_920811763
+372 [389.3043516630583] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-19-d0-prog.sl_643832832
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.14.sl_201705078
+486 [2179.1261527225265] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_1.1.sl_821913530
+571 [1360.7901423457877] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.7.sl_014998326
+389 [335.0877677921212] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_13.2.sl_490547579
+94 [1022.0025548097467] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.20.sl_465205933
+2199 [4005.724405549613] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.16.sl_966313199
+2883 [3353.78286932107] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_7_1000.sl_494680030
+511 [1531.6235989822203] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_5.9.sl_828997834
+1584 [2364.5171422562844] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.8.sl_026547314
+186 [1077.6310996460754] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-18-d5-prog.sl_200976440
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_994472039
+286 [234.67997826022807] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.6.sl_025542629
+739 [2487.5776878101983] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_9.1.sl_402459635
+625 [1021.6895432304295] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.7.sl_624805423
+1507 [1160.7011611522958] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-03-d5-prog.sl_831689766
+38 [60.27314960825695] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_7.16.sl_292159680
+1129 [822.8528886265965] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.13.sl_918031917
+151 [241.7248176237208] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_72_10.sl_351197519
+547 [370.71824639335557] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_56_1000.sl_431190503
+1876 [3804.5448773666194] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-10-d0-prog.sl_835067482
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_87_10.sl_926086104
+171 [132.14093500790423] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.3.sl_348844889
+1746 [3837.34465516066] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_7_10.sl_551279082
+114 [643.7717028555295] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_12.19.sl_255005521
+1075 [2653.5428877004083] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_2.8.sl_627298615
+152 [107.0970486295835] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_12.6.sl_519062808
+1746 [3232.444104924365] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-09-d1-prog.sl_259676685
+45 [54.000118146207946] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_9.15.sl_477681852
+1383 [1168.467575370147] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_96_1000.sl_595797016
+1651 [3129.7245548151095] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_12.20.sl_497466027
+1097 [1300.8771527416816] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_2.18.sl_715609620
+638 [1583.724310518733] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_6.16.sl_916494695
+290 [419.53787482766086] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.10.sl_539352818
+1154 [2403.1223591579005] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_14.3.sl_480117796
+3357 [2871.587255948558] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_1.5.sl_916107499
+168 [338.786825787048] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_8.16.sl_547135356
+518 [644.6998126427827] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_144_1000.sl_793896923
+1230 [2193.80490039856] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-20-d5-prog.sl_237687100
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_4.4.sl_749121668
+1576 [1333.9533884802793] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_15.5.sl_440565122
+1619 [1842.2881815106728] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-08-d5-prog.sl_581187074
+193 [170.24495194290353] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.17.sl_131904444
+skip, forbidden
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_2.14.sl_805706339
+306 [477.2997613751572] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_15.12.sl_273629259
+706 [2615.8813933638876] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_10.5.sl_889955408
+1626 [1738.626264773181] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_12.11.sl_436512013
+416 [789.1937054828956] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp@icfp_32_10.sl_470610632
+589 [318.8613479158369] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_7.1.sl_319912340
+skip, forbidden
+results/greedy:full_0.7_4.model.global/benchmarks_custom@hackers_delight@hd-07-d1-prog.sl_850417535
+104 [146.4133796165058] hackers
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_5.20.sl_845095389
+296 [242.0484178504282] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_13.9.sl_840178437
+461 [1260.3843722563856] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_3.14.sl_285029008
+410 [526.8783696119541] icfp
+results/greedy:full_0.7_4.model.global/benchmarks_se@arrays@array_search_15.sl_584413482
+467 [442.3188691415842] arrays
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_15.15.sl_091092309
+1024 [1664.8870931433237] icfp
+results/greedy:full_0.7_4.model.global/benchmarks@icfp_generated@icfp_gen_11.9.sl_006468120
+1042 [1816.1411389338757] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_3.7.sl_012195590
+2415 [2132.8445637700984] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_9.7.sl_743600982
+227 [201.7122742068316] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-13-d5-prog.sl_679615580
+28 [52.46432976960532] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_2.15.sl_975367572
+1573 [2765.5846231228866] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_12.12.sl_498684620
+249 [192.1848386164767] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_4.11.sl_160019841
+skip, forbidden
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-05-d0-prog.sl_114448145
+31 [21.653271657906107] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_5.17.sl_238210736
+960 [2317.0072346399074] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_13.1.sl_735598871
+1733 [1402.695312571477] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_12.17.sl_628379612
+681 [777.0505380905744] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_se@arrays@array_search_5.sl_728118616
+97 [134.3806932297147] arrays
+results/greedy:full_0.7_3.model.global/benchmarks_se@arrays@array_search_2.sl_097762691
+46 [77.47454895927362] arrays
+results/greedy:full_0.7_3.model.global/benchmarks@max@max_2.sl_912052162
+9 [39.72151109620335] max
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_56_1000.sl_564894544
+2109 [3804.5448773666194] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_14.17.sl_628195107
+157 [138.79666306605156] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_se@arrays@array_search_6.sl_825024410
+136 [181.396351856465] arrays
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_113_1000.sl_684318196
+105 [111.28675981839554] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_82_10.sl_249271805
+1193 [1431.3924559422403] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_3.6.sl_807387974
+1569 [2400.574000988888] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_14.1.sl_513791618
+2296 [1465.2186955673476] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_11.15.sl_486561437
+1546 [1819.4923872405238] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_9_1000.sl_505984338
+12344 [7212.483005506481] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_12.11.sl_878329079
+914 [789.1937054828956] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_15.7.sl_624971499
+2584 [1500.631778404841] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_13.5.sl_687493544
+1933 [4545.9469561529295] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_se@arrays@array_search_9.sl_368410623
+200 [474.292327859049] arrays
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_1.6.sl_238451056
+1249 [2816.877066013322] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_6.14.sl_170722577
+1828 [1589.930572698794] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_1.15.sl_530294133
+896 [1602.6833029966456] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-19-d1-prog.sl_765127091
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_10.16.sl_656888703
+3335 [4197.85950884471] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_9.11.sl_644957426
+2043 [1182.6473579895612] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_9.19.sl_202163430
+1461 [3009.3922734559055] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@max@max_9.sl_936315345
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_94_100.sl_335147645
+66 [146.82766018456016] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_2.3.sl_926836089
+1079 [1210.2278446294042] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_10.10.sl_386508783
+2451 [5730.4340473611965] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_68_1000.sl_388649587
+skip, forbidden
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_14.18.sl_068062415
+1193 [2605.2420360552255] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_82_100.sl_211199096
+752 [1434.9427380667591] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-10-d0-prog.sl_688195081
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_1.1.sl_735438861
+573 [1360.7901423457877] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_93_1000.sl_945469231
+182 [318.2657785451151] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_45_1000.sl_500199887
+24 [45.393841073607675] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_1.17.sl_973086777
+2223 [5106.24443467527] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_25_1000.sl_754650595
+1318 [2113.602258893391] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_15.3.sl_571363755
+6020 [3641.6933003977506] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-06-d1-prog.sl_866782286
+169 [122.91422729565919] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@max@max_15.sl_406315741
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_3.9.sl_033935471
+135 [109.5205301831707] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_13.13.sl_534507341
+3084 [4878.377226524902] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_8.6.sl_716542018
+1905 [2487.5776878101983] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_21_1000.sl_662059953
+210 [223.58425073053243] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_4.10.sl_126434189
+118 [207.56175169392904] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_14.19.sl_758034782
+2753 [4689.942844612569] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_14.13.sl_976709137
+1335 [2800.4790204320734] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_12.18.sl_522504454
+333 [683.6696255475738] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_139_10.sl_365334429
+134 [109.58871790084316] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_2.1.sl_930532228
+skip, forbidden
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_7.7.sl_397569799
+1456 [1629.5383608227773] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_14.10.sl_555209007
+4373 [6102.439393907673] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_114_100.sl_485018995
+739 [745.8105757312521] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_7.1.sl_240010921
+skip, forbidden
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_5.2.sl_507864952
+1105 [738.5891984191219] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_9.12.sl_523670471
+812 [1228.5840412709965] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_15.17.sl_604006987
+2491 [6288.64468498417] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_8.11.sl_429537530
+2621 [5678.7144024805975] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_12.1.sl_351838256
+1414 [1245.7067616626757] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_6.3.sl_053682208
+1850 [3323.9765971591514] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_15.16.sl_636996675
+1601 [836.2936386925628] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_15.2.sl_435328897
+6201 [3278.658539469878] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_10.11.sl_343822328
+1467 [2895.180923909539] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_5.10.sl_836595451
+418 [629.8206976012546] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-04-d1-prog.sl_661884785
+125 [98.7977462356773] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_11.13.sl_346806045
+704 [1381.5332488497559] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_6.13.sl_761221660
+122 [241.7248176237208] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_7.8.sl_508762198
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_4.12.sl_089395914
+606 [404.9134573930352] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_5.6.sl_912223337
+534 [930.2908907233199] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-02-d0-prog.sl_083964917
+8 [13.547914852947054] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_5.20.sl_196094848
+295 [242.0484178504282] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_5.13.sl_174720921
+965 [2493.148852593131] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_1.14.sl_598175186
+skip, forbidden
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_15.11.sl_161337869
+440 [461.2949390387083] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_14_1000.sl_337624663
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-06-d0-prog.sl_814515538
+37 [33.17461030320567] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_135_100.sl_350181862
+385 [484.67083121439435] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_11.5.sl_417657228
+1260 [831.291356992127] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_1.2.sl_159752582
+1196 [1747.9430250508772] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_581634544
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_344728564
+26 [26.429835057556687] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_3.5.sl_850412267
+252 [272.84989377867316] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_270687556
+skip, forbidden
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_104_10.sl_690768736
+69 [178.6914734320271] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_11.8.sl_940590989
+200 [1077.6310996460754] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_1.5.sl_225991206
+210 [338.786825787048] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_150_10.sl_188777188
+215 [785.1040492524327] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-02-d5-prog.sl_199353359
+183 [223.61049007923873] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_2.16.sl_983972378
+379 [675.2099146091093] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_147_1000.sl_583254803
+409 [305.4179194705285] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_3.11.sl_943325462
+431 [396.24420504164794] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_13.10.sl_929121364
+111 [194.5312271201664] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-09-d0-prog.sl_537631985
+59 [116.38870651406666] hackers
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-04-d5-prog.sl_901995227
+324 [274.92290551369945] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_14.12.sl_578077232
+53 [66.05225506621119] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_54_1000.sl_813296430
+67 [112.90637495674675] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_3.13.sl_931707210
+366 [835.3914934739823] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_38_10.sl_381597965
+166 [246.87490088395498] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_2.2.sl_194307099
+325 [682.1200303633649] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_se@arrays@array_search_15.sl_703209047
+467 [442.3188691415842] arrays
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_8.4.sl_810217082
+1122 [2067.4913647170733] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_15.19.sl_286615776
+930 [1846.1240327150201] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_7.11.sl_609677102
+1444 [1516.2919287581944] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_10.2.sl_272815760
+52 [861.7656538471431] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@max@max_4.sl_798800275
+575 [667.0460647337999] max
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_11.12.sl_179608686
+2384 [2239.9431158895504] icfp
+results/greedy:full_0.7_3.model.global/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_857689437
+277 [234.67997826022807] hackers
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_2.9.sl_983523580
+159 [178.56578966741853] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_4.4.sl_375281133
+1522 [1333.9533884802793] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_12.10.sl_295667446
+1066 [2483.14420809561] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_11.2.sl_321211551
+2151 [3890.531203695999] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_2.7.sl_113441020
+1050 [2177.630679112316] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_1.10.sl_670491288
+1238 [1596.9259430401219] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_15.14.sl_650242000
+2702 [3776.044802197855] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_5_1000.sl_565168485
+90 [217.59399911661893] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_11.19.sl_079518209
+985 [1876.0678678482275] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_11.9.sl_507481069
+1124 [1816.1411389338757] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_13.3.sl_173740969
+2690 [3794.698106773059] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp_generated@icfp_gen_8.10.sl_992982697
+2070 [3274.3705487420084] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_69_10.sl_343117316
+93 [202.31643910642077] icfp
+results/greedy:full_0.7_3.model.global/benchmarks@icfp@icfp_7_1000.sl_424903231
+518 [1531.6235989822203] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_3.1.sl_618815511
+1076 [841.3687464479405] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_14.5.sl_198567177
+1017 [2290.901706282299] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_14.19.sl_561944799
+2696 [4689.942844612569] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-10-d0-prog.sl_571961122
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_11.9.sl_050601799
+1042 [1816.1411389338757] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-19-d5-prog.sl_783549484
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_5.6.sl_789579849
+516 [930.2908907233199] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-01-d1-prog.sl_646337377
+43 [41.28883857823398] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_13.19.sl_647582418
+370 [712.4218465522466] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_4.16.sl_893187555
+894 [1849.9615156558355] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@max@max_10.sl_572775749
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_54_1000.sl_343330860
+67 [112.90637495674675] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_3.16.sl_889822323
+2344 [3785.2965302128337] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_5.11.sl_131475624
+1875 [2420.1494453570604] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_4.1.sl_510613018
+1247 [1092.3517551469756] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_12.11.sl_556055233
+698 [789.1937054828956] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-18-d5-prog.sl_560494157
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_1.20.sl_588944712
+861 [1770.3282090557968] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_10.9.sl_747653435
+631 [543.1093030806628] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@max@max_14.sl_072812079
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_10.19.sl_735528844
+648 [1459.4347850325908] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.7.sl_293251855
+427 [335.0877677921212] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_95_100.sl_272894177
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_12.6.sl_385037881
+1555 [3232.444104924365] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_15.19.sl_737951392
+1176 [1846.1240327150201] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_10.5.sl_141643130
+1914 [1738.626264773181] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_9.12.sl_422397721
+984 [1228.5840412709965] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.6.sl_566922175
+985 [2487.5776878101983] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-11-d5-prog.sl_061286496
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_2.14.sl_336318072
+332 [477.2997613751572] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_3.2.sl_480125546
+146 [518.7083873526385] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-06-d5-prog.sl_073859838
+396 [341.583880406398] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_14.15.sl_016554599
+2579 [2902.2893071113704] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_2.12.sl_509410815
+706 [362.03351800639354] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_4.19.sl_965831976
+7484 [5842.507568261379] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_1.18.sl_431911326
+1554 [4350.515679190679] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_12.3.sl_702699092
+3071 [2159.6729317541412] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.14.sl_072918849
+479 [2179.1261527225265] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-20-d1-prog.sl_807281058
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_25_1000.sl_908309157
+852 [2113.602258893391] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_885183774
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_82_10.sl_399199571
+285 [1431.3924559422403] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-13-d5-prog.sl_917058347
+29 [52.46432976960532] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_94_100.sl_147019492
+67 [146.82766018456016] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_5.2.sl_726865150
+887 [738.5891984191219] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_10.6.sl_791752463
+skip, forbidden
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_15.12.sl_456704620
+530 [2615.8813933638876] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_7.16.sl_098270337
+1060 [822.8528886265965] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_2.20.sl_384706764
+2351 [2056.0517089384525] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_10.1.sl_025327598
+734 [1431.0191642601528] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_6.1.sl_708223443
+2892 [647.7465254669177] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_13.2.sl_925273677
+93 [1022.0025548097467] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-18-d1-prog.sl_447162571
+results/greedy:full_0.7_9.model.global/benchmarks@max@max_11.sl_734457175
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_11.4.sl_346014144
+1182 [2535.164008878313] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_6.16.sl_394995994
+264 [419.53787482766086] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_4.6.sl_045907599
+6217 [3512.81264008622] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_4.3.sl_592463959
+387 [389.3043516630583] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_2.16.sl_566773561
+352 [675.2099146091093] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_4.12.sl_942780902
+606 [404.9134573930352] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_81_1000.sl_283899072
+322 [1702.7133700239192] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_5.10.sl_536202797
+420 [629.8206976012546] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_12.10.sl_811655359
+1318 [2483.14420809561] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_7.17.sl_014682795
+356 [334.75365623531906] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.17.sl_590798853
+222 [242.26438932682157] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-15-d1-prog.sl_208594093
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_5.8.sl_863332624
+4829 [3593.753791824967] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_1.10.sl_095451907
+1436 [1596.9259430401219] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_6.17.sl_004856063
+1377 [1409.5742107947842] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_3.18.sl_739397126
+3042 [5495.445833077082] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_955893412
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_2.15.sl_622282924
+1160 [2765.5846231228866] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_817014177
+skip, forbidden
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_7.3.sl_839706476
+1325 [2072.3428771987587] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_9.16.sl_183278278
+746 [513.7041053903238] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_134_1000.sl_306828994
+1069 [1992.006407783717] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_15.3.sl_381606639
+6025 [3641.6933003977506] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_235627430
+237 [234.67997826022807] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.11.sl_203399961
+2345 [5678.7144024805975] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_7.4.sl_660886152
+2351 [4338.6295527818165] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_6.11.sl_758395174
+144 [102.3920446474144] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_150_10.sl_321184856
+202 [785.1040492524327] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_10.8.sl_480643058
+725 [1656.8965058653393] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.13.sl_448843069
+650 [519.1450498764992] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_1.15.sl_118910252
+293 [1602.6833029966456] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_6.3.sl_393680692
+1787 [3323.9765971591514] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_3.5.sl_549418925
+254 [272.84989377867316] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_15.5.sl_727840718
+1178 [1842.2881815106728] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_6.20.sl_896419159
+4 [2.1074358993444715] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-18-d0-prog.sl_889110304
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-17-d1-prog.sl_231207208
+634 [1114.0652110548606] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_72_10.sl_078571423
+547 [370.71824639335557] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@max@max_9.sl_293299993
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_1.8.sl_485676342
+1107 [2291.8209945083813] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_13.7.sl_122561862
+686 [630.2951242340483] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_4.20.sl_658870089
+3068 [3751.895130594821] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_9.7.sl_890981317
+222 [201.7122742068316] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_7_10.sl_526555710
+115 [643.7717028555295] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-02-d1-prog.sl_566593610
+30 [52.80565213622834] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_99_100.sl_009579894
+653 [528.2884044969372] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-06-d0-prog.sl_279195859
+37 [33.17461030320567] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_93_1000.sl_173652727
+169 [318.2657785451151] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_12.7.sl_201072117
+334 [535.3572838170829] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_14_1000.sl_078040727
+skip, forbidden
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_7.10.sl_326419585
+1493 [1125.5825768227733] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_15.16.sl_806174842
+1602 [836.2936386925628] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.4.sl_865240707
+1347 [2067.4913647170733] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_14.4.sl_830087611
+949 [882.2296529152583] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_11.2.sl_534428069
+1796 [3890.531203695999] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_403035804
+24 [26.429835057556687] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_11.6.sl_445172088
+8 [7.659949856983717] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_5.4.sl_509415459
+849 [2808.086876138438] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_9.20.sl_583359585
+1083 [960.285901222634] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_626177920
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_39_100.sl_091042159
+296 [185.2515513145968] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.8.sl_998659139
+1731 [2432.9599810128325] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_9.3.sl_222033858
+1105 [2647.3328638607645] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_14.2.sl_097609741
+520 [755.2757080447792] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_9_1000.sl_996497486
+12329 [7212.483005506481] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_13.18.sl_143260778
+3105 [4681.72754002556] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_8.20.sl_939766098
+3037 [4005.724405549613] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_12.20.sl_544220604
+1068 [1300.8771527416816] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_15.6.sl_153835293
+1129 [2801.0921728546336] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_1.19.sl_225448417
+389 [282.45220615381237] icfp
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-15-d0-prog.sl_155579502
+results/greedy:full_0.7_9.model.global/benchmarks_custom@hackers_delight@hd-13-d0-prog.sl_788935420
+18 [38.1421594887902] hackers
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_6.12.sl_579907362
+97 [50.80457812783813] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_15.8.sl_999742120
+skip, forbidden
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_7.18.sl_866611595
+1869 [2414.1594537125325] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp@icfp_113_1000.sl_447324040
+105 [111.28675981839554] icfp
+results/greedy:full_0.7_9.model.global/benchmarks@icfp_generated@icfp_gen_10.15.sl_291293868
+892 [2219.0095052769675] icfp
+Global stats:
+A: 1.391475040815285
+G: 1.3936000140872258
+max
+A: 0.9721054043426595
+G: 1.5378104464285527
+icfp
+A: 0.5576747297575252
+G: 1.4295539658865501
+hackers
+A: 0.8454241778793866
+G: 1.09337046371524
+arrays
+A: 0.831328313723808
+G: 1.1807336169804372

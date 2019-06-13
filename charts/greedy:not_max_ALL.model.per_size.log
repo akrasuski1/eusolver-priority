@@ -1,0 +1,26 @@
+434
+14
+results/greedy:not_max.model.per_size/benchmarks@max@max_4.sl_785089972
+359 [667.0460647337999] max
+results/greedy:not_max.model.per_size/benchmarks@max@max_12.sl_598723343
+results/greedy:not_max.model.per_size/benchmarks@max@max_10.sl_431773251
+results/greedy:not_max.model.per_size/benchmarks@max@max_9.sl_448489017
+results/greedy:not_max.model.per_size/benchmarks@max@max_15.sl_778130867
+results/greedy:not_max.model.per_size/benchmarks@max@max_8.sl_439279014
+results/greedy:not_max.model.per_size/benchmarks@max@max_14.sl_413250944
+results/greedy:not_max.model.per_size/benchmarks@max@max_2.sl_233049488
+9 [39.72151109620335] max
+results/greedy:not_max.model.per_size/benchmarks@max@max_13.sl_484841811
+results/greedy:not_max.model.per_size/benchmarks@max@max_3.sl_628574079
+140 [184.26202618124205] max
+results/greedy:not_max.model.per_size/benchmarks@max@max_7.sl_808920787
+results/greedy:not_max.model.per_size/benchmarks@max@max_5.sl_410767951
+2897 [2211.8586283687787] max
+results/greedy:not_max.model.per_size/benchmarks@max@max_11.sl_909877469
+results/greedy:not_max.model.per_size/benchmarks@max@max_6.sl_343552584
+Global stats:
+A: 0.9112740764699042
+G: 1.6943000621150004
+max
+A: 0.9273429958304431
+G: 1.6943000621150004

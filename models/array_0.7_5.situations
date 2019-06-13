@@ -1,0 +1,14 @@
+SITUATION 1
+ - 50573 samples, 4 distinct
+  32546 of __arg from (0, 1, <, <=, >, >=, B, __arg, __bigint)
+  14519 of __bigint from (0, 1, <, <=, >, >=, B, __arg, __bigint)
+  1754 of 1 from (0, 1, <, <=, >, >=, B, __arg, __bigint)
+  1754 of 0 from (0, 1, <, <=, >, >=, B, __arg, __bigint)
+EOL
+SITUATION 3
+ - 16273 samples, 4 distinct
+  4194 of <= from (0, 1, <, <=, >, >=, B, __arg, __bigint)
+  4102 of > from (0, 1, <, <=, >, >=, B, __arg, __bigint)
+  4101 of >= from (0, 1, <, <=, >, >=, B, __arg, __bigint)
+  3876 of < from (0, 1, <, <=, >, >=, B, __arg, __bigint)
+EOL

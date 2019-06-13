@@ -1,0 +1,2510 @@
+4340
+1310
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_3.11.sl_894980108
+265 [396.24420504164794] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_3.15.sl_214802120
+63 [80.30710977280974] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_14.12.sl_273450539
+61 [66.05225506621119] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_6.18.sl_008741793
+500 [619.5108378370196] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.16.sl_434080468
+283 [734.3958581568594] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_1.18.sl_861499477
+1498 [4350.515679190679] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-07-d5-prog.sl_580322998
+480 [1511.1628940765868] hackers
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_7.17.sl_921261766
+245 [334.75365623531906] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-18-d0-prog.sl_604237958
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_2.4.sl_184169010
+1126 [3759.9718340073123] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_9.1.sl_927047976
+908 [1021.6895432304295] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_9.12.sl_379140307
+792 [1228.5840412709965] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_6.12.sl_932574153
+57 [50.80457812783813] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_13.17.sl_440674822
+464 [584.5492484943388] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.13.sl_629745417
+5123 [9188.517891995565] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_94_1000.sl_322308710
+76 [138.04059009776347] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_15.11.sl_179890832
+398 [461.2949390387083] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_15.17.sl_607949392
+3909 [6288.64468498417] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_15.16.sl_536639558
+861 [836.2936386925628] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@max@max_5.sl_062126676
+2152 [2211.8586283687787] max
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_14.7.sl_819064134
+1377 [2548.0140648031847] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_8.16.sl_938769894
+964 [644.6998126427827] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_81_1000.sl_130504085
+418 [1702.7133700239192] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.2.sl_354925253
+212 [708.86861519127] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_9.19.sl_863756629
+1733 [3009.3922734559055] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_13.5.sl_455220524
+1622 [4545.9469561529295] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_10.4.sl_219062340
+skip, forbidden
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.13.sl_323085566
+955 [2493.148852593131] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_2.10.sl_833085208
+616 [1503.4448406568415] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.1.sl_141860492
+skip, forbidden
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_21_1000.sl_003771952
+114 [223.58425073053243] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.20.sl_561301465
+718 [1300.8771527416816] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_6.14.sl_584408049
+1565 [1589.930572698794] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-20-d0-prog.sl_533992181
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_14.10.sl_002482730
+3267 [6102.439393907673] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_1.4.sl_818022181
+621 [1861.3201650969986] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_3.12.sl_850998617
+201 [218.01466399783476] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.9.sl_324588557
+1687 [2577.724603313127] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_1.1.sl_465282221
+393 [1360.7901423457877] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_39_100.sl_113344163
+138 [185.2515513145968] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.17.sl_366218523
+969 [2317.0072346399074] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_6.13.sl_288721732
+150 [241.7248176237208] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_11.7.sl_714864085
+591 [1215.4834011475618] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@max@max_9.sl_565333794
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_15.9.sl_956653791
+1812 [3413.222527218782] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_10.9.sl_806417926
+752 [543.1093030806628] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_105_1000.sl_987903996
+65 [123.5854255590436] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.8.sl_594648240
+384 [894.9727696358377] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_11.3.sl_932092516
+1586 [3837.34465516066] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.3.sl_776864881
+skip, forbidden
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_8.9.sl_152268075
+917 [2112.6994439202203] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-15-d0-prog.sl_735646263
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_45_1000.sl_582718477
+28 [45.393841073607675] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_113_1000.sl_249469562
+87 [111.28675981839554] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_10.7.sl_134707097
+303 [1058.2062601914124] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_8.14.sl_365794646
+545 [2179.1261527225265] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-02-d5-prog.sl_813909813
+190 [223.61049007923873] hackers
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_3.14.sl_528065761
+403 [526.8783696119541] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_4.20.sl_211751643
+2624 [3751.895130594821] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_4.10.sl_398144159
+135 [207.56175169392904] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-05-d0-prog.sl_045535066
+14 [21.653271657906107] hackers
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_4.17.sl_983622771
+skip, forbidden
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-20-d5-prog.sl_796599000
+results/stochastic:full_0.7_1.model.per_size/benchmarks@max@max_12.sl_873115187
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_9.20.sl_370910435
+632 [960.285901222634] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_10.16.sl_587253944
+3273 [4197.85950884471] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_14.18.sl_944000313
+1306 [2605.2420360552255] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-17-d0-prog.sl_456811576
+513 [499.52382162294134] hackers
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_54_1000.sl_241855224
+99 [112.90637495674675] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_8.1.sl_295981913
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.14.sl_720127718
+1236 [2369.350685993117] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_15.15.sl_144229638
+1484 [1664.8870931433237] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_531506392
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_1.16.sl_162690815
+1125 [1181.8292795445977] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_104_10.sl_201757045
+127 [178.6914734320271] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_14.16.sl_778369909
+517 [1039.8431208429167] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_557074042
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_2.11.sl_379960615
+5387 [7357.756546928355] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_13.7.sl_580302838
+551 [630.2951242340483] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_14.19.sl_962684278
+1868 [4689.942844612569] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.15.sl_627605717
+1258 [2736.2293417416918] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_11.20.sl_209564044
+3605 [4266.28976128922] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_13.12.sl_156017618
+168 [331.7068210679791] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.15.sl_225080385
+1557 [1149.5648388222642] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_15.19.sl_669656381
+846 [1846.1240327150201] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_25_1000.sl_062401082
+1114 [2113.602258893391] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_1.3.sl_327376668
+405 [456.1083652419557] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.6.sl_711268856
+2009 [3232.444104924365] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_7.8.sl_789295869
+skip, forbidden
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_9.17.sl_447843590
+1154 [2085.2585541640883] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-18-d5-prog.sl_887413235
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_11.9.sl_468678734
+1438 [1816.1411389338757] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_15.1.sl_316756651
+349 [1304.407938086629] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_595413376
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_15.5.sl_701573774
+1645 [1842.2881815106728] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_090913948
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_9.4.sl_576603023
+2874 [3042.8793888919063] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_4.5.sl_144841493
+616 [1033.1470357049996] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_2.13.sl_035601779
+595 [2600.160480226906] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_10.14.sl_570681915
+1673 [2982.6269188852257] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_135_100.sl_167663811
+448 [484.67083121439435] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.9.sl_626181804
+1479 [2364.5171422562844] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.12.sl_566250724
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_6.7.sl_272565640
+1238 [1160.7011611522958] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-12-d5-prog.sl_263076842
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_2.12.sl_538485501
+512 [362.03351800639354] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp@icfp_96_10.sl_081136566
+592 [2191.0442283945304] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_13.13.sl_166084761
+2202 [4878.377226524902] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_4.12.sl_525174355
+267 [404.9134573930352] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@max@max_6.sl_255941629
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_14.8.sl_145750383
+69 [147.34277871181337] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_794623197
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_11.6.sl_559407150
+8 [7.659949856983717] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_4.14.sl_377969134
+487 [612.5029814448142] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@max@max_13.sl_892695124
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_1.8.sl_159198820
+1315 [2291.8209945083813] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_12.10.sl_875228039
+1344 [2483.14420809561] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-01-d1-prog.sl_609480023
+39 [41.28883857823398] hackers
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_6.9.sl_622096646
+4329 [7684.110202623547] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_2.9.sl_966605461
+174 [178.56578966741853] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_8.13.sl_677048634
+261 [519.1450498764992] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-18-d1-prog.sl_767383540
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_8.20.sl_059607979
+2508 [4005.724405549613] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_13.3.sl_164696272
+2263 [3794.698106773059] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_3.19.sl_217198321
+464 [590.2669984759151] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_4.6.sl_917875325
+2797 [3512.81264008622] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_1.10.sl_701165937
+418 [1596.9259430401219] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_10.5.sl_178163651
+1696 [1738.626264773181] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_3.18.sl_687034261
+3504 [5495.445833077082] icfp
+results/stochastic:full_0.7_1.model.per_size/benchmarks_custom@hackers_delight@hd-03-d0-prog.sl_031079050
+4 [4.0] hackers
+results/stochastic:full_0.7_1.model.per_size/benchmarks@icfp_generated@icfp_gen_5.4.sl_364829594
+735 [2808.086876138438] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_14.1.sl_392246580
+814 [1465.2186955673476] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_15.4.sl_615454318
+1303 [2328.2448581632393] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_39_100.sl_113886361
+138 [185.2515513145968] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_4.12.sl_333352346
+321 [404.9134573930352] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_14.2.sl_510090238
+415 [755.2757080447792] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.5.sl_609922689
+262 [272.84989377867316] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_6.12.sl_388138556
+56 [50.80457812783813] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.9.sl_765461418
+143 [109.5205301831707] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.20.sl_667361338
+1389 [2583.9441500704634] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.8.sl_185721897
+378 [894.9727696358377] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_2.18.sl_519816791
+960 [1583.724310518733] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_15.6.sl_378219941
+1199 [2801.0921728546336] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_150_10.sl_198884094
+223 [785.1040492524327] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.5.sl_968963116
+1248 [2238.799480391896] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_13.16.sl_725132506
+2388 [5242.8029623797775] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.16.sl_434128338
+1013 [644.6998126427827] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_9.2.sl_418835670
+868 [1292.5473392485803] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.12.sl_452415091
+195 [218.01466399783476] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_1.1.sl_225320598
+362 [1360.7901423457877] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_25_1000.sl_987243724
+1281 [2113.602258893391] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.9.sl_653855470
+1045 [2112.6994439202203] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-17-d0-prog.sl_164037322
+512 [499.52382162294134] hackers
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_2.8.sl_629132083
+94 [107.0970486295835] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_10.19.sl_458524602
+483 [1459.4347850325908] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_2.9.sl_195964997
+169 [178.56578966741853] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_14.18.sl_082885848
+1613 [2605.2420360552255] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_10.1.sl_302374311
+405 [1431.0191642601528] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_147_1000.sl_566158922
+215 [305.4179194705285] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.9.sl_005128891
+1888 [2577.724603313127] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.3.sl_125645553
+3224 [4257.125674809206] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_72_10.sl_977842614
+307 [370.71824639335557] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@max@max_13.sl_581483592
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_1.16.sl_180978116
+977 [1181.8292795445977] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_5.7.sl_370981249
+176 [385.441934718822] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_13.2.sl_380755657
+103 [1022.0025548097467] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.8.sl_403378246
+887 [2432.9599810128325] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.13.sl_946661963
+4652 [9188.517891995565] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_4.9.sl_445589518
+1001 [2873.1715462425914] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_6.19.sl_002098282
+2662 [2547.1706604629494] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_11.18.sl_786453450
+1708 [1224.460952140912] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_82_100.sl_033367602
+634 [1434.9427380667591] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_5.10.sl_137534462
+247 [629.8206976012546] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.18.sl_356490732
+2254 [2645.8773584457713] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-04-d1-prog.sl_745947825
+55 [98.7977462356773] hackers
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_9.17.sl_218733139
+959 [2085.2585541640883] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_7.1.sl_930175022
+skip, forbidden
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-01-d1-prog.sl_301390763
+39 [41.28883857823398] hackers
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_5.6.sl_749828344
+1547 [930.2908907233199] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.17.sl_078407042
+690 [777.0505380905744] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_13.8.sl_374152168
+2323 [2253.0312837711504] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-07-d5-prog.sl_625865327
+512 [1511.1628940765868] hackers
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_4.2.sl_996913876
+1092 [2116.368470877464] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_7.5.sl_089997805
+422 [856.7062481790872] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_13.10.sl_722942205
+162 [194.5312271201664] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_4.14.sl_996783054
+470 [612.5029814448142] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_7.2.sl_906271251
+209 [1393.0457771797317] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_14.3.sl_025819617
+4744 [2871.587255948558] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_144_100.sl_000888808
+1490 [2082.8142273761437] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.7.sl_108025009
+2846 [2132.8445637700984] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.3.sl_340997993
+2516 [2159.6729317541412] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_se@arrays@array_search_14.sl_360086236
+431 [476.4792596494115] arrays
+results/stochastic:full_0.7_2.model.per_size/benchmarks_se@arrays@array_search_15.sl_073305063
+465 [442.3188691415842] arrays
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_4.19.sl_796921933
+5047 [5842.507568261379] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_9.11.sl_777223622
+3497 [1182.6473579895612] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.19.sl_724729760
+493 [590.2669984759151] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-19-d1-prog.sl_215353346
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_13.15.sl_002711280
+1758 [2220.1375492810294] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_5.13.sl_383280521
+1670 [2493.148852593131] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_96_1000.sl_140452635
+2192 [3129.7245548151095] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_6.14.sl_017237893
+1786 [1589.930572698794] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_82_10.sl_652125265
+614 [1431.3924559422403] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-12-d1-prog.sl_364698292
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.6.sl_029277679
+1487 [2487.5776878101983] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-18-d1-prog.sl_926055451
+results/stochastic:full_0.7_2.model.per_size/benchmarks@max@max_11.sl_064615813
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_15.13.sl_479584786
+424 [499.21421305815727] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_7.7.sl_696563714
+1575 [1629.5383608227773] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_94_1000.sl_347072908
+73 [138.04059009776347] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.15.sl_921427100
+62 [80.30710977280974] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_32_10.sl_825612401
+415 [318.8613479158369] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_94_100.sl_588732259
+70 [146.82766018456016] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_9.1.sl_209908609
+1024 [1021.6895432304295] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_5.14.sl_642159522
+1497 [2588.2049412385277] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@max@max_4.sl_457970735
+639 [667.0460647337999] max
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_6.13.sl_737350614
+144 [241.7248176237208] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.16.sl_119512398
+323 [706.4464763921868] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-18-d0-prog.sl_758275071
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_5.12.sl_960387127
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.15.sl_351773889
+skip, forbidden
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_10.12.sl_578606231
+89 [134.39694116348426] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.4.sl_246970424
+1747 [1486.4156811718453] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_se@arrays@array_search_10.sl_971930478
+237 [298.0483417222324] arrays
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-15-d5-prog.sl_939155915
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_87_10.sl_739744839
+85 [132.14093500790423] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_5.2.sl_427356288
+768 [738.5891984191219] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.4.sl_685416425
+1542 [2067.4913647170733] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.18.sl_456214839
+494 [683.6696255475738] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_6.16.sl_202640807
+307 [419.53787482766086] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_14.13.sl_933822484
+1210 [2800.4790204320734] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_14.11.sl_958670059
+2323 [2546.593682109126] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_15.16.sl_769435117
+688 [836.2936386925628] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-13-d0-prog.sl_648110937
+20 [38.1421594887902] hackers
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_7.14.sl_388836627
+1401 [1613.7132196508082] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_12.19.sl_166781427
+2117 [2653.5428877004083] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_7.4.sl_845332260
+1860 [4338.6295527818165] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_11.11.sl_563455426
+1236 [2287.1002487943924] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_8.7.sl_576610096
+232 [335.0877677921212] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_13.13.sl_905009832
+2671 [4878.377226524902] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-19-d5-prog.sl_723295475
+results/stochastic:full_0.7_2.model.per_size/benchmarks_se@arrays@array_search_5.sl_705416239
+95 [134.3806932297147] arrays
+results/stochastic:full_0.7_2.model.per_size/benchmarks@max@max_2.sl_123522467
+9 [39.72151109620335] max
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_2.11.sl_727245022
+6466 [7357.756546928355] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_455370462
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_223689877
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_144_1000.sl_091815625
+1495 [2193.80490039856] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-10-d0-prog.sl_722622853
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_11.20.sl_551548117
+3532 [4266.28976128922] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_11.3.sl_637716729
+1479 [3837.34465516066] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.18.sl_874368195
+2858 [5495.445833077082] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_4.6.sl_033989467
+2782 [3512.81264008622] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_1.3.sl_082940270
+251 [456.1083652419557] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_3.2.sl_384989807
+148 [518.7083873526385] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_2.3.sl_975796529
+658 [1210.2278446294042] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_10.6.sl_983685489
+skip, forbidden
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_10.18.sl_956501117
+533 [965.1473553961067] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_1.19.sl_244257287
+223 [282.45220615381237] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-06-d1-prog.sl_816745069
+74 [122.91422729565919] hackers
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp@icfp_5_1000.sl_864646409
+140 [217.59399911661893] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_15.18.sl_191567590
+688 [861.1566219436312] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks@icfp_generated@icfp_gen_15.2.sl_413760942
+1417 [3278.658539469878] icfp
+results/stochastic:full_0.7_2.model.per_size/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_327169238
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_9.11.sl_895313925
+1348 [1182.6473579895612] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.16.sl_480993278
+311 [419.53787482766086] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_1.20.sl_664825456
+1261 [1770.3282090557968] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_211687384
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_1.5.sl_443980051
+171 [338.786825787048] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.2.sl_930722518
+475 [953.0937745069668] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.5.sl_810181948
+1142 [2238.799480391896] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_7_10.sl_744003540
+363 [643.7717028555295] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_se@arrays@array_search_14.sl_524289789
+431 [476.4792596494115] arrays
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_2.18.sl_514455488
+875 [1583.724310518733] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_902774996
+27 [26.429835057556687] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_1.7.sl_693803310
+912 [1221.9007256497507] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.17.sl_887481529
+224 [242.26438932682157] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_9.1.sl_010635411
+966 [1021.6895432304295] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_14.3.sl_188020251
+5496 [2871.587255948558] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.16.sl_485313511
+1935 [3353.78286932107] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.7.sl_222742927
+1213 [1160.7011611522958] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_4.4.sl_188922671
+807 [1333.9533884802793] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_7.15.sl_843609243
+464 [635.6574555078683] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.4.sl_098958078
+598 [586.5339299576723] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-06-d0-prog.sl_977917962
+23 [33.17461030320567] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_12.2.sl_554246116
+207 [708.86861519127] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_5.7.sl_994823473
+357 [385.441934718822] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_38_10.sl_991920076
+150 [246.87490088395498] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-08-d5-prog.sl_140025662
+177 [170.24495194290353] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_9.17.sl_713964835
+952 [2085.2585541640883] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.7.sl_698946647
+260 [335.0877677921212] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_952041535
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_757887943
+256 [234.67997826022807] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_30_10.sl_280925783
+582 [794.7202782878016] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-06-d5-prog.sl_868899484
+279 [341.583880406398] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_7.1.sl_046927126
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_9.18.sl_070770189
+567 [1849.4377606477306] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_7.19.sl_447586513
+329 [251.8346894670327] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_12.14.sl_406415893
+1298 [2369.350685993117] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_3.18.sl_079136249
+3276 [5495.445833077082] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_3.7.sl_516696529
+2354 [2132.8445637700984] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.6.sl_025986771
+1658 [2487.5776878101983] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-09-d1-prog.sl_764633112
+45 [54.000118146207946] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-07-d1-prog.sl_947791260
+121 [146.4133796165058] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-18-d5-prog.sl_604765474
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_15.6.sl_743730677
+1114 [2801.0921728546336] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_118_10.sl_555745579
+562 [583.70105392792] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.3.sl_475733191
+2482 [2271.181605964104] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_2.7.sl_518123963
+1250 [2177.630679112316] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_82_10.sl_517384519
+808 [1431.3924559422403] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_192696963
+results/stochastic:full_0.7_4.model.per_size/benchmarks@max@max_3.sl_445500695
+102 [184.26202618124205] max
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_2.12.sl_404414569
+511 [362.03351800639354] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_12.20.sl_253874791
+740 [1300.8771527416816] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_13.9.sl_646605172
+495 [1260.3843722563856] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.20.sl_894766406
+1736 [4005.724405549613] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.8.sl_265439246
+690 [1077.6310996460754] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_12.7.sl_298955557
+571 [535.3572838170829] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.6.sl_843725264
+6 [7.659949856983717] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_se@arrays@array_search_15.sl_334556512
+465 [442.3188691415842] arrays
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_12.19.sl_382268860
+1874 [2653.5428877004083] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.14.sl_160294402
+1307 [2179.1261527225265] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.15.sl_484289227
+158 [198.5689883166617] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_13.2.sl_687186043
+111 [1022.0025548097467] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@max@max_9.sl_329965283
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_68_1000.sl_022439737
+skip, forbidden
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.5.sl_350282804
+415 [429.6042699548238] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_10.7.sl_070979553
+255 [1058.2062601914124] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_13.10.sl_645896576
+168 [194.5312271201664] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_72_10.sl_232534124
+255 [370.71824639335557] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_9.20.sl_893234017
+721 [960.285901222634] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_5.4.sl_135928802
+1763 [2808.086876138438] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_3.14.sl_034908561
+374 [526.8783696119541] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-19-d0-prog.sl_771176564
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_143_1000.sl_798835493
+1187 [1238.7991859951042] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_3.6.sl_288234033
+3170 [2400.574000988888] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.5.sl_779140592
+743 [831.291356992127] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_7.16.sl_469228791
+438 [822.8528886265965] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_12.3.sl_385327809
+2488 [2159.6729317541412] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_13.4.sl_610842397
+1262 [3048.2565791784623] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.14.sl_450486436
+511 [970.4274977872036] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_2.2.sl_079854448
+196 [682.1200303633649] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.3.sl_522962360
+1589 [3837.34465516066] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_13.13.sl_469798831
+2972 [4878.377226524902] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.9.sl_216530242
+1211 [1816.1411389338757] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_56_1000.sl_875595819
+2170 [3804.5448773666194] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_87_10.sl_726846630
+87 [132.14093500790423] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_14.4.sl_649985096
+651 [882.2296529152583] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_5.11.sl_431245548
+1908 [2420.1494453570604] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-10-d0-prog.sl_632146856
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.17.sl_820538736
+skip, forbidden
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_9.15.sl_387692358
+1369 [1168.467575370147] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_se@arrays@array_search_10.sl_323706143
+237 [298.0483417222324] arrays
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.6.sl_169475635
+2166 [4567.256198697803] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-13-d0-prog.sl_973695657
+19 [38.1421594887902] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_5.6.sl_137399778
+1414 [930.2908907233199] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_14.12.sl_763490869
+65 [66.05225506621119] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_103_10.sl_348404106
+419 [1113.923790542598] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_3.9.sl_175133839
+148 [109.5205301831707] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_96_1000.sl_728145437
+2255 [3129.7245548151095] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.15.sl_478723955
+skip, forbidden
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-20-d5-prog.sl_699723004
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_104_10.sl_105180303
+131 [178.6914734320271] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_15.16.sl_641300626
+822 [836.2936386925628] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_12.11.sl_764686239
+208 [789.1937054828956] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_28_10.sl_814280341
+8 [8.349451898962183] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_5.9.sl_145248243
+1540 [2364.5171422562844] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_15.15.sl_926997729
+1554 [1664.8870931433237] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_15.12.sl_670919232
+1068 [2615.8813933638876] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.9.sl_834621530
+6193 [7684.110202623547] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_14.1.sl_755003920
+2424 [1465.2186955673476] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_5.20.sl_107298091
+127 [242.0484178504282] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@max@max_13.sl_773066590
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_8.16.sl_829766307
+973 [644.6998126427827] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_144_1000.sl_847606919
+1654 [2193.80490039856] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_11.10.sl_295389565
+958 [2403.1223591579005] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_7_1000.sl_411813205
+823 [1531.6235989822203] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_10.5.sl_264064823
+1711 [1738.626264773181] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.10.sl_155794374
+3336 [6075.27191418463] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_32_10.sl_738297209
+449 [318.8613479158369] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_15.5.sl_961649901
+932 [1842.2881815106728] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-10-d5-prog.sl_812370312
+results/stochastic:full_0.7_4.model.per_size/benchmarks_custom@hackers_delight@hd-03-d5-prog.sl_822823578
+38 [60.27314960825695] hackers
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_13.19.sl_512608191
+437 [712.4218465522466] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp@icfp_105_1000.sl_726983560
+65 [123.5854255590436] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_2.8.sl_840432095
+91 [107.0970486295835] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_15.20.sl_295328193
+1155 [2790.608242601109] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_2.4.sl_700261650
+1687 [3759.9718340073123] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_6.13.sl_450697831
+150 [241.7248176237208] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_4.3.sl_355596819
+266 [389.3043516630583] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_2.14.sl_940002439
+405 [477.2997613751572] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_12.6.sl_433652053
+1506 [3232.444104924365] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@max@max_8.sl_088202410
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_2.5.sl_549151442
+349 [654.8574575413656] icfp
+results/stochastic:full_0.7_4.model.per_size/benchmarks@icfp_generated@icfp_gen_1.1.sl_727076862
+395 [1360.7901423457877] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_14.18.sl_223972014
+1252 [2605.2420360552255] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_3.17.sl_908339446
+1111 [1543.2758349165063] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_7_1000.sl_881890971
+516 [1531.6235989822203] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_1.3.sl_314867148
+259 [456.1083652419557] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_45_10.sl_078898107
+31 [45.286129042822175] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@max@max_12.sl_325959514
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_8.4.sl_440983542
+1338 [2067.4913647170733] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_3.13.sl_960549270
+410 [835.3914934739823] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_9.16.sl_352865538
+450 [513.7041053903238] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_11.13.sl_549731051
+1219 [1381.5332488497559] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_776742647
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_139_10.sl_158687566
+147 [109.58871790084316] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_104_10.sl_892203448
+124 [178.6914734320271] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-19-d0-prog.sl_484528375
+results/stochastic:full_0.7_8.model.per_size/benchmarks@max@max_9.sl_393969918
+results/stochastic:full_0.7_8.model.per_size/benchmarks_se@arrays@array_search_9.sl_285997946
+200 [474.292327859049] arrays
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_135_100.sl_881890196
+454 [484.67083121439435] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_6.3.sl_677413209
+1520 [3323.9765971591514] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-09-d5-prog.sl_377692793
+33 [51.4230498104616] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_7.3.sl_385217299
+2563 [2072.3428771987587] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_10.5.sl_491177554
+1617 [1738.626264773181] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_14.4.sl_418582883
+741 [882.2296529152583] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_037591570
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_6.12.sl_535196111
+58 [50.80457812783813] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.19.sl_078780107
+194 [312.47317666080465] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_6.4.sl_836560522
+760 [586.5339299576723] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_147_1000.sl_563622933
+238 [305.4179194705285] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_11.8.sl_597225879
+1985 [1077.6310996460754] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_5.4.sl_886436190
+711 [2808.086876138438] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_12.12.sl_848142263
+101 [192.1848386164767] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_8.8.sl_919696197
+1538 [2432.9599810128325] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_5.19.sl_761046728
+277 [528.2884044969372] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_45_1000.sl_223769397
+31 [45.393841073607675] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_10.1.sl_823165023
+362 [1431.0191642601528] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_se@arrays@array_search_11.sl_136462851
+287 [322.14288813096437] arrays
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-05-d0-prog.sl_807628809
+28 [21.653271657906107] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_530926534
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.3.sl_271357704
+697 [1210.2278446294042] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_12.5.sl_967849871
+1421 [1633.1756313300666] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_3.11.sl_462491478
+263 [396.24420504164794] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.18.sl_825548052
+851 [1583.724310518733] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_1.8.sl_326020172
+1107 [2291.8209945083813] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_5.10.sl_330761516
+255 [629.8206976012546] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_1.13.sl_287090487
+1590 [3057.3204101485708] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_11.2.sl_992026551
+1443 [3890.531203695999] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_7.15.sl_380526895
+527 [635.6574555078683] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_14.6.sl_548569381
+1093 [2099.2382566453684] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_114_100.sl_583259522
+317 [745.8105757312521] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_3.7.sl_166258952
+827 [2132.8445637700984] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_5.3.sl_032130631
+skip, forbidden
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_14.7.sl_150176755
+1320 [2548.0140648031847] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_se@arrays@array_search_4.sl_176956876
+60 [134.06644104405711] arrays
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_94_100.sl_198444837
+71 [146.82766018456016] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_9.18.sl_823652508
+1367 [1849.4377606477306] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_15.8.sl_500292436
+skip, forbidden
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_1.20.sl_795234538
+878 [1770.3282090557968] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@max@max_3.sl_623194259
+105 [184.26202618124205] max
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_1.11.sl_725392310
+418 [323.22450582226816] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_8.2.sl_232449634
+232 [953.0937745069668] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_10.2.sl_052196299
+59 [861.7656538471431] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_14.17.sl_242304426
+79 [138.79666306605156] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_10.9.sl_918090853
+776 [543.1093030806628] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_8.7.sl_136291276
+254 [335.0877677921212] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_6.9.sl_572891825
+6659 [7684.110202623547] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_se@arrays@array_search_8.sl_586905872
+179 [226.2104202054027] arrays
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_11.9.sl_268612724
+1438 [1816.1411389338757] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_73_10.sl_010801813
+96 [189.6285740160743] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_10.13.sl_761358152
+1507 [1348.3778955794357] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_7.5.sl_071037861
+381 [856.7062481790872] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_418025432
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_14.12.sl_005571115
+63 [66.05225506621119] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-02-d5-prog.sl_876949931
+175 [223.61049007923873] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_15.10.sl_178001934
+357 [1242.5318286395177] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_87_10.sl_718213688
+86 [132.14093500790423] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.9.sl_443895669
+175 [178.56578966741853] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.2.sl_062916481
+213 [682.1200303633649] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-04-d0-prog.sl_032191159
+21 [19.953082427327114] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_13.13.sl_549378991
+1914 [4878.377226524902] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-04-d5-prog.sl_583756803
+201 [274.92290551369945] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_5.11.sl_053519830
+1950 [2420.1494453570604] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.6.sl_379924500
+1807 [4055.974475753138] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_9.10.sl_416301664
+1613 [1294.494410467566] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_14.5.sl_294122634
+688 [2290.901706282299] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.7.sl_170181894
+722 [2177.630679112316] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_3.14.sl_686277799
+412 [526.8783696119541] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_1.16.sl_316053180
+1080 [1181.8292795445977] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_3.9.sl_340364142
+146 [109.5205301831707] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_11.6.sl_037338676
+9 [7.659949856983717] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_13.4.sl_219067098
+1416 [3048.2565791784623] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_13.7.sl_310271776
+555 [630.2951242340483] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_7.8.sl_043128787
+skip, forbidden
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_11.12.sl_618641867
+1378 [2239.9431158895504] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_6.11.sl_519328047
+147 [102.3920446474144] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.20.sl_887111401
+1076 [2056.0517089384525] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_6.7.sl_889425705
+1273 [1160.7011611522958] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-17-d1-prog.sl_055160681
+886 [1114.0652110548606] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-03-d5-prog.sl_699817646
+42 [60.27314960825695] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_51_10.sl_409822869
+201 [270.39977652179624] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-19-d5-prog.sl_632366703
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_72_10.sl_265275746
+256 [370.71824639335557] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_8.12.sl_610240710
+263 [365.4244338230893] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.13.sl_608533505
+595 [2600.160480226906] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_5.18.sl_149911447
+1565 [2200.401582573527] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_13.17.sl_965887011
+455 [584.5492484943388] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_15.4.sl_668345901
+1109 [2328.2448581632393] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_13.10.sl_839873873
+159 [194.5312271201664] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_103_10.sl_017778971
+393 [1113.923790542598] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_4.13.sl_753166430
+3411 [2210.6571707026364] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_15.14.sl_283107483
+2470 [3776.044802197855] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_10.17.sl_787843329
+371 [772.594971819657] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_10.20.sl_104804177
+6518 [7546.4760607926155] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_3.15.sl_392803003
+66 [80.30710977280974] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_12.9.sl_243696859
+1693 [2577.724603313127] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_93_1000.sl_580987727
+202 [318.2657785451151] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_12.15.sl_006399199
+1112 [1149.5648388222642] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_3.3.sl_441565439
+2729 [4257.125674809206] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_10.4.sl_053240792
+skip, forbidden
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-20-d5-prog.sl_783724345
+results/stochastic:full_0.7_8.model.per_size/benchmarks@max@max_7.sl_773750964
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-09-d1-prog.sl_449771724
+48 [54.000118146207946] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_5.12.sl_065725882
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-13-d0-prog.sl_781318176
+19 [38.1421594887902] hackers
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-12-d5-prog.sl_108966390
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_118_100.sl_987081541
+361 [447.18074452328005] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_6.6.sl_499689900
+2124 [4567.256198697803] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_21_1000.sl_688138672
+115 [223.58425073053243] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.10.sl_746016597
+625 [1503.4448406568415] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks_custom@hackers_delight@hd-20-d0-prog.sl_078965254
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_14.3.sl_207507142
+5284 [2871.587255948558] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp@icfp_134_1000.sl_040383494
+1416 [1992.006407783717] icfp
+results/stochastic:full_0.7_8.model.per_size/benchmarks@icfp_generated@icfp_gen_2.11.sl_257529102
+6366 [7357.756546928355] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_14.18.sl_695144590
+1558 [2605.2420360552255] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_954594292
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.11.sl_737059173
+1517 [2287.1002487943924] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-09-d1-prog.sl_465896672
+50 [54.000118146207946] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_2.15.sl_625164361
+1695 [2765.5846231228866] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.6.sl_899965517
+4699 [5461.503254091627] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_82_100.sl_180034765
+909 [1434.9427380667591] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_962836488
+27 [26.429835057556687] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_150_10.sl_338742259
+245 [785.1040492524327] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_13.16.sl_191078870
+3254 [5242.8029623797775] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_39_100.sl_997745540
+136 [185.2515513145968] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.11.sl_150047010
+798 [1182.6473579895612] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_7.14.sl_681907646
+1157 [1613.7132196508082] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_12.20.sl_873498298
+507 [1300.8771527416816] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_3.10.sl_090419718
+skip, forbidden
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_1.14.sl_955196824
+skip, forbidden
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.1.sl_568055745
+1604 [2051.091607056243] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_4.15.sl_272190202
+84 [120.59709063109146] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_13.8.sl_090140349
+3041 [2253.0312837711504] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-12-d0-prog.sl_833898291
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_12.18.sl_963717041
+447 [683.6696255475738] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.9.sl_706925072
+1472 [1816.1411389338757] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-04-d1-prog.sl_884185543
+56 [98.7977462356773] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_94_1000.sl_023163882
+76 [138.04059009776347] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_5.14.sl_181959599
+1486 [2588.2049412385277] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@max@max_9.sl_006087996
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_2.3.sl_386464618
+653 [1210.2278446294042] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_3.12.sl_140972352
+143 [218.01466399783476] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-14-d0-prog.sl_836259304
+8984 [2724.2825119388294] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-07-d5-prog.sl_418904250
+545 [1511.1628940765868] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks@max@max_5.sl_778770995
+2152 [2211.8586283687787] max
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_13.12.sl_746055509
+273 [331.7068210679791] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_10.7.sl_414429866
+309 [1058.2062601914124] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_8.11.sl_284520472
+1891 [5678.7144024805975] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_13.19.sl_349526432
+412 [712.4218465522466] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-20-d0-prog.sl_577325152
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_8.16.sl_862664206
+993 [644.6998126427827] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@max@max_6.sl_308099193
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_10.14.sl_231712549
+1506 [2982.6269188852257] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_14_1000.sl_952995155
+skip, forbidden
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_12.19.sl_921188787
+2234 [2653.5428877004083] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_8.4.sl_331745348
+1235 [2067.4913647170733] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.5.sl_864710802
+872 [831.291356992127] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.16.sl_554804291
+414 [513.7041053903238] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.19.sl_699875671
+875 [1876.0678678482275] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_4.1.sl_879319287
+1776 [1092.3517551469756] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_se@arrays@array_search_2.sl_210732650
+29 [77.47454895927362] arrays
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_4.8.sl_302916837
+2862 [3596.140436804101] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_7.1.sl_239528144
+skip, forbidden
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_14.8.sl_042914813
+131 [147.34277871181337] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.18.sl_870567050
+1281 [1849.4377606477306] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_3.19.sl_633141011
+435 [590.2669984759151] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_6.12.sl_878999911
+57 [50.80457812783813] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_14.2.sl_773451691
+350 [755.2757080447792] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_1.6.sl_005473479
+1045 [2816.877066013322] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_25_1000.sl_383846884
+1285 [2113.602258893391] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_se@arrays@array_search_10.sl_794547363
+237 [298.0483417222324] arrays
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_15.10.sl_302442498
+400 [1242.5318286395177] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_4.2.sl_048641717
+549 [2116.368470877464] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_se@arrays@array_search_8.sl_760276628
+179 [226.2104202054027] arrays
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_2.16.sl_783435464
+751 [675.2099146091093] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_855086941
+239 [234.67997826022807] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.3.sl_040157092
+987 [2647.3328638607645] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_10.15.sl_696338182
+2108 [2219.0095052769675] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_8.12.sl_194782549
+275 [365.4244338230893] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.12.sl_728404513
+927 [1228.5840412709965] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@max@max_12.sl_554916519
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-08-d1-prog.sl_350393070
+70 [57.09119641632274] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-15-d0-prog.sl_628628720
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.12.sl_228568396
+1975 [2239.9431158895504] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.2.sl_864147628
+1640 [3890.531203695999] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.15.sl_731399614
+2022 [1168.467575370147] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.16.sl_901922080
+1254 [3353.78286932107] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_15.4.sl_973627257
+1037 [2328.2448581632393] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_5.8.sl_352430559
+3850 [3593.753791824967] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_8.8.sl_512875004
+2307 [2432.9599810128325] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_13.18.sl_750591755
+4387 [4681.72754002556] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_1.13.sl_031819768
+2114 [3057.3204101485708] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_14.9.sl_853630872
+skip, forbidden
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_2.14.sl_186198696
+474 [477.2997613751572] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_7.18.sl_459327190
+1481 [2414.1594537125325] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.4.sl_095930868
+1379 [2535.164008878313] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_10.5.sl_492211903
+2096 [1738.626264773181] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_134_1000.sl_467573999
+1321 [1992.006407783717] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_125_10.sl_744796695
+367 [1188.0976146585706] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_4.7.sl_641440153
+6856 [9196.765556001545] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_15.1.sl_442953541
+379 [1304.407938086629] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.14.sl_460463498
+278 [428.0852172763551] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.7.sl_654273850
+187 [201.7122742068316] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_105_100.sl_430920268
+122 [179.9084085468588] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_8.1.sl_885026569
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_2.12.sl_088723267
+468 [362.03351800639354] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_6.5.sl_159261710
+402 [429.6042699548238] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_2.19.sl_585030354
+393 [312.47317666080465] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_7.6.sl_460915844
+1995 [2456.1728377908316] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_7.3.sl_189718346
+2220 [2072.3428771987587] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_96_10.sl_836641242
+963 [2191.0442283945304] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_15.15.sl_353250014
+3340 [1664.8870931433237] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_7.19.sl_786186363
+319 [251.8346894670327] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_15.18.sl_486796805
+928 [861.1566219436312] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_9.20.sl_800532599
+609 [960.285901222634] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-05-d1-prog.sl_923557675
+51 [55.25165502314504] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_14.4.sl_140649170
+733 [882.2296529152583] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_14.7.sl_766729412
+1486 [2548.0140648031847] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_12.6.sl_467372667
+1922 [3232.444104924365] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_4.6.sl_900400008
+3217 [3512.81264008622] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_se@arrays@array_search_7.sl_353835642
+135 [210.02021016330366] arrays
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_4.9.sl_920632357
+1824 [2873.1715462425914] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_6.6.sl_199819981
+2602 [4567.256198697803] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@max@max_10.sl_092045662
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_5_1000.sl_787726075
+89 [217.59399911661893] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.7.sl_544198705
+532 [1215.4834011475618] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_2.4.sl_654337076
+1582 [3759.9718340073123] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_104_10.sl_079478309
+67 [178.6914734320271] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_11.10.sl_370233081
+1333 [2403.1223591579005] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@max@max_8.sl_485176375
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-15-d1-prog.sl_296398026
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_73_10.sl_928912475
+158 [189.6285740160743] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_5.2.sl_462195173
+1641 [738.5891984191219] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_6.10.sl_661231068
+4084 [6075.27191418463] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_5.9.sl_284556513
+1845 [2364.5171422562844] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-15-d5-prog.sl_842614289
+results/stochastic:full_0.7_7.model.per_size/benchmarks_custom@hackers_delight@hd-07-d0-prog.sl_778648517
+48 [53.41618705792747] hackers
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_3.17.sl_089448593
+931 [1543.2758349165063] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp@icfp_7_10.sl_712891492
+122 [643.7717028555295] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_10.10.sl_058077461
+2916 [5730.4340473611965] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_8.14.sl_063264475
+1741 [2179.1261527225265] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_12.4.sl_813125575
+1712 [1486.4156811718453] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_3.16.sl_909492251
+3472 [3785.2965302128337] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_15.3.sl_246706271
+4746 [3641.6933003977506] icfp
+results/stochastic:full_0.7_7.model.per_size/benchmarks@icfp_generated@icfp_gen_3.6.sl_665937311
+2272 [2400.574000988888] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_8.15.sl_900713774
+skip, forbidden
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_10.19.sl_284784346
+724 [1459.4347850325908] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.20.sl_797428788
+124 [242.0484178504282] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_9.16.sl_055594225
+413 [513.7041053903238] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_39_100.sl_573218718
+139 [185.2515513145968] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_9.10.sl_605045053
+1901 [1294.494410467566] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_4.16.sl_663376575
+734 [1849.9615156558355] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_13.4.sl_263041420
+1020 [3048.2565791784623] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_2.12.sl_009705711
+494 [362.03351800639354] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.4.sl_118383624
+744 [2808.086876138438] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_4.13.sl_841317483
+2729 [2210.6571707026364] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.9.sl_094649592
+3069 [3413.222527218782] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_10.3.sl_505401567
+1637 [1879.8156088655905] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.2.sl_784852804
+213 [708.86861519127] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_6.16.sl_385940232
+260 [419.53787482766086] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_6.9.sl_765793513
+6076 [7684.110202623547] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_8.1.sl_655330779
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.7.sl_750101514
+565 [535.3572838170829] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_3.10.sl_649786695
+skip, forbidden
+results/stochastic:full_0.7_5.model.per_size/benchmarks@max@max_8.sl_295905426
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_118_100.sl_532977406
+359 [447.18074452328005] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_11.11.sl_326007336
+1432 [2287.1002487943924] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_7.20.sl_957613856
+3121 [3449.555807064879] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_2.9.sl_875678930
+171 [178.56578966741853] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.10.sl_150123281
+259 [629.8206976012546] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_9.5.sl_019299393
+290 [353.3373859841795] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.3.sl_716055293
+2477 [2159.6729317541412] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_11.14.sl_336944465
+661 [970.4274977872036] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.9.sl_723667227
+1775 [2364.5171422562844] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_876134656
+231 [234.67997826022807] hackers
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_2.19.sl_602644033
+195 [312.47317666080465] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.12.sl_277486835
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_13.5.sl_701831340
+2391 [4545.9469561529295] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.16.sl_037177346
+328 [706.4464763921868] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-11-d1-prog.sl_956494853
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_14.15.sl_385634917
+5730 [2902.2893071113704] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_11.4.sl_621123496
+1199 [2535.164008878313] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_9.7.sl_832643861
+193 [201.7122742068316] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_2.3.sl_107264234
+630 [1210.2278446294042] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_8.14.sl_612714364
+1363 [2179.1261527225265] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@max@max_6.sl_485818587
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_14.2.sl_582773791
+353 [755.2757080447792] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_1.10.sl_767594157
+901 [1596.9259430401219] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_2.18.sl_093313867
+917 [1583.724310518733] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.15.sl_847292287
+1625 [2736.2293417416918] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_14_1000.sl_816148540
+skip, forbidden
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_1.19.sl_367689021
+237 [282.45220615381237] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.3.sl_576700320
+4061 [3641.6933003977506] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.12.sl_055005124
+99 [192.1848386164767] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_7.1.sl_786201556
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_8.16.sl_855861194
+936 [644.6998126427827] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_7.3.sl_777450522
+2400 [2072.3428771987587] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_se@arrays@array_search_6.sl_069693304
+130 [181.396351856465] arrays
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_54_1000.sl_535588933
+99 [112.90637495674675] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_7.5.sl_668390836
+423 [856.7062481790872] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_14.5.sl_404601950
+1327 [2290.901706282299] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@max@max_4.sl_810839156
+544 [667.0460647337999] max
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_99_100.sl_095481587
+344 [528.2884044969372] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.10.sl_150156850
+1194 [2483.14420809561] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_4.20.sl_584999305
+2820 [3751.895130594821] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.20.sl_615182921
+1193 [2790.608242601109] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_3.9.sl_243099470
+143 [109.5205301831707] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.16.sl_368954898
+702 [836.2936386925628] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-14-d0-prog.sl_548904187
+8947 [2724.2825119388294] hackers
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_8.12.sl_470517166
+268 [365.4244338230893] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_134_1000.sl_264017895
+1231 [1992.006407783717] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.16.sl_598106367
+298 [734.3958581568594] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_10.13.sl_413566903
+997 [1348.3778955794357] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-13-d1-prog.sl_549864655
+26 [38.11576419738886] hackers
+results/stochastic:full_0.7_5.model.per_size/benchmarks@max@max_2.sl_682492881
+9 [39.72151109620335] max
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_8.8.sl_272423114
+1148 [2432.9599810128325] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_113_1000.sl_433411572
+87 [111.28675981839554] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_8.6.sl_322700417
+1108 [2487.5776878101983] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_1.12.sl_777708105
+582 [728.9327002817902] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_6.2.sl_713987242
+1010 [57.48216038344478] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_10.4.sl_129005141
+skip, forbidden
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_11.12.sl_722415015
+1904 [2239.9431158895504] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_14.1.sl_195398610
+1113 [1465.2186955673476] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@max@max_9.sl_214613302
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_45_10.sl_212017471
+30 [45.286129042822175] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.20.sl_324960580
+500 [1300.8771527416816] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_4.1.sl_935245931
+1847 [1092.3517551469756] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-07-d1-prog.sl_372486973
+120 [146.4133796165058] hackers
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_14.6.sl_168664823
+1163 [2099.2382566453684] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_4.9.sl_301468018
+2049 [2873.1715462425914] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_10.11.sl_164482361
+1986 [2895.180923909539] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_10.8.sl_631996104
+1232 [1656.8965058653393] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_4.19.sl_795613050
+5472 [5842.507568261379] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.6.sl_878187442
+1342 [930.2908907233199] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.17.sl_112990846
+814 [2317.0072346399074] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_se@arrays@array_search_5.sl_164261967
+95 [134.3806932297147] arrays
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_7.2.sl_333761995
+229 [1393.0457771797317] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_11.1.sl_790311520
+1883 [2051.091607056243] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.4.sl_977371281
+944 [2328.2448581632393] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_4.10.sl_418446280
+136 [207.56175169392904] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.5.sl_520384363
+1576 [1842.2881815106728] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_3.3.sl_328934934
+3199 [4257.125674809206] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.6.sl_519530895
+2108 [3232.444104924365] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-09-d5-prog.sl_274512334
+39 [51.4230498104616] hackers
+results/stochastic:full_0.7_5.model.per_size/benchmarks_se@arrays@array_search_15.sl_582134358
+465 [442.3188691415842] arrays
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-20-d5-prog.sl_154599896
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_971969537
+27 [26.429835057556687] hackers
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-03-d0-prog.sl_073730880
+4 [4.0] hackers
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_94_1000.sl_520331486
+76 [138.04059009776347] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_11.5.sl_408327823
+842 [831.291356992127] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_14.18.sl_372137014
+1498 [2605.2420360552255] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.19.sl_749957949
+1448 [2653.5428877004083] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_13.9.sl_211568188
+457 [1260.3843722563856] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_10.6.sl_301975721
+skip, forbidden
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.13.sl_855914997
+427 [499.21421305815727] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_9.1.sl_355324819
+1492 [1021.6895432304295] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_6.5.sl_518617112
+398 [429.6042699548238] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_11.15.sl_434830921
+1010 [1819.4923872405238] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_2.11.sl_842025929
+2118 [7357.756546928355] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_4.17.sl_518793408
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_6.6.sl_016587966
+1979 [4567.256198697803] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_12.18.sl_484634966
+445 [683.6696255475738] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_8.9.sl_704051873
+1288 [2112.6994439202203] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_1.3.sl_289355014
+260 [456.1083652419557] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_5.14.sl_431868426
+1173 [2588.2049412385277] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_56_1000.sl_775876184
+3684 [3804.5448773666194] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks_custom@hackers_delight@hd-08-d0-prog.sl_872996285
+68 [45.23060597654513] hackers
+results/stochastic:full_0.7_5.model.per_size/benchmarks_se@arrays@array_search_2.sl_660920562
+29 [77.47454895927362] arrays
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_6.11.sl_929773606
+144 [102.3920446474144] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_103_10.sl_547324381
+423 [1113.923790542598] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp@icfp_105_1000.sl_778213736
+65 [123.5854255590436] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.19.sl_925896408
+941 [1846.1240327150201] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_14.20.sl_614458287
+1249 [1978.656078221973] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_1.2.sl_962788218
+1393 [1747.9430250508772] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_13.12.sl_095418954
+278 [331.7068210679791] icfp
+results/stochastic:full_0.7_5.model.per_size/benchmarks@icfp_generated@icfp_gen_15.8.sl_301072087
+skip, forbidden
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_103_10.sl_123770367
+469 [1113.923790542598] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_81_1000.sl_133497047
+179 [1702.7133700239192] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_7.4.sl_292152352
+3195 [4338.6295527818165] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-06-d5-prog.sl_076985739
+319 [341.583880406398] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_15.7.sl_146425531
+1061 [1500.631778404841] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.18.sl_780446639
+419 [619.5108378370196] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_4.7.sl_267924496
+9151 [9196.765556001545] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-15-d0-prog.sl_339676035
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_8.sl_498801790
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_3.15.sl_840722203
+58 [80.30710977280974] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_7.8.sl_211644796
+skip, forbidden
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-05-d1-prog.sl_510360036
+56 [55.25165502314504] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_1.18.sl_421630186
+1964 [4350.515679190679] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.4.sl_447179190
+524 [586.5339299576723] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_1.5.sl_411070929
+154 [338.786825787048] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_11.8.sl_260704057
+3138 [1077.6310996460754] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_3.1.sl_829384643
+554 [841.3687464479405] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-08-d1-prog.sl_564095255
+70 [57.09119641632274] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_10.13.sl_710723152
+2031 [1348.3778955794357] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_4.13.sl_644933752
+3392 [2210.6571707026364] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_9.13.sl_097464650
+119 [152.56856407381775] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_7.sl_908789503
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-02-d5-prog.sl_668999858
+253 [223.61049007923873] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.17.sl_657764700
+2106 [1409.5742107947842] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_2.5.sl_541928938
+397 [654.8574575413656] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-15-d5-prog.sl_637741618
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_15.2.sl_813545564
+1443 [3278.658539469878] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_8.18.sl_065081561
+2325 [2645.8773584457713] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.16.sl_140655640
+265 [419.53787482766086] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_5.20.sl_839475788
+127 [242.0484178504282] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.5.sl_020922077
+393 [429.6042699548238] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_8.12.sl_077811625
+309 [365.4244338230893] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_4.8.sl_968020408
+2213 [3596.140436804101] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_1.1.sl_313189716
+328 [1360.7901423457877] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_11.2.sl_342879435
+1784 [3890.531203695999] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_8.5.sl_608280586
+734 [2238.799480391896] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_5.6.sl_417141836
+1269 [930.2908907233199] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_12.12.sl_038403450
+156 [192.1848386164767] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_93_1000.sl_271255945
+211 [318.2657785451151] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_6.sl_118116976
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_1.15.sl_966597216
+722 [1602.6833029966456] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-04-d5-prog.sl_195247704
+272 [274.92290551369945] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_2.16.sl_792428018
+739 [675.2099146091093] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_5.11.sl_104394708
+2644 [2420.1494453570604] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_14.2.sl_618520858
+360 [755.2757080447792] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_14_1000.sl_270370258
+skip, forbidden
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_9.5.sl_316773195
+290 [353.3373859841795] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-18-d1-prog.sl_004477648
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_9.20.sl_428959447
+563 [960.285901222634] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_10.8.sl_810488548
+1343 [1656.8965058653393] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_903638716
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-07-d1-prog.sl_765441463
+133 [146.4133796165058] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_12.3.sl_175510750
+2576 [2159.6729317541412] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-19-d0-prog.sl_963699801
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_3.sl_456132185
+102 [184.26202618124205] max
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_14.3.sl_606276794
+5158 [2871.587255948558] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_12.11.sl_998892771
+491 [789.1937054828956] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_13.10.sl_148692102
+128 [194.5312271201664] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.3.sl_257759083
+2009 [3323.9765971591514] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-04-d0-prog.sl_974183608
+18 [19.953082427327114] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_3.9.sl_575103273
+144 [109.5205301831707] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_4.sl_435914427
+544 [667.0460647337999] max
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-11-d5-prog.sl_313705621
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_15.16.sl_095937464
+579 [836.2936386925628] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_3.16.sl_975481400
+2885 [3785.2965302128337] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_2.19.sl_002568442
+425 [312.47317666080465] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_13.1.sl_159397231
+3231 [1402.695312571477] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-03-d5-prog.sl_275435679
+38 [60.27314960825695] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_21_1000.sl_762017571
+118 [223.58425073053243] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_10.11.sl_611817937
+1978 [2895.180923909539] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_1.10.sl_912282826
+1104 [1596.9259430401219] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_15.3.sl_140967708
+3841 [3641.6933003977506] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-20-d1-prog.sl_589253102
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_9.12.sl_466496576
+1054 [1228.5840412709965] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-06-d0-prog.sl_406235292
+23 [33.17461030320567] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.20.sl_114512531
+4 [2.1074358993444715] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_12.13.sl_956912535
+5666 [9188.517891995565] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_14.16.sl_872707051
+632 [1039.8431208429167] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_5.sl_368828966
+2152 [2211.8586283687787] max
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_092571893
+303 [234.67997826022807] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_14.18.sl_183638385
+1662 [2605.2420360552255] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_se@arrays@array_search_13.sl_584430014
+378 [346.7286513153009] arrays
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_7.5.sl_803021594
+1123 [856.7062481790872] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_14.10.sl_101730459
+4143 [6102.439393907673] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_2.12.sl_624371543
+461 [362.03351800639354] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_28_10.sl_663042787
+5 [8.349451898962183] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_54_1000.sl_265943527
+94 [112.90637495674675] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_9.4.sl_766903835
+2303 [3042.8793888919063] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-14-d0-prog.sl_015258072
+8848 [2724.2825119388294] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_14.sl_484693677
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-08-d5-prog.sl_559879764
+180 [170.24495194290353] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_2.1.sl_913330613
+skip, forbidden
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_39_100.sl_635523527
+139 [185.2515513145968] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_10.1.sl_102672057
+435 [1431.0191642601528] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-07-d0-prog.sl_763270713
+48 [53.41618705792747] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_11.20.sl_727571677
+4295 [4266.28976128922] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_56_1000.sl_769006100
+2511 [3804.5448773666194] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_1.6.sl_354628626
+1497 [2816.877066013322] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_11.5.sl_982608117
+838 [831.291356992127] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_12.10.sl_986442954
+1705 [2483.14420809561] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.19.sl_083913679
+2909 [2547.1706604629494] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_800695412
+27 [26.429835057556687] hackers
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_3.5.sl_920570690
+367 [272.84989377867316] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_4.20.sl_321547438
+2709 [3751.895130594821] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_12.9.sl_556436216
+2141 [2577.724603313127] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_13.20.sl_924614387
+4045 [6008.092100851606] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_14.19.sl_550946688
+1822 [4689.942844612569] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_8.17.sl_274000721
+220 [242.26438932682157] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_3.14.sl_786113842
+433 [526.8783696119541] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.11.sl_553436122
+143 [102.3920446474144] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_15.15.sl_278465386
+2825 [1664.8870931433237] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_15.8.sl_830596626
+skip, forbidden
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_9.sl_901591515
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_12.sl_592451062
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_5.17.sl_915777877
+850 [2317.0072346399074] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp@icfp_125_10.sl_413695234
+1071 [1188.0976146585706] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_se@arrays@array_search_2.sl_648466175
+29 [77.47454895927362] arrays
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_2.11.sl_394815804
+6814 [7357.756546928355] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_333273163
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_12.20.sl_845433105
+514 [1300.8771527416816] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_6.8.sl_062718863
+3093 [2152.1320575557615] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_4.16.sl_094968087
+803 [1849.9615156558355] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_se@arrays@array_search_15.sl_442916778
+465 [442.3188691415842] arrays
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_10.16.sl_520132661
+6749 [4197.85950884471] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks_custom@hackers_delight@hd-15-d1-prog.sl_156303780
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_3.17.sl_380347500
+676 [1543.2758349165063] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_8.8.sl_479185759
+1523 [2432.9599810128325] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@max@max_15.sl_551862568
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_7.3.sl_461097619
+1717 [2072.3428771987587] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_11.3.sl_845907733
+1227 [3837.34465516066] icfp
+results/stochastic:full_0.7_6.model.per_size/benchmarks@icfp_generated@icfp_gen_8.7.sl_473902655
+237 [335.0877677921212] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_2.11.sl_808219200
+5372 [7357.756546928355] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.18.sl_132571562
+2027 [4350.515679190679] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_6.11.sl_489539367
+145 [102.3920446474144] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_4.15.sl_770447164
+87 [120.59709063109146] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_11.9.sl_435903729
+1418 [1816.1411389338757] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_9.17.sl_795952677
+849 [2085.2585541640883] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.3.sl_426795072
+5114 [2871.587255948558] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-09-d0-prog.sl_793152783
+60 [116.38870651406666] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.17.sl_115087680
+2228 [5106.24443467527] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_118_100.sl_408840646
+410 [447.18074452328005] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.14.sl_253554312
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.18.sl_759556508
+1498 [2605.2420360552255] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_15.5.sl_363509358
+412 [1842.2881815106728] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_4.18.sl_735174111
+218 [373.5533067346098] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_373766123
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_3.4.sl_731112971
+5 [10.771247708052407] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-10-d5-prog.sl_034951928
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-09-d5-prog.sl_474247716
+34 [51.4230498104616] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_8.6.sl_712183093
+1630 [2487.5776878101983] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_13.14.sl_006492645
+484 [471.20089170738044] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_11.4.sl_782007823
+1381 [2535.164008878313] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-17-d1-prog.sl_178293764
+1082 [1114.0652110548606] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_94_1000.sl_491007045
+193 [138.04059009776347] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_7.1.sl_022458101
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_9.11.sl_539696844
+793 [1182.6473579895612] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_93_1000.sl_257350693
+206 [318.2657785451151] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_10.7.sl_414321245
+303 [1058.2062601914124] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.5.sl_008894703
+159 [338.786825787048] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_9.5.sl_769910503
+240 [353.3373859841795] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_7.8.sl_945449663
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_11.2.sl_749819038
+1451 [3890.531203695999] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@max@max_5.sl_590650817
+2152 [2211.8586283687787] max
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_3.9.sl_914154271
+141 [109.5205301831707] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_12.16.sl_163340340
+326 [706.4464763921868] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_6.5.sl_574132943
+390 [429.6042699548238] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_94_100.sl_584551011
+121 [146.82766018456016] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@max@max_8.sl_758966845
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_105_100.sl_323295886
+114 [179.9084085468588] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_8.10.sl_780605215
+1133 [3274.3705487420084] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-17-d0-prog.sl_413367883
+508 [499.52382162294134] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_12.17.sl_744918420
+822 [777.0505380905744] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_4.11.sl_739874383
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_11.17.sl_829815331
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_8.3.sl_732093467
+2575 [2271.181605964104] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-05-d1-prog.sl_000668076
+53 [55.25165502314504] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_12.19.sl_410355174
+1572 [2653.5428877004083] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_014539195
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_13.2.sl_546105707
+152 [1022.0025548097467] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_7.6.sl_485047090
+1536 [2456.1728377908316] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_15.10.sl_693853279
+553 [1242.5318286395177] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_5.18.sl_047088977
+877 [2200.401582573527] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-12-d5-prog.sl_436028847
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.7.sl_704671314
+785 [1221.9007256497507] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-02-d1-prog.sl_673133143
+28 [52.80565213622834] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.20.sl_727782416
+1507 [1770.3282090557968] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.7.sl_164998825
+1274 [2548.0140648031847] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_15.18.sl_471137043
+746 [861.1566219436312] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_10.5.sl_134077904
+1795 [1738.626264773181] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_56_1000.sl_300826183
+1704 [3804.5448773666194] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_38_10.sl_410050444
+143 [246.87490088395498] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.17.sl_659416961
+79 [138.79666306605156] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_7.11.sl_217389538
+1943 [1516.2919287581944] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_6.18.sl_137000218
+269 [619.5108378370196] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_2.10.sl_974188537
+622 [1503.4448406568415] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_12.5.sl_927858932
+654 [1633.1756313300666] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_13.3.sl_585299382
+2216 [3794.698106773059] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_7.18.sl_019642448
+1834 [2414.1594537125325] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_15.7.sl_049407325
+1694 [1500.631778404841] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.3.sl_856089356
+241 [456.1083652419557] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_12.15.sl_979560382
+1056 [1149.5648388222642] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_2.1.sl_662067316
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_15.9.sl_185331839
+2702 [3413.222527218782] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_4.9.sl_607798685
+1052 [2873.1715462425914] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_3.13.sl_851343819
+413 [835.3914934739823] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_32_10.sl_749255501
+455 [318.8613479158369] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_10.11.sl_252567818
+1480 [2895.180923909539] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_10.17.sl_416599709
+421 [772.594971819657] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_11.3.sl_362423136
+1556 [3837.34465516066] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_4.19.sl_077172584
+4996 [5842.507568261379] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.6.sl_968516660
+1761 [2816.877066013322] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.11.sl_037618143
+1369 [2546.593682109126] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@max@max_4.sl_220057871
+544 [667.0460647337999] max
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_9.10.sl_543572651
+1928 [1294.494410467566] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_99_100.sl_148152906
+335 [528.2884044969372] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_4.13.sl_439345430
+2172 [2210.6571707026364] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_5.15.sl_583145953
+1047 [2736.2293417416918] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_12.2.sl_167157421
+215 [708.86861519127] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_5.16.sl_411054632
+392 [734.3958581568594] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_135_100.sl_896636969
+435 [484.67083121439435] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_12.14.sl_083458266
+899 [2369.350685993117] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_7_10.sl_398941726
+114 [643.7717028555295] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_5.14.sl_395740956
+1195 [2588.2049412385277] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_14_1000.sl_588642566
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_4.17.sl_230931473
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_2.9.sl_401296621
+217 [178.56578966741853] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_6.3.sl_447261163
+992 [3323.9765971591514] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_7.3.sl_234127753
+2629 [2072.3428771987587] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_7.5.sl_262311311
+373 [856.7062481790872] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-18-d0-prog.sl_838680765
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_13.12.sl_199837126
+149 [331.7068210679791] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_2.19.sl_475202315
+349 [312.47317666080465] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.16.sl_759814452
+571 [1039.8431208429167] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-08-d0-prog.sl_531185783
+32 [45.23060597654513] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-06-d1-prog.sl_559248351
+75 [122.91422729565919] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_1.4.sl_037011132
+619 [1861.3201650969986] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_9.1.sl_015697578
+633 [1021.6895432304295] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_103730594
+results/stochastic:full_0.7_0.model.per_size/benchmarks@max@max_9.sl_641610043
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_9.8.sl_255257471
+190 [151.2059312107659] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_5.13.sl_105560053
+1032 [2493.148852593131] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_13.7.sl_761344077
+536 [630.2951242340483] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_72_10.sl_136215734
+256 [370.71824639335557] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_646125761
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.6.sl_978779401
+890 [2099.2382566453684] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_10.6.sl_849871724
+skip, forbidden
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_13.6.sl_261587941
+314 [907.0991905007509] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_45_10.sl_312213168
+28 [45.286129042822175] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_8.13.sl_366442838
+260 [519.1450498764992] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.8.sl_295143172
+122 [147.34277871181337] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_se@arrays@array_search_5.sl_508148060
+95 [134.3806932297147] arrays
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_14.13.sl_613044950
+1344 [2800.4790204320734] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_73_10.sl_825981488
+145 [189.6285740160743] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_6.2.sl_934781968
+687 [57.48216038344478] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_7.4.sl_504063031
+1703 [4338.6295527818165] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_11.7.sl_358090094
+627 [1215.4834011475618] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_se@arrays@array_search_10.sl_071993606
+237 [298.0483417222324] arrays
+results/stochastic:full_0.7_0.model.per_size/benchmarks_se@arrays@array_search_8.sl_405982966
+179 [226.2104202054027] arrays
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp_generated@icfp_gen_10.3.sl_784315583
+1207 [1879.8156088655905] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks@icfp@icfp_96_1000.sl_675047164
+1808 [3129.7245548151095] icfp
+results/stochastic:full_0.7_0.model.per_size/benchmarks_custom@hackers_delight@hd-03-d0-prog.sl_075824416
+4 [4.0] hackers
+results/stochastic:full_0.7_0.model.per_size/benchmarks_se@arrays@array_search_13.sl_005260003
+378 [346.7286513153009] arrays
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_5.10.sl_711868117
+261 [629.8206976012546] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.7.sl_166014290
+220 [335.0877677921212] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_9.12.sl_707723067
+756 [1228.5840412709965] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@max@max_10.sl_311020898
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_14.19.sl_374847247
+1909 [4689.942844612569] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_13.2.sl_355584907
+108 [1022.0025548097467] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_12.3.sl_264408743
+2511 [2159.6729317541412] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_12.11.sl_167653892
+262 [789.1937054828956] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-18-d0-prog.sl_847543625
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_14.15.sl_126626780
+3384 [2902.2893071113704] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-17-d1-prog.sl_447499580
+803 [1114.0652110548606] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_113_1000.sl_238420796
+87 [111.28675981839554] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_2.14.sl_805026542
+421 [477.2997613751572] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_7.4.sl_287651165
+2028 [4338.6295527818165] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-13-d5-prog.sl_884317040
+25 [52.46432976960532] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_12.10.sl_122550920
+1501 [2483.14420809561] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-18-d5-prog.sl_288017093
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.14.sl_098530341
+1133 [2179.1261527225265] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_3.5.sl_841075522
+280 [272.84989377867316] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_14.2.sl_657694556
+344 [755.2757080447792] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.8.sl_568792918
+870 [2432.9599810128325] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_4.1.sl_141255602
+1885 [1092.3517551469756] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-13-d0-prog.sl_537462305
+19 [38.1421594887902] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_10.15.sl_827208313
+968 [2219.0095052769675] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_5.6.sl_639223513
+625 [930.2908907233199] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@max@max_9.sl_449188663
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_13.18.sl_464468787
+2592 [4681.72754002556] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.13.sl_457079725
+271 [519.1450498764992] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_11.2.sl_126742132
+2116 [3890.531203695999] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_487804268
+26 [26.429835057556687] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_6.20.sl_965525685
+4 [2.1074358993444715] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-11-d5-prog.sl_021183368
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_10.5.sl_859786833
+1294 [1738.626264773181] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_15.5.sl_103474720
+1566 [1842.2881815106728] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.6.sl_627585823
+1433 [2487.5776878101983] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@max@max_11.sl_931698027
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_2.16.sl_707378915
+741 [675.2099146091093] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_25_1000.sl_696795772
+984 [2113.602258893391] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_3.18.sl_971644630
+4794 [5495.445833077082] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_15.3.sl_966238469
+4109 [3641.6933003977506] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_15.16.sl_942183099
+746 [836.2936386925628] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_1.15.sl_954430716
+337 [1602.6833029966456] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_10.8.sl_757101949
+1520 [1656.8965058653393] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_11.9.sl_203940391
+1498 [1816.1411389338757] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_39_100.sl_899385767
+136 [185.2515513145968] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_7_10.sl_087581041
+124 [643.7717028555295] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_7.17.sl_825191274
+243 [334.75365623531906] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-15-d1-prog.sl_654845933
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_1.8.sl_789273737
+1695 [2291.8209945083813] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_11.4.sl_394684318
+3075 [2535.164008878313] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_14.5.sl_375546431
+1312 [2290.901706282299] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_10.19.sl_155297435
+1016 [1459.4347850325908] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_4.6.sl_766781309
+2967 [3512.81264008622] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_6.1.sl_189581309
+2701 [647.7465254669177] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_11.6.sl_302477110
+9 [7.659949856983717] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_12.7.sl_597422779
+566 [535.3572838170829] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_9.20.sl_697439240
+562 [960.285901222634] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_027820539
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_72_10.sl_176075296
+281 [370.71824639335557] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_9.3.sl_404010871
+1013 [2647.3328638607645] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.17.sl_748253139
+220 [242.26438932682157] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_1.18.sl_186675843
+2139 [4350.515679190679] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-19-d5-prog.sl_757972145
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_54_1000.sl_703344200
+100 [112.90637495674675] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_7.3.sl_117781122
+2259 [2072.3428771987587] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-10-d1-prog.sl_829916063
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_4.19.sl_117527588
+5278 [5842.507568261379] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.4.sl_697780948
+1191 [2067.4913647170733] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_94_100.sl_224471214
+73 [146.82766018456016] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.20.sl_986315620
+2469 [4005.724405549613] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-02-d1-prog.sl_700910392
+28 [52.80565213622834] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_12.20.sl_679190591
+504 [1300.8771527416816] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_5.2.sl_011490391
+1054 [738.5891984191219] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-11-d0-prog.sl_728313146
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-18-d1-prog.sl_202525414
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_1.10.sl_580813643
+439 [1596.9259430401219] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_3.2.sl_394624495
+149 [518.7083873526385] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@max@max_14.sl_294923438
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_2.12.sl_970223545
+484 [362.03351800639354] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_921610555
+184 [234.67997826022807] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_6.16.sl_412407767
+259 [419.53787482766086] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_7.10.sl_062409094
+1162 [1125.5825768227733] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-15-d0-prog.sl_078676516
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_7.16.sl_736092110
+470 [822.8528886265965] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_13.19.sl_091445768
+453 [712.4218465522466] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_15.6.sl_885061869
+1149 [2801.0921728546336] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-01-d1-prog.sl_242639290
+40 [41.28883857823398] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_15.19.sl_305554467
+913 [1846.1240327150201] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_93_1000.sl_863323604
+208 [318.2657785451151] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_13.7.sl_875918995
+520 [630.2951242340483] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_15.12.sl_344425844
+887 [2615.8813933638876] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_5.4.sl_272424344
+1229 [2808.086876138438] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_134_1000.sl_009495566
+1299 [1992.006407783717] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_10.1.sl_874826148
+389 [1431.0191642601528] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_1.20.sl_114368594
+893 [1770.3282090557968] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_5.8.sl_273096660
+3477 [3593.753791824967] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_5.11.sl_972264074
+1953 [2420.1494453570604] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_3.1.sl_968443049
+455 [841.3687464479405] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_2.20.sl_056614837
+1838 [2056.0517089384525] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_4.20.sl_787108698
+2640 [3751.895130594821] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_881451253
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_9.16.sl_189191275
+398 [513.7041053903238] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_6.11.sl_699695184
+133 [102.3920446474144] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_9_1000.sl_266441829
+5768 [7212.483005506481] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_2.15.sl_395172771
+1542 [2765.5846231228866] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-20-d1-prog.sl_828931603
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_95_100.sl_059090642
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_4.3.sl_046319028
+210 [389.3043516630583] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_6.17.sl_227040337
+1861 [1409.5742107947842] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_150_10.sl_406900867
+241 [785.1040492524327] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_12.6.sl_364584955
+2390 [3232.444104924365] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_81_1000.sl_132138049
+249 [1702.7133700239192] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_15.8.sl_397434627
+skip, forbidden
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_10.6.sl_077185292
+skip, forbidden
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_14_1000.sl_097784601
+skip, forbidden
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-06-d0-prog.sl_818743678
+23 [33.17461030320567] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-06-d5-prog.sl_074959361
+246 [341.583880406398] hackers
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_14.4.sl_405960927
+769 [882.2296529152583] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_8.11.sl_440874392
+2362 [5678.7144024805975] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_6.12.sl_466022693
+55 [50.80457812783813] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_1.19.sl_665295882
+238 [282.45220615381237] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_7.18.sl_666505946
+1379 [2414.1594537125325] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_82_10.sl_933807375
+333 [1431.3924559422403] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_10.9.sl_755342596
+687 [543.1093030806628] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_4.12.sl_495875866
+297 [404.9134573930352] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_9.7.sl_222893436
+190 [201.7122742068316] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp@icfp_99_100.sl_360807251
+357 [528.2884044969372] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_3.16.sl_549364021
+2457 [3785.2965302128337] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks_custom@hackers_delight@hd-10-d0-prog.sl_685025493
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_4.16.sl_927566694
+752 [1849.9615156558355] icfp
+results/stochastic:full_0.7_9.model.per_size/benchmarks@icfp_generated@icfp_gen_6.3.sl_266203013
+1837 [3323.9765971591514] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_1.6.sl_376884298
+1073 [2816.877066013322] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_2.16.sl_133171644
+652 [675.2099146091093] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_10.16.sl_197679240
+6382 [4197.85950884471] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_1.14.sl_578992180
+skip, forbidden
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_8.6.sl_473615798
+1820 [2487.5776878101983] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_93_1000.sl_484819619
+216 [318.2657785451151] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-14-d1-prog.sl_561449902
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_68_1000.sl_034846430
+skip, forbidden
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-03-d1-prog.sl_182366343
+27 [26.429835057556687] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-04-d5-prog.sl_574004439
+112 [274.92290551369945] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_4.10.sl_196692944
+131 [207.56175169392904] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_6.14.sl_084996799
+1375 [1589.930572698794] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_3.9.sl_866988303
+144 [109.5205301831707] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_94_100.sl_414580615
+70 [146.82766018456016] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_1.10.sl_720881823
+1130 [1596.9259430401219] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_14.12.sl_187640988
+60 [66.05225506621119] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_45_1000.sl_907584366
+28 [45.393841073607675] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_4.11.sl_114248815
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_15.11.sl_721586403
+412 [461.2949390387083] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_12.10.sl_134555245
+1149 [2483.14420809561] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_10.10.sl_243360971
+2041 [5730.4340473611965] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_11.2.sl_548365189
+1810 [3890.531203695999] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_8.4.sl_961534709
+1159 [2067.4913647170733] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_13.13.sl_988803556
+1982 [4878.377226524902] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_3.6.sl_540663140
+3091 [2400.574000988888] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_15.3.sl_670682916
+4134 [3641.6933003977506] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_9.19.sl_924199750
+1282 [3009.3922734559055] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_12.18.sl_293063097
+509 [683.6696255475738] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_9.11.sl_214209886
+794 [1182.6473579895612] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_15.16.sl_980232604
+718 [836.2936386925628] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_14_1000.sl_297689812
+skip, forbidden
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_14.10.sl_717574841
+3712 [6102.439393907673] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_7.11.sl_202509825
+1549 [1516.2919287581944] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_15.19.sl_119136774
+871 [1846.1240327150201] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_15.7.sl_542396113
+1986 [1500.631778404841] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_3.7.sl_101945622
+2390 [2132.8445637700984] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_25_1000.sl_717302557
+1161 [2113.602258893391] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_9_1000.sl_205489197
+5145 [7212.483005506481] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_se@arrays@array_search_5.sl_108380091
+95 [134.3806932297147] arrays
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_11.15.sl_153866363
+1225 [1819.4923872405238] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_82_100.sl_620496150
+824 [1434.9427380667591] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_4.4.sl_908026442
+689 [1333.9533884802793] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_14.13.sl_692002579
+1379 [2800.4790204320734] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_8.11.sl_824038841
+2245 [5678.7144024805975] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_2.2.sl_052847012
+210 [682.1200303633649] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_11.12.sl_030186785
+1690 [2239.9431158895504] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_11.9.sl_759660294
+1450 [1816.1411389338757] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_13.5.sl_637244657
+2809 [4545.9469561529295] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_15.14.sl_883561411
+2546 [3776.044802197855] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_6.3.sl_096204046
+2079 [3323.9765971591514] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_7.8.sl_727098874
+skip, forbidden
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_139_10.sl_133455383
+143 [109.58871790084316] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_1.1.sl_508507008
+325 [1360.7901423457877] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_5.10.sl_989205838
+247 [629.8206976012546] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_11.5.sl_438863430
+797 [831.291356992127] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_2.9.sl_904727315
+171 [178.56578966741853] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-02-d5-prog.sl_555643257
+194 [223.61049007923873] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-05-d5-prog.sl_239291736
+198 [234.67997826022807] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_4.12.sl_567489862
+267 [404.9134573930352] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-19-d1-prog.sl_040281274
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_5_1000.sl_646326269
+142 [217.59399911661893] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_12.17.sl_683983531
+742 [777.0505380905744] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_10.11.sl_384206521
+1634 [2895.180923909539] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_1.15.sl_510934433
+309 [1602.6833029966456] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_2.15.sl_272437884
+1504 [2765.5846231228866] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_69_10.sl_337524511
+146 [202.31643910642077] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_7.7.sl_373319045
+1504 [1629.5383608227773] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_10.2.sl_633619495
+56 [861.7656538471431] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_5.20.sl_284570007
+128 [242.0484178504282] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-13-d5-prog.sl_896388894
+24 [52.46432976960532] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_7_1000.sl_405555266
+557 [1531.6235989822203] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_2.7.sl_998482935
+1021 [2177.630679112316] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_14.18.sl_469759235
+1377 [2605.2420360552255] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_56_1000.sl_641946962
+4109 [3804.5448773666194] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_13.3.sl_532239185
+2389 [3794.698106773059] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_3.13.sl_844804744
+410 [835.3914934739823] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-09-d0-prog.sl_635974416
+61 [116.38870651406666] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-04-d1-prog.sl_336637576
+53 [98.7977462356773] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-10-d0-prog.sl_613938954
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_9.7.sl_479881974
+195 [201.7122742068316] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_se@arrays@array_search_6.sl_649747576
+130 [181.396351856465] arrays
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_1.2.sl_698090958
+1371 [1747.9430250508772] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_8.10.sl_463755996
+1893 [3274.3705487420084] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_5.13.sl_567240528
+797 [2493.148852593131] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_5.6.sl_727193401
+1332 [930.2908907233199] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-02-d0-prog.sl_310840591
+8 [13.547914852947054] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_5.17.sl_813534023
+974 [2317.0072346399074] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_11.19.sl_708708055
+787 [1876.0678678482275] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_14.17.sl_385356234
+72 [138.79666306605156] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_5.2.sl_787826267
+1263 [738.5891984191219] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_15.17.sl_691931023
+3127 [6288.64468498417] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-06-d0-prog.sl_516961220
+23 [33.17461030320567] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_82_10.sl_892152723
+794 [1431.3924559422403] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_147_1000.sl_793445916
+233 [305.4179194705285] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_6.13.sl_541525161
+146 [241.7248176237208] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_1.5.sl_642649740
+160 [338.786825787048] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_2.1.sl_881674436
+skip, forbidden
+results/stochastic:full_0.7_3.model.per_size/benchmarks@max@max_2.sl_591922719
+9 [39.72151109620335] max
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_9.12.sl_359972557
+869 [1228.5840412709965] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_113_1000.sl_467728011
+83 [111.28675981839554] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_2.3.sl_560211185
+681 [1210.2278446294042] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_114_100.sl_503347694
+328 [745.8105757312521] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_13.10.sl_955051665
+159 [194.5312271201664] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_12.1.sl_020138811
+1642 [1245.7067616626757] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_104_10.sl_140546996
+123 [178.6914734320271] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_se@arrays@array_search_15.sl_277002968
+465 [442.3188691415842] arrays
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_3.11.sl_585546214
+261 [396.24420504164794] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_1.17.sl_421634820
+2998 [5106.24443467527] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_14.19.sl_970532907
+1690 [4689.942844612569] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_11.13.sl_628517668
+781 [1381.5332488497559] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_11.8.sl_991229912
+2108 [1077.6310996460754] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_21_1000.sl_714862467
+119 [223.58425073053243] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-14-d5-prog.sl_723534640
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_12.11.sl_680206084
+192 [789.1937054828956] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@max@max_9.sl_801874322
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_135_100.sl_769055847
+411 [484.67083121439435] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_54_1000.sl_810242787
+95 [112.90637495674675] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-06-d1-prog.sl_759494013
+75 [122.91422729565919] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks@max@max_15.sl_562533676
+results/stochastic:full_0.7_3.model.per_size/benchmarks_se@arrays@array_search_2.sl_047192747
+29 [77.47454895927362] arrays
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_7.1.sl_010975497
+skip, forbidden
+results/stochastic:full_0.7_3.model.per_size/benchmarks_custom@hackers_delight@hd-05-d0-prog.sl_221546706
+13 [21.653271657906107] hackers
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_150_10.sl_660212881
+239 [785.1040492524327] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_15.2.sl_263419132
+1433 [3278.658539469878] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_12.12.sl_762492098
+98 [192.1848386164767] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_14.1.sl_474140892
+819 [1465.2186955673476] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@max@max_4.sl_626568301
+639 [667.0460647337999] max
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp@icfp_38_10.sl_494398446
+148 [246.87490088395498] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks_se@arrays@array_search_9.sl_164064757
+200 [474.292327859049] arrays
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_13.1.sl_459708691
+3668 [1402.695312571477] icfp
+results/stochastic:full_0.7_3.model.per_size/benchmarks@icfp_generated@icfp_gen_3.5.sl_153051146
+265 [272.84989377867316] icfp
+Global stats:
+A: 1.4366910942041569
+G: 1.4905562868327782
+arrays
+A: 0.7449726328968482
+G: 1.4017551319379993
+icfp
+A: 0.555911479759136
+G: 1.5176079959025004
+max
+A: 0.8892868304093677
+G: 1.59536692277574
+hackers
+A: 0.8027149483280897
+G: 1.2328594135173345
