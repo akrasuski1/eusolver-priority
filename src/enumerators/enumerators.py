@@ -147,7 +147,7 @@ def _smart_cartesian_product_of_generators(*generators):
                     pass
 
             if len(elems) > e + 1 and maxvis[e+1] == -1:
-                queue.put((-score_children_combiner([elems[e+1].score, rec[r].score]), index, (e+1, 0)))
+                queue.put((-score_children_combiner([elems[e+1].score, rec[0].score]), index, (e+1, 0)))
                 index += 1
                 maxvis[e+1] = 0
 
