@@ -255,7 +255,7 @@ def get_preferences_for_size_normal(sz):
 def get_preferences_for_size_conflated(sz):
     return alt_preferences
 def get_preferences_for_size_null(sz):
-    return []
+    return {}
 
 
 def score_expr_combiner_normal(op_score, children_score):

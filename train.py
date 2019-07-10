@@ -75,7 +75,7 @@ def train(tests):
     return weights
 
 
-for how in ["per_size", "global"]:
+for how in ["global", "per_size"]:
     print("Modelling", how)
     if how == "per_size":
         result = {}
@@ -96,4 +96,4 @@ for how in ["per_size", "global"]:
 
         result = train(tests)
 
-    open("models/" + name + ".model." + how, "w").write(str(result))
+    #open("models/" + name + ".model." + how, "w").write(str(result))

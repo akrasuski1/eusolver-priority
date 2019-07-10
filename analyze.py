@@ -6,6 +6,7 @@ import ast
 
 
 model = sys.argv[1]
+print(model)
 name = model.split(":")[1].split(".model.")[0]
 globs = sys.argv[2:]
 
@@ -109,8 +110,8 @@ plt.legend()
 plt.grid()
 plt.xscale("log")
 plt.yscale("log")
-plt.xlabel("Predicates visited in original version")
-plt.ylabel("Speedup (ratio of predicates visited)")
+plt.xlabel("Expressions visited in original EUSolver")
+plt.ylabel("Ratio of expressions visited (original : modified)")
 
 title = ""
 if "greedy" in model:
